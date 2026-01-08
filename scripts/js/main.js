@@ -11,7 +11,7 @@ function inciarSesion(usuario, password) {
     if (!usuario || !password) return;
     // creamos una petición XMLHTTP
     var peticion = new XMLHttpRequest();
-    peticion.open("POST", 'http://localhost/MANEX/scripts/php/getBBDD.php', true);
+    peticion.open("POST", './scripts/php/getBBDD.php', true);
     peticion.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
     peticion.onreadystatechange = () => {
         if (peticion.readyState == 4 && peticion.status == 200) {
