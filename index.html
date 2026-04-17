@@ -1,19 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MANEX</title>
 </head>
+
 <body hidden>
-        <form class="inicio-sesion">
+    <form class="inicio-sesion">
+        <input type="text" name="token" id="token" hidden>
+        <div>
             <label for="user">Usuario:</label>
-            <input type="text" name="user" id="user">
+            <input type="text" name="user" id="user" required maxlength="16" minlength="1">
+        </div>
+        <div>
             <label for="pass">Contraseña:</label>
-            <input type="password" name="pass" id="pass">
-            <input type="submit" value="Iniciar sesión" id="iniciarSesion">
-        </form>
+            <input type="password" name="pass" id="pass" required maxlength="255" minlength="1">
+        </div>
+        <div>
+            <label for="keepSession" title="Mantener la sesión iniciada durante 24 horas.">
+                <input type="checkbox" name="keepSession" id="keepSession">
+                Mantener la sesión iniciada
+            </label>
+        </div>
+        <input type="submit" value="Iniciar sesión" id="iniciarSesion">
+    </form>
 
     <script src="./scripts/js/main.js"></script>
 </body>
+
 </html>

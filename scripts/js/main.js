@@ -6,15 +6,28 @@ document.addEventListener('DOMContentLoaded', () => {
     })
 });
 
+
+/**
+ * 
+ * Recibe un usuario y una contraseña, intenta iniciar sesión.
+ * Si el inicio ha sido correcto, devuelve true.
+ * Si el inicio ha sido incorrecto, devuelve false.
+ * 
+ * @param {*} usuario 
+ * @param {*} password 
+ * @author Alex Bernardos Gil
+ * @returns Boolean
+ */
 function inciarSesion(usuario, password) {
-    console.log(usuario, password);
+    
     if (!usuario || !password) return;
     // creamos una petición XMLHTTP
     var peticion = new XMLHttpRequest();
     // llamada post al php encargado de hacer la petición
-    peticion.open("POST", './scripts/php/TryLogin.php', true);
+    peticion.open("POST", './scripts/php/AuthUser.php', true);
+
     peticion.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-    
+
     peticion.onreadystatechange = () => {
         if (peticion.readyState == 4 && peticion.status == 200) {
 
@@ -24,17 +37,18 @@ function inciarSesion(usuario, password) {
                     // lógica Login correcto 
 
                     window.alert(respuesta.message);
-
+                    return true;
                 } else {
                     // lógica Login incorrecto
 
                     window.alert('ERROR ' + respuesta.message);
-
+                    return false;
                 }
             } catch (error) {
                 // lógica error
                 console.error('ERROR AL INICIAR SESIÓN: ', error);
                 console.log('Respuesta del servidor no es JSON válido:', peticion.responseText);
+                return false;
             }
         };
     };
