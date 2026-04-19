@@ -27,9 +27,10 @@ function inciarSesion(usuario, password, wantsToKeepSession = '', sessionToken =
                 const respuesta = JSON.parse(peticion.responseText);
                 if (respuesta.status === 'success') {
                     // lógica Login correcto 
-
-                    console.log(respuesta.message);
-                    if (respuesta.token) console.log(respuesta.token);
+                    if (respuesta.token[0] && respuesta.token[1]) {
+                        cookieStore.set('token', respuesta.token[1]);
+                        // cargar dashboard
+                    } 
                     return true;
                 } else {
                     // lógica Login incorrecto
@@ -47,11 +48,7 @@ function inciarSesion(usuario, password, wantsToKeepSession = '', sessionToken =
     };
 
     // envía la petición con los parámetros codificados
-    peticion.send(`
-        user=${encodeURIComponent(usuario)}
-        &pass=${encodeURIComponent(password)}
-        ${wantsToKeepSession ? '&keepSession=' + encodeURIComponent(wantsToKeepSession) : ''}
-        ${sessionToken ? '&token=' + encodeURIComponent(sessionToken) : ''}`);
+    peticion.send(`&usuario=${encodeURIComponent(usuario)}&pass=${encodeURIComponent(password)}${wantsToKeepSession ? '&keepSession=' + encodeURIComponent(wantsToKeepSession) : ''}${sessionToken ? '&token=' + encodeURIComponent(sessionToken) : ''}`);
 
 };
 
@@ -60,11 +57,16 @@ function inciarSesion(usuario, password, wantsToKeepSession = '', sessionToken =
  * 
  * @author Alex Bernardos Gil
  */
-function loadLoginPageFunctions() {
+async function loadLoginPageFunctions() {
         document.body.hidden = false;
+
+        let token = await cookieStore.get('token');
+        token = token?.value ? token?.value : token;
+
+        if (token) inciarSesion('auto', 'login', true, token);
+
         document.querySelector('.inicio-sesion').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const token = await cookieStore.get('token');
             inciarSesion(e.target.user.value, e.target.pass.value, e.target.keepSession.checked, token);
         });
 }

@@ -2,7 +2,7 @@
 header('Content-Type: application/json');
 require '../../env/bbdd.credentials.php';
 
-$recivedUser = $_POST["user"] ?? null;
+$recivedUser = $_POST["usuario"] ?? null;
 $recivedPass = $_POST["pass"] ?? null;
 $recivedKeepSession = $_POST["keepSession"] ?? null;
 $recivedToken = $_POST["token"] ?? null;
@@ -25,7 +25,7 @@ $port = Credentials::$bbdd_port;
 $conn = mysqli_connect($servername, $username, $bbddPassword, $database, $port);
 
 if ($recivedToken) {
-    $sqlToken = "SELECT username FROM auth_token WHERE token = ? AND expires_at > NOW()";
+    $sqlToken = "SELECT username, token FROM auth_token WHERE token = ? AND expires_at > NOW()";
     $stmtToken = mysqli_prepare($conn, $sqlToken);
     mysqli_stmt_bind_param($stmtToken, 's', $recivedToken);
     mysqli_stmt_execute($stmtToken);
@@ -36,7 +36,7 @@ if ($recivedToken) {
         echo json_encode([
             'status' => 'success',
             'message' => 'Inicio de sesión exitoso',
-            'token' => [$recivedKeepSession, $token]
+            'token' => [$recivedKeepSession, $rowToken["token"], $rowToken["username"]]
         ]);
         exit;
     } else {
@@ -65,7 +65,7 @@ $result = mysqli_stmt_get_result($stmt);
 if (mysqli_num_rows($result) === 0) {
     echo json_encode([
         'status' => 'error',
-        'message' => 'credenciales incorrectos'
+        'message' => 'credenciales incorrectos1'
     ]);
     exit;
 }
