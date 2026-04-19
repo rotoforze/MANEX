@@ -5,6 +5,8 @@ require '../../env/bbdd.credentials.php';
 $recivedUser = $_POST["user"] ?? null;
 $recivedPass = $_POST["pass"] ?? null;
 $recivedKeepSession = $_POST["keepSession"] ?? null;
+$recivedToken = $_POST["token"] ?? null;
+
 
 if (!$recivedUser && !$recivedPass) {
     echo json_encode([
@@ -23,7 +25,7 @@ $port = Credentials::$bbdd_port;
 $conn = mysqli_connect($servername, $username, $bbddPassword, $database, $port);
 
 if ($recivedToken) {
-    $sqlToken = "SELECT username FROM auth_tokens WHERE token = ? AND expires_at > NOW()";
+    $sqlToken = "SELECT username FROM auth_token WHERE token = ? AND expires_at > NOW()";
     $stmtToken = mysqli_prepare($conn, $sqlToken);
     mysqli_stmt_bind_param($stmtToken, 's', $recivedToken);
     mysqli_stmt_execute($stmtToken);
@@ -34,7 +36,7 @@ if ($recivedToken) {
         echo json_encode([
             'status' => 'success',
             'message' => 'Inicio de sesión exitoso',
-            'user' => $rowToken['username']
+            'token' => [$recivedKeepSession, $token]
         ]);
         exit;
     } else {
@@ -76,11 +78,12 @@ if ($recivedPass == $finalpassword) {
     // como el inicio ha sido correcto Y SE EL USUARIO HA ENVIADO EL CHECKBOX DE MANTENER SESION hay que crear un registro en la BBDD
     // que guarde con el username del user, un hash o algun token y la fecha de expiracion (hoy + 24h)
     // si ya existe un registro de ese usuario, actualizar el token o hash
+    $token = '';
     if ($recivedKeepSession) {
         $token = bin2hex(random_bytes(32));
         $expires = date('Y-m-d H:i:s', strtotime('+24 hours'));
 
-        $sqlUpsert = "INSERT INTO auth_tokens (username, token, expires_at) 
+        $sqlUpsert = "INSERT INTO auth_token (username, token, expires_at) 
                       VALUES (?, ?, ?) 
                       ON DUPLICATE KEY UPDATE token = VALUES(token), expires_at = VALUES(expires_at)";
 
@@ -88,12 +91,14 @@ if ($recivedPass == $finalpassword) {
         mysqli_stmt_bind_param($stmtUpsert, 'sss', $recivedUser, $token, $expires);
         mysqli_stmt_execute($stmtUpsert);
 
-        setcookie("auth_token", $token, time() + (24 * 60 * 60), "/", "", false, true);
+        // no establece la cookie, por lo que tengo que devolver el token y que lo establezca el front desde JS
+        // setcookie("auth_token", $token, time() + (24 * 60 * 60), "/", "", false, true);
     }
 
     echo json_encode([
         'status' => 'success',
-        'message' => 'Inicio de sesión exitoso'
+        'message' => 'Inicio de sesión exitoso',
+        'token' => [$recivedKeepSession, $token]
     ]);
     exit;
 } else {
