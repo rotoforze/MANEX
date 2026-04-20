@@ -25,7 +25,7 @@ $port = Credentials::$bbdd_port;
 
 $conn = mysqli_connect($servername, $username, $bbddPassword, $database, $port);
 
-if ($recivedToken && $recivedToken != '') {
+if ($recivedToken && $recivedToken != '' && !$recivedPass && !$recivedUser) {
     $sqlToken = "SELECT username, token FROM auth_token WHERE token = ? AND expires_at > NOW()";
     $stmtToken = mysqli_prepare($conn, $sqlToken);
     mysqli_stmt_bind_param($stmtToken, 's', $recivedToken);
@@ -43,7 +43,7 @@ if ($recivedToken && $recivedToken != '') {
     } else {
         echo json_encode([
             'status' => 'error',
-            'message' => 'token incorrecto o expirado'.$recivedToken
+            'message' => 'token incorrecto o expirado'
         ]);
         exit;
     }

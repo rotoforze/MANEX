@@ -20,7 +20,7 @@ export async function inciarSesion({ request }) {
     const password = postData?.password;
     const wantsToKeepSession = postData?.keepSession ? true : false;
     const sessionToken = postData?.token;
-    console.log(usuario, password)
+    
     if (!sessionToken && (!usuario || !password)) return;
     return authUser(usuario, password, wantsToKeepSession, sessionToken);
 
@@ -34,7 +34,7 @@ const authUser = async (usuario, password, wantsToKeepSession, sessionToken) => 
     params.append('pass', password);
     if (wantsToKeepSession) params.append('keepSession', wantsToKeepSession);
     if (sessionToken) params.append('token', sessionToken);
-    console.log(usuario, password)
+    
 
     try {
         const response = await fetch(url, {
