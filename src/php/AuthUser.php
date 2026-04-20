@@ -1,5 +1,6 @@
 <?php
 header('Content-Type: application/json');
+header("Access-Control-Allow-Origin: http://localhost:5173");
 require '../../env/bbdd.credentials.php';
 
 $recivedUser = $_POST["usuario"] ?? null;
@@ -8,7 +9,7 @@ $recivedKeepSession = $_POST["keepSession"] ?? null;
 $recivedToken = $_POST["token"] ?? null;
 
 
-if (!$recivedUser && !$recivedPass) {
+if (!$recivedUser && !$recivedPass && !$recivedToken) {
     echo json_encode([
         'status' => 'error',
         'message' => 'null credentials'
@@ -24,7 +25,7 @@ $port = Credentials::$bbdd_port;
 
 $conn = mysqli_connect($servername, $username, $bbddPassword, $database, $port);
 
-if ($recivedToken) {
+if ($recivedToken && $recivedToken != '') {
     $sqlToken = "SELECT username, token FROM auth_token WHERE token = ? AND expires_at > NOW()";
     $stmtToken = mysqli_prepare($conn, $sqlToken);
     mysqli_stmt_bind_param($stmtToken, 's', $recivedToken);
@@ -42,7 +43,7 @@ if ($recivedToken) {
     } else {
         echo json_encode([
             'status' => 'error',
-            'message' => 'token incorrecto o expirado'
+            'message' => 'token incorrecto o expirado'.$recivedToken
         ]);
         exit;
     }
@@ -74,10 +75,6 @@ $row = mysqli_fetch_assoc($result);
 $finalpassword = $row['PASSWORD'];
 
 if ($recivedPass == $finalpassword) {
-
-    // como el inicio ha sido correcto Y SE EL USUARIO HA ENVIADO EL CHECKBOX DE MANTENER SESION hay que crear un registro en la BBDD
-    // que guarde con el username del user, un hash o algun token y la fecha de expiracion (hoy + 24h)
-    // si ya existe un registro de ese usuario, actualizar el token o hash
     $token = '';
     if ($recivedKeepSession) {
         $token = bin2hex(random_bytes(32));
@@ -90,9 +87,6 @@ if ($recivedPass == $finalpassword) {
         $stmtUpsert = mysqli_prepare($conn, $sqlUpsert);
         mysqli_stmt_bind_param($stmtUpsert, 'sss', $recivedUser, $token, $expires);
         mysqli_stmt_execute($stmtUpsert);
-
-        // no establece la cookie, por lo que tengo que devolver el token y que lo establezca el front desde JS
-        // setcookie("auth_token", $token, time() + (24 * 60 * 60), "/", "", false, true);
     }
 
     echo json_encode([

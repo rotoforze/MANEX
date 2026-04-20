@@ -1,25 +1,22 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { MainNav } from '../components/MainNav'
-import { LoginPage } from './LoginPage';
-import { Outlet } from 'react-router';
+import { Outlet, useNavigate } from 'react-router';
 
 export const RootLayout = () => {
     const authUser = (cookieStore.get('token')).value || '';
-    
-    // si el usuario ha iniciado sesion, se mete en el outlet
-    // la navegacion, si no, carga el login.
-    
+    const navigate = useNavigate();
+    useEffect(() => {
+        if (!authUser) navigate('/');
+    }, [authUser])
+    // si el usuario ha iniciado sesion, se mete en el outlet y carga
+    // la navegacion, si no, carga solo el login.
+
     return (
         <>
-            {authUser ? 
-            (<>
             <main>
-                <MainNav/>
-                <Outlet/>
+                {authUser ? <MainNav /> : null}
+                <Outlet />
             </main>
-            </>) :
-            <LoginPage />
-            }
         </>
     )
 }
