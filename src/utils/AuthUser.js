@@ -68,11 +68,13 @@ const authUser = async (usuario, password, wantsToKeepSession, sessionToken) => 
             return true;
         } else {
             console.log('ERROR: ' + respuesta.message);
+            await cookieStore.delete('token');
             return false;
         }
 
     } catch (error) {
         console.error('ERROR AL INICIAR SESIÓN: ', error);
+        await cookieStore.delete('token');
         return false;
     }
 };

@@ -13,10 +13,10 @@ export const RootLayout = () => {
 
     return (
         <>
-            <main>
-                {authUser ? <MainNav /> : null}
-                <Outlet />
-            </main>
+
+            {authUser ? <MainNav /> : null}
+            <Outlet />
+
         </>
     )
 }
