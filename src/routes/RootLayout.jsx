@@ -1,20 +1,28 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { MainNav } from '../components/MainNav'
-import { Outlet, useNavigate } from 'react-router';
+import { Outlet, useNavigate } from 'react-router-dom';
+import {useUsers} from "../context/UserContext.jsx";
 
+/**
+ *
+ * Siempre se muestra este componente. Muestra el outlet y el MainNav (Solo si el usuario se ha logeado)
+ *
+ * @returns {React.JSX.Element}
+ * @author Alex Bernardos Gil
+ * @version 1.2.0
+ * @constructor
+ */
 export const RootLayout = () => {
-    const authUser = (cookieStore.get('token')).value || '';
+    const { user } = useUsers();
     const navigate = useNavigate();
-    useEffect(() => {
-        if (!authUser) navigate('/');
-    }, [authUser])
-    // si el usuario ha iniciado sesion, se mete en el outlet y carga
-    // la navegacion, si no, carga solo el login.
+
+    console.log(user.token)
+    if (user.token) navigate('/');
 
     return (
         <>
 
-            {authUser ? <MainNav /> : null}
+            {!user.token && user.token !== undefined ? <MainNav /> : null}
             <Outlet />
 
         </>

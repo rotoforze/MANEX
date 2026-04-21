@@ -1,10 +1,22 @@
-import React, { useEffect, useState } from 'react'
-import { Form, useActionData, useNavigate, useSubmit } from 'react-router'
+import React, {useEffect, useState} from 'react'
+import { Form, useActionData, useNavigate, useSubmit } from 'react-router-dom'
+import {useUsers} from "../context/UserContext.jsx";
 
-export const LoginPage = () => {
+
+/**
+ *
+ * Componente que muestra un formulario para el logeo del usuario.
+ *
+ * @returns {React.JSX.Element}
+ * @author Alex Bernardos Gil
+ * @version 1.3.2
+ * @constructor
+ */
+const LoginPage = () => {
     const actionData = useActionData();
     const navigate = useNavigate();
     const submit = useSubmit();
+    const { user } = useUsers();
 
     const [passwordShown, setPasswordShown] = useState(false);
     const [token, setToken] = useState('');
@@ -13,31 +25,42 @@ export const LoginPage = () => {
     useEffect(() => {
         if (actionData) navigate('/dashboard');
 
-    }, [actionData]);
+    }, [actionData, navigate]);
 
     useEffect(() => {
+        /**
+         * Comprueba si la cookie existe en el navegador, si existe, manda el formulario con
+         * la cookie.
+         *
+         * @author Alex Bernardos Gil
+         * @version 1.0.0
+         * @returns {Promise<boolean>}
+         */
         const getToken = async () => {
-            if (window.cookieStore) {
-                const tokenRaw = await cookieStore.get('token');
-                setToken(tokenRaw?.value);
-                if (tokenRaw?.value) {
+
+                const userToken = user.token;
+                setToken(userToken);
+                if (userToken) {
                     const form = document.querySelector(".login-form");
-                    form.querySelector('#token').value = tokenRaw?.value;
+                    form.querySelector('#token').value = userToken;
                     form.querySelector('#keepSession').checked = true;
-                    submit(form);
+                    await submit(form);
+                    return true;
                 }
-            }
+
+            return false;
         };
         getToken();
-    }, [])
+    }, [submit, user.token])
 
     useEffect(() => {
-        setCargado(!cargando);
-    }, [token, actionData])
+        const changeCargandoState = () => setCargado(!cargando);
+        changeCargandoState();
+    }, [token, actionData, cargando])
 
 
     return (
-        <>
+        <div className='center-login'>
             <div className='login-section' hidden={cargando}>
                 {actionData?.error && <div className="message">{actionData.error}</div>}
                 <fieldset>
@@ -78,7 +101,7 @@ export const LoginPage = () => {
                         </div>
                         <div className='keepSession-container'>
                             <label htmlFor="keepSession" className='keepSession'>
-                                <input type="checkbox" name="keepSession" id="keepSession" defaultChecked={token?.value ? true : false} />
+                                <input type="checkbox" name="keepSession" id="keepSession" defaultChecked={!!token?.value} />
                                 Mantener la sesión iniciada
                             </label>
                         </div>
@@ -89,6 +112,7 @@ export const LoginPage = () => {
             <div className='cargando' hidden={!cargando}>
                 <h1>Cargando</h1>
             </div>
-        </>
+        </div>
     )
 }
+export default LoginPage

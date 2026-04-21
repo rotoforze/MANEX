@@ -1,10 +1,21 @@
 import React from 'react'
 import { NavLink } from 'react-router'
+import '../../public/styles/Navigation.css'
 
+/**
+ *
+ * Barra de navegación.
+ *
+ * @returns {React.JSX.Element}
+ * @author Alex Bernardos Gil
+ * @version 1.0.6
+ * @constructor
+ */
 export const MainNav = () => {
   return (
-    <navbar>
+    <nav>
       <ul>
+        <li className="logo-text">MANEX</li>
         <li>
           <NavLink to={'/dashboard'}
             className={({ isActive }) => (isActive ? 'activo' : undefined) + " btn-navlink"}>
@@ -25,6 +36,6 @@ export const MainNav = () => {
         </li>
         <li></li>
       </ul>
-    </navbar>
+    </nav>
   )
 }

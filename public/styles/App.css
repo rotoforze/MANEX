@@ -1,9 +1,6 @@
 #root {
     width: 100dvw;
     height: 100dvh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     background-image:
         /* 1. Capa de Texto: Pequeña y repetitiva */
         url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='2048' height='1024'%3E%3Ctext x='50%25' y='50%25' font-family='sans-serif' font-weight='900' font-size='256' fill='rgba(0,0,0,0.15)' text-anchor='middle' dominant-baseline='middle'%3EMANEX%3C/text%3E%3C/svg%3E"),
@@ -22,6 +19,15 @@
 
     /* Esto asegura que ambos se clonen infinitamente */
     background-repeat: repeat;
+}
+
+.center-login {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
 }
 
 .login-section {
@@ -92,13 +98,16 @@ Form #user:focus {
     color: #1f1f1f;
     border-bottom: 3px solid #1f1f1f;
 }
+
 .keepSession-container {
     width: 100%;
     padding: 10px;
 }
+
 .keepSession-container input {
     margin-right: 10px;
 }
+
 Form input[type="submit"] {
     transition: all 1000ms;
     display: flex;
@@ -108,7 +117,8 @@ Form input[type="submit"] {
     justify-self: center;
 }
 
-Form input[type="submit"]:hover, Form input[type="submit"]:active {
+Form input[type="submit"]:hover,
+Form input[type="submit"]:active {
     transition: all 1000ms;
     font-style: italic;
     border-bottom: 3px solid #1f1f1f;
