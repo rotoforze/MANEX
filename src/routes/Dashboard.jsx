@@ -16,6 +16,7 @@ import {
 } from '@mui/material'
 import { Link as RouterLink } from 'react-router-dom'
 import { MainNav } from '../components/MainNav'
+import { useUsers } from '../context/UserContext.jsx'
 
 const datosResumenDashboard = [
   {
@@ -30,39 +31,91 @@ const datosResumenDashboard = [
   },
 ]
 
-const gruposDashboard = [
+const apartadosDashboard = [
+  {
+    id: 'contrato',
+    titulo: 'Contrato',
+    grupo: 'Gestion de personal',
+    descripcionGrupo: 'Apartados base para la gestion diaria del personal.',
+  },
+  {
+    id: 'departamento',
+    titulo: 'Departamento',
+    grupo: 'Gestion de personal',
+    descripcionGrupo: 'Apartados base para la gestion diaria del personal.',
+  },
+  {
+    id: 'empleado',
+    titulo: 'Empleado',
+    grupo: 'Gestion de personal',
+    descripcionGrupo: 'Apartados base para la gestion diaria del personal.',
+  },
+  {
+    id: 'usuario',
+    titulo: 'Usuario',
+    grupo: 'Gestion de personal',
+    descripcionGrupo: 'Apartados base para la gestion diaria del personal.',
+  },
+  {
+    id: 'fichajes',
+    titulo: 'Fichajes',
+    grupo: 'Control horario y ausencias',
+    descripcionGrupo: 'Apartados utiles para revisar asistencia y permisos.',
+  },
+  {
+    id: 'solicitud_vacaciones',
+    titulo: 'Solicitud vacaciones',
+    grupo: 'Control horario y ausencias',
+    descripcionGrupo: 'Apartados utiles para revisar asistencia y permisos.',
+  },
+  {
+    id: 'incidencia',
+    titulo: 'Incidencia',
+    grupo: 'Incidencias e inventario',
+    descripcionGrupo: 'Apartados para registrar y consultar incidencias.',
+  },
+  {
+    id: 'incidencia_inventario',
+    titulo: 'Incidencia inventario',
+    grupo: 'Incidencias e inventario',
+    descripcionGrupo: 'Apartados para registrar y consultar incidencias.',
+  },
+  {
+    id: 'incidencia_it',
+    titulo: 'Incidencia IT',
+    grupo: 'Incidencias e inventario',
+    descripcionGrupo: 'Apartados para registrar y consultar incidencias.',
+  },
+  {
+    id: 'inventario',
+    titulo: 'Inventario',
+    grupo: 'Incidencias e inventario',
+    descripcionGrupo: 'Apartados para registrar y consultar incidencias.',
+  },
+  {
+    id: 'envia_una',
+    titulo: 'Envia una',
+    grupo: 'Comunicacion interna',
+    descripcionGrupo: 'Apartado sencillo para pruebas de avisos o mensajes.',
+  },
+]
+
+const gruposBaseDashboard = [
   {
     titulo: 'Gestion de personal',
     descripcion: 'Apartados base para la gestion diaria del personal.',
-    apartados: ['Contrato', 'Departamento', 'Empleado', 'Usuario'],
   },
   {
     titulo: 'Control horario y ausencias',
     descripcion: 'Apartados utiles para revisar asistencia y permisos.',
-    apartados: ['Fichajes', 'Solicitud vacaciones'],
   },
   {
     titulo: 'Incidencias e inventario',
     descripcion: 'Apartados para registrar y consultar incidencias.',
-    apartados: ['Incidencia', 'Incidencia inventario', 'Incidencia IT', 'Inventario'],
   },
   {
     titulo: 'Comunicacion interna',
     descripcion: 'Apartado sencillo para pruebas de avisos o mensajes.',
-    apartados: ['Envia una'],
-  },
-]
-
-const filasEjemploTabla = [
-  {
-    apartado: 'Contrato',
-    datoPrincipal: 'Dato 1',
-    datoSecundario: 'Dato 2',
-  },
-  {
-    apartado: 'Empleado',
-    datoPrincipal: 'Dato 1',
-    datoSecundario: 'Dato 2',
   },
 ]
 
@@ -113,10 +166,38 @@ const estilosDashboard = {
  *
  * @returns {React.JSX.Element}
  * @author Eneas Menéndez
+ * @change Se adaptó el dashboard para mostrar apartados dinámicos por permisos.
+ * @reason Permitir que los menús visibles dependan del usuario autenticado.
  * @version 1.0
  * @constructor
  */
 export const Dashboard = () => {
+  const { user } = useUsers()
+  const permisosUsuario = user?.permisos || []
+
+  const apartadosPermitidos = apartadosDashboard.filter((apartadoDashboard) =>
+    permisosUsuario.includes(apartadoDashboard.id),
+  )
+
+  const gruposDashboard = gruposBaseDashboard
+    .map((grupoBaseDashboard) => {
+      const apartadosGrupo = apartadosPermitidos.filter(
+        (apartadoDashboard) => apartadoDashboard.grupo === grupoBaseDashboard.titulo,
+      )
+
+      return {
+        ...grupoBaseDashboard,
+        apartados: apartadosGrupo,
+      }
+    })
+    .filter((grupoDashboard) => grupoDashboard.apartados.length > 0)
+
+  const filasEjemploTabla = apartadosPermitidos.slice(0, 2).map((apartadoPermitido) => ({
+    apartado: apartadoPermitido.titulo,
+    datoPrincipal: 'Dato 1',
+    datoSecundario: 'Dato 2',
+  }))
+
   return (
     <Box sx={estilosDashboard.contenedorPrincipal}>
       <MainNav />
@@ -236,8 +317,8 @@ export const Dashboard = () => {
                       <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap">
                         {grupoDashboard.apartados.map((apartado) => (
                           <Chip
-                            key={apartado}
-                            label={apartado}
+                            key={apartado.id}
+                            label={apartado.titulo}
                             sx={{
                               backgroundColor: '#e8edf3',
                               color: '#233143',
@@ -260,7 +341,8 @@ export const Dashboard = () => {
                   Tabla de ejemplo
                 </Typography>
                 <Typography color="text.secondary">
-                  Datos simples para comprobar maquetacion y renderizado.
+                  Datos simples para comprobar maquetacion y renderizado segun
+                  permisos del usuario.
                 </Typography>
               </Box>
 
@@ -281,6 +363,13 @@ export const Dashboard = () => {
                         <TableCell>{filaEjemplo.datoSecundario}</TableCell>
                       </TableRow>
                     ))}
+                    {filasEjemploTabla.length === 0 && (
+                      <TableRow>
+                        <TableCell colSpan={3}>
+                          No hay apartados disponibles para este usuario.
+                        </TableCell>
+                      </TableRow>
+                    )}
                   </TableBody>
                 </Table>
               </TableContainer>
