@@ -3,3 +3,7 @@
 
 ## ¿Que tipo de contenido hay?
 > En esta rama se aprecia contenido full-stack (React + JS, PHP, consultas SQL y maquetado)
+ 
+## Importate
+> Para instalar las librerias necesarias:
+    npm install @mui/material @emotion/react @emotion/styled 

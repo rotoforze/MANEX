@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { MainNav } from '../components/MainNav'
 import { Outlet, useNavigate } from 'react-router-dom';
 import {useUsers} from "../context/UserContext.jsx";
@@ -9,6 +9,9 @@ import {useUsers} from "../context/UserContext.jsx";
  *
  * @returns {React.JSX.Element}
  * @author Alex Bernardos Gil
+ * @contributor Eneas Menéndez
+ * @change Se movió la navegación a un useEffect.
+ * @reason Evitar navegación durante el render y reducir renderizados innecesarios.
  * @version 1.2.0
  * @constructor
  */
@@ -16,8 +19,9 @@ export const RootLayout = () => {
     const { user } = useUsers();
     const navigate = useNavigate();
 
-    console.log(user.token)
-    if (user.token) navigate('/');
+    useEffect(() => {
+        if (user.token) navigate('/');
+    }, [navigate, user.token]);
 
     return (
         <>

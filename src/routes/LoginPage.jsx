@@ -9,6 +9,9 @@ import {useUsers} from "../context/UserContext.jsx";
  *
  * @returns {React.JSX.Element}
  * @author Alex Bernardos Gil
+ * @contributor Eneas Menéndez
+ * @change Se corrigió el cambio de estado de "cargando" dentro de useEffect.
+ * @reason Evitar el error "Maximum update depth exceeded" por un bucle de renderizado.
  * @version 1.3.2
  * @constructor
  */
@@ -23,7 +26,10 @@ const LoginPage = () => {
     const [cargando, setCargado] = useState(false);
 
     useEffect(() => {
-        if (actionData) navigate('/dashboard');
+        if (actionData) {
+            setCargado(false);
+            navigate('/dashboard');
+        }
 
     }, [actionData, navigate]);
 
@@ -41,6 +47,7 @@ const LoginPage = () => {
                 const userToken = user.token;
                 setToken(userToken);
                 if (userToken) {
+                    setCargado(true);
                     const form = document.querySelector(".login-form");
                     form.querySelector('#token').value = userToken;
                     form.querySelector('#keepSession').checked = true;
@@ -48,15 +55,15 @@ const LoginPage = () => {
                     return true;
                 }
 
+            setCargado(false);
             return false;
         };
         getToken();
     }, [submit, user.token])
 
     useEffect(() => {
-        const changeCargandoState = () => setCargado(!cargando);
-        changeCargandoState();
-    }, [token, actionData, cargando])
+        if (actionData === false) setCargado(false);
+    }, [actionData])
 
 
     return (
@@ -101,7 +108,7 @@ const LoginPage = () => {
                         </div>
                         <div className='keepSession-container'>
                             <label htmlFor="keepSession" className='keepSession'>
-                                <input type="checkbox" name="keepSession" id="keepSession" defaultChecked={!!token?.value} />
+                                <input type="checkbox" name="keepSession" id="keepSession" defaultChecked={!!token} />
                                 Mantener la sesión iniciada
                             </label>
                         </div>

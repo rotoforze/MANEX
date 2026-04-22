@@ -8,6 +8,9 @@ import '../../public/styles/Navigation.css'
  *
  * @returns {React.JSX.Element}
  * @author Alex Bernardos Gil
+ * @contributor Eneas Menéndez
+ * @change Se restauró la implementación original del componente.
+ * @reason Mantener el diseño de navegación original del proyecto.
  * @version 1.0.6
  * @constructor
  */
