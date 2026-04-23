@@ -16,13 +16,12 @@ export const RootLayout = () => {
     const { user } = useUsers();
     const navigate = useNavigate();
 
-    console.log(user.token)
-    if (user.token) navigate('/');
+    if (user?.token) navigate('/');
 
     return (
         <>
 
-            {!user.token && user.token !== undefined ? <MainNav /> : null}
+            {user?.token && user?.username ? <MainNav /> : null}
             <Outlet />
 
         </>

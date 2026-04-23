@@ -36,7 +36,7 @@ export async function inciarSesion({request}) {
  * @returns Boolean
  */
 const authUser = async (usuario, password, wantsToKeepSession, sessionToken) => {
-    const url = 'http://localhost/MANEX/src/php/AuthUser.php';
+    const url = 'http://localhost/login';
 
     const params = new URLSearchParams();
     params.append('usuario', usuario);
