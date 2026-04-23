@@ -59,10 +59,11 @@ export function UserProvider({children}) {
      * @author Alex Bernardos Gil
      * @version 1.0.0
      */
-    function changeUserInformation(username = undefined, token = window?.token?.value) {
+    function changeUserInformation(username = undefined, token = window?.token?.value, authenticated = false) {
         setUser({
             username: username || user.username,
-            token: token || user.token
+            token: token || user.token,
+            authenticated: authenticated || user.authenticated
         })
     }
 

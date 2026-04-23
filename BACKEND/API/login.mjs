@@ -110,7 +110,7 @@ export function login(req, res) {
                     // como resuelve, enviamos status code 200.
                     return res.status(200).send({
                         status: 201,
-                        token: [keepSession, newToken]
+                        token: [true, newToken || null, usuario]
                     })
                 }
             } else {

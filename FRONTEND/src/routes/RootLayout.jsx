@@ -18,15 +18,17 @@ export const RootLayout = () => {
 
     useEffect(() => {
         console.log(user);
-        if (user?.username && user?.token && user?.authenticated) {
+        if (user?.username && user?.authenticated) {
             navigate('/dashboard');
+        } else if (!user?.username && !user?.authenticated) {
+            navigate('/');
         }
     }, [user])
 
     return (
         <>
 
-            {user?.token && user?.username ? <MainNav/> : null}
+            {user?.username && user?.authenticated ? <MainNav/> : null}
             <Outlet/>
 
         </>
