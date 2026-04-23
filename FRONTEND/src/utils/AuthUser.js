@@ -17,7 +17,8 @@ export async function inciarSesion({request}) {
     const wantsToKeepSession = !!postData?.keepSession;
     const sessionToken = postData?.token;
 
-    if (!sessionToken && (!usuario || !password)) return;
+    // if (!sessionToken && (!usuario || !password)) return;
+    console.log(sessionToken)
     return authUser(usuario, password, wantsToKeepSession, sessionToken);
 
 }
@@ -35,16 +36,13 @@ export async function inciarSesion({request}) {
  * @version 1.0
  * @returns Boolean
  */
-const authUser = async (usuario, password, wantsToKeepSession, sessionToken) => {
-    const url = 'http://localhost/login';
-
+export const authUser = async (usuario, password, wantsToKeepSession, sessionToken) => {
+    const url = 'http://localhost:80/login';
     const params = new URLSearchParams();
     params.append('usuario', usuario);
     params.append('pass', password);
     if (wantsToKeepSession) params.append('keepSession', '' + wantsToKeepSession);
     if (sessionToken) params.append('token', sessionToken);
-
-
     try {
         const response = await fetch(url, {
             method: 'POST',
@@ -61,13 +59,18 @@ const authUser = async (usuario, password, wantsToKeepSession, sessionToken) => 
 
         const respuesta = await response.json();
 
-        if (respuesta.status === 'success') {
+        if (respuesta.status === 201) {
             // Lógica Login correcto
             if (respuesta.token && respuesta.token[0] && respuesta.token[1]) {
+
                 await createTokenCookie(respuesta.token[1]);
 
             }
-            return true;
+            return {
+                success: respuesta.token[0],
+                token: respuesta.token[1],
+                username: respuesta.token[2]
+            };
         } else {
             console.log('ERROR: ' + respuesta.message);
             await deleteTokenCookie();

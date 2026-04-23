@@ -1,11 +1,11 @@
-import express from 'express';
+import express, {urlencoded} from 'express';
 import cors from 'cors';
 import {login} from "./API/login.mjs";
 
 const app = express();
 
 app.use(cors());
-
+app.use(express.urlencoded({extended: true}));
 app.get('/', (req, res) => {
     res.send({
         status: 200,
@@ -15,9 +15,17 @@ app.get('/', (req, res) => {
     });
 })
 
-app.get('/login', (req, res) => {
-
-    res.send(login(req, res));
+app.post('/login', (req, res) => {
+    if (!req.body) {
+        res.send({
+            status: 400,
+            body: {
+                'message': 'Not valid body: ' + req
+            }
+        });
+        return;
+    }
+    login(req, res);
 
 })
 

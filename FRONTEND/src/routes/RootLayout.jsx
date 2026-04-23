@@ -1,6 +1,6 @@
-import React from 'react'
-import { MainNav } from '../components/MainNav'
-import { Outlet, useNavigate } from 'react-router-dom';
+import React, {useEffect} from 'react'
+import {MainNav} from '../components/MainNav'
+import {Outlet, useNavigate} from 'react-router-dom';
 import {useUsers} from "../context/UserContext.jsx";
 
 /**
@@ -13,16 +13,21 @@ import {useUsers} from "../context/UserContext.jsx";
  * @constructor
  */
 export const RootLayout = () => {
-    const { user } = useUsers();
+    const {user} = useUsers();
     const navigate = useNavigate();
 
-    if (user?.token) navigate('/');
+    useEffect(() => {
+        console.log(user);
+        if (user?.username && user?.token && user?.authenticated) {
+            navigate('/dashboard');
+        }
+    }, [user])
 
     return (
         <>
 
-            {user?.token && user?.username ? <MainNav /> : null}
-            <Outlet />
+            {user?.token && user?.username ? <MainNav/> : null}
+            <Outlet/>
 
         </>
     )

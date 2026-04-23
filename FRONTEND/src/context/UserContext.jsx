@@ -1,4 +1,5 @@
-import React, {createContext, useContext, useState} from 'react'
+import React, {createContext, useContext, useState, useEffect} from 'react'
+import {authUser} from '../utils/AuthUser'
 
 const UserContext = createContext();
 
@@ -11,12 +12,43 @@ const UserContext = createContext();
  * @version 1.0.0
  * @constructor
  */
-export function UserProvider({ children }) {
+export function UserProvider({children}) {
 
     const [user, setUser] = useState({
         username: '',
-        token: window?.token?.value || ''
+        token: getCookie('token') || '',
+        authenticated: false,
     });
+
+    /**
+     * Comprueba si la cookie existe en el navegador, si existe, manda el formulario con
+     * la cookie.
+     *
+     * @author Alex Bernardos Gil
+     * @version 1.2.0
+     * @returns {Promise<boolean>}
+     */
+    const autoLogin = async () => {
+        const token = getCookie('token');
+        if (!token) return;
+
+        const result = await authUser(null, null, false, token);
+    console.log(result);
+        if (result?.success) {
+            setUser({
+                username: result.username,
+                token,
+                authenticated: true
+            });
+            return true;
+        }
+        return false;
+    };
+
+    useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        autoLogin();
+    }, []);
 
     /**
      *
@@ -35,12 +67,11 @@ export function UserProvider({ children }) {
     }
 
 
-
     return (
         <UserContext.Provider
-            value={{user, changeUserInformation}} >
-                {children}
-            </UserContext.Provider>
+            value={{user, changeUserInformation}}>
+            {children}
+        </UserContext.Provider>
     )
 }
 
@@ -67,5 +98,16 @@ export function useUsers() {
  */
 // eslint-disable-next-line react-refresh/only-export-components
 export function loaderAuthTokenCookie() {
-    return window.token?.value;
+    return getCookie('token') || null;
+}
+
+function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+
+    if (parts.length === 2) {
+        return parts.pop().split(';').shift();
+    }
+
+    return null;
 }

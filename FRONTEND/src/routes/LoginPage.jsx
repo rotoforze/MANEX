@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from 'react'
-import {Form, useActionData, useNavigate, useSubmit} from 'react-router-dom'
+import React, { useEffect, useState} from 'react'
+import {Form, useActionData, useNavigate} from 'react-router-dom'
 import {useUsers} from "../context/UserContext.jsx";
 import {Loading} from "../components/Loading.jsx";
 
@@ -10,51 +10,24 @@ import {Loading} from "../components/Loading.jsx";
  *
  * @returns {React.JSX.Element}
  * @author Alex Bernardos Gil
- * @version 1.3.2
+ * @version 1.12.2
  * @constructor
  */
 const LoginPage = () => {
     const actionData = useActionData();
     const navigate = useNavigate();
-    const submit = useSubmit();
-    const {user} = useUsers();
+    const {user, changeUserInformation} = useUsers();
 
     const [passwordShown, setPasswordShown] = useState(false);
-    const [token, setToken] = useState('');
     const [cargando, setCargado] = useState(true);
-    const [conexion, setConexion] = useState(true);
 
     useEffect(() => {
+        console.log(actionData)
         if (actionData) navigate('/dashboard');
 
     }, [actionData, navigate]);
 
-    useEffect(() => {
-        /**
-         * Comprueba si la cookie existe en el navegador, si existe, manda el formulario con
-         * la cookie.
-         *
-         * @author Alex Bernardos Gil
-         * @version 1.0.0
-         * @returns {Promise<boolean>}
-         */
-        const getToken = async () => {
-
-            const userToken = user.token;
-            setToken(userToken);
-            if (userToken) {
-                const form = document.querySelector(".login-form");
-                form.querySelector('#token').value = userToken;
-                form.querySelector('#keepSession').checked = true;
-                await submit(form);
-                return true;
-            }
-
-            return false;
-        };
-        getToken();
-    }, [submit, user.token])
-
+    // comprueba la conexión con el servidor para poder cargar la app.
     useEffect(() => {
         try {
             fetch('http://localhost:80/',
@@ -71,20 +44,28 @@ const LoginPage = () => {
         } catch (error) {
             console.error(error);
         }
-    }, [token, actionData])
+    }, [])
+
+    useEffect(() => {
+        if (!actionData) return;
+
+        if (actionData.success) {
+            changeUserInformation(actionData.username, actionData.token, true);
+        }
+    }, [actionData]);
 
 
     return (
         <div className='center-login'>
             {cargando ? (
-                <Loading />
-            ) :  (
+                <Loading/>
+            ) : (
                 <div className='login-section'>
                     {actionData?.error && <div className="message">{actionData.error}</div>}
                     <fieldset>
                         <legend>Iniciar sesión</legend>
                         <Form className='login-form' method='POST'>
-                            <input type="text" name="token" id="token" defaultValue={token} hidden/>
+                            <input type="text" name="token" id="token" defaultValue={user.token} hidden/>
                             <div>
                                 <input type="text" placeholder='Usuario'
                                        id='user' name='user' required minLength={1} maxLength={16}/>
@@ -92,7 +73,7 @@ const LoginPage = () => {
                             <div>
                                 <div className='password-group'>
                                     <input aria-describedby='password-addon'
-                                           placeholder='Contraseña'
+                                           placeholder='Contraseña' autoComplete="true"
                                            type={passwordShown ? 'text' : 'password'}
                                            name="password" id="password" required minLength={0} maxLength={255}/>
                                     <button className="eye-password-button" type='button'
@@ -129,7 +110,7 @@ const LoginPage = () => {
                             <div className='keepSession-container'>
                                 <label htmlFor="keepSession" className='keepSession'>
                                     <input type="checkbox" name="keepSession" id="keepSession"
-                                           defaultChecked={!!token}/>
+                                           defaultChecked={!!user.token}/>
                                     Mantener la sesión iniciada
                                 </label>
                             </div>
