@@ -166,9 +166,7 @@ const estilosDashboard = {
  *
  * @returns {React.JSX.Element}
  * @author Eneas Menéndez
- * @change Se adaptó el dashboard para mostrar apartados dinámicos por permisos.
- * @reason Permitir que los menús visibles dependan del usuario autenticado.
- * @version 1.0
+ * @version 1.0.1
  * @constructor
  */
 export const Dashboard = () => {
