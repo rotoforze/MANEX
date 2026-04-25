@@ -1,0 +1,20 @@
+.inicio-sesion {
+    margin: 0px auto;
+    width: 30dvw;
+    border: black 1px solid;
+    padding: 20px;
+    text-align: justify;
+}
+.inicio-sesion div {
+    display: flex;
+    flex-direction: column;
+    justify-content: left;
+    margin: 5px 0px;
+}
+.inicio-sesion input[role="textbox"] {
+    width: 100%;
+}
+.inicio-sesion label {
+    text-align: left;
+    margin: 10px 0px;
+}
