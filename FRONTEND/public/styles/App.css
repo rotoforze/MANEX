@@ -1,130 +1,39 @@
+
 #root {
-    width: 100dvw;
-    height: 100dvh;
+    width: 100%;
+    min-height: 100vh;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+
     background-image:
-        /* 1. Capa de Texto: Pequeña y repetitiva */
+        /* 1. Texto repetido */
         url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='2048' height='1024'%3E%3Ctext x='50%25' y='50%25' font-family='sans-serif' font-weight='900' font-size='256' fill='rgba(0,0,0,0.15)' text-anchor='middle' dominant-baseline='middle'%3EMANEX%3C/text%3E%3C/svg%3E"),
-        /* 2. Triángulos hacia arriba */
+        /* 2. Triángulos arriba */
         conic-gradient(from 150deg at 50% 33%, #e5e5f7 60deg, transparent 0),
-        /* 3. Triángulos hacia abajo */
+        /* 3. Triángulos abajo */
         conic-gradient(from -30deg at 50% 66%, #e5e5f7 60deg, #ffffff 0);
 
-    /* CONTROL DE REPETICIÓN Y TAMAÑO */
-    /* El primer valor (80px 40px) hace que el texto se repita cada poco espacio */
-    /* Los siguientes (20px 20px) crean la rejilla densa de triángulos */
     background-size: 80px 40px, 20px 20px, 20px 20px;
-
-    /* Alineación del mosaico */
     background-position: 0 0, 0 0, 10px 0;
-
-    /* Esto asegura que ambos se clonen infinitamente */
     background-repeat: repeat;
 }
 
-.center-login {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
+form {
+    width: auto;
+    margin: 0;
 }
 
-.login-section {
-    display: flex;
-    background-color: #f1f1f1;
-    padding: 30px;
-    width: fit-content;
-    border-radius: 10px;
-    border: 1px solid #1f1f1f;
+form div {
+    width: auto !important;
 }
 
-Form {
-    width: 33dvw;
-    margin: 0px auto;
-}
-
-Form div,
-Form input[id='user'],
-Form div.input-group {
-    width: 100% !important;
-}
-
-.password-group {
-    display: flex;
-    flex-direction: row-reverse;
-    align-items: center;
-}
-
-.eye-password-button {
-    position: static;
-    border: none !important;
-    background-color: unset;
-    color: #1f1f1f;
-    margin-right: 5px;
-}
-
-.eye-password-button:hover {
-    transition: all 100ms;
-    background-color: #e5e5f7;
-    border-radius: 25px;
-}
-
-.eye-password-button:active {
-    transition: all 1000ms;
-    background-color: #dadada;
-    border-radius: 25px;
-}
-
-Form #password,
-Form #user {
-    transition: all 1000ms;
-    width: 100%;
-    outline: 0;
-    border-radius: 2px;
-    border-width: 0 0 2px;
-    margin: 10px 0px;
-    padding: 10px;
-    color: #6b6b6b;
-    border-bottom: 3px solid #e5e5f7;
-}
-
-Form #password:hover,
-Form #password:focus,
-Form #user:hover,
-Form #user:focus {
-    transition: all 1000ms;
-    border: none;
-    color: #1f1f1f;
-    border-bottom: 3px solid #1f1f1f;
-}
-
+.center-login,
+.login-section,
+.password-group,
+.eye-password-button,
 .keepSession-container {
-    width: 100%;
-    padding: 10px;
-}
-
-.keepSession-container input {
-    margin-right: 10px;
-}
-
-Form input[type="submit"] {
-    transition: all 1000ms;
-    display: flex;
-    border: unset;
-    border-bottom: 3px solid #e5e5f7;
-    width: fit-content;
-    justify-self: center;
-}
-
-Form input[type="submit"]:hover,
-Form input[type="submit"]:active {
-    transition: all 1000ms;
-    font-style: italic;
-    border-bottom: 3px solid #1f1f1f;
-}
-
-Form input[type="submit"]:active {
-    background-color: #dadada;
-    border-radius: 10px;
+    all: unset;
 }
