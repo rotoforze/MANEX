@@ -17,7 +17,8 @@ import {
     Stack,              // Layout vertical con separación automática
     IconButton,         // Botón solo de icono
     InputAdornment,     // Iconos dentro de inputs
-    Alert               // Mensaje de error
+    Alert,              // Mensaje de error
+    Link                // Enlaces estilizados
 } from '@mui/material'
 
 // Esto es para los iconos de mostrar/ocultar contraseña
@@ -39,30 +40,40 @@ const LoginPage = () => {
     const navigate = useNavigate()
     const { user, changeUserInformation } = useUsers()
 
+    // Estado que controla si la contraseña se muestra o no
     const [passwordShown, setPasswordShown] = useState(false)
+
+    // Estado que almacena el valor escrito de la contraseña
+    const [passwordValue, setPasswordValue] = useState('')
+
     const [cargando, setCargado] = useState(true)
 
+    // Alterna la visibilidad de la contraseña
+    const handleClickShowPassword = () => {
+        setPasswordShown(prev => !prev)
+    }
+
+    // Evita que el icono robe el foco del input
+    const handleMouseDownPassword = (event) => {
+        event.preventDefault()
+    }
+
     useEffect(() => {
-        console.log(actionData)
         if (actionData) navigate('/dashboard')
     }, [actionData, navigate])
 
     // comprueba la conexión con el servidor para poder cargar la app.
     useEffect(() => {
-        try {
-            fetch('http://localhost:80/', {
-                method: 'GET',
-                headers: { 'Content-Type': 'application/json' }
+        fetch('http://localhost:80/', {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' }
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (!data.status == 200) navigate('/error')
             })
-                .then((response) => response.json())
-                .then(data => {
-                    if (!data.status == 200) navigate('/error')
-                })
-                .catch(() => navigate('/error'))
-                .finally(() => setCargado(false))
-        } catch (error) {
-            console.error(error)
-        }
+            .catch(() => navigate('/error'))
+            .finally(() => setCargado(false))
     }, [])
 
     useEffect(() => {
@@ -73,9 +84,9 @@ const LoginPage = () => {
     }, [actionData])
 
     return (
-        // CAMBIO: Container centra el panel como en los templates oficiales MUI
+        // Container que centra el panel como en los templates oficiales MUI
         <Container
-            maxWidth={false} // Se elimina la limitación de ancho
+            maxWidth={false}
             sx={{
                 minHeight: '100vh',
                 display: 'flex',
@@ -99,14 +110,14 @@ const LoginPage = () => {
                             Iniciar sesión
                         </Typography>
 
-                        {/* Un alert */}
+                        {/* Un alert para errores */}
                         {actionData?.error && (
                             <Alert severity="error" sx={{ mb: 2 }}>
                                 {actionData.error}
                             </Alert>
                         )}
 
-                        {/* Reemplazo de div convencionales */}
+                        {/* Formulario principal */}
                         <Form method="POST">
                             <input
                                 type="text"
@@ -117,7 +128,7 @@ const LoginPage = () => {
                             />
 
                             <Stack spacing={2}>
-                                {/* TextField para usuario con la misma función */}
+                                {/* TextField para usuario */}
                                 <TextField
                                     label="Usuario"
                                     name="user"
@@ -126,29 +137,35 @@ const LoginPage = () => {
                                     inputProps={{ minLength: 1, maxLength: 16 }}
                                 />
 
-                                {/* TextField + InputAdornment para contraseña */}
+                                {/*
+                                  TextField de contraseña:
+                                  - Icono de ojo alineado a la IZQUIERDA
+                                  - Ojo abierto/cerrado según estado
+                                  - El icono solo aparece cuando hay texto
+                                */}
                                 <TextField
                                     label="Contraseña"
                                     name="password"
                                     type={passwordShown ? 'text' : 'password'}
+                                    value={passwordValue}
+                                    onChange={(e) => setPasswordValue(e.target.value)}
                                     required
                                     fullWidth
                                     inputProps={{ minLength: 0, maxLength: 255 }}
                                     InputProps={{
-                                        endAdornment: (
-                                            <InputAdornment position="end">
-                                                {/* Funcionalidad de IconButton */}
+                                        startAdornment: passwordValue.length > 0 && (
+                                            <InputAdornment position="start">
+                                                {/* Icono de mostrar u ocultar contraseña */}
                                                 <IconButton
                                                     type="button"
-                                                    onClick={() =>
-                                                        setPasswordShown(prev => !prev)
-                                                    }
-                                                    edge="end"
+                                                    onClick={handleClickShowPassword}
+                                                    onMouseDown={handleMouseDownPassword}
+                                                    edge="start"
                                                     aria-label="mostrar u ocultar contraseña"
                                                 >
                                                     {passwordShown
-                                                        ? <VisibilityOff />
-                                                        : <Visibility />}
+                                                        ? <VisibilityOff sx={{ color: '#1976d2' }} />
+                                                        : <Visibility sx={{ color: '#1976d2' }} />}
                                                 </IconButton>
                                             </InputAdornment>
                                         )
@@ -178,6 +195,41 @@ const LoginPage = () => {
                                 </Button>
                             </Stack>
                         </Form>
+
+                        {/* Navegación secundaria */}
+                        <Box
+                            sx={{
+                                mt: 3,
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                gap: 1
+                            }}
+                        >
+                            {/* Enlace a recuperación de contraseña */}
+                            <Typography variant="body2">
+                                ¿Has olvidado tu contraseña?{' '}
+                                <Link
+                                    component="button"
+                                    type="button"
+                                    onClick={() => navigate('/forgot-password')}
+                                >
+                                    Recuperarla
+                                </Link>
+                            </Typography>
+
+                            {/* Enlace a creación de cuenta */}
+                            <Typography variant="body2">
+                                ¿No tienes cuenta?{' '}
+                                <Link
+                                    component="button"
+                                    type="button"
+                                    onClick={() => navigate('/register')}
+                                >
+                                    Crear cuenta
+                                </Link>
+                            </Typography>
+                        </Box>
                     </CardContent>
                 </Card>
             )}
