@@ -7,7 +7,7 @@ package.json*
 BACKEND/ENV/
 scripts/start-all.mjs
 
-scripts/start-all.msj
+scripts/start-all.mjs
 
 npm-debug.log*
 yarn-debug.log*
