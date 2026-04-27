@@ -1,3 +1,4 @@
+import { endpoint } from '../../env/locations.js';
 /**
  *
  * Recibe un usuario y una contraseña, intenta iniciar sesión.
@@ -37,7 +38,7 @@ export async function inciarSesion({request}) {
  * @returns Boolean
  */
 export const authUser = async (usuario, password, wantsToKeepSession, sessionToken) => {
-    const url = 'http://localhost:80/login';
+    const url = endpoint.backend_login;
     const params = new URLSearchParams();
     params.append('usuario', usuario);
     params.append('pass', password);
@@ -61,15 +62,16 @@ export const authUser = async (usuario, password, wantsToKeepSession, sessionTok
 
         if (respuesta.status === 201) {
             // Lógica Login correcto
-            if (respuesta.token && respuesta.token[0] && respuesta.token[1]) {
+            if (respuesta.auth) {
 
-                await createTokenCookie(respuesta.token[1]);
+                await createTokenCookie(respuesta.auth.token);
 
             }
             return {
-                success: respuesta.token[0],
-                token: respuesta.token[1],
-                username: respuesta.token[2]
+                success: respuesta.auth.authorized,
+                token: respuesta.auth.token,
+                username: respuesta.auth.username,
+                department: respuesta.auth.department,
             };
         } else {
             console.log('ERROR: ' + respuesta.message);

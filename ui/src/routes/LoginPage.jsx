@@ -2,6 +2,7 @@ import React, { useEffect, useState} from 'react'
 import {Form, useActionData, useNavigate} from 'react-router-dom'
 import {useUsers} from "../context/UserContext.jsx";
 import {Loading} from "../components/Loading.jsx";
+import { endpoint } from '../../env/locations.js';
 
 
 /**
@@ -22,7 +23,6 @@ const LoginPage = () => {
     const [cargando, setCargado] = useState(true);
 
     useEffect(() => {
-        console.log(actionData)
         if (actionData) navigate('/dashboard');
 
     }, [actionData, navigate]);
@@ -30,7 +30,7 @@ const LoginPage = () => {
     // comprueba la conexión con el servidor para poder cargar la app.
     useEffect(() => {
         try {
-            fetch('http://localhost:80/',
+            fetch(endpoint.backend,
                 {method: 'GET', headers: {'Content-Type': 'application/json'}})
                 .then((response) => response.json())
                 .then(data => {
