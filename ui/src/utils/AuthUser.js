@@ -1,4 +1,4 @@
-import { endpoint } from '../../env/locations.js';
+import { endpoint } from '../../ENV/location.js';
 /**
  *
  * Recibe un usuario y una contraseña, intenta iniciar sesión.
