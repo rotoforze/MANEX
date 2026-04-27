@@ -17,7 +17,6 @@ export const RootLayout = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        console.log(user);
         if (user?.username && user?.authenticated) {
             navigate('/dashboard');
         } else if (!user?.username && !user?.authenticated) {
