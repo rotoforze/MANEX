@@ -2,7 +2,7 @@ import React, { useEffect, useState} from 'react'
 import {Form, useActionData, useNavigate} from 'react-router-dom'
 import {useUsers} from "../context/UserContext.jsx";
 import {Loading} from "../components/Loading.jsx";
-import { endpoint } from '../../env/locations.js';
+import { endpoint } from '../../ENV/location.js';
 
 
 /**

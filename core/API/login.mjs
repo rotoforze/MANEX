@@ -8,7 +8,8 @@ import crypto from "crypto";
  * crea un token y lo devuelve para mantener la sesión iniciada.
  *
  * @author Alex Bernardos Gil
- * @version 1.3.0
+ * @version 1.3.1
+ * @editor Covadonga Blanco Álvarez 14/04/2026
  * @param {Request} req
  * @param {Response} res
  * @returns {Response}
@@ -57,8 +58,8 @@ export function login(req, res) {
         // si hemos recibido token y es valido
         if (token && token !== undefined) {
             connection.query(
-                // TODO HACER QUE PILLE EL DEPT TAMBIEN
-                'SELECT USERNAME, TOKEN FROM auth_token WHERE TOKEN = ? AND EXPIRES_AT > NOW()',
+                
+                'SELECT a.USERNAME, a.TOKEN, e.id_departamento FROM auth_token a JOIN empleado e ON a.username = e.username WHERE a.TOKEN = ? AND a.EXPIRES_AT > NOW();',
                 [token],
                 (err, result) => {
                     // como filtramos por token, solo recibiremos el que coincida, ademas que no haya expirado
@@ -69,7 +70,7 @@ export function login(req, res) {
                                 authorized: result.length > 0,
                                 username: result[0].USERNAME,
                                 token: token,
-                                department: 0 // TODO PONER EL NUMERO DEL DEPT QUE CORRESPONDE
+                                department: result[0].id_departamento
                             }
                         });
                     } else {
@@ -79,8 +80,7 @@ export function login(req, res) {
                     }
                 });
         } else {
-            // TODO HACER QUE PILLE EL DEPT TAMBIEN
-            connection.query('SELECT PASSWORD FROM usuario WHERE USERNAME = ?', [usuario], (error, result) => {
+            connection.query('SELECT u.password, e.id_departamento FROM usuario u JOIN empleado e ON u.username = e.username WHERE u.username = ?', [usuario], (error, result) => {
                 // envia la consulta
                 connection.release();
 
@@ -95,7 +95,7 @@ export function login(req, res) {
                 // si no tiene longitud es porque no existe.
                 if (result.length > 0) {
                     // al coinicdir las contraseñas, podemos iniciar sesión
-                    if (result[0].PASSWORD == pass) {
+                    if (result[0].password == pass) {
                         // como hemos recibido en true, generamos un token para asignarlo al usuario
                         if (keepSession) {
                             var newToken = generarToken();
@@ -116,7 +116,6 @@ export function login(req, res) {
                                 console.error("Error en la consulta:", e);
                             }
                         }
-
                         // como resuelve, enviamos status code 200.
                         return res.status(200).send({
                             status: 201,
@@ -124,7 +123,7 @@ export function login(req, res) {
                                 authorized: true,
                                 username: usuario,
                                 token: newToken,
-                                department: 0 // TODO PONER EL DEDPT
+                                department: result[0].id_departamento
                             }
                         })
                     }
