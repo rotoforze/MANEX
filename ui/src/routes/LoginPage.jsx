@@ -1,3 +1,9 @@
+import React, { useEffect, useState} from 'react'
+import {Form, useActionData, useNavigate} from 'react-router-dom'
+import {useUsers} from "../context/UserContext.jsx";
+import {Loading} from "../components/Loading.jsx";
+import { endpoint } from '../../ENV/location.js';
+
 import React, { useEffect, useState } from 'react'
 import { Form, useActionData, useNavigate } from 'react-router-dom'
 import { useUsers } from "../context/UserContext.jsx"
@@ -59,21 +65,28 @@ const LoginPage = () => {
     }
 
     useEffect(() => {
-        if (actionData) navigate('/dashboard')
-    }, [actionData, navigate])
+        console.log(actionData)
+        if (actionData) navigate('/dashboard');
+
+    }, [actionData, navigate]);
 
     // comprueba la conexión con el servidor para poder cargar la app.
     useEffect(() => {
-        fetch('http://localhost:80/', {
-            method: 'GET',
-            headers: { 'Content-Type': 'application/json' }
-        })
-            .then(res => res.json())
-            .then(data => {
-                if (!data.status == 200) navigate('/error')
-            })
-            .catch(() => navigate('/error'))
-            .finally(() => setCargado(false))
+        try {
+            fetch('http://localhost:80/',
+                {method: 'GET', headers: {'Content-Type': 'application/json'}})
+                .then((response) => response.json())
+                .then(data => {
+
+                    if (!data.status == 200) navigate('/error');
+
+                })
+                .catch(() => navigate('/error'))
+                .finally(() => setCargado(false));
+
+        } catch (error) {
+            console.error(error);
+        }
     }, [])
 
     useEffect(() => {
