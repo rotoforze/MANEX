@@ -1,6 +1,7 @@
 import express, {urlencoded} from 'express';
 import cors from 'cors';
 import {login} from "./API/login.mjs";
+import { listaEmpleados } from "./API/empleados/listado.mjs";
 
 const app = express();
 
@@ -28,5 +29,9 @@ app.post('/login', (req, res) => {
     login(req, res);
 
 })
+
+app.get('/empleados/lista', (req, res) => {
+    listaEmpleados(req, res);
+});
 
 app.listen(80, () => console.log('Escuchando llamadas en http://localhost:80'));
