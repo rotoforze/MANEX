@@ -11,10 +11,6 @@ import {
 } from '@mui/material'
 
 import HomeIcon from '@mui/icons-material/Home'
-import PeopleIcon from '@mui/icons-material/People'
-import InventoryIcon from '@mui/icons-material/Inventory'
-import AssignmentIcon from '@mui/icons-material/Assignment'
-import BarChartIcon from '@mui/icons-material/BarChart'
 import SettingsIcon from '@mui/icons-material/Settings'
 
 /**
@@ -31,13 +27,6 @@ import SettingsIcon from '@mui/icons-material/Settings'
  * @constructor
  */
 export const MainNav = () => {
-
-  // Usuario simulado para el control de permisos
-  const usuarioActual = {
-    id: 1,
-    nivelPermisos: 2 // 1 = usuario normal, 2 = administrador
-  }
-
   return (
     <Drawer
       variant="permanent"
@@ -73,38 +62,6 @@ export const MainNav = () => {
           <ListItemText primary="Inicio" />
         </ListItem>
 
-        {/* Opciones solo visibles para administradores */}
-        {usuarioActual.nivelPermisos === 2 && (
-          <>
-            <ListItem button component={NavLink} to="/gestion-usuarios">
-              <ListItemIcon sx={{ color: '#ffffff' }}>
-                <PeopleIcon />
-              </ListItemIcon>
-              <ListItemText primary="Usuarios" />
-            </ListItem>
-
-            <ListItem button component={NavLink} to="/gestion-productos">
-              <ListItemIcon sx={{ color: '#ffffff' }}>
-                <InventoryIcon />
-              </ListItemIcon>
-              <ListItemText primary="Productos" />
-            </ListItem>
-
-            <ListItem button component={NavLink} to="/gestion-pedidos">
-              <ListItemIcon sx={{ color: '#ffffff' }}>
-                <AssignmentIcon />
-              </ListItemIcon>
-              <ListItemText primary="Pedidos" />
-            </ListItem>
-
-            <ListItem button component={NavLink} to="/informes">
-              <ListItemIcon sx={{ color: '#ffffff' }}>
-                <BarChartIcon />
-              </ListItemIcon>
-              <ListItemText primary="Informes" />
-            </ListItem>
-          </>
-        )}
       </List>
 
       {/* Espaciador para empujar las opciones inferiores */}
