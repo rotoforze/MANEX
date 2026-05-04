@@ -11,7 +11,9 @@ app.get('/', (req, res) => {
     res.send({
         status: 200,
         body: {
-            'login': '/login'
+            'login': '/login',
+            'empleados': '/empleados',
+            'listado': '/empleados/lista'
         }
     });
 })
@@ -31,6 +33,18 @@ app.post('/login', (req, res) => {
 })
 
 app.get('/empleados/lista', (req, res) => {
+
+    const parametrosPermitidos = ['cantidad', 'pagina'];
+    const parametrosRecibidos = Object.keys(req.query);
+
+    const parametrosNoValidos = parametrosRecibidos.filter(p => !parametrosPermitidos.includes(p));
+    if (parametrosNoValidos.length > 0) {
+        return res.status(400).send({
+            status: 400,
+            message: `Parámetros no permitidos: ${parametrosNoValidos.join(', ')}`
+        });
+    }
+
     listaEmpleados(req, res);
 });
 
