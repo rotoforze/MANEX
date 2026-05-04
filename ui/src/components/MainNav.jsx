@@ -3,7 +3,7 @@ import { NavLink } from 'react-router-dom'
 import {
   Drawer,
   List,
-  ListItem,
+  ListItemButton,
   ListItemIcon,
   ListItemText,
   Typography,
@@ -55,12 +55,12 @@ export const MainNav = () => {
       <List>
 
         {/* Opción visible para todos los usuarios */}
-        <ListItem button component={NavLink} to="/dashboard">
+        <ListItemButton component={NavLink} to="/dashboard">
           <ListItemIcon sx={{ color: '#ffffff' }}>
             <HomeIcon />
           </ListItemIcon>
           <ListItemText primary="Inicio" />
-        </ListItem>
+        </ListItemButton>
 
       </List>
 
@@ -69,12 +69,12 @@ export const MainNav = () => {
 
       {/* Opciones inferiores */}
       <List>
-        <ListItem button component={NavLink} to="/mi-cuenta">
+        <ListItemButton component={NavLink} to="/mi-cuenta">
           <ListItemIcon sx={{ color: '#ffffff' }}>
             <SettingsIcon />
           </ListItemIcon>
           <ListItemText primary="Configuración" />
-        </ListItem>
+        </ListItemButton>
       </List>
     </Drawer>
   )

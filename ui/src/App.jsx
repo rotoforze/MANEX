@@ -27,6 +27,7 @@ function App() {
     errorElement: <ErrorPage />,
     children: [
       { path: '/', element: <LoginPage />, action: actionInicioSesion},
+      { path: '/error', element: <ErrorPage /> },
       { path: '/dashboard', element: <Dashboard /> }
     ]
   }]);
