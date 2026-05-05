@@ -26,7 +26,7 @@ export function listaEmpleados(req, res) {
         port: bbdd.PORT
     });
 
-    let { cantidadAMostrar: cantidad, pagina } = req.query;
+    let {cantidad, pagina } = req.query;
 
     // valores por defecto
     cantidad = cantidad !== undefined ? parseInt(cantidad) : PAGINACION.CantidadPorDefecto;
@@ -43,7 +43,7 @@ export function listaEmpleados(req, res) {
     if (cantidad < PAGINACION.MinCantidad || cantidad > PAGINACION.MaxCantidad) {
         return res.status(400).send({
             status: 400,
-            message: `cantidadAMostrar debe estar entre ${PAGINACION.MinCantidad} y ${PAGINACION.MaxCantidad}`
+            message: `cantidad debe estar entre ${PAGINACION.MinCantidad} y ${PAGINACION.MaxCantidad}`
         });
     }
 
@@ -84,7 +84,7 @@ export function listaEmpleados(req, res) {
                 return res.status(200).send({
                     status: 200,
                     pagina,
-                    cantidadAMostrar: cantidad,
+                    cantidad,
                     resultados: result.length,
                     data: result
                 });
