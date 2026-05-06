@@ -2,8 +2,6 @@ import React, { useEffect, useState} from 'react'
 import {Form, useActionData, useNavigate} from 'react-router-dom'
 import {useUsers} from "../context/UserContext.jsx";
 import {Loading} from "../components/Loading.jsx";
-import { endpoint } from '../../ENV/location.js';
-
 
 /**
  *
@@ -15,22 +13,24 @@ import { endpoint } from '../../ENV/location.js';
  * @constructor
  */
 const LoginPage = () => {
+    
     const actionData = useActionData();
     const navigate = useNavigate();
     const {user, changeUserInformation} = useUsers();
-
+    
     const [passwordShown, setPasswordShown] = useState(false);
     const [cargando, setCargado] = useState(true);
-
+    
     useEffect(() => {
         if (actionData) navigate('/dashboard');
-
+        
     }, [actionData, navigate]);
-
+     
     // comprueba la conexión con el servidor para poder cargar la app.
     useEffect(() => {
+        
         try {
-            fetch(endpoint.backend,
+            fetch( import.meta.env.VITE_BACKEND,
                 {method: 'GET', headers: {'Content-Type': 'application/json'}})
                 .then((response) => response.json())
                 .then(data => {
