@@ -1,6 +1,7 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import '../public/styles/App.css'
 import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap-icons/font/bootstrap-icons.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
 import { RootLayout } from './routes/RootLayout';
 import { ErrorPage } from './routes/ErrorPage';
@@ -27,6 +28,7 @@ function App() {
     errorElement: <ErrorPage />,
     children: [
       { path: '/', element: <LoginPage />, action: actionInicioSesion},
+      { path: '/error', element: <ErrorPage /> },
       { path: '/dashboard', element: <Dashboard /> }
     ]
   }]);

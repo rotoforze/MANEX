@@ -1,4 +1,4 @@
-import React, {createContext, useContext, useState, useEffect} from 'react'
+import React, {createContext, useCallback, useContext, useEffect, useMemo, useState} from 'react'
 import {authUser} from '../utils/AuthUser'
 
 const UserContext = createContext();
@@ -59,18 +59,23 @@ export function UserProvider({children}) {
      * @author Alex Bernardos Gil
      * @version 1.0.0
      */
-    function changeUserInformation(username = undefined, token = window?.token?.value, authenticated = false) {
-        setUser({
-            username: username || user.username,
-            token: token || user.token,
-            authenticated: authenticated || user.authenticated
-        })
-    }
+    const changeUserInformation = useCallback((username = undefined, token = undefined, authenticated = false) => {
+        setUser((currentUser) => ({
+            username: username || currentUser.username,
+            token: token || currentUser.token,
+            authenticated: authenticated || currentUser.authenticated
+        }))
+    }, [])
+
+    const contextValue = useMemo(
+        () => ({user, changeUserInformation}),
+        [user, changeUserInformation]
+    );
 
 
     return (
         <UserContext.Provider
-            value={{user, changeUserInformation}}>
+            value={contextValue}>
             {children}
         </UserContext.Provider>
     )
