@@ -2,78 +2,36 @@ import React, { useEffect, useState} from 'react'
 import {Form, useActionData, useNavigate} from 'react-router-dom'
 import {useUsers} from "../context/UserContext.jsx";
 import {Loading} from "../components/Loading.jsx";
-import { endpoint } from '../../ENV/location.js';
-
-import React, { useEffect, useState } from 'react'
-import { Form, useActionData, useNavigate } from 'react-router-dom'
-import { useUsers } from "../context/UserContext.jsx"
-import { Loading } from "../components/Loading.jsx"
-
-// Todo esto es lo necesario para que Material UI funcione bien.
-import {
-    Container,          // Contenedor principal responsive
-    Box,                // Wrapper flexible para layout
-    Card,               // Tarjeta con sombra (estilo template MUI)
-    CardContent,        // Contenido interno de la tarjeta
-    TextField,          // Input con label flotante
-    Button,             // Botón principal
-    FormControlLabel,   // Checkbox + label
-    Checkbox,           // Checkbox MUI
-    Typography,         // Texto tipográfico
-    Stack,              // Layout vertical con separación automática
-    IconButton,         // Botón solo de icono
-    InputAdornment,     // Iconos dentro de inputs
-    Alert,              // Mensaje de error
-    Link                // Enlaces estilizados
-} from '@mui/material'
-
-// Esto es para los iconos de mostrar/ocultar contraseña
-import { Visibility, VisibilityOff } from '@mui/icons-material'
+import '../../public/styles/loginPage.css'
 
 /**
  *
  * Componente que muestra un formulario para el logeo del usuario.
  *
- *
  * @returns {React.JSX.Element}
  * @author Alex Bernardos Gil
- * @contributor Eneas de la Rosa Menéndez Pedrosa
- * @version 1.13.0
+ * @version 1.12.2
  * @constructor
  */
 const LoginPage = () => {
-    const actionData = useActionData()
-    const navigate = useNavigate()
-    const { user, changeUserInformation } = useUsers()
-
-    // Estado que controla si la contraseña se muestra o no
-    const [passwordShown, setPasswordShown] = useState(false)
-
-    // Estado que almacena el valor escrito de la contraseña
-    const [passwordValue, setPasswordValue] = useState('')
-
-    const [cargando, setCargado] = useState(true)
-
-    // Alterna la visibilidad de la contraseña
-    const handleClickShowPassword = () => {
-        setPasswordShown(prev => !prev)
-    }
-
-    // Evita que el icono robe el foco del input
-    const handleMouseDownPassword = (event) => {
-        event.preventDefault()
-    }
-
+    
+    const actionData = useActionData();
+    const navigate = useNavigate();
+    const {user, changeUserInformation} = useUsers();
+    
+    const [passwordShown, setPasswordShown] = useState(false);
+    const [cargando, setCargado] = useState(true);
+    
     useEffect(() => {
-        console.log(actionData)
         if (actionData) navigate('/dashboard');
-
+        
     }, [actionData, navigate]);
-
+     
     // comprueba la conexión con el servidor para poder cargar la app.
     useEffect(() => {
+        
         try {
-            fetch('http://localhost:80/',
+            fetch( import.meta.env.VITE_BACKEND,
                 {method: 'GET', headers: {'Content-Type': 'application/json'}})
                 .then((response) => response.json())
                 .then(data => {
@@ -90,47 +48,31 @@ const LoginPage = () => {
     }, [])
 
     useEffect(() => {
-        if (!actionData) return
+        if (!actionData) return;
+
         if (actionData.success) {
-            changeUserInformation(actionData.username, actionData.token, true)
+            changeUserInformation(actionData.username, actionData.id, actionData.token, true);
         }
-    }, [actionData])
+    }, [actionData]);
+
 
     return (
-        // Container que centra el panel como en los templates oficiales MUI
-        <Container
-            maxWidth={false}
-            sx={{
-                minHeight: '100vh',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center'
-            }}
-        >
+        <main className="login-page d-flex align-items-center justify-content-center min-vh-100 px-3">
             {cargando ? (
                 <Loading />
             ) : (
-                // Card de Material-UI para un panel con sombra y bordes redondeados
-                <Card sx={{ width: '100%', maxWidth: 520, boxShadow: 6 }}>
-                    <CardContent sx={{ p: 4 }}>
-                        {/* Tipografia principal */}
-                        <Typography
-                            variant="h4"
-                            component="h1"
-                            align="center"
-                            gutterBottom
-                        >
-                            Iniciar sesión
-                        </Typography>
+                <section className="card login-card shadow-lg border-0 w-100">
+                    <div className="card-body p-4 p-md-5">
+                        <h1 className="h3 text-center mb-4 fw-semibold">
+                            Iniciar sesion
+                        </h1>
 
-                        {/* Un alert para errores */}
                         {actionData?.error && (
-                            <Alert severity="error" sx={{ mb: 2 }}>
+                            <div className="alert alert-danger" role="alert">
                                 {actionData.error}
-                            </Alert>
+                            </div>
                         )}
 
-                        {/* Formulario principal */}
                         <Form method="POST">
                             <input
                                 type="text"
@@ -140,114 +82,85 @@ const LoginPage = () => {
                                 hidden
                             />
 
-                            <Stack spacing={2}>
-                                {/* TextField para usuario */}
-                                <TextField
-                                    label="Usuario"
-                                    name="user"
-                                    required
-                                    fullWidth
-                                    inputProps={{ minLength: 1, maxLength: 16 }}
-                                />
+                            <div className="d-grid gap-3">
+                                <div>
+                                    <label className="form-label" htmlFor="user">
+                                        Usuario
+                                    </label>
+                                    <input
+                                        className="form-control"
+                                        id="user"
+                                        type="text"
+                                        name="user"
+                                        required
+                                        minLength={1}
+                                        maxLength={16}
+                                    />
+                                </div>
 
-                                {/*
-                                  TextField de contraseña:
-                                  - Icono de ojo alineado a la IZQUIERDA
-                                  - Ojo abierto/cerrado según estado
-                                  - El icono solo aparece cuando hay texto
-                                */}
-                                <TextField
-                                    label="Contraseña"
-                                    name="password"
-                                    type={passwordShown ? 'text' : 'password'}
-                                    value={passwordValue}
-                                    onChange={(e) => setPasswordValue(e.target.value)}
-                                    required
-                                    fullWidth
-                                    inputProps={{ minLength: 0, maxLength: 255 }}
-                                    InputProps={{
-                                        startAdornment: passwordValue.length > 0 && (
-                                            <InputAdornment position="start">
-                                                {/* Icono de mostrar u ocultar contraseña */}
-                                                <IconButton
-                                                    type="button"
-                                                    onClick={handleClickShowPassword}
-                                                    onMouseDown={handleMouseDownPassword}
-                                                    edge="start"
-                                                    aria-label="mostrar u ocultar contraseña"
-                                                >
-                                                    {passwordShown
-                                                        ? <VisibilityOff sx={{ color: '#1976d2' }} />
-                                                        : <Visibility sx={{ color: '#1976d2' }} />}
-                                                </IconButton>
-                                            </InputAdornment>
-                                        )
-                                    }}
-                                />
-
-                                {/* Checkbox para mantener sesión */}
-                                <FormControlLabel
-                                    control={
-                                        <Checkbox
-                                            name="keepSession"
-                                            defaultChecked={!!user.token}
+                                <div>
+                                    <label className="form-label" htmlFor="password">
+                                        Contrasena
+                                    </label>
+                                    <div className="input-group">
+                                        <input
+                                            className="form-control"
+                                            id="password"
+                                            name="password"
+                                            type={passwordShown ? 'text' : 'password'}
+                                            required
+                                            minLength={0}
+                                            maxLength={255}
                                         />
-                                    }
-                                    label="Mantener la sesión iniciada"
-                                />
+                                        <button
+                                            className="btn btn-outline-secondary"
+                                            type="button"
+                                            onClick={() => setPasswordShown((shown) => !shown)}
+                                            aria-label={passwordShown ? 'Ocultar contrasena' : 'Mostrar contrasena'}
+                                        >
+                                            <i
+                                                className={`bi ${passwordShown ? 'bi-eye-slash' : 'bi-eye'}`}
+                                                aria-hidden="true"
+                                            />
+                                        </button>
+                                    </div>
+                                </div>
 
-                                {/* Botón iniciar sesión */}
-                                <Button
+                                <div className="form-check">
+                                    <input
+                                        className="form-check-input"
+                                        type="checkbox"
+                                        id="keepSession"
+                                        name="keepSession"
+                                        defaultChecked={!!user.token}
+                                    />
+                                    <label className="form-check-label" htmlFor="keepSession">
+                                        Mantener la sesion iniciada
+                                    </label>
+                                </div>
+
+                                <button
+                                    className="btn btn-primary btn-lg w-100"
                                     type="submit"
-                                    variant="contained"
-                                    size="large"
-                                    fullWidth
-                                    sx={{ textTransform: 'none' }}
                                 >
-                                    Iniciar sesión
-                                </Button>
-                            </Stack>
+                                    Iniciar sesion
+                                </button>
+                            </div>
                         </Form>
 
-                        {/* Navegación secundaria */}
-                        <Box
-                            sx={{
-                                mt: 3,
-                                display: 'flex',
-                                flexDirection: 'column',
-                                alignItems: 'center',
-                                gap: 1
-                            }}
-                        >
-                            {/* Enlace a recuperación de contraseña */}
-                            <Typography variant="body2">
-                                ¿Has olvidado tu contraseña?{' '}
-                                <Link
-                                    component="button"
-                                    type="button"
-                                    onClick={() => navigate('/forgot-password')}
-                                >
-                                    Recuperarla
-                                </Link>
-                            </Typography>
-
-                            {/* Enlace a creación de cuenta */}
-                            <Typography variant="body2">
-                                ¿No tienes cuenta?{' '}
-                                <Link
-                                    component="button"
-                                    type="button"
-                                    onClick={() => navigate('/register')}
-                                >
-                                    Crear cuenta
-                                </Link>
-                            </Typography>
-                        </Box>
-                    </CardContent>
-                </Card>
+                        <div className="mt-4 text-center">
+                            <button
+                                className="btn btn-link p-0"
+                                type="button"
+                                onClick={() => navigate('/FAQ.jsx')}
+                            >
+                                ¿Problemas para iniciar sesion?
+                            </button>
+                        </div>
+                    </div>
+                </section>
             )}
-        </Container>
+        </main>
     )
 }
-
 export default LoginPage

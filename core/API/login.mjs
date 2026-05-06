@@ -1,7 +1,10 @@
 import express from "express";
-import bbdd from "../ENV/bbdd.mjs"
 import mysql from 'mysql2';
 import crypto from "crypto";
+import dotenv from 'dotenv';
+
+//Cargamos las variables del archivo .env a process.env
+dotenv.config();
 
 /**
  * Intenta iniciar sesión, usando un usuario, una password y si se ha recibido,
@@ -17,11 +20,11 @@ import crypto from "crypto";
 export function login(req, res) {
 
     const pool = mysql.createPool({
-        host: bbdd.HOSTNAME,
-        user: bbdd.USERNAME,
-        password: bbdd.PASSWORD,
-        database: bbdd.DATABASE,
-        port: bbdd.PORT
+        host: process.env.DB_HOST,
+        user: process.env.DB_USER,
+        password: process.env.DB_PASS,
+        database: process.env.DB_NAME,
+        port:process.env.DB_PORT
     })
 
     pool.on('enqueue', function () {
@@ -41,9 +44,10 @@ export function login(req, res) {
 
     // comprueba si no se han recibido credenciales ni token
     if ((!usuario || !pass) && !token) {
-        return res.status(401).send(
-            {status: 401}
-        );
+        return res.status(401).send({
+            status: 401,
+            message: "Credenciales no proporcionadas"
+        });
     }
 
     // comprobamos credenciales
@@ -59,7 +63,7 @@ export function login(req, res) {
         if (token && token !== undefined) {
             connection.query(
                 
-                'SELECT a.USERNAME, a.TOKEN, e.id_departamento FROM auth_token a JOIN empleado e ON a.username = e.username WHERE a.TOKEN = ? AND a.EXPIRES_AT > NOW();',
+                'SELECT a.USERNAME, a.TOKEN, e.id, e.id_departamento FROM auth_token a JOIN empleado e ON a.username = e.username WHERE a.TOKEN = ? AND a.EXPIRES_AT > NOW();',
                 [token],
                 (err, result) => {
                     // como filtramos por token, solo recibiremos el que coincida, ademas que no haya expirado
@@ -69,6 +73,7 @@ export function login(req, res) {
                             auth: {
                                 authorized: result.length > 0,
                                 username: result[0].USERNAME,
+                                id: result[0].id,
                                 token: token,
                                 department: result[0].id_departamento
                             }
@@ -80,7 +85,7 @@ export function login(req, res) {
                     }
                 });
         } else {
-            connection.query('SELECT u.password, e.id_departamento FROM usuario u JOIN empleado e ON u.username = e.username WHERE u.username = ?', [usuario], (error, result) => {
+            connection.query('SELECT u.password, e.id, e.id_departamento FROM usuario u JOIN empleado e ON u.username = e.username WHERE u.username = ?', [usuario], (error, result) => {
                 // envia la consulta
                 connection.release();
 
@@ -122,6 +127,7 @@ export function login(req, res) {
                             auth: {
                                 authorized: true,
                                 username: usuario,
+                                id: result[0].id,
                                 token: newToken,
                                 department: result[0].id_departamento
                             }

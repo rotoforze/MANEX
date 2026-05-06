@@ -1,124 +1,77 @@
 import React from 'react'
 import { NavLink } from 'react-router-dom'
-import {
-  Drawer,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-  Typography,
-  Box
-} from '@mui/material'
-
-import HomeIcon from '@mui/icons-material/Home'
-import PeopleIcon from '@mui/icons-material/People'
-import InventoryIcon from '@mui/icons-material/Inventory'
-import AssignmentIcon from '@mui/icons-material/Assignment'
-import BarChartIcon from '@mui/icons-material/BarChart'
-import SettingsIcon from '@mui/icons-material/Settings'
+import { useUsers } from '../context/UserContext.jsx'
 
 /**
  *
- * Menú lateral de navegación.
+ * Menu lateral de navegacion.
  *
  * La visibilidad de las opciones depende del nivel de permisos
- * del usuario que haya iniciado sesión.
+ * del usuario que haya iniciado sesion.
  *
  * @returns {React.JSX.Element}
  * @author Alex Bernardos Gil
- * @contributor Eneas Menéndez
- * @version 1.1.0
+ * @contributor Eneas de la Rosa Menéndez Pedrosa
+ * @version 1.1.1 06/05/2026
  * @constructor
  */
 export const MainNav = () => {
+    const {user} = useUsers()
+    const username = user?.username || 'Usuario'
+    const navLinkClass = ({isActive}) =>
+        `nav-link d-flex align-items-center ${isActive ? 'active' : 'text-white'}`
 
-  // Usuario simulado para el control de permisos
-  const usuarioActual = {
-    id: 1,
-    nivelPermisos: 2 // 1 = usuario normal, 2 = administrador
-  }
+    return (
+        <aside className="main-nav sticky-top d-flex flex-column flex-shrink-0 p-3 text-white bg-dark">
+            <NavLink
+                className="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none"
+                to="/dashboard"
+            >
+                <i className="bi bi-box-seam fs-2 me-2" aria-hidden="true"/>
+                <span className="fs-4">MANEX</span>
+            </NavLink>
 
-  return (
-    <Drawer
-      variant="permanent"
-      anchor="left"
-      sx={{
-        width: 240,
-        '& .MuiDrawer-paper': {
-          width: 240,
-          backgroundColor: '#111827',
-          color: '#ffffff',
-          borderRight: 'none'
-        }
-      }}
-    >
-      {/* Cabecera del menú lateral */}
-      <Box sx={{ p: 2 }}>
-        <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-          MANEX
-        </Typography>
-        <Typography variant="body2" sx={{ color: '#9ca3af' }}>
-          Gestión empresarial
-        </Typography>
-      </Box>
+            <hr/>
 
-      {/* Opciones principales */}
-      <List>
+            <ul className="nav nav-pills flex-column mb-auto">
+                <li className="nav-item">
+                    <NavLink className={navLinkClass} to="/dashboard" end>
+                        <i className="bi bi-house-door me-2" aria-hidden="true"/>
+                        Inicio
+                    </NavLink>
+                </li>
+            </ul>
 
-        {/* Opción visible para todos los usuarios */}
-        <ListItem button component={NavLink} to="/dashboard">
-          <ListItemIcon sx={{ color: '#ffffff' }}>
-            <HomeIcon />
-          </ListItemIcon>
-          <ListItemText primary="Inicio" />
-        </ListItem>
+            <hr/>
 
-        {/* Opciones solo visibles para administradores */}
-        {usuarioActual.nivelPermisos === 2 && (
-          <>
-            <ListItem button component={NavLink} to="/gestion-usuarios">
-              <ListItemIcon sx={{ color: '#ffffff' }}>
-                <PeopleIcon />
-              </ListItemIcon>
-              <ListItemText primary="Usuarios" />
-            </ListItem>
-
-            <ListItem button component={NavLink} to="/gestion-productos">
-              <ListItemIcon sx={{ color: '#ffffff' }}>
-                <InventoryIcon />
-              </ListItemIcon>
-              <ListItemText primary="Productos" />
-            </ListItem>
-
-            <ListItem button component={NavLink} to="/gestion-pedidos">
-              <ListItemIcon sx={{ color: '#ffffff' }}>
-                <AssignmentIcon />
-              </ListItemIcon>
-              <ListItemText primary="Pedidos" />
-            </ListItem>
-
-            <ListItem button component={NavLink} to="/informes">
-              <ListItemIcon sx={{ color: '#ffffff' }}>
-                <BarChartIcon />
-              </ListItemIcon>
-              <ListItemText primary="Informes" />
-            </ListItem>
-          </>
-        )}
-      </List>
-
-      {/* Espaciador para empujar las opciones inferiores */}
-      <Box sx={{ flexGrow: 1 }} />
-
-      {/* Opciones inferiores */}
-      <List>
-        <ListItem button component={NavLink} to="/mi-cuenta">
-          <ListItemIcon sx={{ color: '#ffffff' }}>
-            <SettingsIcon />
-          </ListItemIcon>
-          <ListItemText primary="Configuración" />
-        </ListItem>
-      </List>
-    </Drawer>
+            <div className="dropup">
+                <button
+                    className="btn btn-link d-flex align-items-center text-white text-decoration-none dropdown-toggle p-0"
+                    id="dropdownUser1"
+                    type="button"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                >
+          <span className="main-nav-avatar rounded-circle me-2 d-inline-flex align-items-center justify-content-center">
+            {username.charAt(0).toUpperCase()}
+          </span>
+          <strong>{username}</strong>
+        </button>
+        <ul className="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
+          <li>
+            <NavLink className="dropdown-item" to="/configuration">
+              Configuración
+            </NavLink>
+            <NavLink className="dropdown-item" to="/profile">
+              Perfil
+            </NavLink>
+            <li><hr class="dropdown-divider"></hr></li>
+            <NavLink className="dropdown-item" to="/logout">
+              Cerrar sesión
+            </NavLink>
+          </li>
+        </ul>
+      </div>
+    </aside>
   )
 }
