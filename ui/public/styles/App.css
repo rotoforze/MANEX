@@ -42,9 +42,8 @@ form div {
 }
 
 .main-nav {
-    width: 240px;
+    width: 280px;
     min-height: 100dvh;
-    background-color: #111827;
 }
 
 .main-nav .nav {
@@ -56,19 +55,20 @@ form div {
     justify-content: flex-start;
 }
 
-.main-nav-link {
-    min-height: 44px;
-    border-radius: .5rem;
+.main-nav .nav-link {
+    min-height: 40px;
 }
 
-.main-nav-link:hover,
-.main-nav-link.active {
-    background-color: rgba(255, 255, 255, .12);
+.main-nav .nav-link .bi,
+.main-nav .dropdown-toggle .bi {
+    width: 16px;
 }
 
-.main-nav-link .bi {
-    width: 1.25rem;
-    text-align: center;
+.main-nav-avatar {
+    width: 32px;
+    height: 32px;
+    background-color: #495057;
+    font-size: .875rem;
 }
 
 .dashboard-main {

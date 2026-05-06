@@ -1,81 +1,70 @@
 import React from 'react'
 import { NavLink } from 'react-router-dom'
-import {
-  Drawer,
-  List,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-  Typography,
-  Box
-} from '@mui/material'
-
-import HomeIcon from '@mui/icons-material/Home'
-import SettingsIcon from '@mui/icons-material/Settings'
+import { useUsers } from '../context/UserContext.jsx'
 
 /**
  *
- * Menú lateral de navegación.
+ * Menu lateral de navegacion.
  *
  * La visibilidad de las opciones depende del nivel de permisos
- * del usuario que haya iniciado sesión.
+ * del usuario que haya iniciado sesion.
  *
  * @returns {React.JSX.Element}
  * @author Alex Bernardos Gil
- * @contributor Eneas Menéndez
- * @version 1.1.0
+ * @contributor Eneas de la Rosa Menéndez Pedrosa
+ * @version 1.1.1 06/05/2026
  * @constructor
  */
 export const MainNav = () => {
+  const { user } = useUsers()
+  const username = user?.username || 'Usuario'
+  const navLinkClass = ({ isActive }) =>
+    `nav-link d-flex align-items-center ${isActive ? 'active' : 'text-white'}`
+
   return (
-    <Drawer
-      variant="permanent"
-      anchor="left"
-      sx={{
-        width: 240,
-        '& .MuiDrawer-paper': {
-          width: 240,
-          backgroundColor: '#111827',
-          color: '#ffffff',
-          borderRight: 'none'
-        }
-      }}
-    >
-      {/* Cabecera del menú lateral */}
-      <Box sx={{ p: 2 }}>
-        <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-          MANEX
-        </Typography>
-        <Typography variant="body2" sx={{ color: '#9ca3af' }}>
-          Gestión empresarial
-        </Typography>
-      </Box>
+    <aside className="main-nav d-flex flex-column flex-shrink-0 p-3 text-white bg-dark">
+      <NavLink
+        className="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none"
+        to="/dashboard"
+      >
+        <i className="bi bi-box-seam fs-2 me-2" aria-hidden="true" />
+        <span className="fs-4">MANEX</span>
+      </NavLink>
 
-      {/* Opciones principales */}
-      <List>
+      <hr />
 
-        {/* Opción visible para todos los usuarios */}
-        <ListItemButton component={NavLink} to="/dashboard">
-          <ListItemIcon sx={{ color: '#ffffff' }}>
-            <HomeIcon />
-          </ListItemIcon>
-          <ListItemText primary="Inicio" />
-        </ListItemButton>
+      <ul className="nav nav-pills flex-column mb-auto">
+        <li className="nav-item">
+          <NavLink className={navLinkClass} to="/dashboard" end>
+            <i className="bi bi-house-door me-2" aria-hidden="true" />
+            Inicio
+          </NavLink>
+        </li>
+      </ul>
 
-      </List>
+      <hr />
 
-      {/* Espaciador para empujar las opciones inferiores */}
-      <Box sx={{ flexGrow: 1 }} />
-
-      {/* Opciones inferiores */}
-      <List>
-        <ListItemButton component={NavLink} to="/mi-cuenta">
-          <ListItemIcon sx={{ color: '#ffffff' }}>
-            <SettingsIcon />
-          </ListItemIcon>
-          <ListItemText primary="Configuración" />
-        </ListItemButton>
-      </List>
-    </Drawer>
+      <div className="dropdown">
+        <button
+          className="btn btn-link d-flex align-items-center text-white text-decoration-none dropdown-toggle p-0"
+          id="dropdownUser1"
+          type="button"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+        >
+          <span className="main-nav-avatar rounded-circle me-2 d-inline-flex align-items-center justify-content-center">
+            {username.charAt(0).toUpperCase()}
+          </span>
+          <strong>{username}</strong>
+        </button>
+        <ul className="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
+          <li>
+            <NavLink className="dropdown-item" to="/mi-cuenta">
+              Configuracion
+            </NavLink>
+          </li>
+        </ul>
+      </div>
+    </aside>
   )
 }

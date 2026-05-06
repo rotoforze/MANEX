@@ -1,4 +1,4 @@
-import bbdd from "../ENV/bbdd.mjs"
+import bbdd from "./ENV/bbdd.mjs"
 import mysql from 'mysql2/promise';
 import crypto from "crypto";
 

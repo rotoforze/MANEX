@@ -1,23 +1,15 @@
 import React from 'react'
-import {
-  Box,
-  Paper,
-  Stack,
-  Typography,
-  Divider,
-} from '@mui/material'
-import { MainNav } from '../components/MainNav'
 import { useUsers } from '../context/UserContext.jsx'
 
 /**
  *
  * Dashboard principal de control de empresa.
  *
- * Este componente actúa como pantalla inicial tras el inicio de sesión
- * y muestra información general en función de los permisos del usuario.
+ * Este componente actua como pantalla inicial tras el inicio de sesion
+ * y muestra informacion general en funcion de los permisos del usuario.
  *
  * @returns {React.JSX.Element}
- * @author Eneas Menéndez
+ * @author Eneas Menendez
  * @version 1.0.0
  * @constructor
  */
@@ -31,80 +23,71 @@ export const Dashboard = () => {
    * No contienen datos reales, solo estructura visual.
    */
   const apartadosDashboard = [
-    { id: 'usuarios', titulo: 'Gestión de usuarios' },
-    { id: 'productos', titulo: 'Gestión de productos' },
-    { id: 'pedidos', titulo: 'Gestión de pedidos' },
+    { id: 'usuarios', titulo: 'Gestion de usuarios' },
+    { id: 'productos', titulo: 'Gestion de productos' },
+    { id: 'pedidos', titulo: 'Gestion de pedidos' },
     { id: 'informes', titulo: 'Informes generales' },
   ]
 
-  // Filtrado de apartados en función de los permisos disponibles
+  // Filtrado de apartados en funcion de los permisos disponibles
   const apartadosPermitidos = apartadosDashboard.filter((apartado) =>
     permisosUsuario.includes(apartado.id),
   )
 
   return (
-    <Box sx={{ minHeight: '100dvh', display: 'flex' }}>
-      {/* Menú lateral */}
-      <MainNav />
-
-      {/* Área principal del dashboard */}
-      <Box component="main" sx={{ flexGrow: 1, p: { xs: 2, md: 4 } }}>
-        <Stack spacing={3}>
+    <div className="dashboard-shell d-flex min-vh-100">
+      {/* Area principal del dashboard */}
+      <main className="dashboard-main flex-grow-1 p-3 p-md-4">
+        <div className="d-grid gap-4">
 
           {/* Cabecera principal */}
-          <Paper
-            sx={{
-              p: 4,
-              borderRadius: 4,
-              background:
-                'linear-gradient(135deg, rgba(15,23,42,0.96) 0%, rgba(30,41,59,0.92) 100%)',
-              color: '#f8fafc',
-            }}
-          >
-            <Stack spacing={1}>
-              <Typography variant="overline">
+          <section className="dashboard-hero rounded-3 p-4 text-white shadow-sm">
+            <div className="d-grid gap-2">
+              <span className="text-uppercase small fw-semibold opacity-75">
                 Panel de control
-              </Typography>
+              </span>
 
-              <Typography variant="h4" sx={{ fontWeight: 700 }}>
+              <h1 className="h2 fw-bold mb-0">
                 Inicio
-              </Typography>
+              </h1>
 
-              <Typography sx={{ maxWidth: 600, opacity: 0.85 }}>
-                Vista general de la aplicación tras iniciar sesión.
+              <p className="mb-0 dashboard-hero-copy">
+                Vista general de la aplicacion tras iniciar sesion.
                 El contenido mostrado depende del tipo de usuario.
-              </Typography>
-            </Stack>
-          </Paper>
+              </p>
+            </div>
+          </section>
 
-          {/* Apartados visibles según permisos */}
-          <Paper sx={{ p: 3, borderRadius: 4 }}>
-            <Stack spacing={2}>
-              <Typography variant="h6" sx={{ fontWeight: 700 }}>
+          {/* Apartados visibles segun permisos */}
+          <section className="card border-0 shadow-sm rounded-3">
+            <div className="card-body p-4">
+              <h2 className="h5 fw-bold mb-3">
                 Apartados disponibles
-              </Typography>
+              </h2>
 
-              <Divider />
+              <hr className="my-3" />
 
               {apartadosPermitidos.length > 0 ? (
-                <Stack spacing={1}>
+                <ul className="list-group list-group-flush">
                   {apartadosPermitidos.map((apartadoPermitido) => (
-                    <Typography key={apartadoPermitido.id}>
-                      • {apartadoPermitido.titulo}
-                    </Typography>
+                    <li
+                      className="list-group-item px-0"
+                      key={apartadoPermitido.id}
+                    >
+                      {apartadoPermitido.titulo}
+                    </li>
                   ))}
-                </Stack>
+                </ul>
               ) : (
-                <Typography color="text.secondary">
+                <p className="text-secondary mb-0">
                   No hay apartados disponibles para este usuario.
-                </Typography>
+                </p>
               )}
-            </Stack>
-          </Paper>
+            </div>
+          </section>
 
-        </Stack>
-      </Box>
-    </Box>
+        </div>
+      </main>
+    </div>
   )
 }
-``
