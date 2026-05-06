@@ -74,6 +74,7 @@ export const authUser = async (usuario, password, wantsToKeepSession, sessionTok
             return {
                 success: respuesta.auth.authorized,
                 token: respuesta.auth.token,
+                id: respuesta.auth.id,
                 username: respuesta.auth.username,
                 department: respuesta.auth.department,
             };

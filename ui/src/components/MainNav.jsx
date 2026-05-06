@@ -1,81 +1,41 @@
 import React from 'react'
-import { NavLink } from 'react-router-dom'
-import {
-  Drawer,
-  List,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-  Typography,
-  Box
-} from '@mui/material'
-
-import HomeIcon from '@mui/icons-material/Home'
-import SettingsIcon from '@mui/icons-material/Settings'
+import { NavLink } from 'react-router'
+import '../../public/styles/Navigation.css'
 
 /**
  *
- * Menú lateral de navegación.
- *
- * La visibilidad de las opciones depende del nivel de permisos
- * del usuario que haya iniciado sesión.
+ * Barra de navegación.
  *
  * @returns {React.JSX.Element}
  * @author Alex Bernardos Gil
- * @contributor Eneas Menéndez
- * @version 1.1.0
+ * @version 1.0.6
  * @constructor
  */
 export const MainNav = () => {
   return (
-    <Drawer
-      variant="permanent"
-      anchor="left"
-      sx={{
-        width: 240,
-        '& .MuiDrawer-paper': {
-          width: 240,
-          backgroundColor: '#111827',
-          color: '#ffffff',
-          borderRight: 'none'
-        }
-      }}
-    >
-      {/* Cabecera del menú lateral */}
-      <Box sx={{ p: 2 }}>
-        <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-          MANEX
-        </Typography>
-        <Typography variant="body2" sx={{ color: '#9ca3af' }}>
-          Gestión empresarial
-        </Typography>
-      </Box>
-
-      {/* Opciones principales */}
-      <List>
-
-        {/* Opción visible para todos los usuarios */}
-        <ListItemButton component={NavLink} to="/dashboard">
-          <ListItemIcon sx={{ color: '#ffffff' }}>
-            <HomeIcon />
-          </ListItemIcon>
-          <ListItemText primary="Inicio" />
-        </ListItemButton>
-
-      </List>
-
-      {/* Espaciador para empujar las opciones inferiores */}
-      <Box sx={{ flexGrow: 1 }} />
-
-      {/* Opciones inferiores */}
-      <List>
-        <ListItemButton component={NavLink} to="/mi-cuenta">
-          <ListItemIcon sx={{ color: '#ffffff' }}>
-            <SettingsIcon />
-          </ListItemIcon>
-          <ListItemText primary="Configuración" />
-        </ListItemButton>
-      </List>
-    </Drawer>
+    <nav>
+      <ul>
+        <li className="logo-text">MANEX</li>
+        <li>
+          <NavLink to={'/dashboard'}
+            className={({ isActive }) => (isActive ? 'activo' : undefined) + " btn-navlink"}>
+            Inicio
+          </NavLink>
+        </li>
+        <li>
+          <NavLink to={'/profile'}
+            className={({ isActive }) => (isActive ? 'activo' : undefined) + " btn-navlink"}>
+            Perfil
+          </NavLink>
+        </li>
+        <li>
+          <NavLink to={'/dashboard'} 
+          className={({ isActive }) => (isActive ? 'activo' : undefined) + " btn-navlink"}>
+          TBD
+          </NavLink>
+        </li>
+        <li></li>
+      </ul>
+    </nav>
   )
 }
