@@ -55,16 +55,23 @@ export const MainNav = () => {
           <span className="main-nav-avatar rounded-circle me-2 d-inline-flex align-items-center justify-content-center">
             {username.charAt(0).toUpperCase()}
           </span>
-                    <strong>{username}</strong>
-                </button>
-                <ul className="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
-                    <li>
-                        <NavLink className="dropdown-item" to="/profile">
-                            Perfil
-                        </NavLink>
-                    </li>
-                </ul>
-            </div>
-        </aside>
-    )
+          <strong>{username}</strong>
+        </button>
+        <ul className="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
+          <li>
+            <NavLink className="dropdown-item" to="/configuration">
+              Configuración
+            </NavLink>
+            <NavLink className="dropdown-item" to="/profile">
+              Perfil
+            </NavLink>
+            <li><hr class="dropdown-divider"></hr></li>
+            <NavLink className="dropdown-item" to="/logout">
+              Cerrar sesión
+            </NavLink>
+          </li>
+        </ul>
+      </div>
+    </aside>
+  )
 }
