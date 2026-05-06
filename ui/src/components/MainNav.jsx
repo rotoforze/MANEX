@@ -59,8 +59,15 @@ export const MainNav = () => {
         </button>
         <ul className="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
           <li>
-            <NavLink className="dropdown-item" to="/mi-cuenta">
-              Configuracion
+            <NavLink className="dropdown-item" to="/configuration">
+              Configuración
+            </NavLink>
+            <NavLink className="dropdown-item" to="/profile">
+              Perfil
+            </NavLink>
+            <li><hr class="dropdown-divider"></hr></li>
+            <NavLink className="dropdown-item" to="/logout">
+              Cerrar sesión
             </NavLink>
           </li>
         </ul>
