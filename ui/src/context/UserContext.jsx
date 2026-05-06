@@ -1,4 +1,4 @@
-import React, {createContext, useCallback, useContext, useEffect, useMemo, useState} from 'react'
+import React, {createContext, useContext, useState, useEffect} from 'react'
 import {authUser} from '../utils/AuthUser'
 
 const UserContext = createContext();
@@ -16,6 +16,7 @@ export function UserProvider({children}) {
 
     const [user, setUser] = useState({
         username: '',
+        id: '',
         token: getCookie('token') || '',
         authenticated: false,
     });
@@ -33,10 +34,10 @@ export function UserProvider({children}) {
         if (!token) return;
 
         const result = await authUser(null, null, false, token);
-    console.log(result);
         if (result?.success) {
             setUser({
                 username: result.username,
+                id: result.id,
                 token,
                 authenticated: true
             });
@@ -52,30 +53,25 @@ export function UserProvider({children}) {
 
     /**
      *
-     * Crea el objeto del usuario.
+     * Crea o actualiza el objeto del usuario.
      *
      * @param {String} username
      * @param {String} token
      * @author Alex Bernardos Gil
-     * @version 1.0.0
+     * @version 1.1.0
      */
-    const changeUserInformation = useCallback((username = undefined, token = undefined, authenticated = false) => {
-        setUser((currentUser) => ({
-            username: username || currentUser.username,
-            token: token || currentUser.token,
-            authenticated: authenticated || currentUser.authenticated
-        }))
-    }, [])
-
-    const contextValue = useMemo(
-        () => ({user, changeUserInformation}),
-        [user, changeUserInformation]
-    );
+    function changeUserInformation(username = undefined, token = window?.token?.value, authenticated = false) {
+        setUser({
+            username: username || user.username,
+            token: token || user.token,
+            authenticated: authenticated || user.authenticated
+        })
+    }
 
 
     return (
         <UserContext.Provider
-            value={contextValue}>
+            value={{user, changeUserInformation}}>
             {children}
         </UserContext.Provider>
     )
