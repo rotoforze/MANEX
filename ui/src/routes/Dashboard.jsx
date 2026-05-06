@@ -5,11 +5,11 @@ import { useUsers } from '../context/UserContext.jsx'
  *
  * Dashboard principal de control de empresa.
  *
- * Este componente actúa como pantalla inicial tras el inicio de sesión
- * y muestra información general en función de los permisos del usuario.
+ * Este componente actua como pantalla inicial tras el inicio de sesion
+ * y muestra informacion general en funcion de los permisos del usuario.
  *
  * @returns {React.JSX.Element}
- * @author Eneas Menéndez
+ * @author Eneas Menendez
  * @version 1.0.0
  * @constructor
  */
@@ -22,4 +22,3 @@ export const Dashboard = () => {
       </div>
   )
 }
-``
