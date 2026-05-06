@@ -5,22 +5,22 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 /**
- * Crea o modifica el departamento recibido. Si se recibe un idAModificar pero no existe ese ID, se crea un nuevo contrato con los datos recibidos.
+ * Crea o modifica el departamento recibido. Si se recibe un idAModificar pero no existe ese ID, se crea un nuevo departamento con los datos recibidos.
  *
  * @author Alex Bernardos Gil
  * @version 1.0
  * @param {Request} req
  * @param {Response} res
  */
-function newContrato(req, res) {
+function newDepartamento(req, res) {
     if (!req?.body) return res.status(401).send({
         status: 401,
         message: "Cuerpo vacío."
     })
 
-    const {salarioAnual, horasAnuales, idAModificar} = req.body;
+    const {nombre, idAModificar} = req.body;
 
-    if (isNaN(salarioAnual) || isNaN(horasAnuales) || salarioAnual < 0 || horasAnuales < 0 || (idAModificar && isNaN(idAModificar))) {
+    if (!nombre || (idAModificar && isNaN(idAModificar))) {
         return res.status(400).send({
             status: 400,
             message: "Parámetros inválidos o nulos"
@@ -42,13 +42,12 @@ function newContrato(req, res) {
                 message: "Error de base de datos"
             });
         }
-        connection.query(idAModificar ? `UPDATE contrato
-                                         SET Salario_anual = ?,
-                                             Horas_anuales = ?
+        connection.query(idAModificar ? `UPDATE departamento
+                                         SET Nombre = ?
                                          WHERE id = ?` :
-                `INSERT INTO contrato (Salario_anual, Horas_anuales)
-                 VALUES (?, ?)`,
-            [salarioAnual, horasAnuales, idAModificar],
+                `INSERT INTO departamento (Nombre)
+                 VALUES (?)`,
+            [nombre, idAModificar],
             (error, result) => {
 
                 connection.release();
@@ -62,8 +61,8 @@ function newContrato(req, res) {
 
                 return res.status(200).send({
                     status: 200,
-                    idContrato: result.insertId || idAModificar,
-                    message: `Contrato ${!result.insertId > 0 ? 'editado' : 'creado'} correctamente.`
+                    idDepartamento: result.insertId || idAModificar,
+                    message: `Departamento ${!result.insertId > 0 ? 'editado' : 'creado'} correctamente.`
                 });
 
             }
@@ -71,4 +70,4 @@ function newContrato(req, res) {
     });
 }
 
-export default newContrato;
+export default newDepartamento;

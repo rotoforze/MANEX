@@ -1,22 +1,21 @@
 import mysql from 'mysql2';
 import dotenv from 'dotenv';
-import getContrato from "./contrato.mjs";
 
 //Cargamos las variables del archivo .env a process.env
 dotenv.config();
 
 /**
- * Elimina el contrato recibido.
+ * Elimina el departamento recibido.
  *
  * @author Alex Bernardos Gil
  * @version 1.0
  * @param {Request} req
  * @param {Response} res
  */
-function delContrato(req, res) {
-    const idContrato = parseInt(req.params.id, 10);
+function delDepartamento(req, res) {
+    const idDepartamento = parseInt(req.params.id, 10);
 
-    if (isNaN(idContrato) || !idContrato || idContrato < 0) {
+    if (isNaN(idDepartamento) || !idDepartamento || idDepartamento < 0) {
         return res.status(400).send({
             status: 400,
             message: "Parámetros inválidos o nulos"
@@ -40,9 +39,9 @@ function delContrato(req, res) {
         }
         connection.query(
             `DELETE
-             FROM contrato
+             FROM departamento
              WHERE ID = ?`,
-            [idContrato],
+            [idDepartamento],
             (error, result) => {
 
                 connection.release();
@@ -51,7 +50,7 @@ function delContrato(req, res) {
                     if (error.toString().includes('foreign key constraint fails')) {
                         return res.status(500).send({
                             status: 500,
-                            message: "Hay empleados que dependen de este contrato. No se puede eliminar."
+                            message: "Hay empleados que dependen de este Departamento. No se puede eliminar."
                         });
                     } else {
                         return res.status(500).send({
@@ -64,12 +63,12 @@ function delContrato(req, res) {
                 if (result.affectedRows == 1) {
                     return res.status(200).send({
                         status: 200,
-                        message: "Contrato eliminado correctamente"
+                        message: "Departamento eliminado correctamente"
                     });
                 } else {
                     return res.status(400).send({
                         status: 400,
-                        message: "Contrato no encontrado"
+                        message: "Departamento no encontrado"
                     });
                 }
             }
@@ -77,4 +76,4 @@ function delContrato(req, res) {
     });
 }
 
-export default delContrato;
+export default delDepartamento;
