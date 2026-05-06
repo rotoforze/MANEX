@@ -16,10 +16,10 @@ import { useUsers } from '../context/UserContext.jsx'
  * @constructor
  */
 export const MainNav = () => {
-  const { user } = useUsers()
-  const username = user?.username || 'Usuario'
-  const navLinkClass = ({ isActive }) =>
-    `nav-link d-flex align-items-center ${isActive ? 'active' : 'text-white'}`
+    const {user} = useUsers()
+    const username = user?.username || 'Usuario'
+    const navLinkClass = ({isActive}) =>
+        `nav-link d-flex align-items-center ${isActive ? 'active' : 'text-white'}`
 
   return (
     <aside className="main-nav d-flex flex-column flex-shrink-0 p-3 text-white bg-dark fixed-left">
@@ -31,7 +31,7 @@ export const MainNav = () => {
         <span className="fs-4">MANEX</span>
       </NavLink>
 
-      <hr />
+            <hr/>
 
       <ul className="nav nav-pills flex-column mb-auto">
         <li className="nav-item">
@@ -46,7 +46,7 @@ export const MainNav = () => {
         </li>
       </ul>
 
-      <hr />
+            <hr/>
 
       <div id="desplegableUsuario"className="dropup">
         <button

@@ -5,18 +5,18 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 /**
- * Devuelve la información del empleado recibido.
+ * Devuelve la información del departamento recibido.
  *
  * @author Alex Bernardos Gil
  * @version 1.0
  * @param {Request} req
  * @param {Response} res
  */
-function getEmpleado(req, res) {
+function getDepartamento(req, res) {
 
-    const idEmpleado = parseInt(req.params.id, 10);
+    const idDepartamento = parseInt(req.params.id, 10);
 
-    if (isNaN(idEmpleado) || !idEmpleado || idEmpleado < 0) {
+    if (isNaN(idDepartamento) || !idDepartamento || idDepartamento < 0) {
         return res.status(400).send({
             status: 400,
             message: "Parámetros inválidos o nulos"
@@ -41,11 +41,9 @@ function getEmpleado(req, res) {
 
         connection.query(
             `SELECT *
-             FROM empleado
-             WHERE esVisible = 1
-               AND ID = ?
-             ORDER BY username LIMIT 1`,
-            [idEmpleado],
+             FROM departamento WHERE ID = ?
+             ORDER BY ID LIMIT 1`,
+            [idContrato],
             (error, result) => {
 
                 connection.release();
@@ -66,7 +64,7 @@ function getEmpleado(req, res) {
 
                 return res.status(404).send({
                     status: 404,
-                    message: "No se ha encontrado el usuario."
+                    message: "No se ha encontrado el departamento."
                 });
 
             }
@@ -74,4 +72,4 @@ function getEmpleado(req, res) {
     });
 }
 
-export default getEmpleado
+export default getDepartamento;

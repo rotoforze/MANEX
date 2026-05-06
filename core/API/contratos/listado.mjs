@@ -6,13 +6,13 @@ import Paginacion from "../paginacion.mjs";
 dotenv.config();
 
 /**
- * Devuelve una lista paginada de empleados
- * @author Covadonga Blanco Álvarez
- * @version 1.0.1
- * @param {Request} req 
- * @param {Response} res 
+ * Devuelve una lista paginada de contratos
+ * @author Alex Bernardos Gil
+ * @version 1.0
+ * @param {Request} req
+ * @param {Response} res
  */
-export function listaEmpleados(req, res) {
+export function listaContratos(req, res) {
 
     const pool = mysql.createPool({
         host: process.env.DB_HOST,
@@ -28,18 +28,18 @@ export function listaEmpleados(req, res) {
     cantidad = cantidad !== undefined ? parseInt(cantidad) : Paginacion.DEFAULT_CANTIDAD_PAGINACION;
     pagina = pagina !== undefined ? parseInt(pagina) : Paginacion.DEFAULT_PAGINA;
 
-    
     if (isNaN(cantidad) || isNaN(pagina)) {
+
         return res.status(400).send({
             status: 400,
             message: "Parámetros inválidos"
         });
     }
 
-    if (cantidad < Paginacion.MIN_PAGINACION || cantidad > Paginacion.MAX_PAGINACION_EMPLEADOS) {
+    if (cantidad < Paginacion.MIN_PAGINACION || cantidad > Paginacion.MAX_PAGINACION_CONTRATOS) {
         return res.status(400).send({
             status: 400,
-            message: `cantidad debe estar entre ${Paginacion.MIN_PAGINACION} y ${Paginacion.MAX_PAGINACION_EMPLEADOS}`
+            message: `cantidad debe estar entre ${Paginacion.MIN_PAGINACION} y ${Paginacion.MAX_PAGINACION_CONTRATOS}`
         });
     }
 
@@ -61,9 +61,8 @@ export function listaEmpleados(req, res) {
         }
 
         connection.query(
-            `SELECT * FROM empleado 
-             WHERE esVisible = 1 
-             ORDER BY username 
+            `SELECT * FROM contrato
+             ORDER BY ID DESC
              LIMIT ? OFFSET ?`,
             [cantidad, offset],
             (error, result) => {

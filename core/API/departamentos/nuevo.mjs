@@ -5,18 +5,22 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 /**
- * Devuelve la información del empleado recibido.
+ * Crea o modifica el departamento recibido. Si se recibe un idAModificar pero no existe ese ID, se crea un nuevo departamento con los datos recibidos.
  *
  * @author Alex Bernardos Gil
  * @version 1.0
  * @param {Request} req
  * @param {Response} res
  */
-function getEmpleado(req, res) {
+function newDepartamento(req, res) {
+    if (!req?.body) return res.status(401).send({
+        status: 401,
+        message: "Cuerpo vacío."
+    })
 
-    const idEmpleado = parseInt(req.params.id, 10);
+    const {nombre, idAModificar} = req.body;
 
-    if (isNaN(idEmpleado) || !idEmpleado || idEmpleado < 0) {
+    if (!nombre || (idAModificar && isNaN(idAModificar))) {
         return res.status(400).send({
             status: 400,
             message: "Parámetros inválidos o nulos"
@@ -38,14 +42,12 @@ function getEmpleado(req, res) {
                 message: "Error de base de datos"
             });
         }
-
-        connection.query(
-            `SELECT *
-             FROM empleado
-             WHERE esVisible = 1
-               AND ID = ?
-             ORDER BY username LIMIT 1`,
-            [idEmpleado],
+        connection.query(idAModificar ? `UPDATE departamento
+                                         SET Nombre = ?
+                                         WHERE id = ?` :
+                `INSERT INTO departamento (Nombre)
+                 VALUES (?)`,
+            [nombre, idAModificar],
             (error, result) => {
 
                 connection.release();
@@ -57,16 +59,10 @@ function getEmpleado(req, res) {
                     });
                 }
 
-                if (result.length > 0) {
-                    return res.status(200).send({
-                        status: 200,
-                        usuario: result
-                    });
-                }
-
-                return res.status(404).send({
-                    status: 404,
-                    message: "No se ha encontrado el usuario."
+                return res.status(200).send({
+                    status: 200,
+                    idDepartamento: result.insertId || idAModificar,
+                    message: `Departamento ${!result.insertId > 0 ? 'editado' : 'creado'} correctamente.`
                 });
 
             }
@@ -74,4 +70,4 @@ function getEmpleado(req, res) {
     });
 }
 
-export default getEmpleado
+export default newDepartamento;
