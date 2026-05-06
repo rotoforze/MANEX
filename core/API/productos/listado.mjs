@@ -6,20 +6,20 @@ dotenv.config();
 
 const PAGINACION = {
     MinCantidad: 1,
-    MaxCantidad: 15,
+    MaxCantidad: 30,
     CantidadPorDefecto: 10,
     PaginaPorDefecto: 0,
     MinPagina: 0
 };
 
 /**
- * Devuelve una lista paginada de empleados
+ * Devuelve una lista paginada de inventarios
  * @author Covadonga Blanco Álvarez
  * @version 1.0.1
  * @param {Request} req 
  * @param {Response} res 
  */
-export function listaEmpleados(req, res) {
+export function listaProductos(req, res) {
 
     const pool = mysql.createPool({
         host: process.env.DB_HOST,
@@ -68,9 +68,8 @@ export function listaEmpleados(req, res) {
         }
 
         connection.query(
-            `SELECT * FROM empleado 
-             WHERE esVisible = 1 
-             ORDER BY username 
+            `SELECT * FROM inventario  
+             ORDER BY nombre 
              LIMIT ? OFFSET ?`,
             [cantidad, offset],
             (error, result) => {
