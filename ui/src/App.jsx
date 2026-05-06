@@ -9,8 +9,9 @@ import LoginPage from './routes/LoginPage';
 import {Dashboard} from './routes/Dashboard';
 import {inciarSesion as actionInicioSesion} from './utils/AuthUser';
 import {loaderAuthTokenCookie as loaderCookie, UserProvider} from './context/UserContext';
-import {Profile} from "./components/Profile.jsx";
-
+import {Profile} from "./routes/Profile.jsx";
+import {Configuration} from "./routes/Configuration.jsx";
+import {Logout} from "./routes/Logout.jsx";
 
 /**
  * Contiene el router de la aplicación, parte más alta de la aplicación.
@@ -31,7 +32,9 @@ function App() {
             {path: '/', element: <LoginPage/>, action: actionInicioSesion},
             {path: '/dashboard', element: <Dashboard/>},
             {path: '/error', element: <ErrorPage/>},
-            {path: '/profile', element: <Profile/>}
+            {path: '/profile', element: <Profile/>},
+            {path: '/configuration', element: <Configuration/>},
+            {path: '/logout', element: <Logout/>}
         ]
     }]);
 
