@@ -12,7 +12,7 @@ import { useUsers } from '../context/UserContext.jsx'
  * @returns {React.JSX.Element}
  * @author Alex Bernardos Gil
  * @contributor Eneas de la Rosa Menéndez Pedrosa
- * @version 1.1.1 06/05/2026
+ * @version 1.1.2 06/05/2026
  * @constructor
  */
 export const MainNav = () => {
@@ -22,7 +22,7 @@ export const MainNav = () => {
     `nav-link d-flex align-items-center ${isActive ? 'active' : 'text-white'}`
 
   return (
-    <aside className="main-nav d-flex flex-column flex-shrink-0 p-3 text-white bg-dark">
+    <aside className="main-nav d-flex flex-column flex-shrink-0 p-3 text-white bg-dark fixed-left">
       <NavLink
         className="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none"
         to="/dashboard"
@@ -39,12 +39,16 @@ export const MainNav = () => {
             <i className="bi bi-house-door me-2" aria-hidden="true" />
             Inicio
           </NavLink>
+          <NavLink className={navLinkClass} to="/signinpage" end>
+            <i className="bi bi-house-door me-2" aria-hidden="true" />
+            Nuevo empleado
+          </NavLink>
         </li>
       </ul>
 
       <hr />
 
-      <div className="dropdown">
+      <div id="desplegableUsuario"className="dropup">
         <button
           className="btn btn-link d-flex align-items-center text-white text-decoration-none dropdown-toggle p-0"
           id="dropdownUser1"
@@ -57,7 +61,7 @@ export const MainNav = () => {
           </span>
           <strong>{username}</strong>
         </button>
-        <ul className="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
+        <ul className="dropdown-menu dropdown-menu-dark text-small shadow " aria-labelledby="dropdownUser1">
           <li>
             <NavLink className="dropdown-item" to="/configuration">
               Configuración
