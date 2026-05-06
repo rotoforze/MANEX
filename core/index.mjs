@@ -13,11 +13,13 @@ import getDepartamento from "./API/departamentos/departamento.mjs";
 import delDepartamento from "./API/departamentos/eliminar.mjs";
 import newDepartamento from "./API/departamentos/nuevo.mjs";
 import {listaDepartamentos} from "./API/departamentos/listado.mjs";
+import auth from "./API/middlewareAutenticación.mjs";
 
 const app = express();
 
 app.use(cors());
 app.use(express.urlencoded({extended: true}));
+app.use(auth);
 app.get('/', (req, res) => {
     res.send({
         status: 200,
@@ -44,7 +46,7 @@ app.get('/', (req, res) => {
                 'eliminarDepartamento': ['/departamentos/eliminar/', 'DELETE']
             }
         }
-    });D
+    });
 })
 
 

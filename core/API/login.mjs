@@ -1,4 +1,3 @@
-import express from "express";
 import mysql from 'mysql2';
 import crypto from "crypto";
 import dotenv from 'dotenv';
