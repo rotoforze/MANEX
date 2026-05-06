@@ -1,13 +1,14 @@
-import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import {createBrowserRouter, RouterProvider} from 'react-router-dom'
 import '../public/styles/App.css'
 import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap-icons/font/bootstrap-icons.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
-import { RootLayout } from './routes/RootLayout';
-import { ErrorPage } from './routes/ErrorPage';
+import {RootLayout} from './routes/RootLayout';
+import {ErrorPage} from './routes/ErrorPage';
 import LoginPage from './routes/LoginPage';
-import { Dashboard } from './routes/Dashboard';
-import { inciarSesion as actionInicioSesion } from './utils/AuthUser';
-import { loaderAuthTokenCookie as loaderCookie, UserProvider } from './context/UserContext';
+import {Dashboard} from './routes/Dashboard';
+import {inciarSesion as actionInicioSesion} from './utils/AuthUser';
+import {loaderAuthTokenCookie as loaderCookie, UserProvider} from './context/UserContext';
 import {Profile} from "./components/Profile.jsx";
 
 
@@ -21,23 +22,24 @@ import {Profile} from "./components/Profile.jsx";
  */
 function App() {
 
-  const router = createBrowserRouter([{
-    path: '/',
-    element: <RootLayout />,
-    loader: loaderCookie,
-    errorElement: <ErrorPage />,
-    children: [
-      { path: '/', element: <LoginPage />, action: actionInicioSesion},
-      { path: '/dashboard', element: <Dashboard /> },
-      { path: '/profile', element: <Profile /> }
-    ]
-  }]);
+    const router = createBrowserRouter([{
+        path: '/',
+        element: <RootLayout/>,
+        loader: loaderCookie,
+        errorElement: <ErrorPage/>,
+        children: [
+            {path: '/', element: <LoginPage/>, action: actionInicioSesion},
+            {path: '/dashboard', element: <Dashboard/>},
+            {path: '/error', element: <ErrorPage/>},
+            {path: '/profile', element: <Profile/>}
+        ]
+    }]);
 
-  return (
-    <UserProvider>
-      <RouterProvider router={router} />
-    </UserProvider>
-  )
+    return (
+        <UserProvider>
+            <RouterProvider router={router}/>
+        </UserProvider>
+    )
 }
 
 export default App

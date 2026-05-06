@@ -60,10 +60,9 @@ export function UserProvider({children}) {
      * @author Alex Bernardos Gil
      * @version 1.1.0
      */
-    function changeUserInformation(username = undefined, id = undefined, token = window?.token?.value, authenticated = false) {
+    function changeUserInformation(username = undefined, token = window?.token?.value, authenticated = false) {
         setUser({
             username: username || user.username,
-            id: id || user.id,
             token: token || user.token,
             authenticated: authenticated || user.authenticated
         })
