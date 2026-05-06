@@ -5,18 +5,18 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 /**
- * Devuelve la información del empleado recibido.
+ * Devuelve la información del producto recibido.
  *
- * @author Alex Bernardos Gil
+ * @author Covadonga Blanco Alvarez
  * @version 1.0
  * @param {Request} req
  * @param {Response} res
  */
-function getEmpleado(req, res) {
+function getProducto(req, res) {
 
-    const idEmpleado = parseInt(req.params.id, 10);
+    const idProducto = parseInt(req.params.id, 10);
 
-    if (isNaN(idEmpleado) || !idEmpleado || idEmpleado < 0) {
+    if (isNaN(idProducto) || !idProducto || idProducto < 0) {
         return res.status(400).send({
             status: 400,
             message: "Parámetros inválidos o nulos"
@@ -41,11 +41,10 @@ function getEmpleado(req, res) {
 
         connection.query(
             `SELECT *
-             FROM empleado
-             WHERE esVisible = 1
-               AND ID = ?
-             ORDER BY username LIMIT 1`,
-            [idEmpleado],
+             FROM inventario
+             WHERE ID = ?
+             ORDER BY nombre LIMIT 1`,
+            [idProducto],
             (error, result) => {
 
                 connection.release();
@@ -60,13 +59,13 @@ function getEmpleado(req, res) {
                 if (result.length > 0) {
                     return res.status(200).send({
                         status: 200,
-                        usuario: result
+                        producto: result
                     });
                 }
 
                 return res.status(404).send({
                     status: 404,
-                    message: "No se ha encontrado el usuario."
+                    message: "No se ha encontrado el producto."
                 });
 
             }
@@ -74,4 +73,4 @@ function getEmpleado(req, res) {
     });
 }
 
-export default getEmpleado
+export default getProducto

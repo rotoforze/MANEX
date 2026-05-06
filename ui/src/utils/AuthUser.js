@@ -74,8 +74,9 @@ export const authUser = async (usuario, password, wantsToKeepSession, sessionTok
             return {
                 success: respuesta.auth.authorized,
                 token: respuesta.auth.token,
+                id: respuesta.auth.id,
                 username: respuesta.auth.username,
-                department: respuesta.auth.department,
+                department: respuesta.auth.department
             };
         } else {
             console.log('ERROR: ' + respuesta.message);
@@ -122,6 +123,6 @@ async function createTokenCookie(token) {
  * @version 1.0
  * @returns {Promise<boolean>}
  */
-async function deleteTokenCookie() {
+export async function deleteTokenCookie() {
     return !!await cookieStore.delete('token');
 }
