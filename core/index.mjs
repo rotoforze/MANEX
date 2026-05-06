@@ -8,6 +8,7 @@ import getProducto from "./API/productos/producto.mjs";
 import getContrato from "./API/contratos/contrato.mjs";
 import {listaContratos} from "./API/contratos/listado.mjs";
 import delContrato from "./API/contratos/eliminar.mjs";
+import newContrato from "./API/contratos/nuevo.mjs";
 
 const app = express();
 
@@ -103,5 +104,7 @@ app.get('/productos/:id', getProducto);
 app.get('/contratos/:id', getContrato);
 
 app.delete('/contratos/:id', delContrato);
+
+app.post('/contratos', newContrato);
 
 app.listen(80, () => console.log('Escuchando llamadas en http://localhost:80'));

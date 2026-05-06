@@ -4,6 +4,7 @@ import getContrato from "./contrato.mjs";
 
 //Cargamos las variables del archivo .env a process.env
 dotenv.config();
+
 /**
  * Elimina el contrato recibido.
  *
@@ -37,9 +38,10 @@ function delContrato(req, res) {
                 message: "Error de base de datos"
             });
         }
-        console.log(idContrato)
         connection.query(
-            `DELETE FROM contrato WHERE ID = ?`,
+            `DELETE
+             FROM contrato
+             WHERE ID = ?`,
             [idContrato],
             (error, result) => {
 
@@ -59,17 +61,17 @@ function delContrato(req, res) {
                     }
                 }
 
-                if (result.length > 0) {
+                if (result.affectedRows == 1) {
                     return res.status(200).send({
-                        status: 200
+                        status: 200,
+                        message: "Contrato eliminado correctamente"
+                    });
+                } else {
+                    return res.status(400).send({
+                        status: 400,
+                        message: "Contrato no encontrado"
                     });
                 }
-
-                return res.status(404).send({
-                    status: 404,
-                    message: "No se ha encontrado el contrato."
-                });
-
             }
         );
     });
