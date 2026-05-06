@@ -1,6 +1,15 @@
+<<<<<<< Eneas
 import bbdd from "../ENV/bbdd.mjs"
 import mysql from 'mysql2/promise';
+=======
+import express from "express";
+import mysql from 'mysql2';
+>>>>>>> main
 import crypto from "crypto";
+import dotenv from 'dotenv';
+
+//Cargamos las variables del archivo .env a process.env
+dotenv.config();
 
 const pool = mysql.createPool({
     host: bbdd.HOSTNAME,
@@ -23,7 +32,32 @@ const pool = mysql.createPool({
  * @param {Response} res
  * @returns {Response}
  */
+<<<<<<< Eneas
 export async function login(req, res) {
+=======
+export function login(req, res) {
+
+    const pool = mysql.createPool({
+        host: process.env.DB_HOST,
+        user: process.env.DB_USER,
+        password: process.env.DB_PASS,
+        database: process.env.DB_NAME,
+        port:process.env.DB_PORT
+    })
+
+    pool.on('enqueue', function () {
+        console.log('Esperando por la conexión con la bbdd.');
+    });
+
+    pool.on('acquire', function (connection) {
+        console.log('Se ha establecido la conexión %d con la bbdd.', connection.threadId)
+    });
+
+    pool.on('release', function (connection) {
+        console.log('Conexión %d liberada', connection.threadId);
+    });
+
+>>>>>>> main
     if (!req?.body) return res.status(401).send({status: 401})
     const {usuario, pass, keepSession, token} = req.body;
 

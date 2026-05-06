@@ -1,15 +1,18 @@
-import { endpoint } from '../../ENV/location.js';
+
+
+//Cargamos las variables del archivo .env a process.env
+
 /**
  *
  * Recibe un usuario y una contraseña, intenta iniciar sesión.
  * Si el inicio ha sido correcto, devuelve true.
  * Si el inicio ha sido incorrecto, devuelve false.
- *
- * @param {Object} request
- * @author Alex Bernardos Gil
- * @version 1.0
- * @returns Boolean
- */
+*
+* @param {Object} request
+* @author Alex Bernardos Gil
+* @version 1.0
+* @returns Boolean
+*/
 export async function inciarSesion({request}) {
     const formData = await request.formData();
     const postData = Object.fromEntries(formData);
@@ -17,28 +20,29 @@ export async function inciarSesion({request}) {
     const password = postData?.password;
     const wantsToKeepSession = !!postData?.keepSession;
     const sessionToken = postData?.token;
-
+    
     // if (!sessionToken && (!usuario || !password)) return;
     console.log(sessionToken)
     return authUser(usuario, password, wantsToKeepSession, sessionToken);
-
+    
 }
 
 
 /**
  * Hace una petición fetch al backend PHP que verifica si las
  * credenciales son correctas.
- *
- * @param {String} usuario
- * @param {String} password
- * @param {Boolean} wantsToKeepSession
- * @param {String} sessionToken
- * @author Alex Bernardos Gil
- * @version 1.0
- * @returns Boolean
- */
+*
+* @param {String} usuario
+* @param {String} password
+* @param {Boolean} wantsToKeepSession
+* @param {String} sessionToken
+* @author Alex Bernardos Gil
+* @version 1.0
+* @returns Boolean
+*/
 export const authUser = async (usuario, password, wantsToKeepSession, sessionToken) => {
-    const url = endpoint.backend_login;
+    
+    const url = import.meta.env.VITE_BACKEND_LOGIN;
     const params = new URLSearchParams();
     params.append('usuario', usuario);
     params.append('pass', password);
