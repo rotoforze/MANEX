@@ -4,24 +4,6 @@ import { useUsers } from "../context/UserContext.jsx"
 import { Loading } from "../components/Loading.jsx"
 import { endpoint } from '../../ENV/location.js'
 
-import {
-    Container,
-    Box,
-    Card,
-    CardContent,
-    TextField,
-    Button,
-    FormControlLabel,
-    Checkbox,
-    Typography,
-    Stack,
-    IconButton,
-    InputAdornment,
-    Alert,
-    Link
-} from '@mui/material'
-import { Visibility, VisibilityOff } from '@mui/icons-material'
-
 /**
  *
  * Componente que muestra un formulario para el logeo del usuario.
@@ -38,14 +20,14 @@ const LoginPage = () => {
     const navigate = useNavigate()
     const { user, changeUserInformation } = useUsers()
 
-    const [passwordShown, setPasswordShown] = useState(false);
+    const [passwordShown, setPasswordShown] = useState(false)
     const [cargando, setCargado] = useState(true)
 
     useEffect(() => {
         console.log(actionData)
-        if (actionData) navigate('/dashboard');
+        if (actionData) navigate('/dashboard')
 
-    }, [actionData, navigate]);
+    }, [actionData, navigate])
 
     // comprueba la conexion con el servidor para poder cargar la app.
     useEffect(() => {
@@ -55,14 +37,14 @@ const LoginPage = () => {
                 .then((response) => response.json())
                 .then(data => {
 
-                    if (data.status !== 200) navigate('/error');
+                    if (data.status !== 200) navigate('/error')
 
                 })
                 .catch(() => navigate('/error'))
-                .finally(() => setCargado(false));
+                .finally(() => setCargado(false))
 
         } catch (error) {
-            console.error(error);
+            console.error(error)
         }
     }, [navigate])
 
@@ -74,33 +56,20 @@ const LoginPage = () => {
     }, [actionData, changeUserInformation])
 
     return (
-        <Container
-            maxWidth={false}
-            sx={{
-                minHeight: '100vh',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center'
-            }}
-        >
+        <main className="login-page d-flex align-items-center justify-content-center min-vh-100 px-3">
             {cargando ? (
                 <Loading />
             ) : (
-                <Card sx={{ width: '100%', maxWidth: 520, boxShadow: 6 }}>
-                    <CardContent sx={{ p: 4 }}>
-                        <Typography
-                            variant="h4"
-                            component="h1"
-                            align="center"
-                            gutterBottom
-                        >
+                <section className="card login-card shadow-lg border-0 w-100">
+                    <div className="card-body p-4 p-md-5">
+                        <h1 className="h3 text-center mb-4 fw-semibold">
                             Iniciar sesion
-                        </Typography>
+                        </h1>
 
                         {actionData?.error && (
-                            <Alert severity="error" sx={{ mb: 2 }}>
+                            <div className="alert alert-danger" role="alert">
                                 {actionData.error}
-                            </Alert>
+                            </div>
                         )}
 
                         <Form method="POST">
@@ -112,85 +81,86 @@ const LoginPage = () => {
                                 hidden
                             />
 
-                            <Stack spacing={2}>
-                                <TextField
-                                    label="Usuario"
-                                    name="user"
-                                    required
-                                    fullWidth
-                                    inputProps={{ minLength: 1, maxLength: 16 }}
-                                />
+                            <div className="d-grid gap-3">
+                                <div>
+                                    <label className="form-label" htmlFor="user">
+                                        Usuario
+                                    </label>
+                                    <input
+                                        className="form-control"
+                                        id="user"
+                                        type="text"
+                                        name="user"
+                                        required
+                                        minLength={1}
+                                        maxLength={16}
+                                    />
+                                </div>
 
-                                <TextField
-                                    label="Contrasena"
-                                    name="password"
-                                    type={passwordShown ? 'text' : 'password'}
-                                    required
-                                    fullWidth
-                                    inputProps={{ minLength: 0, maxLength: 255 }}
-                                    slotProps={{
-                                        input: {
-                                            endAdornment: (
-                                                <InputAdornment position="end">
-                                                    <IconButton
-                                                        type="button"
-                                                        onClick={() => setPasswordShown((shown) => !shown)}
-                                                        edge="end"
-                                                        aria-label={passwordShown ? 'Ocultar contrasena' : 'Mostrar contrasena'}
-                                                    >
-                                                        {passwordShown ? <VisibilityOff /> : <Visibility />}
-                                                    </IconButton>
-                                                </InputAdornment>
-                                            )
-                                        }
-                                    }}
-                                />
-
-                                <FormControlLabel
-                                    control={
-                                        <Checkbox
-                                            name="keepSession"
-                                            defaultChecked={!!user.token}
+                                <div>
+                                    <label className="form-label" htmlFor="password">
+                                        Contrasena
+                                    </label>
+                                    <div className="input-group">
+                                        <input
+                                            className="form-control"
+                                            id="password"
+                                            name="password"
+                                            type={passwordShown ? 'text' : 'password'}
+                                            required
+                                            minLength={0}
+                                            maxLength={255}
                                         />
-                                    }
-                                    label="Mantener la sesion iniciada"
-                                />
+                                        <button
+                                            className="btn btn-outline-secondary"
+                                            type="button"
+                                            onClick={() => setPasswordShown((shown) => !shown)}
+                                            aria-label={passwordShown ? 'Ocultar contrasena' : 'Mostrar contrasena'}
+                                        >
+                                            <i
+                                                className={`bi ${passwordShown ? 'bi-eye-slash' : 'bi-eye'}`}
+                                                aria-hidden="true"
+                                            />
+                                        </button>
+                                    </div>
+                                </div>
 
-                                <Button
+                                <div className="form-check">
+                                    <input
+                                        className="form-check-input"
+                                        type="checkbox"
+                                        id="keepSession"
+                                        name="keepSession"
+                                        defaultChecked={!!user.token}
+                                    />
+                                    <label className="form-check-label" htmlFor="keepSession">
+                                        Mantener la sesion iniciada
+                                    </label>
+                                </div>
+
+                                <button
+                                    className="btn btn-primary btn-lg w-100"
                                     type="submit"
-                                    variant="contained"
-                                    size="large"
-                                    fullWidth
-                                    sx={{ textTransform: 'none' }}
                                 >
                                     Iniciar sesion
-                                </Button>
-                            </Stack>
+                                </button>
+                            </div>
                         </Form>
 
-                        <Box
-                            sx={{
-                                mt: 3,
-                                display: 'flex',
-                                flexDirection: 'column',
-                                alignItems: 'center',
-                                gap: 1
-                            }}
-                        >
-                            <Typography variant="body2">
-                                <Link
-                                    component="button"
-                                    type="button"
-                                    onClick={() => navigate('/FAQ.jsx')}
-                                >
-                                    ¿Problemas para iniciar sesión?
-                                </Link>
-                            </Typography>
-                        </Box>
-                    </CardContent>
-                </Card>
+                        <div className="mt-4 text-center">
+                            <button
+                                className="btn btn-link p-0"
+                                type="button"
+                                onClick={() => navigate('/FAQ.jsx')}
+                            >
+                                ¿Problemas para iniciar sesion?
+                            </button>
+                        </div>
+                    </div>
+                </section>
             )}
-        </Container>
+        </main>
+
     )
 }
 

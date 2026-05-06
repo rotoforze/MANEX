@@ -29,9 +29,10 @@ export async function login(req, res) {
 
     // comprueba si no se han recibido credenciales ni token
     if ((!usuario || !pass) && !token) {
-        return res.status(401).send(
-            {status: 401}
-        );
+        return res.status(401).send({
+            status: 401,
+            message: "Credenciales no proporcionadas"
+        });
     }
 
     try {
