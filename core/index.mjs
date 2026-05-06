@@ -22,23 +22,29 @@ app.get('/', (req, res) => {
     res.send({
         status: 200,
         body: {
-            'login': '/login',
+            'login': ['/login', 'GET'],
             'empleados': {
-                'listado': '/empleados',
-                'usuario': '/empleados/'
+                'listado': ['/empleados', 'GET'],
+                'usuario': ['/empleados/', 'GET']
             },
             'inventario': {
-                'listado': '/productos',
-                'producto': '/productos/'
+                'listado': ['/productos', 'GET'],
+                'producto': ['/productos/', 'GET'],
             },
             'contrato': {
-                'listado': '/contratos',
-                'contrato': '/contratos/',
-                'nuevoContrato': '/contratos/nuevo',
-                'eliminarContrato': '/contratos/eliminar/'
+                'listado': ['/contratos', 'GET'],
+                'contrato': ['/contratos/', 'GET'],
+                'nuevoContrato': ['/contratos', 'POST'],
+                'eliminarContrato': ['/contratos/eliminar/', 'DELETE']
+            },
+            'departamento': {
+                'listado': ['/departamentos', 'GET'],
+                'departamento': ['/departamentos/', 'GET'],
+                'nuevoDepartamento': ['/departamentos', 'POST'],
+                'eliminarDepartamento': ['/departamentos/eliminar/', 'DELETE']
             }
         }
-    });
+    });D
 })
 
 
