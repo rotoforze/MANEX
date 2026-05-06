@@ -1,7 +1,15 @@
+<<<<<<< Eneas
+import React, { useEffect, useState } from 'react'
+import { Form, useActionData, useNavigate } from 'react-router-dom'
+import { useUsers } from "../context/UserContext.jsx"
+import { Loading } from "../components/Loading.jsx"
+import { endpoint } from '../../ENV/location.js'
+=======
 import React, { useEffect, useState} from 'react'
 import {Form, useActionData, useNavigate} from 'react-router-dom'
 import {useUsers} from "../context/UserContext.jsx";
 import {Loading} from "../components/Loading.jsx";
+>>>>>>> main
 
 /**
  *
@@ -15,6 +23,22 @@ import {Loading} from "../components/Loading.jsx";
  * @constructor
  */
 const LoginPage = () => {
+<<<<<<< Eneas
+    const actionData = useActionData()
+    const navigate = useNavigate()
+    const { user, changeUserInformation } = useUsers()
+
+    const [passwordShown, setPasswordShown] = useState(false)
+    const [cargando, setCargado] = useState(true)
+
+    useEffect(() => {
+        console.log(actionData)
+        if (actionData) navigate('/dashboard')
+
+    }, [actionData, navigate])
+
+    // comprueba la conexion con el servidor para poder cargar la app.
+=======
     
     const actionData = useActionData();
     const navigate = useNavigate();
@@ -29,6 +53,7 @@ const LoginPage = () => {
     }, [actionData, navigate]);
      
     // comprueba la conexión con el servidor para poder cargar la app.
+>>>>>>> main
     useEffect(() => {
         
         try {
