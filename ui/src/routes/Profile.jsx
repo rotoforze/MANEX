@@ -7,6 +7,13 @@ export const Profile = () => {
     const {user} = useUsers();
     useEffect(() => {
         // buscamos el id del usuario
+        try {
+            fetch(import.meta.env.VITE_BACKEND_EMPLEADO + user?.id,
+                {method: 'GET', headers: {'Content-Type': 'application/json'}})
+                .then((response) => response.json())
+        } catch (error) {
+            console.error(error);
+        }
     }, [])
 
     return (

@@ -43,7 +43,7 @@ function getDepartamento(req, res) {
             `SELECT *
              FROM departamento WHERE ID = ?
              ORDER BY ID LIMIT 1`,
-            [idContrato],
+            [idDepartamento],
             (error, result) => {
 
                 connection.release();
