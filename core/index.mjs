@@ -9,6 +9,10 @@ import getContrato from "./API/contratos/contrato.mjs";
 import {listaContratos} from "./API/contratos/listado.mjs";
 import delContrato from "./API/contratos/eliminar.mjs";
 import newContrato from "./API/contratos/nuevo.mjs";
+import getDepartamento from "./API/departamentos/departamento.mjs";
+import delDepartamento from "./API/departamentos/eliminar.mjs";
+import newDepartamento from "./API/departamentos/nuevo.mjs";
+import {listaDepartamentos} from "./API/departamentos/listado.mjs";
 
 const app = express();
 
@@ -99,12 +103,30 @@ app.get('/contratos', (req, res) => {
     listaContratos(req, res);
 });
 
+app.get('/departamentos', (req, res) => {
+    const parametrosRecibidos = Object.keys(req.query);
+
+    const parametrosNoValidos = parametrosRecibidos.filter(p => !Paginacion.PARAMETROS_PERMITIDOS.includes(p));
+
+    if (parametrosNoValidos.length > 0) {
+        return res.status(400).send({
+            status: 400,
+            message: `Parámetros no permitidos: ${parametrosNoValidos.join(', ')}`
+        });
+    }
+
+    listaDepartamentos(req, res);
+});
+
 app.get('/empleados/:id', getEmpleado);
 app.get('/productos/:id', getProducto);
 app.get('/contratos/:id', getContrato);
+app.get('/departamentos/:id', getDepartamento);
 
 app.delete('/contratos/:id', delContrato);
+app.delete('/departamentos/:id', delDepartamento);
 
 app.post('/contratos', newContrato);
+app.post('/departamentos', newDepartamento);
 
 app.listen(80, () => console.log('Escuchando llamadas en http://localhost:80'));
