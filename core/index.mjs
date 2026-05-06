@@ -1,7 +1,8 @@
 import express, {urlencoded} from 'express';
 import cors from 'cors';
 import {login} from "./API/login.mjs";
-import { listaEmpleados } from "./API/empleados/listado.mjs";
+import {listaEmpleados} from "./API/empleados/listado.mjs";
+import getEmpleado from "./API/empleados/empleado.mjs";
 
 const app = express();
 
@@ -12,8 +13,10 @@ app.get('/', (req, res) => {
         status: 200,
         body: {
             'login': '/login',
-            'empleados': '/empleados',
-            'listado': '/empleados/lista'
+            'empleados': {
+                'listado': '/empleados',
+                'usuario': '/empleados/'
+            }
         }
     });
 })
@@ -32,12 +35,13 @@ app.post('/login', (req, res) => {
 
 })
 
-app.get('/empleados/lista', (req, res) => {
+app.get('/empleados', (req, res) => {
 
     const parametrosPermitidos = ['cantidad', 'pagina'];
     const parametrosRecibidos = Object.keys(req.query);
 
     const parametrosNoValidos = parametrosRecibidos.filter(p => !parametrosPermitidos.includes(p));
+
     if (parametrosNoValidos.length > 0) {
         return res.status(400).send({
             status: 400,
@@ -47,5 +51,7 @@ app.get('/empleados/lista', (req, res) => {
 
     listaEmpleados(req, res);
 });
+
+app.get('/empleados/:id', getEmpleado);
 
 app.listen(80, () => console.log('Escuchando llamadas en http://localhost:80'));
