@@ -1,5 +1,8 @@
 import mysql from 'mysql2';
-import bbdd from "../ENV/bbdd.mjs";
+import dotenv from 'dotenv';
+
+//Cargamos las variables del archivo .env a process.env
+dotenv.config();
 
 const PAGINACION = {
     MinCantidad: 1,
@@ -19,11 +22,11 @@ const PAGINACION = {
 export function listaEmpleados(req, res) {
 
     const pool = mysql.createPool({
-        host: bbdd.HOSTNAME,
-        user: bbdd.USERNAME,
-        password: bbdd.PASSWORD,
-        database: bbdd.DATABASE,
-        port: bbdd.PORT
+        host: process.env.DB_HOST,
+        user: process.env.DB_USER,
+        password: process.env.DB_PASS,
+        database: process.env.DB_NAME,
+        port:process.env.DB_PORT
     });
 
     let {cantidad, pagina } = req.query;
