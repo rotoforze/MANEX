@@ -26,11 +26,11 @@ export const RootLayout = () => {
             if (location.pathname !== '/') navigate('/');
         }
     }, [user?.username, user?.authenticated, location.pathname, navigate])
-
+    
     return (
         <>
 
-            {user?.username && user?.authenticated ? <MainNav/> : null}
+            {user?.id ? <MainNav/> : null}
             <Outlet/>
 
         </>
