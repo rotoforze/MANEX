@@ -16,6 +16,7 @@ export function UserProvider({children}) {
 
     const [user, setUser] = useState({
         username: '',
+        id: '',
         token: getCookie('token') || '',
         authenticated: false,
     });
@@ -33,10 +34,10 @@ export function UserProvider({children}) {
         if (!token) return;
 
         const result = await authUser(null, null, false, token);
-    console.log(result);
         if (result?.success) {
             setUser({
                 username: result.username,
+                id: result.id,
                 token,
                 authenticated: true
             });
@@ -52,16 +53,17 @@ export function UserProvider({children}) {
 
     /**
      *
-     * Crea el objeto del usuario.
+     * Crea o actualiza el objeto del usuario.
      *
      * @param {String} username
      * @param {String} token
      * @author Alex Bernardos Gil
-     * @version 1.0.0
+     * @version 1.1.0
      */
-    function changeUserInformation(username = undefined, token = window?.token?.value, authenticated = false) {
+    function changeUserInformation(username = undefined, id = undefined, token = window?.token?.value, authenticated = false) {
         setUser({
             username: username || user.username,
+            id: id || user.id,
             token: token || user.token,
             authenticated: authenticated || user.authenticated
         })

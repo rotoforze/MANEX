@@ -23,9 +23,9 @@ export const MainNav = () => {
           </NavLink>
         </li>
         <li>
-          <NavLink to={'/dashboard'}
+          <NavLink to={'/profile'}
             className={({ isActive }) => (isActive ? 'activo' : undefined) + " btn-navlink"}>
-            TBD
+            Perfil
           </NavLink>
         </li>
         <li>

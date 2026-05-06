@@ -50,7 +50,7 @@ const LoginPage = () => {
         if (!actionData) return;
 
         if (actionData.success) {
-            changeUserInformation(actionData.username, actionData.token, true);
+            changeUserInformation(actionData.username, actionData.id, actionData.token, true);
         }
     }, [actionData]);
 

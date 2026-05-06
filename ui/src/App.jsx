@@ -8,6 +8,7 @@ import LoginPage from './routes/LoginPage';
 import { Dashboard } from './routes/Dashboard';
 import { inciarSesion as actionInicioSesion } from './utils/AuthUser';
 import { loaderAuthTokenCookie as loaderCookie, UserProvider } from './context/UserContext';
+import {Profile} from "./components/Profile.jsx";
 
 
 /**
@@ -27,7 +28,8 @@ function App() {
     errorElement: <ErrorPage />,
     children: [
       { path: '/', element: <LoginPage />, action: actionInicioSesion},
-      { path: '/dashboard', element: <Dashboard /> }
+      { path: '/dashboard', element: <Dashboard /> },
+      { path: '/profile', element: <Profile /> }
     ]
   }]);
 
