@@ -1,6 +1,6 @@
 import React from 'react'
-import {NavLink} from 'react-router-dom'
-import {useUsers} from '../context/UserContext.jsx'
+import { NavLink } from 'react-router-dom'
+import { useUsers } from '../context/UserContext.jsx'
 
 /**
  *
