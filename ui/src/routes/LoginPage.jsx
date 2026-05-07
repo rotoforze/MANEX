@@ -7,11 +7,9 @@ import {Loading} from "../components/Loading.jsx";
  *
  * Componente que muestra un formulario para el logeo del usuario.
  *
- *
  * @returns {React.JSX.Element}
  * @author Alex Bernardos Gil
- * @contributor Eneas de la Rosa Menendez Pedrosa
- * @version 1.13.0
+ * @version 1.12.2
  * @constructor
  */
 const LoginPage = () => {
@@ -37,23 +35,25 @@ const LoginPage = () => {
                 .then((response) => response.json())
                 .then(data => {
 
-                    if (data.status !== 200) navigate('/error')
+                    if (!data.status == 200) navigate('/error');
 
                 })
                 .catch(() => navigate('/error'))
-                .finally(() => setCargado(false))
+                .finally(() => setCargado(false));
 
         } catch (error) {
-            console.error(error)
+            console.error(error);
         }
-    }, [navigate])
+    }, [])
 
     useEffect(() => {
-        if (!actionData) return
+        if (!actionData) return;
+
         if (actionData.success) {
-            changeUserInformation(actionData.username, actionData.token, true)
+            changeUserInformation(actionData.username, actionData.id, actionData.token, true);
         }
-    }, [actionData, changeUserInformation])
+    }, [actionData]);
+
 
     return (
         <main className="login-page d-flex align-items-center justify-content-center min-vh-100 px-3">
@@ -160,8 +160,6 @@ const LoginPage = () => {
                 </section>
             )}
         </main>
-
     )
 }
-
 export default LoginPage

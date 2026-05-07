@@ -6,13 +6,13 @@ import Paginacion from "../paginacion.mjs";
 dotenv.config();
 
 /**
- * Devuelve una lista paginada de empleados
+ * Devuelve una lista paginada de inventarios
  * @author Covadonga Blanco Álvarez
  * @version 1.0.1
  * @param {Request} req 
- * @param {Response} res 
+ * @param {Response} res
  */
-export function listaEmpleados(req, res) {
+export function listaProductos(req, res) {
 
     const pool = mysql.createPool({
         host: process.env.DB_HOST,
@@ -36,10 +36,10 @@ export function listaEmpleados(req, res) {
         });
     }
 
-    if (cantidad < Paginacion.MIN_PAGINACION || cantidad > Paginacion.MAX_PAGINACION_EMPLEADOS) {
+    if (cantidad < Paginacion.MIN_PAGINACION || cantidad > Paginacion.MAX_PAGINACION_PRODUCTOS) {
         return res.status(400).send({
             status: 400,
-            message: `cantidad debe estar entre ${Paginacion.MIN_PAGINACION} y ${Paginacion.MAX_PAGINACION_EMPLEADOS}`
+            message: `cantidad debe estar entre ${Paginacion.MIN_PAGINACION} y ${Paginacion.MAX_PAGINACION_PRODUCTOS}`
         });
     }
 
@@ -61,9 +61,8 @@ export function listaEmpleados(req, res) {
         }
 
         connection.query(
-            `SELECT * FROM empleado 
-             WHERE esVisible = 1 
-             ORDER BY username 
+            `SELECT * FROM inventario  
+             ORDER BY nombre 
              LIMIT ? OFFSET ?`,
             [cantidad, offset],
             (error, result) => {
