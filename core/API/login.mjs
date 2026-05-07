@@ -159,7 +159,7 @@ function generarToken() {
  *
  * @author Alex Bernardos Gil
  * @version 1.2
- * @param conenection
+ * @param pool
  * @param usuario
  * @param token
  * @returns {boolean}

@@ -14,6 +14,7 @@ import delDepartamento from "./API/departamentos/eliminar.mjs";
 import newDepartamento from "./API/departamentos/nuevo.mjs";
 import {listaDepartamentos} from "./API/departamentos/listado.mjs";
 import auth from "./API/middlewareAutenticación.mjs";
+import registrar from "./API/empleados/registrar.mjs";
 
 const app = express();
 
@@ -27,7 +28,10 @@ app.get('/', (req, res) => {
             'login': ['/login', 'GET'],
             'empleados': {
                 'listado': ['/empleados', 'GET'],
-                'usuario': ['/empleados/', 'GET']
+                'empleado': ['/empleados/', 'GET'],
+                'nuevoEmpleado': ['/empleados', 'POST'],
+                'eliminarEmpleado': ['/empleados', 'DELETE'],
+                'actualizarEmpleado': ['/empleados', 'POST']
             },
             'inventario': {
                 'listado': ['/productos', 'GET'],
@@ -54,13 +58,12 @@ app.get('/', (req, res) => {
 
 app.post('/login', (req, res) => {
     if (!req.body) {
-        res.send({
+        return res.send({
             status: 400,
             body: {
                 'message': 'Not valid body: ' + req
             }
         });
-        return;
     }
     login(req, res);
 
@@ -134,6 +137,21 @@ app.get('/departamentos/:id', getDepartamento);
 app.delete('/contratos/:id', delContrato);
 app.delete('/departamentos/:id', delDepartamento);
 
+app.post('/empleados', (req, res) => {
+    if (!req.body) {
+        return res.send({
+            status: 400,
+            body: {
+                'message': 'Not valid body: ' + req
+            }
+        });
+    }
+    // si en la petición viene un ID, vamos a actualizarUsuario
+    // en vez de a registrar
+    if (req.body.id) {
+
+    } else registrar(req, res);
+});
 app.post('/contratos', newContrato);
 app.post('/departamentos', newDepartamento);
 
