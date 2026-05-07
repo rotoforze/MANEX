@@ -6,13 +6,13 @@ import 'bootstrap/dist/js/bootstrap.bundle.min';
 import {RootLayout} from './routes/RootLayout';
 import {ErrorPage} from './routes/ErrorPage';
 import LoginPage from './routes/LoginPage';
-import SignInPage from './routes/SignInPage';
 import {Dashboard} from './routes/Dashboard';
 import {inciarSesion as actionInicioSesion} from './utils/AuthUser';
 import {loaderAuthTokenCookie as loaderCookie, UserProvider} from './context/UserContext';
 import {Profile} from "./routes/Profile.jsx";
 import {Configuration} from "./routes/Configuration.jsx";
 import {Logout} from "./routes/Logout.jsx";
+import {Empleados} from "./routes/Empleados.jsx";
 
 /**
  * Contiene el router de la aplicación, parte más alta de la aplicación.
@@ -32,7 +32,7 @@ function App() {
       { path: '/', element: <LoginPage />, action: actionInicioSesion },
       { path: '/error', element: <ErrorPage /> },
       { path: '/dashboard', element: <Dashboard /> },
-      { path: '/signinpage', element: <SignInPage /> },
+      { path: '/empleados', element: <Empleados /> },
       { path: '/profile', element: <Profile/>},
       { path: '/configuration', element: <Configuration/>},
       { path: '/logout', element: <Logout/>}

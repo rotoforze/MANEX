@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Form, useActionData, useNavigate } from 'react-router-dom';
 import { useUsers } from "../context/UserContext.jsx";
-import { Loading } from "../components/Loading.jsx";
+import { Loading } from "./Loading.jsx";
 import "../../public/styles/SignInPage.css";
 
-const SignInPage = () => {
+export function SignInForm() {
 
     const actionData = useActionData();
     const navigate = useNavigate();
@@ -263,5 +263,3 @@ const SignInPage = () => {
         </section>
     );
 };
-
-export default SignInPage;
