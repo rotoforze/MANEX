@@ -1,26 +1,21 @@
 import mysql from "mysql2/promise";
-import dotenv from 'dotenv';
 import verificadorDatos from "./verificadorDatos.mjs";
-import {hashContrasenia} from "./hashDeContrasenias.mjs";
-
-//Cargamos las variables del archivo .env a process.env
-dotenv.config();
 
 /**
- * Registra un usuario en la BBDD, después registra al empleado.
+ * Elimina un empleado de la base de datos.
  *
  * @author Alex Bernardos Gil
  * @version 1.0.0
  * @param req
  * @param res
  */
-async function registrar(req, res) {
+async function delEmpleado(req, res) {
 
-    await verificadorDatos(req, res);
+    const {id, usuario} = req.body;
 
-    const { nombre, apellidos, fecha_nacimiento,
-        telefono, ID_contrato, ID_departamento,
-        usuario, email, contrasenia} = req.body;
+    if ((id && id < 0) || !usuario) {
+        return res.status(400).send({status: 400, message: 'El ID del empleado no puede ser negativo.'});
+    }
 
     // comenzamos la transaccion
     const config = {
@@ -36,16 +31,14 @@ async function registrar(req, res) {
     await connection.beginTransaction();
 
     try {
-        // hash de la contraseña
-        var contraseniaHasheada = await hashContrasenia(contrasenia);
-
+        // el usuario NO SE PUEDE CAMBIAR
         const resultadoUsuario = await connection.query(
-            'INSERT INTO usuario (USERNAME, PASSWORD, EMAIL) VALUES (?, ?, ?)',
-            [usuario, contraseniaHasheada, email]);
+            'DELETE FROM usuario WHERE username = ?',
+            [usuario]);
 
         const resultadoEmpleado = await connection.query(
-            'INSERT INTO empleado (Nombre, Apellidos, fecha_nacimiento, telefono, ID_CONTRATO, ID_DEPARTAMENTO, USERNAME) VALUES (?, ?, ?, ?, ?, ?, ?)',
-            [nombre, apellidos, fecha_nacimiento, telefono, ID_contrato, ID_departamento, usuario]);
+            'DELETE FROM empleado WHERE ID_empleado = ?',
+            [id]);
 
         await connection.commit();
 
@@ -65,4 +58,4 @@ async function registrar(req, res) {
 
 }
 
-export default registrar;
+export default delEmpleado;

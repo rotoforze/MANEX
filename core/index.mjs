@@ -15,6 +15,8 @@ import newDepartamento from "./API/departamentos/nuevo.mjs";
 import {listaDepartamentos} from "./API/departamentos/listado.mjs";
 import auth from "./API/middlewareAutenticación.mjs";
 import registrar from "./API/empleados/registrar.mjs";
+import actualizar from "./API/empleados/actualizar.mjs";
+import delEmpleado from "./API/empleados/eliminar.mjs";
 
 const app = express();
 
@@ -134,8 +136,9 @@ app.get('/productos/:id', getProducto);
 app.get('/contratos/:id', getContrato);
 app.get('/departamentos/:id', getDepartamento);
 
-app.delete('/contratos/:id', delContrato);
-app.delete('/departamentos/:id', delDepartamento);
+app.delete('/empleados', delEmpleado)
+app.delete('/contratos', delContrato);
+app.delete('/departamentos', delDepartamento);
 
 app.post('/empleados', (req, res) => {
     if (!req.body) {
@@ -149,7 +152,7 @@ app.post('/empleados', (req, res) => {
     // si en la petición viene un ID, vamos a actualizarUsuario
     // en vez de a registrar
     if (req.body.id) {
-
+        actualizar(req, res);
     } else registrar(req, res);
 });
 app.post('/contratos', newContrato);

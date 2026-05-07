@@ -1,26 +1,22 @@
-import mysql from "mysql2/promise";
-import dotenv from 'dotenv';
 import verificadorDatos from "./verificadorDatos.mjs";
+import mysql from "mysql2/promise";
 import {hashContrasenia} from "./hashDeContrasenias.mjs";
 
-//Cargamos las variables del archivo .env a process.env
-dotenv.config();
-
 /**
- * Registra un usuario en la BBDD, después registra al empleado.
+ * Actualiza el usuario en la BBDD.
  *
  * @author Alex Bernardos Gil
  * @version 1.0.0
  * @param req
  * @param res
  */
-async function registrar(req, res) {
-
-    await verificadorDatos(req, res);
+async function actualizar(req, res) {
 
     const { nombre, apellidos, fecha_nacimiento,
         telefono, ID_contrato, ID_departamento,
-        usuario, email, contrasenia} = req.body;
+        usuario, email, contrasenia, id } = req.body;
+
+    await verificadorDatos(req, res);
 
     // comenzamos la transaccion
     const config = {
@@ -36,16 +32,18 @@ async function registrar(req, res) {
     await connection.beginTransaction();
 
     try {
-        // hash de la contraseña
-        var contraseniaHasheada = await hashContrasenia(contrasenia);
 
+        // hash de la contraseña
+        const contraseniaHasheada = await hashContrasenia(contrasenia);
+
+        // el usuario NO SE PUEDE CAMBIAR
         const resultadoUsuario = await connection.query(
-            'INSERT INTO usuario (USERNAME, PASSWORD, EMAIL) VALUES (?, ?, ?)',
-            [usuario, contraseniaHasheada, email]);
+            'UPDATE usuario SET password = ?, email = ? WHERE username = ?',
+            [contraseniaHasheada, email, usuario]);
 
         const resultadoEmpleado = await connection.query(
-            'INSERT INTO empleado (Nombre, Apellidos, fecha_nacimiento, telefono, ID_CONTRATO, ID_DEPARTAMENTO, USERNAME) VALUES (?, ?, ?, ?, ?, ?, ?)',
-            [nombre, apellidos, fecha_nacimiento, telefono, ID_contrato, ID_departamento, usuario]);
+            'UPDATE empleado SET nombre = ?, apellidos = ?, fecha_nacimiento = ?, telefono = ?, ID_contrato = ?, ID_departamento = ? WHERE id = ?',
+            [nombre, apellidos, fecha_nacimiento, telefono, ID_contrato, ID_departamento, id]);
 
         await connection.commit();
 
@@ -65,4 +63,4 @@ async function registrar(req, res) {
 
 }
 
-export default registrar;
+export default actualizar;
