@@ -1,5 +1,3 @@
-import React, {useEffect} from 'react'
-import {useUsers} from "../context/UserContext.jsx";
 import {NavLink} from "react-router-dom";
 
 /**
@@ -11,7 +9,7 @@ import {NavLink} from "react-router-dom";
  * @version 1.0.0
  * @constructor
  */
-export const navbarConfigProfileLogout = ( {children} ) => {
+export const NavbarConfigProfileLogout = ( {children} ) => {
     return (
         <div className={"container-fluid justify-content-center mt-4"}>
             <div className="card text-center">

@@ -1,5 +1,6 @@
 import React, {useEffect} from 'react'
 import {useUsers} from "../context/UserContext.jsx";
+import {NavbarConfigProfileLogout} from "../components/NavbarConfigProfileLogout.jsx";
 
 /**
  *
@@ -17,10 +18,10 @@ export const Configuration = () => {
     }, [])
 
     return (
-        <navbarConfigProfileLogout>
+        <NavbarConfigProfileLogout>
             <div className="card-body">
                 <h5 className="card-title">Ajustes</h5>
             </div>
-        </navbarConfigProfileLogout>
+        </NavbarConfigProfileLogout>
         )
 }

@@ -68,7 +68,7 @@ export const authUser = async (usuario, password, wantsToKeepSession, sessionTok
             // Lógica Login correcto
             if (respuesta.auth) {
 
-                await createTokenCookie(respuesta.auth.token);
+                await createTokenCookie(respuesta.auth.token, !!wantsToKeepSession);
 
             }
             return {
@@ -99,12 +99,12 @@ export const authUser = async (usuario, password, wantsToKeepSession, sessionTok
  * @version 1.0
  * @returns {Promise<boolean>}
  */
-async function createTokenCookie(token) {
+async function createTokenCookie(token, tiempoLargo) {
     if (!token) return false;
     // borra si existe la cookie del token para restablecer el tiempo de uso
     await deleteTokenCookie();
-    const unDiaEnMilisegundos = 24 * 60 * 60 * 1000;
-    const fechaExpiracion = Date.now() + unDiaEnMilisegundos;
+    const tiempo = tiempoLargo ? 24 * 60 * 60 * 1000 : 60 * 60 * 1000;
+    const fechaExpiracion = Date.now() + tiempo;
 
     return !!await cookieStore.set({
         name: 'token',
