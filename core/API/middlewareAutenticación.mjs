@@ -35,7 +35,7 @@ const auth = async (req, res, next) => {
     });
 
     // si es login o la raíz, dejamos pasar
-    if (req.path == '/login' || req.path == '/') next();
+    if (req.path == '/login' || req.path == '/') return next();
     // si no se recibe un token, no se permite el acceso
     if (!req?.headers?.token) {
         return res.status(401).json({
