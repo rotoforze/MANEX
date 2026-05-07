@@ -1,6 +1,7 @@
 import React from 'react'
 import { NavLink } from 'react-router-dom'
 import { useUsers } from '../context/UserContext.jsx'
+import {Empleados} from "../routes/Empleados.jsx";
 
 /**
  *
@@ -39,9 +40,9 @@ export const MainNav = () => {
             <i className="bi bi-house-door me-2" aria-hidden="true" />
             Inicio
           </NavLink>
-          <NavLink className={navLinkClass} to="/signinpage" end>
+          <NavLink className={navLinkClass} to="/Empleados" end>
             <i className="bi bi-house-door me-2" aria-hidden="true" />
-            Nuevo empleado
+            Empleados
           </NavLink>
         </li>
       </ul>
