@@ -17,9 +17,14 @@ import auth from "./API/middlewareAutenticación.mjs";
 import registrar from "./API/empleados/registrar.mjs";
 import actualizar from "./API/empleados/actualizar.mjs";
 import delEmpleado from "./API/empleados/eliminar.mjs";
+import swaggerUi from 'swagger-ui-express';
+import swaggerDocument from './swagger.json' with { type: "json" };
+import paginacion from "./API/paginacion.mjs";
+
 
 const app = express();
 
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use(cors());
 app.use(express.urlencoded({extended: true}));
 app.use(auth);
@@ -74,7 +79,7 @@ app.post('/login', (req, res) => {
 app.get('/empleados', (req, res) => {
     const parametrosRecibidos = Object.keys(req.query);
 
-    const parametrosNoValidos = parametrosRecibidos.filter(p => !Paginacion.PARAMETROS_PERMITIDOS.includes(p));
+    const parametrosNoValidos = parametrosRecibidos.filter(p => !paginacion.PARAMETROS_PERMITIDOS.includes(p));
 
     if (parametrosNoValidos.length > 0) {
         return res.status(400).send({
@@ -83,13 +88,16 @@ app.get('/empleados', (req, res) => {
         });
     }
 
-    listaEmpleados(req, res);
+    if (req?.query?.id) {
+        getEmpleado(req, res);
+
+    } else listaEmpleados(req, res);
 });
 
 app.get('/productos', (req, res) => {
     const parametrosRecibidos = Object.keys(req.query);
 
-    const parametrosNoValidos = parametrosRecibidos.filter(p => !Paginacion.PARAMETROS_PERMITIDOS.includes(p));
+    const parametrosNoValidos = parametrosRecibidos.filter(p => !paginacion.PARAMETROS_PERMITIDOS.includes(p));
 
     if (parametrosNoValidos.length > 0) {
         return res.status(400).send({
@@ -98,13 +106,16 @@ app.get('/productos', (req, res) => {
         });
     }
 
-    listaProductos(req, res);
+    if (req?.query?.id) {
+        getProducto(req, res);
+
+    } else listaProductos(req, res);
 });
 
 app.get('/contratos', (req, res) => {
     const parametrosRecibidos = Object.keys(req.query);
 
-    const parametrosNoValidos = parametrosRecibidos.filter(p => !Paginacion.PARAMETROS_PERMITIDOS.includes(p));
+    const parametrosNoValidos = parametrosRecibidos.filter(p => !paginacion.PARAMETROS_PERMITIDOS.includes(p));
 
     if (parametrosNoValidos.length > 0) {
         return res.status(400).send({
@@ -113,13 +124,16 @@ app.get('/contratos', (req, res) => {
         });
     }
 
-    listaContratos(req, res);
+    if (req?.query?.id) {
+        getContrato(req, res);
+
+    } else listaContratos(req, res);
 });
 
 app.get('/departamentos', (req, res) => {
     const parametrosRecibidos = Object.keys(req.query);
 
-    const parametrosNoValidos = parametrosRecibidos.filter(p => !Paginacion.PARAMETROS_PERMITIDOS.includes(p));
+    const parametrosNoValidos = parametrosRecibidos.filter(p => !paginacion.PARAMETROS_PERMITIDOS.includes(p));
 
     if (parametrosNoValidos.length > 0) {
         return res.status(400).send({
@@ -128,13 +142,11 @@ app.get('/departamentos', (req, res) => {
         });
     }
 
-    listaDepartamentos(req, res);
-});
+    if (req?.query?.id) {
+        getDepartamento(req, res);
 
-app.get('/empleados/:id', getEmpleado);
-app.get('/productos/:id', getProducto);
-app.get('/contratos/:id', getContrato);
-app.get('/departamentos/:id', getDepartamento);
+    } else listaDepartamentos(req, res);
+});
 
 app.delete('/empleados', delEmpleado)
 app.delete('/contratos', delContrato);
@@ -151,7 +163,7 @@ app.post('/empleados', (req, res) => {
     }
     // si en la petición viene un ID, vamos a actualizarUsuario
     // en vez de a registrar
-    if (req.body.id) {
+    if (req?.body?.id) {
         actualizar(req, res);
     } else registrar(req, res);
 });

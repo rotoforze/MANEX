@@ -14,7 +14,7 @@ dotenv.config();
  */
 function getContrato(req, res) {
 
-    const idContrato = parseInt(req.params.id, 10);
+    const idContrato = req.body.id;
 
     if (isNaN(idContrato) || !idContrato || idContrato < 0) {
         return res.status(400).send({
