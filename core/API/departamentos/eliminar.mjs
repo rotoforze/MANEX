@@ -13,9 +13,9 @@ dotenv.config();
  * @param {Response} res
  */
 function delDepartamento(req, res) {
-    const idDepartamento = parseInt(req.params.id, 10);
+    const { id } = req.body;
 
-    if (isNaN(idDepartamento) || !idDepartamento || idDepartamento < 0) {
+    if (isNaN(id) || !id || id < 0) {
         return res.status(400).send({
             status: 400,
             message: "Parámetros inválidos o nulos"
@@ -41,7 +41,7 @@ function delDepartamento(req, res) {
             `DELETE
              FROM departamento
              WHERE ID = ?`,
-            [idDepartamento],
+            [id],
             (error, result) => {
 
                 connection.release();

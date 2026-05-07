@@ -1,6 +1,8 @@
 import mysql from 'mysql2';
 import crypto from "crypto";
 import dotenv from 'dotenv';
+import verificadorDatos from "./empleados/verificadorDatos.mjs";
+import {verificarContrasenia} from "./empleados/hashDeContrasenias.mjs";
 
 //Cargamos las variables del archivo .env a process.env
 dotenv.config();
@@ -94,7 +96,8 @@ export function login(req, res) {
                     }
                 });
         } else {
-            connection.query('SELECT u.password, e.id, e.id_departamento FROM usuario u JOIN empleado e ON u.username = e.username WHERE u.username = ?', [usuario], (error, result) => {
+            connection.query('SELECT u.password, e.id, e.id_departamento FROM usuario u JOIN empleado e ON u.username = e.username WHERE u.username = ?',
+                [usuario], async (error, result) => {
                 // envia la consulta
                 connection.release();
 
@@ -109,7 +112,7 @@ export function login(req, res) {
                 // si no tiene longitud es porque no existe.
                 if (result.length > 0) {
                     // al coinicdir las contraseñas, podemos iniciar sesión
-                    if (result[0].password == pass) {
+                    if (await verificarContrasenia(pass, result[0].password)) {
                         // como hemos recibido en true, generamos un token para asignarlo al usuario
                         var newToken = generarToken();
 
@@ -159,7 +162,7 @@ function generarToken() {
  *
  * @author Alex Bernardos Gil
  * @version 1.2
- * @param conenection
+ * @param pool
  * @param usuario
  * @param token
  * @returns {boolean}

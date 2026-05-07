@@ -14,9 +14,9 @@ dotenv.config();
  * @param {Response} res
  */
 function delContrato(req, res) {
-    const idContrato = parseInt(req.params.id, 10);
+    const { id } = req.body;
 
-    if (isNaN(idContrato) || !idContrato || idContrato < 0) {
+    if (isNaN(id) || !id || id < 0) {
         return res.status(400).send({
             status: 400,
             message: "Parámetros inválidos o nulos"
@@ -42,7 +42,7 @@ function delContrato(req, res) {
             `DELETE
              FROM contrato
              WHERE ID = ?`,
-            [idContrato],
+            [id],
             (error, result) => {
 
                 connection.release();

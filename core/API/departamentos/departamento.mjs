@@ -14,7 +14,7 @@ dotenv.config();
  */
 function getDepartamento(req, res) {
 
-    const idDepartamento = parseInt(req.params.id, 10);
+    const idDepartamento = req.body.id;
 
     if (isNaN(idDepartamento) || !idDepartamento || idDepartamento < 0) {
         return res.status(400).send({

@@ -14,7 +14,7 @@ dotenv.config();
  */
 function getProducto(req, res) {
 
-    const idProducto = parseInt(req.params.id, 10);
+    const idProducto = req.body.id;
 
     if (isNaN(idProducto) || !idProducto || idProducto < 0) {
         return res.status(400).send({
