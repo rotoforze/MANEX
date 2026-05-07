@@ -6,6 +6,7 @@ import 'bootstrap/dist/js/bootstrap.bundle.min';
 import {RootLayout} from './routes/RootLayout';
 import {ErrorPage} from './routes/ErrorPage';
 import LoginPage from './routes/LoginPage';
+import SignInPage from './routes/SignInPage';
 import {Dashboard} from './routes/Dashboard';
 import {inciarSesion as actionInicioSesion} from './utils/AuthUser';
 import {loaderAuthTokenCookie as loaderCookie, UserProvider} from './context/UserContext';
@@ -22,19 +23,19 @@ import {Logout} from "./routes/Logout.jsx";
  * @constructor
  */
 function App() {
-
-    const router = createBrowserRouter([{
-        path: '/',
-        element: <RootLayout/>,
-        loader: loaderCookie,
-        errorElement: <ErrorPage/>,
-        children: [
-            {path: '/', element: <LoginPage/>, action: actionInicioSesion},
-            {path: '/dashboard', element: <Dashboard/>},
-            {path: '/error', element: <ErrorPage/>},
-            {path: '/profile', element: <Profile/>},
-            {path: '/configuration', element: <Configuration/>},
-            {path: '/logout', element: <Logout/>}
+  const router = createBrowserRouter([{
+    path: '/',
+    element: <RootLayout />,
+    loader: loaderCookie,
+    errorElement: <ErrorPage />,
+    children: [
+      { path: '/', element: <LoginPage />, action: actionInicioSesion },
+      { path: '/error', element: <ErrorPage /> },
+      { path: '/dashboard', element: <Dashboard /> },
+      { path: '/signinpage', element: <SignInPage /> },
+      { path: '/profile', element: <Profile/>},
+      { path: '/configuration', element: <Configuration/>},
+      { path: '/logout', element: <Logout/>}
         ]
     }]);
 

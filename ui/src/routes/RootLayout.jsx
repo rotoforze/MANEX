@@ -26,13 +26,17 @@ export const RootLayout = () => {
             if (location.pathname !== '/') navigate('/');
         }
     }, [user?.username, user?.authenticated, location.pathname, navigate])
-    
-    return (
-        <>
 
-            {user?.id ? <MainNav/> : null}
-            <Outlet/>
+    if (user?.username && user?.authenticated) {
+        return (
+            <div className="app-shell d-flex min-vh-100">
+                <MainNav/>
+                <main className="app-content flex-grow-1">
+                    <Outlet/>
+                </main>
+            </div>
+        )
+    }
 
-        </>
-    )
+    return <Outlet/>
 }

@@ -2,7 +2,6 @@ import React, { useEffect, useState} from 'react'
 import {Form, useActionData, useNavigate} from 'react-router-dom'
 import {useUsers} from "../context/UserContext.jsx";
 import {Loading} from "../components/Loading.jsx";
-import '../../public/styles/loginPage.css'
 
 /**
  *
@@ -23,7 +22,7 @@ const LoginPage = () => {
     const [cargando, setCargado] = useState(true);
     
     useEffect(() => {
-        if (actionData) navigate('/dashboard');
+        if (actionData) navigate('/Dashboard');
         
     }, [actionData, navigate]);
      

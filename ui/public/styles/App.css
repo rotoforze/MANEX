@@ -1,12 +1,13 @@
 #root {
     width: 100%;
-    min-height: 100vh;
+    height: 100vh;
     display: flex;
 }
 
 body {
     margin: 0;
-    min-height: 100vh;
+    height: 100vh;
+    overflow: hidden;
     background-image:
             url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='2048' height='1024'%3E%3Ctext x='50%25' y='50%25' font-family='sans-serif' font-weight='900' font-size='256' fill='rgba(0,0,0,0.15)' text-anchor='middle' dominant-baseline='middle'%3EMANEX%3C/text%3E%3C/svg%3E"),
             conic-gradient(from 150deg at 50% 33%, #e5e5f7 60deg, transparent 0),
@@ -80,11 +81,31 @@ form div {
     opacity: .85;
 }
 
-.main-nav {
-    width: 280px;
-    min-height: 100vh;
+.app-shell {
+    position: relative;
+    height: 100vh;
+    overflow: hidden;
 }
 
+.main-nav {
+    width: 280px;
+    height: 100vh;
+    position: fixed;
+    left: 0;
+    top: 0;
+    flex-shrink: 0;
+    overflow-y: auto;
+}
+
+.app-content {
+    margin-left: 280px;
+    flex-grow: 1;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
 
 .dashboard-main {
     flex: 1;
