@@ -48,7 +48,7 @@ export const MainNav = () => {
 
             <hr/>
 
-      <div id="desplegableUsuario"className="dropup">
+      <div id="desplegableUsuario" className="dropup">
         <button
           className="btn btn-link d-flex align-items-center text-white text-decoration-none dropdown-toggle p-0"
           id="dropdownUser1"
@@ -66,10 +66,19 @@ export const MainNav = () => {
             <NavLink className="dropdown-item" to="/configuration">
               Configuración
             </NavLink>
+          </li>
+
+          <li>
             <NavLink className="dropdown-item" to="/profile">
               Perfil
             </NavLink>
-            <li><hr class="dropdown-divider"></hr></li>
+          </li>
+
+          <li>
+            <hr className="dropdown-divider" />
+          </li>
+
+          <li>
             <NavLink className="dropdown-item" to="/logout">
               Cerrar sesión
             </NavLink>
