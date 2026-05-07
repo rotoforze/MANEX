@@ -6,6 +6,7 @@ import 'bootstrap/dist/js/bootstrap.bundle.min';
 import { RootLayout } from './routes/RootLayout';
 import { ErrorPage } from './routes/ErrorPage';
 import LoginPage from './routes/LoginPage';
+import SignInPage from './routes/SignInPage';
 import { Dashboard } from './routes/Dashboard';
 import { inciarSesion as actionInicioSesion } from './utils/AuthUser';
 import { loaderAuthTokenCookie as loaderCookie, UserProvider } from './context/UserContext';
@@ -27,9 +28,10 @@ function App() {
     loader: loaderCookie,
     errorElement: <ErrorPage />,
     children: [
-      { path: '/', element: <LoginPage />, action: actionInicioSesion},
+      { path: '/', element: <LoginPage />, action: actionInicioSesion },
       { path: '/error', element: <ErrorPage /> },
-      { path: '/dashboard', element: <Dashboard /> }
+      { path: '/dashboard', element: <Dashboard /> },
+      { path: '/signinpage', element: <SignInPage /> }
     ]
   }]);
 
