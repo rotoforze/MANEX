@@ -104,7 +104,7 @@ export function SignInForm() {
                                 </div>
 
                                 <div className="col-md-6 mb-3">
-                                    <label>Apellidos</label><span className="text-danger">*</span>
+                                    <label>Apellidos</label>
                                     <input
                                         type="text"
                                         className="form-control"
@@ -198,7 +198,7 @@ export function SignInForm() {
                                 </div>
 
                                 <div className="col-md-4 mb-3">
-                                    <label>Email</label><span className="text-danger">*</span>
+                                    <label>Email</label>
                                     <input
                                         type="email"
                                         className="form-control"
