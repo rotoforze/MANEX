@@ -63,7 +63,7 @@ export const MainNav = () => {
             <i className="bi bi-person me-2" aria-hidden="true" />
             Empleados
           </NavLink>
-          <NavLink className={navLinkClass} to="/Productos" end onClick={closeMenu}>
+          <NavLink className={navLinkClass} to="/productos" end onClick={closeMenu}>
             <i className="bi bi-box me-2" aria-hidden="true" />
             Productos
           </NavLink>
