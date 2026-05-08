@@ -1,11 +1,14 @@
 .empleados-container {
     overflow: auto;
+    overflow-y: scroll;
+    width: 83dvw !important;
+    height: 98dvh !important;
 }
 
 @media (max-width: 1000px) {
     .empleados-container {
         height: 100%;
-        width: 100%;
+        width: 100dvw !important;
     }
     .empleados-container .card {
         width: 100%;

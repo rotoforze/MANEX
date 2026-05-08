@@ -4,7 +4,7 @@ import { useUsers } from "../context/UserContext.jsx";
 import { Loading } from "./Loading.jsx";
 import "../../public/styles/SignInPage.css";
 
-export function SignInForm() {
+export function SignInForm( { funcionDeCierreDeFormulario } ) {
 
     const actionData = useActionData();
     const navigate = useNavigate();
@@ -69,7 +69,10 @@ export function SignInForm() {
             {cargando ? (
                 <Loading />
             ) : (
-                <div className="card shadow w-100" style={{ maxWidth: "900px" }}>
+                <div className="card shadow w-100 signin-form">
+                    <div className="card-header d-flex justify-content-end">
+                        <button className={"bi-x bi btn btn-outline-danger"} onClick={() => funcionDeCierreDeFormulario(false)}></button>
+                    </div>
                     <div className="card-body p-4">
 
                         <h2 className="text-center mb-4">Registro</h2>
@@ -92,22 +95,24 @@ export function SignInForm() {
 
                             <div className="row">
                                 <div className="col-md-6 mb-3">
-                                    <label>
+                                    <label htmlFor={"nombre"}>
                                         Nombre <span className="text-danger">*</span>
                                     </label>
                                     <input
                                         type="text"
                                         className="form-control"
+                                        id="nombre"
                                         name="nombre"
                                         required
                                     />
                                 </div>
 
                                 <div className="col-md-6 mb-3">
-                                    <label>Apellidos</label>
+                                    <label htmlFor={"apellidos"}>Apellidos</label>
                                     <input
                                         type="text"
                                         className="form-control"
+                                        id="apellidos"
                                         name="apellidos"
                                         required
                                     />
@@ -117,37 +122,43 @@ export function SignInForm() {
 
                             <div className="row">
                                 <div className="col-md-4 mb-3">
-                                    <label>
+                                    <label htmlFor={"fecha_nacimiento"}>
                                     Fecha de nacimiento <span className="text-danger">*</span>
                                     </label>
                                     <input
                                         type="date"
                                         className="form-control"
-                                        name="fechaNacimiento"
-                                        required
+                                        id="fecha_nacimiento"
+                                        name="fecha_nacimiento"
+                                        required={"bday"}
                                     />
                                 </div>
 
                                 <div className="col-md-4 mb-3">
-                                    <label>
+                                    <label htmlFor={"telefono"}>
                                         Teléfono <span className="text-danger">*</span>
                                     </label>
                                     <input
                                         type="tel"
                                         className="form-control"
+                                        id="telefono"
                                         name="telefono"
                                         required
                                     />
                                 </div>
 
+                            </div>
+
+                            <div className="row">
                                 <div className="col-md-4 mb-3">
-                                    <label>
+                                    <label htmlFor={"id_contrato"}>
                                         ID Contrato <span className="text-danger">*</span>
                                     </label>
                                     <input
                                         type="number"
                                         className={`form-control ${idContratoError ? 'is-invalid' : ''}`}
-                                        name="idContrato"
+                                        name="id_contrato"
+                                        id="id_contrato"
                                         min="1"
                                         onChange={handleIdContratoChange}
                                         required
@@ -158,17 +169,15 @@ export function SignInForm() {
                                         </div>
                                     )}
                                 </div>
-                            </div>
-
-                            <div className="row">
                                 <div className="col-md-6 mb-3">
-                                    <label>
+                                    <label htmlFor={"id_departamento"}>
                                         ID Departamento <span className="text-danger">*</span>
                                     </label>
                                     <input
                                         type="number"
                                         className={`form-control ${idDepartamentoError ? 'is-invalid' : ''}`}
-                                        name="idDepartamento"
+                                        name="id_departamento"
+                                        id="id_departamento"
                                         min="1"
                                         onChange={handleIdDepartamentoChange}
                                         required
@@ -187,30 +196,34 @@ export function SignInForm() {
 
                             <div className="row">
                                 <div className="col-md-4 mb-3">
-                                    <label>
+                                    <label htmlFor={"username"}>
                                         Usuario <span className="text-danger">*</span>
                                     </label>
                                     <input
                                         type="text"
                                         className="form-control"
                                         name="username"
+                                        id="username"
                                         required
+                                        autoComplete={"email"}
                                     />
                                 </div>
 
                                 <div className="col-md-4 mb-3">
-                                    <label>Email</label>
+                                    <label htmlFor={"email"}>Email</label>
                                     <input
                                         type="email"
                                         className="form-control"
                                         name="email"
+                                        id="email"
                                         required
+                                        autoComplete={"username"}
                                     />
                                 </div>
                             </div>
 
                             <div className="mb-3">
-                                <label>
+                                <label htmlFor={"password"}>
                                     Contraseña <span className="text-danger">*</span>
                                 </label>
                                 <div className="input-group">
@@ -218,6 +231,7 @@ export function SignInForm() {
                                         type={passwordShown ? "text" : "password"}
                                         className="form-control"
                                         name="password"
+                                        id="password"
                                         required
                                     />
                                     <button
@@ -231,7 +245,7 @@ export function SignInForm() {
                             </div>
 
                             <div className="mb-3">
-                                <label>
+                                <label htmlFor={"confirmPassword"}>
                                     Confirmar contraseña <span className="text-danger">*</span>
                                 </label>
                                 <div className="input-group">
@@ -239,6 +253,7 @@ export function SignInForm() {
                                         type={confirmPasswordShown ? "text" : "password"}
                                         className="form-control"
                                         name="confirmPassword"
+                                        id={"confirmPassword"}
                                         required
                                     />
                                     <button
