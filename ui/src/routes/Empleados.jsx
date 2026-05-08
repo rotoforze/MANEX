@@ -16,7 +16,7 @@ export function Empleados () {
     const [registroVisible, setRegistroVisible] = useState(false);
 
     return (
-        <div className="d-flex flex-column vw-100 vh-100 m-5 card">
+        <div className="d-flex flex-column w-100 flex-grow-1 card" style={{ overflowY: 'auto' }}>
             <div className={"d-flex flex-column align-items-center justify-content-center gap-2 w-100 p-4"}>
                 <h4>Acciones</h4>
                 <div className={"d-flex gap-2"}>
@@ -31,7 +31,7 @@ export function Empleados () {
                 { registroVisible ? <SignInForm /> : ''}
             </div>
             <hr />
-            <div className={"d-flex flex-column align-items-center justify-content-center gap-2 w-100 p-4"}>
+            <div className={"d-flex flex-column align-items-center w-100 p-4 flex-grow-1"} style={{ overflowY: 'auto' }}>
                 <TablaEmpleados />
             </div>
         </div>
