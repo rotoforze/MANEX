@@ -32,25 +32,25 @@ async function delEmpleado(req, res) {
 
     try {
         // el usuario NO SE PUEDE CAMBIAR
+        const resultadoEmpleado = await connection.query(
+            'DELETE FROM empleado WHERE username = ?',
+            [usuario]);
         const resultadoUsuario = await connection.query(
             'DELETE FROM usuario WHERE username = ?',
             [usuario]);
 
-        const resultadoEmpleado = await connection.query(
-            'DELETE FROM empleado WHERE ID_empleado = ?',
-            [id]);
 
         await connection.commit();
 
-        return res.status(201).send({status: 201, message: 'Empleado registrado correctamente.'});
+        return res.status(201).send({status: 201, message: 'Empleado eliminado correctamente.'});
 
     } catch (error) {
 
         await connection.rollback();
 
-        console.error('Error al registrar el empleado:', error);
+        console.error('Error al eliminado el empleado:', error);
 
-        return res.status(500).send({status: 500, message: 'Error al registrar el empleado.'});
+        return res.status(500).send({status: 500, message: 'Error al eliminado el empleado.'});
 
     } finally {
         await connection.end();
