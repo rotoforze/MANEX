@@ -31,7 +31,7 @@ export const RootLayout = () => {
         return (
             <div className="app-shell d-flex min-vh-100">
                 <MainNav/>
-                <main className="app-content flex-grow-1">
+                <main className="app-content overflow-scroll">
                     <Outlet/>
                 </main>
             </div>

@@ -7,7 +7,6 @@
 body {
     margin: 0;
     height: 100vh;
-    overflow: hidden;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='2048' height='1024'%3E%3Ctext x='50%25' y='50%25' font-family='sans-serif' font-weight='900' font-size='256' fill='rgba(0,0,0,0.15)' text-anchor='middle' dominant-baseline='middle'%3EMANEX%3C/text%3E%3C/svg%3E"),
     conic-gradient(from 150deg at 50% 33%, #e5e5f7 60deg, transparent 0),
     conic-gradient(from -30deg at 50% 66%, #e5e5f7 60deg, #ffffff 0);
@@ -80,17 +79,26 @@ form div {
     opacity: .85;
 }
 
-/*.app-shell {*/
-/*    position: relative;*/
-/*    height: 100vh;*/
-/*    overflow: hidden;*/
-/*}*/
-
 .main-nav {
     width: 15dvw;
     height: 100vh;
     position: static;
     overflow-y: auto;
+}
+
+.loading {
+    position: fixed;
+    background-color: #1f1f1f;
+    color: #e5e5f7;
+    padding: 4px;
+    border-radius: 4px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.3s ease-in-out;
 }
 
 .mobile-menu-header {
@@ -104,11 +112,15 @@ form div {
 .app-content {
     width: 85dvw;
     flex-grow: 1;
-    height: 100vh;
+    height: 100dvh;
+    margin: auto 0px;
     display: flex;
     align-items: center;
     justify-content: center;
+}
+.app-shell {
     overflow: hidden;
+    height: 100dvh;
 }
 
 .dashboard-main {
@@ -156,7 +168,7 @@ form div {
         position: static;
         flex-direction: column;
         overflow-y: hidden;
-        overflow-x: auto;
+        overflow-x: hidden;
         padding: 0 1rem !important;
         transition: max-height 0.3s ease-in-out;
         z-index: 999;
@@ -202,13 +214,13 @@ form div {
     .app-shell {
         display: flex;
         flex-direction: column;
+        overflow: hidden;
         height: 100dvh;
     }
     .app-content {
         height: 90dvh !important;
         width: 100dvw !important;
         flex-direction: column;
-        overflow: auto;
         justify-content: unset;
         align-items: unset;
     }

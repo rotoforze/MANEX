@@ -22,16 +22,16 @@ export function TablaEmpleados() {
 
     useEffect(() => {
         try {
-            fetch(import.meta.env.VITE_BACKEND_EMPLEADO+ '?pagina=' + paginaActual + '&cantidad=' + cantidadPorPagina,
+            fetch(import.meta.env.VITE_BACKEND_EMPLEADO + '?pagina=' + paginaActual + '&cantidad=' + cantidadPorPagina,
                 {
                     method: 'GET',
                     headers: {'Content-Type': 'application/x-www-form-urlencoded', 'token': user?.token}
                 })
                 .then((response) => response.json()
                 ).then((data) => {
-                if (data)  {
+                if (data) {
                     setListaEmpleados(data?.data);
-                    setPaginaMaxima(data?.meta?.totalPaginas);
+                    setPaginaMaxima(data?.meta?.totalPaginas - 1);
                     setResultadosPorPagina(data?.meta?.resultados);
                 }
             });
@@ -67,8 +67,16 @@ export function TablaEmpleados() {
                                     <td>{user?.Apellidos}</td>
                                     <td>{user?.email}</td>
                                     <td>{user?.telefono}</td>
-                                    <td>{user?.fecha_nacimiento}</td>
-                                    <td>{user?.fecha_alta}</td>
+                                    <td>
+                                        {user?.fecha_nacimiento
+                                            ? new Date(user.fecha_nacimiento).toLocaleDateString('es-ES', {timeZone: 'UTC'})
+                                            : 'N/A'}
+                                    </td>
+                                    <td>
+                                        {user?.fecha_alta
+                                            ? new Date(user.fecha_alta).toLocaleDateString('es-ES', {timeZone: 'UTC'})
+                                            : 'N/A'}
+                                    </td>
                                     <td>{user?.ID_DEPARTAMENTO}</td>
                                     <td>{user?.ID_CONTRATO}</td>
                                     <td className={"row-cols-1 gap-2"}>
@@ -80,14 +88,16 @@ export function TablaEmpleados() {
                         )}
                         </tbody>
                     </table>
-                    <div className="gap-3 d-flex justify-content-center">
-                        <button className="btn btn-primary bi-chevron-left" onClick={() => {
-                            if (paginaActual > 0) setPaginaActual(paginaActual - 1);
-                        }}></button>
+                    <div className="gap-3 d-flex justify-content-center mb-3">
+                        <button className="btn btn-primary bi-chevron-left" disabled={paginaActual == 0}
+                                onClick={() => {
+                                    if (paginaActual > 0) setPaginaActual(paginaActual - 1);
+                                }}></button>
                         <b>Mostrando {resultadosPorPagina}/{cantidadPorPagina} en la página {paginaActual}</b>
-                        <button className="btn btn-primary bi-chevron-right" onClick={() => {
-                            if (paginaActual < paginaMaxima) setPaginaActual(paginaActual + 1);
-                        }}></button>
+                        <button className="btn btn-primary bi-chevron-right" disabled={!(paginaActual < paginaMaxima)}
+                                onClick={() => {
+                                    if (paginaActual < paginaMaxima) setPaginaActual(paginaActual + 1);
+                                }}></button>
                     </div>
                 </div>
             )
