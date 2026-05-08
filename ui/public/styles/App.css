@@ -7,10 +7,9 @@ body {
     margin: 0;
     height: 100vh;
     overflow: hidden;
-    background-image:
-        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='2048' height='1024'%3E%3Ctext x='50%25' y='50%25' font-family='sans-serif' font-weight='900' font-size='256' fill='rgba(0,0,0,0.15)' text-anchor='middle' dominant-baseline='middle'%3EMANEX%3C/text%3E%3C/svg%3E"),
-        conic-gradient(from 150deg at 50% 33%, #e5e5f7 60deg, transparent 0),
-        conic-gradient(from -30deg at 50% 66%, #e5e5f7 60deg, #ffffff 0);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='2048' height='1024'%3E%3Ctext x='50%25' y='50%25' font-family='sans-serif' font-weight='900' font-size='256' fill='rgba(0,0,0,0.15)' text-anchor='middle' dominant-baseline='middle'%3EMANEX%3C/text%3E%3C/svg%3E"),
+    conic-gradient(from 150deg at 50% 33%, #e5e5f7 60deg, transparent 0),
+    conic-gradient(from -30deg at 50% 66%, #e5e5f7 60deg, #ffffff 0);
     background-size: 80px 40px, 20px 20px, 20px 20px;
     background-position: 0 0, 0 0, 10px 0;
     background-repeat: repeat;
@@ -80,19 +79,16 @@ form div {
     opacity: .85;
 }
 
-.app-shell {
-    position: relative;
-    height: 100vh;
-    overflow: hidden;
-}
+/*.app-shell {*/
+/*    position: relative;*/
+/*    height: 100vh;*/
+/*    overflow: hidden;*/
+/*}*/
 
 .main-nav {
-    width: 280px;
+    width: 15dvw;
     height: 100vh;
-    position: fixed;
-    left: 0;
-    top: 0;
-    flex-shrink: 0;
+    position: static;
     overflow-y: auto;
 }
 
@@ -105,7 +101,7 @@ form div {
 }
 
 .app-content {
-    margin-left: 280px;
+    width: 85dvw;
     flex-grow: 1;
     height: 100vh;
     display: flex;
@@ -138,6 +134,7 @@ form div {
 }
 
 @media (max-width: 1000px) {
+
     .mobile-menu-header {
         display: flex !important;
     }
@@ -156,12 +153,11 @@ form div {
     }
 
     .main-nav {
-        width: 100%;
-        height: auto;
+        width: 100dvw;
+        height: 10dvh;
+        min-height: 10dvh;
         max-height: 0;
-        position: fixed;
-        left: 0;
-        top: 60px;
+        position: static;
         flex-direction: column;
         overflow-y: hidden;
         overflow-x: auto;
@@ -171,36 +167,35 @@ form div {
     }
 
     .main-nav.menu-open {
-        max-height: calc(100vh - 60px);
-        overflow-y: auto;
+        max-height: 100dvh;
+        position: static;
+        height: max-content;
+        overflow-y: scroll;
         padding: 1rem !important;
+        transition: max-height 0.3s ease-in-out;
     }
 
     .mobile-menu-header {
-        position: fixed;
+        position: static;
         top: 0;
         left: 0;
         right: 0;
-        height: 60px;
+        height: 10dvh;
         background-color: #212529;
         padding: 0.5rem 1rem !important;
         z-index: 1000;
         display: flex !important;
     }
 
-    .main-nav .nav {
-        flex-direction: column !important;
-        margin-top: 0.5rem;
-    }
-
     .main-nav .nav-link {
         padding: 0.75rem 0.5rem;
+        margin: 0.25rem 0;
         font-size: 0.95rem;
         display: flex;
         align-items: center;
         justify-content: flex-start;
         border-radius: 4px;
-        transition: background-color 0.2s ease;
+        transition: background-color 0.3s ease-in-out;
     }
 
     .main-nav .nav-link:hover {
@@ -208,19 +203,25 @@ form div {
         color: white;
     }
 
-    .main-nav hr {
-        margin: 0.5rem 0;
-    }
-
-    .app-content {
-        margin-left: 0;
-        margin-top: 60px;
-        height: calc(100vh - 60px);
+    .app-shell {
+        display: flex;
         flex-direction: column;
+        height: 100dvh;
+    }
+    .app-content {
+        height: 90dvh !important;
+        width: 100dvw !important;
+        flex-direction: column;
+        overflow: auto;
+        justify-content: unset;
+        align-items: unset;
     }
 
     #desplegableUsuario {
         margin-top: 0.5rem;
+    }
+    #desplegableUsuario:hover {
+        transform: scale(1.01);
     }
 
     #desplegableUsuario .btn {

@@ -9,8 +9,8 @@ dotenv.config();
  * Devuelve una lista paginada de empleados
  * @author Covadonga Blanco Álvarez
  * @version 1.0.1
- * @param {Request} req 
- * @param {Response} res 
+ * @param {Request} req
+ * @param {Response} res
  */
 export function listaEmpleados(req, res) {
 
@@ -19,16 +19,17 @@ export function listaEmpleados(req, res) {
         user: process.env.DB_USER,
         password: process.env.DB_PASS,
         database: process.env.DB_NAME,
-        port:process.env.DB_PORT
+        port: process.env.DB_PORT
     });
 
-    let {cantidad, pagina } = req.query;
+    let {cantidad, pagina} = req.query;
 
     // valores por defecto
+
     cantidad = cantidad !== undefined ? parseInt(cantidad) : Paginacion.DEFAULT_CANTIDAD_PAGINACION;
     pagina = pagina !== undefined ? parseInt(pagina) : Paginacion.DEFAULT_PAGINA;
 
-    
+
     if (isNaN(cantidad) || isNaN(pagina)) {
         return res.status(400).send({
             status: 400,
@@ -59,12 +60,18 @@ export function listaEmpleados(req, res) {
                 message: "Error de base de datos"
             });
         }
-
+        let totalResultados = 0;
+        connection.query(`SELECT COUNT(*) as total FROM empleado e 
+                    WHERE e.esVisible = 1;`, (error, result) => {
+            totalResultados = result[0].total;
+        })
         connection.query(
-                `SELECT e.*, u.email FROM empleado e JOIN usuario u ON e.USERNAME = u.USERNAME 
-             WHERE e.esVisible = 1 
-             ORDER BY e.username 
-             LIMIT ? OFFSET ?`,
+            `SELECT e.*, u.email
+             FROM empleado e
+                      JOIN usuario u ON e.USERNAME = u.USERNAME
+             WHERE e.esVisible = 1
+             ORDER BY e.id DESC LIMIT ?
+             OFFSET ?`,
             [cantidad, offset],
             (error, result) => {
 
@@ -79,9 +86,12 @@ export function listaEmpleados(req, res) {
 
                 return res.status(200).send({
                     status: 200,
-                    pagina,
-                    cantidad,
-                    resultados: result.length,
+                    meta: {
+                        pagina,
+                        cantidad,
+                        totalPaginas: Math.ceil(totalResultados / cantidad),
+                        resultados: result.length
+                    },
                     data: result
                 });
             }
