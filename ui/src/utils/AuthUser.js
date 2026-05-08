@@ -19,8 +19,6 @@ export async function inciarSesion({request}) {
     const wantsToKeepSession = !!postData?.keepSession;
     const sessionToken = postData?.token;
 
-    // if (!sessionToken && (!usuario || !password)) return;
-    console.log(sessionToken)
     return authUser(usuario, password, wantsToKeepSession, sessionToken);
 
 }

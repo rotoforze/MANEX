@@ -98,7 +98,7 @@ async function getNivelAcceso(token, pool) {
             'SELECT e.ID_DEPARTAMENTO FROM auth_token a JOIN EMPLEADO e ON a.USERNAME = e.USERNAME WHERE a.token = ? AND a.EXPIRES_AT > NOW();',
             [token]
         );
-
+        pool.end();
         if (rows.length > 0) {
             return rows[0].ID_DEPARTAMENTO;
         }

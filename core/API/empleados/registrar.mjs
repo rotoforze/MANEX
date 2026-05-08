@@ -16,7 +16,8 @@ dotenv.config();
  */
 async function registrar(req, res) {
 
-    await verificadorDatos(req, res);
+        await verificadorDatos(req, res)
+    if (res.headersSent) return;
 
     const { nombre, apellidos, fecha_nacimiento,
         telefono, ID_contrato, ID_departamento,

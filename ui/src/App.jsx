@@ -8,6 +8,7 @@ import {ErrorPage} from './routes/ErrorPage';
 import LoginPage from './routes/LoginPage';
 import {Dashboard} from './routes/Dashboard';
 import {inciarSesion as actionInicioSesion} from './utils/AuthUser';
+import {registrarUsuario as actionRegistro} from "./utils/RegisterNewUser.js";
 import {loaderAuthTokenCookie as loaderCookie, UserProvider} from './context/UserContext';
 import {Profile} from "./routes/Profile.jsx";
 import {Configuration} from "./routes/Configuration.jsx";
@@ -32,7 +33,7 @@ function App() {
       { path: '/', element: <LoginPage />, action: actionInicioSesion },
       { path: '/error', element: <ErrorPage /> },
       { path: '/dashboard', element: <Dashboard /> },
-      { path: '/empleados', element: <Empleados /> },
+      { path: '/empleados', element: <Empleados />, action: actionRegistro },
       { path: '/profile', element: <Profile/>},
       { path: '/configuration', element: <Configuration/>},
       { path: '/logout', element: <Logout/>}

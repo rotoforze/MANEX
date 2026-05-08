@@ -1,5 +1,5 @@
-import React, { useEffect, useState} from 'react'
-import {Form, useActionData, useNavigate} from 'react-router-dom'
+import React, {useEffect, useState} from 'react'
+import {Form, useActionData, useNavigate, useNavigation} from 'react-router-dom'
 import {useUsers} from "../context/UserContext.jsx";
 import {Loading} from "../components/Loading.jsx";
 import '../../public/styles/loginPage.css'
@@ -14,24 +14,26 @@ import '../../public/styles/loginPage.css'
  * @constructor
  */
 const LoginPage = () => {
-    
+
     const actionData = useActionData();
     const navigate = useNavigate();
+    const navigation = useNavigation();
     const {user, changeUserInformation} = useUsers();
-    
+    const seEstaEnviando = navigation.state === 'submitting';
+
     const [passwordShown, setPasswordShown] = useState(false);
     const [cargando, setCargado] = useState(true);
-    
+
     useEffect(() => {
         if (actionData) navigate('/Dashboard');
-        
+
     }, [actionData, navigate]);
-     
+
     // comprueba la conexión con el servidor para poder cargar la app.
     useEffect(() => {
-        
+
         try {
-            fetch( import.meta.env.VITE_BACKEND,
+            fetch(import.meta.env.VITE_BACKEND,
                 {method: 'GET', headers: {'Content-Type': 'application/json'}})
                 .then((response) => response.json())
                 .then(data => {
@@ -59,7 +61,7 @@ const LoginPage = () => {
     return (
         <main className="login-page d-flex align-items-center justify-content-center min-vh-100 px-3">
             {cargando ? (
-                <Loading />
+                <Loading/>
             ) : (
                 <section className="card login-card shadow-lg border-0 w-100">
                     <div className="card-body p-4 p-md-5">
@@ -141,9 +143,9 @@ const LoginPage = () => {
 
                                 <button
                                     className="btn btn-primary btn-lg w-100"
-                                    type="submit"
+                                    type="submit" disabled={seEstaEnviando}
                                 >
-                                    Iniciar sesion
+                                    {seEstaEnviando ? "Iniciando sesión..." : 'Iniciar sesion'}
                                 </button>
                             </div>
                         </Form>
