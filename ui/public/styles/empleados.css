@@ -1,0 +1,14 @@
+.empleados-container {
+    overflow: auto;
+}
+
+@media (max-width: 1000px) {
+    .empleados-container {
+        height: 100%;
+        width: 100%;
+    }
+    .empleados-container .card {
+        width: 100%;
+        height: 100%;
+    }
+}

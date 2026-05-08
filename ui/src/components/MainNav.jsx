@@ -60,7 +60,7 @@ export const MainNav = () => {
             Inicio
           </NavLink>
           <NavLink className={navLinkClass} to="/Empleados" end onClick={closeMenu}>
-            <i className="bi bi-house-door me-2" aria-hidden="true" />
+            <i className="bi bi-person me-2" aria-hidden="true" />
             Empleados
           </NavLink>
         </li>

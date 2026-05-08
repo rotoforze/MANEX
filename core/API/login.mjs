@@ -66,6 +66,7 @@ export function login(req, res) {
                 'SELECT a.USERNAME, a.TOKEN, a.EXPIRES_AT, e.id, e.id_departamento FROM auth_token a JOIN empleado e ON a.username = e.username WHERE a.TOKEN = ? AND a.EXPIRES_AT > NOW();',
                 [token],
                 (err, result) => {
+                    connection.release();
                     // como filtramos por token, solo recibiremos el que coincida, ademas que no haya expirado
                     if (result.length > 0) {
                         // si el token está a punto de caducar, lo vamos a actualizar creando uno nuevo.
