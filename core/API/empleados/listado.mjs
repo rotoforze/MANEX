@@ -61,9 +61,9 @@ export function listaEmpleados(req, res) {
         }
 
         connection.query(
-            `SELECT * FROM empleado 
-             WHERE esVisible = 1 
-             ORDER BY username 
+                `SELECT e.*, u.email FROM empleado e JOIN usuario u ON e.USERNAME = u.USERNAME 
+             WHERE e.esVisible = 1 
+             ORDER BY e.username 
              LIMIT ? OFFSET ?`,
             [cantidad, offset],
             (error, result) => {
