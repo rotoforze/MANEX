@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import {SignInForm} from "../components/SignInForm.jsx";
 import {TablaEmpleados} from "../components/TablaEmpleados.jsx";
+import '../../public/styles/Empleados.css';
 
 /**
  *
@@ -16,10 +17,10 @@ export function Empleados () {
     const [registroVisible, setRegistroVisible] = useState(false);
 
     return (
-        <div className="d-flex flex-column vw-100 vh-100 m-5 card">
+        <div className="d-flex flex-column card w-100 h-100 empleados-container">
             <div className={"d-flex flex-column align-items-center justify-content-center gap-2 w-100 p-4"}>
                 <h4>Acciones</h4>
-                <div className={"d-flex gap-2"}>
+                <div className={"d-flex gap-2 align-items-start justify-content-start"}>
 
                     <button className={"btn " + (registroVisible ? 'btn-danger' : 'btn-primary')} onClick={ () => {
                         // muestra el componente de registro
@@ -28,10 +29,10 @@ export function Empleados () {
 
                     <button className="btn btn-primary">Refrescar panel</button>
                 </div>
-                { registroVisible ? <SignInForm /> : ''}
+                { registroVisible ? <SignInForm /> : <b></b>}
             </div>
             <hr />
-            <div className={"d-flex flex-column align-items-center justify-content-center gap-2 w-100 p-4"}>
+            <div className={"d-flex flex-column gap-2 w-100 p-4 justify-content-center overflow-scroll"}>
                 <TablaEmpleados />
             </div>
         </div>

@@ -114,10 +114,11 @@ export function SignInForm() {
                                 </div>
                             </div>
 
+
                             <div className="row">
                                 <div className="col-md-4 mb-3">
                                     <label>
-                                        Fecha de nacimiento <span className="text-danger">*</span>
+                                    Fecha de nacimiento <span className="text-danger">*</span>
                                     </label>
                                     <input
                                         type="date"
