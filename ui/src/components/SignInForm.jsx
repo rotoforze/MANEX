@@ -1,51 +1,20 @@
-import React, { useEffect, useState } from 'react';
-import { Form, useActionData, useNavigate } from 'react-router-dom';
+import React, {useEffect, useState} from 'react';
+import {Form, useActionData, useNavigate, useNavigation} from 'react-router-dom';
 import { useUsers } from "../context/UserContext.jsx";
 import { Loading } from "./Loading.jsx";
 import "../../public/styles/SignInPage.css";
 
-export function SignInForm( { funcionDeCierreDeFormulario } ) {
+export function SignInForm( { funcionDeCierreDeFormulario, handleNuevoRegistro } ) {
 
     const actionData = useActionData();
     const navigate = useNavigate();
+    const navigation = useNavigation();
     const { user } = useUsers();
+    const seEstaEnviando = navigation.state === 'submitting';
 
     const [cargando, setCargado] = useState(true);
     const [passwordShown, setPasswordShown] = useState(false);
     const [confirmPasswordShown, setConfirmPasswordShown] = useState(false);
-
-    //Comprobación en el FRONTEND para no insertar numeros negativos
-    const [idContratoError, setIdContratoError] = useState('');
-    const [idDepartamentoError, setIdDepartamentoError] = useState('');
-
-    const validatePositiveId = (value) => {
-        if (value < 1) {
-            return 'El ID debe ser un número positivo';
-        }
-        return '';
-    };
-
-    const handleIdContratoChange = (e) => {
-        const value = e.target.value;
-        if (value === '') {
-            setIdContratoError('');
-        } else if (Number(value) < 1) {
-            setIdContratoError('El ID Contrato debe ser un número positivo');
-        } else {
-            setIdContratoError('');
-        }
-    };
-
-    const handleIdDepartamentoChange = (e) => {
-        const value = e.target.value;
-        if (value === '') {
-            setIdDepartamentoError('');
-        } else if (Number(value) < 1) {
-            setIdDepartamentoError('El ID Departamento debe ser un número positivo');
-        } else {
-            setIdDepartamentoError('');
-        }
-    };
 
     useEffect(() => {
         fetch(import.meta.env.VITE_BACKEND)
@@ -56,11 +25,10 @@ export function SignInForm( { funcionDeCierreDeFormulario } ) {
             .catch(() => navigate('/error'))
             .finally(() => setCargado(false));
     }, [navigate]);
-
     useEffect(() => {
         if (!actionData) return;
         if (actionData.success) {
-            navigate('/signinpage');
+            handleNuevoRegistro();
         }
     }, [actionData, navigate]);
 
@@ -70,6 +38,7 @@ export function SignInForm( { funcionDeCierreDeFormulario } ) {
                 <Loading />
             ) : (
                 <div className="card shadow w-100 signin-form">
+                    { actionData && actionData[1] && <div className={`alert ${actionData[0] ? 'alert-success' : 'alert-danger'}`}>{actionData[1]}</div>}
                     <div className="card-header d-flex justify-content-end">
                         <button className={"bi-x bi btn btn-outline-danger"} onClick={() => funcionDeCierreDeFormulario(false)}></button>
                     </div>
@@ -114,7 +83,6 @@ export function SignInForm( { funcionDeCierreDeFormulario } ) {
                                         className="form-control"
                                         id="apellidos"
                                         name="apellidos"
-                                        required
                                     />
                                 </div>
                             </div>
@@ -156,18 +124,12 @@ export function SignInForm( { funcionDeCierreDeFormulario } ) {
                                     </label>
                                     <input
                                         type="number"
-                                        className={`form-control ${idContratoError ? 'is-invalid' : ''}`}
+                                        className={`form-control`}
                                         name="id_contrato"
                                         id="id_contrato"
                                         min="1"
-                                        onChange={handleIdContratoChange}
                                         required
                                     />
-                                    {idContratoError && (
-                                        <div className="invalid-feedback d-block">
-                                            {idContratoError}
-                                        </div>
-                                    )}
                                 </div>
                                 <div className="col-md-6 mb-3">
                                     <label htmlFor={"id_departamento"}>
@@ -175,18 +137,12 @@ export function SignInForm( { funcionDeCierreDeFormulario } ) {
                                     </label>
                                     <input
                                         type="number"
-                                        className={`form-control ${idDepartamentoError ? 'is-invalid' : ''}`}
+                                        className={`form-control`}
                                         name="id_departamento"
                                         id="id_departamento"
                                         min="1"
-                                        onChange={handleIdDepartamentoChange}
                                         required
                                     />
-                                    {idDepartamentoError && (
-                                        <div className="invalid-feedback d-block">
-                                            {idDepartamentoError}
-                                        </div>
-                                    )}
                                 </div>
                             </div>
 
@@ -216,7 +172,6 @@ export function SignInForm( { funcionDeCierreDeFormulario } ) {
                                         className="form-control"
                                         name="email"
                                         id="email"
-                                        required
                                         autoComplete={"username"}
                                     />
                                 </div>
@@ -268,8 +223,8 @@ export function SignInForm( { funcionDeCierreDeFormulario } ) {
                                 </div>
                             </div>
 
-                            <button className="btn btn-primary w-100" type="submit">
-                                Registrar
+                            <button className="btn btn-primary w-100" type="submit" disabled={seEstaEnviando}>
+                                { seEstaEnviando ? "Registrando..." : "Registrar"}
                             </button>
 
                         </Form>

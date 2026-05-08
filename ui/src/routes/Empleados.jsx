@@ -15,6 +15,12 @@ import '../../public/styles/empleados.css';
 export function Empleados () {
 
     const [registroVisible, setRegistroVisible] = useState(false);
+    const [refreshKey, setRefreshKey] = useState(0);
+
+    function handleNuevoRegistro() {
+        setRefreshKey(prevKey => prevKey + 1);
+        setRegistroVisible(false);
+    }
 
     return (
         <div className="d-flex flex-column card w-100 h-100 empleados-container">
@@ -29,11 +35,11 @@ export function Empleados () {
 
                     <button className="btn btn-primary">Refrescar panel</button>
                 </div>
-                { registroVisible ? <SignInForm funcionDeCierreDeFormulario={setRegistroVisible} /> : <b></b>}
+                { registroVisible ? <SignInForm funcionDeCierreDeFormulario={setRegistroVisible} handleNuevoRegistro={handleNuevoRegistro} /> : <b></b>}
             </div>
             <hr />
             <div className={"d-flex flex-column gap-2 w-100 p-4 justify-content-center overflow-scroll"}>
-                <TablaEmpleados />
+                <TablaEmpleados key={refreshKey} />
             </div>
         </div>
     )
