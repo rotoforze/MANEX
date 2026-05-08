@@ -97,6 +97,14 @@ form div {
     overflow-y: auto;
 }
 
+.mobile-menu-header {
+    display: none;
+}
+
+.menu-toggle-btn {
+    display: none !important;
+}
+
 .app-content {
     margin-left: 280px;
     flex-grow: 1;
@@ -123,4 +131,101 @@ form div {
 
 #desplegableUsuario {
     border-radius: 18px;
+}
+
+@media (max-width: 1000px) {
+    .mobile-menu-header {
+        display: flex !important;
+    }
+
+    .menu-toggle-btn {
+        display: block !important;
+        font-size: 1.5rem;
+    }
+
+    .menu-toggle-btn i {
+        transition: transform 0.3s ease;
+    }
+
+    .main-nav.menu-open .menu-toggle-btn i {
+        transform: rotate(180deg);
+    }
+
+    .main-nav {
+        width: 100%;
+        height: auto;
+        max-height: 0;
+        position: fixed;
+        left: 0;
+        top: 60px;
+        flex-direction: column;
+        overflow-y: hidden;
+        overflow-x: auto;
+        padding: 0 1rem !important;
+        transition: max-height 0.3s ease-in-out;
+        z-index: 999;
+    }
+
+    .main-nav.menu-open {
+        max-height: calc(100vh - 60px);
+        overflow-y: auto;
+        padding: 1rem !important;
+    }
+
+    .mobile-menu-header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 60px;
+        background-color: #212529;
+        padding: 0.5rem 1rem !important;
+        z-index: 1000;
+        display: flex !important;
+    }
+
+    .main-nav .nav {
+        flex-direction: column !important;
+        margin-top: 0.5rem;
+    }
+
+    .main-nav .nav-link {
+        padding: 0.75rem 0.5rem;
+        font-size: 0.95rem;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        border-radius: 4px;
+        transition: background-color 0.2s ease;
+    }
+
+    .main-nav .nav-link:hover {
+        background-color: #0d6efd;
+        color: white;
+    }
+
+    .main-nav hr {
+        margin: 0.5rem 0;
+    }
+
+    .app-content {
+        margin-left: 0;
+        margin-top: 60px;
+        height: calc(100vh - 60px);
+        flex-direction: column;
+    }
+
+    #desplegableUsuario {
+        margin-top: 0.5rem;
+    }
+
+    #desplegableUsuario .btn {
+        font-size: 0.9rem;
+        padding: 0.25rem 0 !important;
+    }
+
+    .main-nav-avatar {
+        width: 28px;
+        height: 28px;
+    }
 }
