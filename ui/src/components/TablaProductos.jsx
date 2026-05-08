@@ -58,34 +58,35 @@ export function TablaProductos() {
                                 <th scope="col">#</th>
                                 <th scope="col">Nombre</th>
                                 <th scope="col">Descripción</th>
-                                <th scope="col">Precio</th>
-                                <th scope="col">Stock</th>
                                 <th scope="col">Estado</th>
                                 <th scope="col">Acciones</th>
                             </tr>
                         </thead>
 
                         <tbody className="table-group-divider">
-                            {listaProductos.map((producto) => (
-                                <tr key={producto?.ID} className="h-auto">
+                            {
+                                listaProductos.map((producto) => (
 
-                                    <th scope="row">{producto?.ID}</th>
+                                    <tr key={producto?.ID} className="h-auto">
 
-                                    <td>{producto?.nombre}</td>
+                                        <th scope="row">{producto?.ID}</th>
 
-                                    <td>{producto?.descripcion}</td>
+                                        <td>{producto?.Nombre}</td>
 
-                                    <td>{producto?.estado}€</td>
+                                        <td>{producto?.Descripcion}</td>
 
-                                    <td className={"row-cols-1 gap-2"}>
-                                        <button className="btn btn-primary bi-pencil-fill"></button>
+                                        <td>{producto?.Estado}</td>
 
-                                        <button className="btn btn-danger bi-trash-fill mt-2"></button>
-                                    </td>
+                                        <td className={"row-cols-1 gap-2"}>
+                                            <button className="btn btn-primary bi-pencil-fill"></button>
 
-                                </tr>
-                            )
-                            )}
+                                            <button className="btn btn-danger bi-trash-fill mt-2"></button>
+                                        </td>
+
+                                    </tr>
+
+                                ))
+                            }
                         </tbody>
                     </table>
 
