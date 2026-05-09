@@ -20,7 +20,9 @@ import delEmpleado from "./API/empleados/eliminar.mjs";
 import swaggerUi from 'swagger-ui-express';
 import swaggerDocument from './swagger.json' with { type: "json" };
 import paginacion from "./API/paginacion.mjs";
-
+import listadoPermisos from "./API/permisos/listado.mjs";
+import guardarPermisos from "./API/permisos/guardar.mjs";
+import eliminarPermisos from "./API/permisos/eliminar.mjs";
 
 const app = express();
 
@@ -169,5 +171,19 @@ app.post('/empleados', (req, res) => {
 });
 app.post('/contratos', newContrato);
 app.post('/departamentos', newDepartamento);
+
+
+app.get('/permisos', listadoPermisos);
+
+app.post('/permisos', (req, res) => {
+    if (req?.body?.ruta && req?.body?.metodo && req?.body?.permisos) {
+       return guardarPermisos(req, res);
+    }
+    return res.status(400).json({
+        message: 'Datos inválidos'
+    });
+});
+
+app.delete('/permisos', eliminarPermisos);
 
 app.listen(80, () => console.log('Escuchando llamadas en http://localhost:80'));
