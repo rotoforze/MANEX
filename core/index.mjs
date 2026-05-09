@@ -1,18 +1,18 @@
-import express, {urlencoded} from 'express';
+import express, { urlencoded } from 'express';
 import cors from 'cors';
-import {login} from "./API/login.mjs";
-import {listaEmpleados} from "./API/empleados/listado.mjs";
+import { login } from "./API/login.mjs";
+import { listaEmpleados } from "./API/empleados/listado.mjs";
 import getEmpleado from "./API/empleados/empleado.mjs";
-import {listaProductos} from "./API/productos/listado.mjs";
+import { listaProductos } from "./API/productos/listado.mjs";
 import getProducto from "./API/productos/producto.mjs";
 import getContrato from "./API/contratos/contrato.mjs";
-import {listaContratos} from "./API/contratos/listado.mjs";
+import { listaContratos } from "./API/contratos/listado.mjs";
 import delContrato from "./API/contratos/eliminar.mjs";
 import newContrato from "./API/contratos/nuevo.mjs";
 import getDepartamento from "./API/departamentos/departamento.mjs";
 import delDepartamento from "./API/departamentos/eliminar.mjs";
 import newDepartamento from "./API/departamentos/nuevo.mjs";
-import {listaDepartamentos} from "./API/departamentos/listado.mjs";
+import { listaDepartamentos } from "./API/departamentos/listado.mjs";
 import auth from "./API/middlewareAutenticación.mjs";
 import registrar from "./API/empleados/registrar.mjs";
 import actualizar from "./API/empleados/actualizar.mjs";
@@ -24,11 +24,23 @@ import listadoPermisos from "./API/permisos/listado.mjs";
 import guardarPermisos from "./API/permisos/guardar.mjs";
 import eliminarPermisos from "./API/permisos/eliminar.mjs";
 
+import {listaFichajes} from "./API/fichajes/listado.mjs";
+import registrarFichaje from "./API/fichajes/nuevo.mjs";
+import actualizarFichaje from "./API/fichajes/actualizar.mjs";
+import delFichaje from "./API/fichajes/eliminar.mjs";
+import getFichaje from "./API/fichajes/fichaje.mjs";
+
+import {listaIncidencias} from "./API/incidencias/listado.mjs";
+import registrarIncidencias from "./API/incidencias/nuevo.mjs";
+import actualizarIncidencia from "./API/incidencias/actualizar.mjs";
+import delIncidencia from "./API/incidencias/eliminar.mjs";
+import getIncidencia from "./API/incidencias/incidencia.mjs";
+
 const app = express();
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use(cors());
-app.use(express.urlencoded({extended: true}));
+app.use(express.urlencoded({ extended: true }));
 app.use(auth);
 app.get('/', (req, res) => {
     res.send({
@@ -57,6 +69,18 @@ app.get('/', (req, res) => {
                 'departamento': ['/departamentos/', 'GET'],
                 'nuevoDepartamento': ['/departamentos', 'POST'],
                 'eliminarDepartamento': ['/departamentos/eliminar/', 'DELETE']
+            },
+            'fichaje': {
+                'listado': ['/fichajes', 'GET'],
+                'fichaje': ['/fichajes/', 'GET'],
+                'nuevoFichaje': ['/fichajes', 'POST'],
+                'eliminarFichajes': ['/fichajes/eliminar/', 'DELETE']
+            },
+            'incidencia': {
+                'listado': ['/fichajes', 'GET'],
+                'incidencia': ['/fichajes/', 'GET'],
+                'nuevaIncidencia': ['/fichajes', 'POST'],
+                'eliminarIncidencia': ['/fichajes/eliminar/', 'DELETE']
             }
         }
     });
@@ -95,6 +119,43 @@ app.get('/empleados', (req, res) => {
 
     } else listaEmpleados(req, res);
 });
+
+app.get('/fichajes', (req, res) => {
+    const parametrosRecibidos = Object.keys(req.query);
+
+    const parametrosNoValidos = parametrosRecibidos.filter(p => !paginacion.PARAMETROS_PERMITIDOS.includes(p));
+
+    if (parametrosNoValidos.length > 0) {
+        return res.status(400).send({
+            status: 400,
+            message: `Parámetros no permitidos: ${parametrosNoValidos.join(', ')}`
+        });
+    }
+
+    if (req?.query?.id) {
+        getFichaje(req, res);
+
+    } else listaFichajes(req, res);
+});
+
+app.get('/incidencias', (req, res) => {
+    const parametrosRecibidos = Object.keys(req.query);
+
+    const parametrosNoValidos = parametrosRecibidos.filter(p => !paginacion.PARAMETROS_PERMITIDOS.includes(p));
+
+    if (parametrosNoValidos.length > 0) {
+        return res.status(400).send({
+            status: 400,
+            message: `Parámetros no permitidos: ${parametrosNoValidos.join(', ')}`
+        });
+    }
+
+    if (req?.query?.id) {
+        getIncidencia(req, res);
+
+    } else listaIncidencias(req, res);
+});
+
 
 app.get('/productos', (req, res) => {
     const parametrosRecibidos = Object.keys(req.query);
@@ -150,7 +211,9 @@ app.get('/departamentos', (req, res) => {
     } else listaDepartamentos(req, res);
 });
 
-app.delete('/empleados', delEmpleado)
+app.delete('/empleados', delEmpleado);
+app.delete('/fichajes', delFichaje);
+app.delete('/incidencias', delIncidencia);
 app.delete('/contratos', delContrato);
 app.delete('/departamentos', delDepartamento);
 
@@ -169,6 +232,41 @@ app.post('/empleados', (req, res) => {
         actualizar(req, res);
     } else registrar(req, res);
 });
+
+
+app.post('/fichages', (req, res) => {
+    if (!req.body) {
+        return res.send({
+            status: 400,
+            body: {
+                'message': 'Not valid body: ' + req
+            }
+        });
+    }
+    // si en la petición viene un ID, vamos a actualizarUsuario
+    // en vez de a registrar
+    if (req?.body?.id) {
+        actualizarFichaje(req, res);
+    } else registrarFichaje(req, res);
+});
+
+app.post('/incidencia', (req, res) => {
+    if (!req.body) {
+        return res.send({
+            status: 400,
+            body: {
+                'message': 'Not valid body: ' + req
+            }
+        });
+    }
+    // si en la petición viene un ID, vamos a actualizarUsuario
+    // en vez de a registrar
+    if (req?.body?.id) {
+        actualizarIncidencia(req, res);
+    } else registrarIncidencias(req, res);
+});
+
+
 app.post('/contratos', newContrato);
 app.post('/departamentos', newDepartamento);
 
@@ -177,7 +275,7 @@ app.get('/permisos', listadoPermisos);
 
 app.post('/permisos', (req, res) => {
     if (req?.body?.ruta && req?.body?.metodo && req?.body?.permisos) {
-       return guardarPermisos(req, res);
+        return guardarPermisos(req, res);
     }
     return res.status(400).json({
         message: 'Datos inválidos'
