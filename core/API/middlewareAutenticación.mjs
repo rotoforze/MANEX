@@ -54,6 +54,7 @@ const auth = async (req, res, next) => {
     const rutaRecortada = req.path;
     // comprobamos si la ruta tiene permisos
     const permisos = obtenerPermisos();
+    console.log(rutaRecortada, permisos[rutaRecortada])
 
     const metodosRuta = permisos[rutaRecortada];
     let permisoAprobado = false;

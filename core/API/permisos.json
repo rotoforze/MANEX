@@ -11,7 +11,22 @@
             "*"
         ]
     },
-    "/empleados": null,
+    "/empleados": {
+        "protected": false,
+        "DELETE": [
+            "5",
+            "7",
+            "8"
+        ],
+        "POST": [
+            "5",
+            "7",
+            "8"
+        ],
+        "GET": [
+            ">1"
+        ]
+    },
     "/productos": {
         "protected": false,
         "GET": [
@@ -68,18 +83,6 @@
         ],
         "DELETE": [
             "8"
-        ]
-    },
-    "/fichajes": {
-        "protected": false,
-        "GET": [
-            ">1"
-        ],
-        "POST": [
-            ">1"
-        ],
-        "DELETE": [
-            ">1"
         ]
     }
 }
