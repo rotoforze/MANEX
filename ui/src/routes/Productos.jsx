@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { SignInForm } from "../components/SignInForm.jsx";
+import { NuevoProductoForm } from "../components/NewProduct.jsx";
 import { TablaProductos } from "../components/TablaProductos.jsx";
 import '../../public/styles/empleados.css';
 
@@ -63,9 +63,9 @@ export function Productos() {
                 {
                     registroVisible
                         ? (
-                            <SignInForm
+                            <NuevoProductoForm
                                 funcionDeCierreDeFormulario={setRegistroVisible}
-                                handleNuevoRegistro={handleNuevoRegistro}
+                                handleNuevoProducto={handleNuevoRegistro}
                             />
                         )
                         : null

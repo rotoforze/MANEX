@@ -15,3 +15,27 @@
         height: 100%;
     }
 }
+
+.nuevo-producto-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.nuevo-producto-form .nombre-estado-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.nuevo-producto-form .nombre-estado-container .nombre,
+.nuevo-producto-form .nombre-estado-container .estado {
+    flex: 1;
+}
+
+.nuevo-producto-form .descripcion {
+    width: 100%;
+    height: 100px;
+    resize: none;
+}
+
