@@ -1,5 +1,5 @@
 import mysql from 'mysql2/promise';
-import permisions from "./permisions.mjs";
+import { obtenerPermisos } from "./permisions.mjs";
 
 
 /**
@@ -44,14 +44,11 @@ const auth = async (req, res, next) => {
     }
     // comprobamos si el token es valido (si existe en la bbdd)
     const nivelAcceso = await getNivelAcceso(req?.headers?.token, pool);
-    if (!nivelAcceso || nivelAcceso === -1) {
-        return res.status(401).json({message: 'Token caducado o inexistente'});
-    }
-
     // Validación de permisos
     const rutaRecortada = req.path.slice(0, req.path.indexOf('/', 1));
     // comprobamos si la ruta tiene permisos
-    const metodosRuta = permisions[rutaRecortada];
+    const permisos = obtenerPermisos();
+    const metodosRuta = permisos[rutaRecortada];
     let permisoAprobado = false;
     if (metodosRuta && metodosRuta[req.method]) {
 
@@ -74,12 +71,11 @@ const auth = async (req, res, next) => {
         }
 
         if (!metodosRuta[req.method].includes(nivelAcceso) && !permisoAprobado) {
-            return res.status(403).json({message: 'No tienes permiso para esta acción'});
+            return res.status(403).json({ message: 'No tienes permiso para esta acción' });
         }
     }
 
     // lo guardo en la request por si acaso
-    // req.userLevel = nivelAcceso;
     return next();
 }
 
