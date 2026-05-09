@@ -1,50 +1,93 @@
-import {createBrowserRouter, RouterProvider} from 'react-router-dom'
+import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import '../public/styles/App.css'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
-import {RootLayout} from './routes/RootLayout';
-import {ErrorPage} from './routes/ErrorPage';
+import { RootLayout } from './routes/RootLayout';
+import { ErrorPage } from './routes/ErrorPage';
 import LoginPage from './routes/LoginPage';
-import {Dashboard} from './routes/Dashboard';
-import {inciarSesion as actionInicioSesion} from './utils/AuthUser';
-import {registrarUsuario as actionRegistro} from "./utils/RegisterNewUser.js";
-import {loaderAuthTokenCookie as loaderCookie, UserProvider} from './context/UserContext';
-import {Profile} from "./routes/Profile.jsx";
-import {Configuration} from "./routes/Configuration.jsx";
-import {Logout} from "./routes/Logout.jsx";
-import {Empleados} from "./routes/Empleados.jsx";
+import { Dashboard } from './routes/Dashboard';
+import { inciarSesion as actionInicioSesion } from './utils/AuthUser';
+import { registrarUsuario as actionRegistro } from "./utils/RegisterNewUser.js";
+import { loaderAuthTokenCookie as loaderCookie, UserProvider } from './context/UserContext';
+import { Profile } from "./routes/Profile.jsx";
+import { Configuration } from "./routes/Configuration.jsx";
+import { Logout } from "./routes/Logout.jsx";
+import { Empleados } from "./routes/Empleados.jsx";
+import { Productos } from "./routes/Productos.jsx";
 
 /**
  * Contiene el router de la aplicación, parte más alta de la aplicación.
  *
  * @returns {React.JSX.Element}
  * @author Alex Bernardos Gil
- * @version 1.2.0
+ * @contributor Eneas de la Rosa Menéndez Pedrosa
+ * @version 1.2.1
  * @constructor
  */
 function App() {
-  const router = createBrowserRouter([{
-    path: '/',
-    element: <RootLayout />,
-    loader: loaderCookie,
-    errorElement: <ErrorPage />,
-    children: [
-      { path: '/', element: <LoginPage />, action: actionInicioSesion },
-      { path: '/error', element: <ErrorPage /> },
-      { path: '/dashboard', element: <Dashboard /> },
-      { path: '/empleados', element: <Empleados />, action: actionRegistro },
-      { path: '/profile', element: <Profile/>},
-      { path: '/configuration', element: <Configuration/>},
-      { path: '/logout', element: <Logout/>}
-        ]
-    }]);
 
-    return (
-        <UserProvider>
-            <RouterProvider router={router}/>
-        </UserProvider>
-    )
+  const router = createBrowserRouter([
+    {
+      path: '/',
+      element: <RootLayout />,
+      loader: loaderCookie,
+      errorElement: <ErrorPage />,
+
+      children: [
+
+        {
+          path: '/',
+          element: <LoginPage />,
+          action: actionInicioSesion
+        },
+
+        {
+          path: '/error',
+          element: <ErrorPage />
+        },
+
+        {
+          path: '/dashboard',
+          element: <Dashboard />
+        },
+
+        {
+          path: '/empleados',
+          element: <Empleados />,
+          action: actionRegistro
+        },
+
+        {
+          path: '/productos',
+          element: <Productos />,
+          action: actionRegistro
+        },
+
+        {
+          path: '/profile',
+          element: <Profile />
+        },
+
+        {
+          path: '/configuration',
+          element: <Configuration />
+        },
+
+        {
+          path: '/logout',
+          element: <Logout />
+        }
+
+      ]
+    }
+  ]);
+
+  return (
+    <UserProvider>
+      <RouterProvider router={router} />
+    </UserProvider>
+  )
 }
 
 export default App

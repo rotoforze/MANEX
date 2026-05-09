@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import { useUsers } from '../context/UserContext.jsx'
-import {Empleados} from "../routes/Empleados.jsx";
+import { Empleados } from "../routes/Empleados.jsx";
 
 /**
  *
@@ -17,20 +17,20 @@ import {Empleados} from "../routes/Empleados.jsx";
  * @constructor
  */
 export const MainNav = () => {
-    const {user} = useUsers()
-    const username = user?.username || 'Usuario'
-    const [isMenuOpen, setIsMenuOpen] = useState(false)
-    
-    const navLinkClass = ({isActive}) =>
-        `nav-link d-flex align-items-center ${isActive ? 'active' : 'text-white'}`
+  const { user } = useUsers()
+  const username = user?.username || 'Usuario'
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
 
-    const toggleMenu = () => {
-        setIsMenuOpen(!isMenuOpen)
-    }
+  const navLinkClass = ({ isActive }) =>
+    `nav-link d-flex align-items-center ${isActive ? 'active' : 'text-white'}`
 
-    const closeMenu = () => {
-        setIsMenuOpen(false)
-    }
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen)
+  }
+
+  const closeMenu = () => {
+    setIsMenuOpen(false)
+  }
 
   return (
     <aside className={`main-nav d-flex flex-column flex-shrink-0 p-3 text-white bg-dark fixed-left ${isMenuOpen ? 'menu-open' : ''}`}>
@@ -51,7 +51,7 @@ export const MainNav = () => {
         </button>
       </div>
 
-      <hr/>
+      <hr />
 
       <ul className="nav nav-pills flex-column mb-auto">
         <li className="nav-item">
@@ -63,10 +63,14 @@ export const MainNav = () => {
             <i className="bi bi-person me-2" aria-hidden="true" />
             Empleados
           </NavLink>
+          <NavLink className={navLinkClass} to="/productos" end onClick={closeMenu}>
+            <i className="bi bi-box me-2" aria-hidden="true" />
+            Productos
+          </NavLink>
         </li>
       </ul>
 
-            <hr/>
+      <hr />
 
       <div id="desplegableUsuario" className="dropup">
         <button
