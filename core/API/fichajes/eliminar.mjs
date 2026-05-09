@@ -11,9 +11,9 @@ import verificadorDatos from "./verificadorDatos.mjs";
  */
 async function delFichaje(req, res) {
 
-    const {id_empleado} = req.body;
+    const {id} = req.body;
 
-    if ((id_empleado && id_empleado < 0)) {
+    if ((id && id < 0)) {
         return res.status(400).send({status: 400, message: 'El ID del empleado no puede ser negativo.'});
     }
     const config = {
@@ -29,8 +29,8 @@ async function delFichaje(req, res) {
 
     try {
         const resultadoFichaje = await connection.query(
-            'DELETE FROM fichajes WHERE id_empleado = ?',
-            [id_empleado]);
+            'DELETE FROM fichajes WHERE id = ?',
+            [id]);
 
 
         await connection.commit();

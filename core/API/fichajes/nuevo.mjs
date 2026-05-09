@@ -18,7 +18,7 @@ async function registrarFichaje(req, res) {
     await verificadorDatos(req, res)
     if (res.headersSent) return;
 
-    const { ID_Empleado, fecha_entrada,fecha_Salida, tipo } = req.body;
+    const { username, fecha_entrada, tipo } = req.body;
 
     const config = {
         host: process.env.DB_HOST,
@@ -32,10 +32,10 @@ async function registrarFichaje(req, res) {
     if (!connection) return res.status(500).send({ status: 500, message: 'Error al conectar a la base de datos.' });
 
     try {
-
+        const id_empleado = await connection.query('SELECT id FROM empleado WHERE username = ?', [username]);
         const resultadoFichaje = await connection.query(
-            'INSERT INTO fichajes (id_empleado,fecha_entrada,fecha_salida,tipo) VALUES (?, ?, ?, ?)',
-            [ID_Empleado, fecha_entrada, fecha_Salida, tipo]);
+            'INSERT INTO fichajes (id_empleado,fecha_entrada,tipo) VALUES (?, ?, ?)',
+            [id_empleado[0][0].id, fecha_entrada || new Date(), tipo || 'Presencial']);
 
         await connection.commit();
 

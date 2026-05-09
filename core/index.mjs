@@ -62,32 +62,29 @@ app.get('/', (req, res) => {
                 'listado': ['/contratos', 'GET'],
                 'contrato': ['/contratos/', 'GET'],
                 'nuevoContrato': ['/contratos', 'POST'],
-                'eliminarContrato': ['/contratos/eliminar/', 'DELETE']
+                'eliminarContrato': ['/contratos/', 'DELETE']
             },
             'departamento': {
                 'listado': ['/departamentos', 'GET'],
                 'departamento': ['/departamentos/', 'GET'],
                 'nuevoDepartamento': ['/departamentos', 'POST'],
-                'eliminarDepartamento': ['/departamentos/eliminar/', 'DELETE']
+                'eliminarDepartamento': ['/departamentos/', 'DELETE']
             },
             'fichaje': {
                 'listado': ['/fichajes', 'GET'],
                 'fichaje': ['/fichajes/', 'GET'],
                 'nuevoFichaje': ['/fichajes', 'POST'],
-                'eliminarFichajes': ['/fichajes/eliminar/', 'DELETE']
+                'eliminarFichajes': ['/fichajes/', 'DELETE']
             },
             'incidencia': {
                 'listado': ['/fichajes', 'GET'],
                 'incidencia': ['/fichajes/', 'GET'],
                 'nuevaIncidencia': ['/fichajes', 'POST'],
-                'eliminarIncidencia': ['/fichajes/eliminar/', 'DELETE']
+                'eliminarIncidencia': ['/fichajes/', 'DELETE']
             }
         }
     });
 })
-
-
-
 
 app.post('/login', (req, res) => {
     if (!req.body) {
@@ -121,7 +118,7 @@ app.get('/empleados', (req, res) => {
 });
 
 app.get('/fichajes', (req, res) => {
-    const parametrosRecibidos = Object.keys(req.query);
+    const parametrosRecibidos = Object.keys(req.body);
 
     const parametrosNoValidos = parametrosRecibidos.filter(p => !paginacion.PARAMETROS_PERMITIDOS.includes(p));
 
@@ -131,8 +128,7 @@ app.get('/fichajes', (req, res) => {
             message: `Parámetros no permitidos: ${parametrosNoValidos.join(', ')}`
         });
     }
-
-    if (req?.query?.id) {
+    if (req?.body?.username) {
         getFichaje(req, res);
 
     } else listaFichajes(req, res);
@@ -211,11 +207,14 @@ app.get('/departamentos', (req, res) => {
     } else listaDepartamentos(req, res);
 });
 
+app.get('/permisos', listadoPermisos);
+
 app.delete('/empleados', delEmpleado);
 app.delete('/fichajes', delFichaje);
 app.delete('/incidencias', delIncidencia);
 app.delete('/contratos', delContrato);
 app.delete('/departamentos', delDepartamento);
+app.delete('/permisos', eliminarPermisos);
 
 app.post('/empleados', (req, res) => {
     if (!req.body) {
@@ -234,7 +233,7 @@ app.post('/empleados', (req, res) => {
 });
 
 
-app.post('/fichages', (req, res) => {
+app.post('/fichajes', (req, res) => {
     if (!req.body) {
         return res.send({
             status: 400,
@@ -245,12 +244,12 @@ app.post('/fichages', (req, res) => {
     }
     // si en la petición viene un ID, vamos a actualizarUsuario
     // en vez de a registrar
-    if (req?.body?.id) {
+    if (req?.body?.id || (req?.body?.username && req?.body?.fecha_salida)) {
         actualizarFichaje(req, res);
     } else registrarFichaje(req, res);
 });
 
-app.post('/incidencia', (req, res) => {
+app.post('/incidencias', (req, res) => {
     if (!req.body) {
         return res.send({
             status: 400,
@@ -270,9 +269,6 @@ app.post('/incidencia', (req, res) => {
 app.post('/contratos', newContrato);
 app.post('/departamentos', newDepartamento);
 
-
-app.get('/permisos', listadoPermisos);
-
 app.post('/permisos', (req, res) => {
     if (req?.body?.ruta && req?.body?.metodo && req?.body?.permisos) {
         return guardarPermisos(req, res);
@@ -281,7 +277,5 @@ app.post('/permisos', (req, res) => {
         message: 'Datos inválidos'
     });
 });
-
-app.delete('/permisos', eliminarPermisos);
 
 app.listen(80, () => console.log('Escuchando llamadas en http://localhost:80'));

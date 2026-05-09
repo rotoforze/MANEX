@@ -14,9 +14,9 @@ dotenv.config();
  */
 function getFichaje(req, res) {
 
-    const idEmpleado = req.body.id;
+    const username = req.body.username;
 
-    if (isNaN(idEmpleado) || !idEmpleado || idEmpleado < 0) {
+    if (!username) {
         return res.status(400).send({
             status: 400,
             message: "Parámetros inválidos o nulos"
@@ -38,13 +38,12 @@ function getFichaje(req, res) {
                 message: "Error de base de datos"
             });
         }
-
         connection.query(
-            `SELECT e.nombre,e.apellidos, f.fecha_entrada,f.fecha_salida,f.tipo
+            `SELECT e.nombre,e.apellidos, f.id, f.fecha_entrada,f.fecha_salida,f.tipo
              FROM empleado e
-             JOIN fichajes f ON e.id = f.id_empleado where f.id_empleado = ?
-             ORDER BY e.nombre LIMIT 1`,
-            [idEmpleado],
+             JOIN fichajes f ON e.id = f.id_empleado where e.USERNAME = ?
+             ORDER BY f.fecha_entrada DESC`,
+            [username],
             (error, result) => {
 
                 connection.release();

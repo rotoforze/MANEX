@@ -7,20 +7,20 @@
  * @param res
  * @returns {Promise<*>}
  */
-async function verificadorDatos(req, res) {
+async function verificadorDatos(req, res, updating = false) {
     const {
-        ID_Empleado,fecha_entrada,
-        fecha_Salida,tipo
+        username, fecha_entrada,
+        id, tipo
     } = req.body;
 
     // validaciones
-    if (!ID_Empleado) {
-        if (!fecha_entrada || !fecha_Salida ||!tipo) {
+    if (!username) {
+        if (!fecha_entrada ||!tipo) {
             return res.status(400).send({status: 400, message: 'Faltan datos.'})
         }
     }
 
-    if ( (ID_Empleado && ID_Empleado < 0)) {
+    if ((id && id < 0)) {
         return res.status(400).send({status: 400, message: 'Datos inválidos.'})
     }
 }

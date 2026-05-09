@@ -1,6 +1,6 @@
 import verificadorDatos from "./verificadorDatos.mjs";
 import mysql from "mysql2/promise";
-import {hashContrasenia} from "./hashDeContrasenias.mjs";
+
 
 /**
  * Actualiza el usuario en la BBDD.

@@ -11,10 +11,13 @@ import mysql from "mysql2/promise";
  */
 async function actualizarFichaje(req, res) {
 
-    const { ID_Empleado,fecha_entrada,
-        fecha_Salida,tipo} = req.body;
+    const {
+        id, username, fecha_entrada,
+        fecha_Salida, tipo
+    } = req.body;
 
     await verificadorDatos(req, res);
+    if (res.headersSent) return;
 
     const config = {
         host: process.env.DB_HOST,
@@ -29,9 +32,37 @@ async function actualizarFichaje(req, res) {
 
     try {
 
+        if (username) {
+            var new_id_empleado = await connection.query('SELECT id FROM empleado WHERE username = ?', [username]);
+            new_id_empleado = new_id_empleado[0][0].id;
+        } else return res.status(400).send({status: 400, message: 'El usuario no existe.'});
+
+        if (!tipo) {
+            var new_tipo = await connection.query('SELECT tipo FROM fichajes WHERE ID_EMPLEADO = ? AND id = ?', [new_id_empleado, id]);
+            new_tipo = new_tipo[0][0].tipo;
+        }
+
+        if (!fecha_Salida) {
+            var new_fecha_salida = await connection.query('SELECT fecha_salida FROM fichajes WHERE id = ?', [id]);
+            new_fecha_salida = new_fecha_salida[0][0].fecha_salida;
+            const fecha_actual = new Date();
+            if (new_fecha_salida == null) {
+                new_fecha_salida = fecha_actual;
+            }
+        }
+
+        if (!fecha_entrada) {
+            var new_fecha_entrada = await connection.query('SELECT fecha_entrada FROM fichajes WHERE id = ?', [id]);
+            new_fecha_entrada = new_fecha_entrada[0][0].fecha_entrada
+        }
+
         const resultadoFichaje = await connection.query(
-            'UPDATE fichages SET fecha_entrada = ?, fecha_salida = ?, tipo = ? WHERE id_empleado = ?',
-            [fecha_entrada,fecha_Salida,tipo,ID_Empleado]);
+            'UPDATE fichajes SET tipo = ?, fecha_entrada = ?, fecha_salida = ? WHERE id = ?',
+            [tipo || new_tipo,
+                fecha_entrada || new_fecha_entrada,
+                fecha_Salida || new_fecha_salida,
+                id]);
+        console.log(resultadoFichaje);
 
         await connection.commit();
 

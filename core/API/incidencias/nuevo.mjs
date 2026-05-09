@@ -1,7 +1,6 @@
 import mysql from "mysql2/promise";
 import dotenv from 'dotenv';
 import verificadorDatos from "./verificadorDatos.mjs";
-import {hashContrasenia} from "./hashDeContrasenias.mjs";
 
 //Cargamos las variables del archivo .env a process.env
 dotenv.config();
@@ -16,10 +15,10 @@ dotenv.config();
  */
 async function registrarIncidencias(req, res) {
 
-        await verificadorDatos(req, res)
+    await verificadorDatos(req, res)
     if (res.headersSent) return;
 
-    const {fecha_creacion, observaciones,estado} = req.body;
+    const {fecha_creacion, observaciones, estado} = req.body;
 
     // comenzamos la transaccion
     const config = {
@@ -36,8 +35,8 @@ async function registrarIncidencias(req, res) {
     try {
 
         const resultadoIncidencia = await connection.query(
-            'INSERT INTO incidencia (fecha_creacion,observaciones,estado) VALUES (?, ?, ?, ?, ?, ?, ?)',
-            [fecha_creacion, observaciones,estado]);
+            'INSERT INTO incidencia (fecha_creacion,observaciones,estado) VALUES (?, ?, ?)',
+            [fecha_creacion, observaciones, estado]);
 
         await connection.commit();
 
