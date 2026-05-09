@@ -84,6 +84,16 @@ form div {
     position: static;
     overflow-y: auto;
 }
+.nav-link{
+    padding: 0.75rem 1rem;
+    margin: 0.25rem 0;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    border-radius: 4px;
+    transition: background-color 0.3s ease-in-out;
+}
 
 .loading {
     position: fixed;

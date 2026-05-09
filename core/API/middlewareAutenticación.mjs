@@ -44,10 +44,18 @@ const auth = async (req, res, next) => {
     }
     // comprobamos si el token es valido (si existe en la bbdd)
     const nivelAcceso = await getNivelAcceso(req?.headers?.token, pool);
+
+    if (nivelAcceso == -1) {
+        return res.status(401).json({
+            message: 'El token ha caducado o no es válido'
+        });
+    }
     // Validación de permisos
-    const rutaRecortada = req.path.slice(0, req.path.indexOf('/', 1));
+    const rutaRecortada = req.path;
     // comprobamos si la ruta tiene permisos
     const permisos = obtenerPermisos();
+    console.log(rutaRecortada, permisos[rutaRecortada])
+
     const metodosRuta = permisos[rutaRecortada];
     let permisoAprobado = false;
     if (metodosRuta && metodosRuta[req.method]) {
@@ -69,10 +77,11 @@ const auth = async (req, res, next) => {
         } catch (e) {
             console.log(e);
         }
-
-        if (!metodosRuta[req.method].includes(nivelAcceso) && !permisoAprobado) {
+        if (!permisoAprobado) {
             return res.status(403).json({ message: 'No tienes permiso para esta acción' });
         }
+    } else {
+        return res.status(403).json({ message: 'No tienes permiso para esta acción' });
     }
 
     // lo guardo en la request por si acaso

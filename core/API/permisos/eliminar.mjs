@@ -11,7 +11,7 @@ const eliminar = (req, res) => {
         metodo
     } = req.body;
 
-    if (!ruta || !metodo) {
+    if (!ruta) {
 
         return res.status(400).json({
             message: 'Datos inválidos'
@@ -29,11 +29,11 @@ const eliminar = (req, res) => {
 
     if (
         permisosActuales[ruta]
-        &&
-        permisosActuales[ruta][metodo]
     ) {
 
-        delete permisosActuales[ruta][metodo];
+        console.log(permisosActuales, permisosActuales[ruta][metodo], permisosActuales[ruta]);
+        delete (metodo && permisosActuales[ruta][metodo] ? permisosActuales[ruta][metodo] : permisosActuales[ruta]);
+        console.log(permisosActuales);
 
         if (
             Object.keys(permisosActuales[ruta]).length === 0

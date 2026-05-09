@@ -1,0 +1,85 @@
+import verificadorDatos from "./verificadorDatos.mjs";
+import mysql from "mysql2/promise";
+
+/**
+ * Actualiza el fichaje en la BBDD.
+ *
+ * @author Covadonga Blanco Álvarez
+ * @version 1.0.0
+ * @param req
+ * @param res
+ */
+async function actualizarFichaje(req, res) {
+
+    const {
+        id, username, fecha_entrada,
+        fecha_Salida, tipo
+    } = req.body;
+
+    await verificadorDatos(req, res);
+    if (res.headersSent) return;
+
+    const config = {
+        host: process.env.DB_HOST,
+        user: process.env.DB_USER,
+        password: process.env.DB_PASS,
+        database: process.env.DB_NAME,
+        port: process.env.DB_PORT
+    };
+
+    const connection = await mysql.createConnection(config);
+    if (!connection) return res.status(500).send({status: 500, message: 'Error al conectar a la base de datos.'});
+
+    try {
+
+        if (username) {
+            var new_id_empleado = await connection.query('SELECT id FROM empleado WHERE username = ?', [username]);
+            new_id_empleado = new_id_empleado[0][0].id;
+        } else return res.status(400).send({status: 400, message: 'El usuario no existe.'});
+
+        if (!tipo) {
+            var new_tipo = await connection.query('SELECT tipo FROM fichajes WHERE ID_EMPLEADO = ? AND id = ?', [new_id_empleado, id]);
+            new_tipo = new_tipo[0][0].tipo;
+        }
+
+        if (!fecha_Salida) {
+            var new_fecha_salida = await connection.query('SELECT fecha_salida FROM fichajes WHERE id = ?', [id]);
+            new_fecha_salida = new_fecha_salida[0][0].fecha_salida;
+            const fecha_actual = new Date();
+            if (new_fecha_salida == null) {
+                new_fecha_salida = fecha_actual;
+            }
+        }
+
+        if (!fecha_entrada) {
+            var new_fecha_entrada = await connection.query('SELECT fecha_entrada FROM fichajes WHERE id = ?', [id]);
+            new_fecha_entrada = new_fecha_entrada[0][0].fecha_entrada
+        }
+
+        const resultadoFichaje = await connection.query(
+            'UPDATE fichajes SET tipo = ?, fecha_entrada = ?, fecha_salida = ? WHERE id = ?',
+            [tipo || new_tipo,
+                fecha_entrada || new_fecha_entrada,
+                fecha_Salida || new_fecha_salida,
+                id]);
+        console.log(resultadoFichaje);
+
+        await connection.commit();
+
+        return res.status(201).send({status: 201, message: 'Fichaje registrado.'});
+
+    } catch (error) {
+
+        await connection.rollback();
+
+        console.error('Error al registar el fichaje:', error);
+
+        return res.status(500).send({status: 500, message: 'Error al registar el fichaje.'});
+
+    } finally {
+        await connection.end();
+    }
+
+}
+
+export default actualizarFichaje;

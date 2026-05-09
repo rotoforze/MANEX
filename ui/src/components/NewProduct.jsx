@@ -74,14 +74,14 @@ export function NuevoProductoForm({ funcionDeCierreDeFormulario, handleNuevoProd
                                 defaultValue={user.token}
                             />
 
-                            <h4 className="mb-3 border-bottom pb-2">
+                            <h4 className="mb-4 border-bottom pb-2 text-center">
                                 Información del producto
                             </h4>
 
-                            <div className="row">
+                            <div className="row justify-content-center text-center">
 
-                                <div className="col-md-6 mb-3">
-                                    <label htmlFor={"nombre"}>
+                                <div className="col-md-5 mb-3">
+                                    <label htmlFor="nombre" className="form-label">
                                         Nombre <span className="text-danger">*</span>
                                     </label>
 
@@ -94,8 +94,8 @@ export function NuevoProductoForm({ funcionDeCierreDeFormulario, handleNuevoProd
                                     />
                                 </div>
 
-                                <div className="col-md-6 mb-3">
-                                    <label htmlFor={"estado"}>
+                                <div className="col-md-5 mb-3">
+                                    <label htmlFor="estado" className="form-label">
                                         Estado <span className="text-danger">*</span>
                                     </label>
 
@@ -129,22 +129,23 @@ export function NuevoProductoForm({ funcionDeCierreDeFormulario, handleNuevoProd
 
                             </div>
 
-                            <div className="row">
+                            <div className="justify-content-center w-100">
 
-                                <div className="mb-3">
-
-                                    <label htmlFor={"descripcion"}>
+                                <div className="d-flex justify-content-center mb-3 flex-column">
+                                    <label
+                                        htmlFor="descripcion"
+                                        className="form-label"
+                                    >
                                         Descripción
                                     </label>
-                                    <div className="input-group">
-                                        <textarea
-                                            className="form-control"
-                                            id="descripcion"
-                                            name="descripcion"
-                                            rows="5"
-                                            maxLength="512"
-                                        ></textarea>
-                                    </div>
+
+                                    <textarea
+                                        className="form-control w-100 p-2"
+                                        id="descripcion"
+                                        name="descripcion"
+                                        rows="5"
+                                        maxLength="512"
+                                    ></textarea>
                                 </div>
 
                             </div>
