@@ -1,20 +1,23 @@
-import {createBrowserRouter, RouterProvider} from 'react-router-dom'
+import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import '../public/styles/App.css'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
-import {RootLayout} from './routes/RootLayout';
-import {ErrorPage} from './routes/ErrorPage';
+import { RootLayout } from './routes/RootLayout';
+import { ErrorPage } from './routes/ErrorPage';
 import LoginPage from './routes/LoginPage';
-import {Dashboard} from './routes/Dashboard';
-import {inciarSesion as actionInicioSesion} from './utils/AuthUser';
-import {registrarUsuario as actionRegistro} from "./utils/RegisterNewUser.js";
-import {loaderAuthTokenCookie as loaderCookie, UserProvider} from './context/UserContext';
-import {Profile} from "./routes/Profile.jsx";
-import {Configuration} from "./routes/Configuration.jsx";
-import {Logout} from "./routes/Logout.jsx";
-import {Empleados} from "./routes/Empleados.jsx";
-import {Productos} from "./routes/Productos.jsx";
+import { Dashboard } from './routes/Dashboard';
+import { inciarSesion as actionInicioSesion } from './utils/AuthUser';
+import { registrarUsuario as actionRegistro } from "./utils/RegisterNewUser.js";
+import { loaderAuthTokenCookie as loaderCookie, UserProvider } from './context/UserContext';
+import { Profile } from "./routes/Profile.jsx";
+import { Configuration } from "./routes/Configuration.jsx";
+import { Logout } from "./routes/Logout.jsx";
+import { Empleados } from "./routes/Empleados.jsx";
+import { Productos } from "./routes/Productos.jsx";
+import { Fichajes } from "./routes/Fichajes.jsx";
+import { Incidencia } from "./routes/Incidencia.jsx";
+import { Solicitudes } from "./routes/Solicitudes.jsx";
 
 /**
  * Contiene el router de la aplicación, parte más alta de la aplicación.
@@ -28,25 +31,28 @@ import {Productos} from "./routes/Productos.jsx";
 function App() {
 
     const router = createBrowserRouter([{
-        path: '/', element: <RootLayout/>, loader: loaderCookie, errorElement: <ErrorPage/>,
+        path: '/', element: <RootLayout />, loader: loaderCookie, errorElement: <ErrorPage />,
 
         children: [
 
-            {path: '/', element: <LoginPage/>, action: actionInicioSesion},
-            {path: '/error', element: <ErrorPage/>},
-            {path: '/dashboard', element: <Dashboard/>},
-            {path: '/empleados', element: <Empleados/>, action: actionRegistro},
-            {path: '/productos', element: <Productos/>, action: actionRegistro},
-            {path: '/profile', element: <Profile/>},
-            {path: '/configuration', element: <Configuration/>},
-            {path: '/logout', element: <Logout/>}
+            { path: '/', element: <LoginPage />, action: actionInicioSesion },
+            { path: '/error', element: <ErrorPage /> },
+            { path: '/dashboard', element: <Dashboard /> },
+            { path: '/empleados', element: <Empleados />, action: actionRegistro },
+            { path: '/productos', element: <Productos />, action: actionRegistro },
+            { path: '/fichajes', element: <Fichajes />, action: actionRegistro },
+            { path: '/incidencia', element: <Incidencia />, action: actionRegistro },
+            { path: '/solicitudes', element: <Solicitudes />, action: actionRegistro },
+            { path: '/profile', element: <Profile /> },
+            { path: '/configuration', element: <Configuration /> },
+            { path: '/logout', element: <Logout /> }
 
         ]
     }]);
 
     return (<UserProvider>
-            <RouterProvider router={router}/>
-        </UserProvider>)
+        <RouterProvider router={router} />
+    </UserProvider>)
 }
 
 export default App

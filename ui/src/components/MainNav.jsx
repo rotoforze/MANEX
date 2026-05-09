@@ -67,6 +67,18 @@ export const MainNav = () => {
             <i className="bi bi-box me-2" aria-hidden="true" />
             Productos
           </NavLink>
+          <NavLink className={navLinkClass} to="/fichajes" end onClick={closeMenu}>
+            <i className="bi bi-person-add me-2" aria-hidden="true" />
+            Fichajes
+          </NavLink>
+          <NavLink className={navLinkClass} to="/incidencia" end onClick={closeMenu}>
+            <i className="bi bi-bookmark me-2" aria-hidden="true" />
+            Incidencia
+          </NavLink>
+          <NavLink className={navLinkClass} to="/solicitudes" end onClick={closeMenu}>
+            <i className="bi bi-window-plus me-2" aria-hidden="true" />
+            Solicitudes
+          </NavLink>
         </li>
       </ul>
 

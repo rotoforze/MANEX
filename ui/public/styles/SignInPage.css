@@ -16,8 +16,10 @@
     max-width: 40dvw !important;
     height: fit-content !important;
 }
+
 .signin-form input {
-    width: 10dvw !important;;
+    width: 10dvw !important;
+    ;
 }
 
 .signin-container .card-body {
@@ -34,12 +36,15 @@
         padding: 0px !important;
         overflow: scroll;
     }
+
     .signin-form .card-body {
         width: 100% !important;
     }
+
     .signin-form {
         margin: auto 0px;
     }
+
     .signin-form form {
         display: flex;
         flex-direction: column;
@@ -47,10 +52,16 @@
         justify-content: center !important;
         align-items: center !important;
     }
+
     .signin-form input {
         width: 20dvw !important;
     }
+
     .signin-form .row {
         width: fit-content !important;
     }
+}
+
+.descripcion-container {
+    text-align: center;
 }
