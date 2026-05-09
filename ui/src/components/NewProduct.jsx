@@ -129,23 +129,22 @@ export function NuevoProductoForm({ funcionDeCierreDeFormulario, handleNuevoProd
 
                             </div>
 
-                            <div className="row justify-content-center">
+                            <div className="justify-content-center w-100">
 
-                                <div className="col-md-10 mb-3">
+                                <div className="d-flex justify-content-center mb-3 flex-column">
                                     <label
                                         htmlFor="descripcion"
-                                        className="form-label d-block text-center"
+                                        className="form-label"
                                     >
                                         Descripción
                                     </label>
 
                                     <textarea
-                                        className="form-control"
+                                        className="form-control w-100 p-2"
                                         id="descripcion"
                                         name="descripcion"
                                         rows="5"
                                         maxLength="512"
-                                        style={{ width: "100%" }}
                                     ></textarea>
                                 </div>
 
