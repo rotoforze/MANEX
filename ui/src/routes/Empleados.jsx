@@ -33,7 +33,9 @@ export function Empleados () {
                             setRegistroVisible(!registroVisible);
                     } }> {registroVisible ? 'Cerrar formulario' : 'Nuevo registro' }</button>
 
-                    <button className="btn btn-primary">Refrescar panel</button>
+                    <button className="btn btn-primary" onClick={() => {
+                        setRefreshKey(prevKey => prevKey + 1);
+                    }}>Refrescar panel</button>
                 </div>
                 { registroVisible ? <SignInForm funcionDeCierreDeFormulario={setRegistroVisible} handleNuevoRegistro={handleNuevoRegistro} /> : <b></b>}
             </div>
