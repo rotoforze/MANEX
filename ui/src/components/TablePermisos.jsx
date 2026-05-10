@@ -55,6 +55,7 @@ export function TablePermisos() {
                             <h1 className={"card-title"}>{eliminando ? 'Eliminar ' : ''}{editando ? 'Guardar ' : ''}{rutaAEditar || ''}</h1>
                             <p>¿Quieres {eliminando ? 'eliminar ' : ''}{editando ? 'guardar ' : ''} los permisos
                                 de {rutaAEditar || ''}?</p>
+                            {estado && <p className={"text-danger"}>{estado}</p>}
                             <div>
                                 <label className={"form-label"}>Escribe 'CONFIRMAR' para poder confirmar.</label>
                                 <input type="text" className={"form-control"}
@@ -81,7 +82,7 @@ export function TablePermisos() {
                                                     fetchInicio();
                                                 }, 2000);
                                             });
-                                    }} disabled={!confirmar}>Confirmar
+                                    }} disabled={!confirmar || estado}>Confirmar
                                     </button>
                                     <button className={"btn btn-danger"} onClick={() => {
                                         setEstado(undefined);
