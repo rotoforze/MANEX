@@ -12,9 +12,9 @@ export function TablePermisos() {
     const [eliminando, setEliminando] = useState(false);
     const [editando, setEditando] = useState(false);
     const [confirmar, setConfirmar] = useState(false);
+    const [estado, setEstado] = useState(undefined);
 
-    useEffect(() => {
-
+    const fetchInicio = () => {
         fetch(import.meta.env.VITE_BACKEND_PERMISOS, {
             method: 'GET', headers: {'token': user?.token}
         })
@@ -33,31 +33,65 @@ export function TablePermisos() {
                 })
                 setDepartamentos(mapa);
             });
+    }
 
+    useEffect(() => {
+        fetchInicio();
     }, []);
     return (
         <div>
             {
-                editando || eliminando ? (<div  className="superponer">
+                editando || eliminando ? (<div className="superponer">
                     <div className={"card confirmacion"}>
+                        <div className="card-header d-flex justify-content-end">
+                            <button className={"bi-x bi btn btn-outline-danger"} onClick={() => {
+                                setRutaAEditar(null);
+                                setEliminando(false);
+                                setEditando(false);
+                                setConfirmar(false);
+                            }}></button>
+                        </div>
                         <div className={"card-body"}>
-                            <div className="card-header d-flex justify-content-end">
-                                <button className={"bi-x bi btn btn-outline-danger"} onClick={() => {
-                                    setRutaAEditar(null);
-                                    setEliminando(false);
-                                    setEditando(false);
-                                    setConfirmar(false);
-                                }}></button>
-                            </div>
                             <h1 className={"card-title"}>{eliminando ? 'Eliminar ' : ''}{editando ? 'Guardar ' : ''}{rutaAEditar || ''}</h1>
-                            <p>¿Quieres {eliminando ? 'eliminar ' : ''}{editando ? 'guardar ' : ''} los permisos de {rutaAEditar || ''}?</p>
+                            <p>¿Quieres {eliminando ? 'eliminar ' : ''}{editando ? 'guardar ' : ''} los permisos
+                                de {rutaAEditar || ''}?</p>
                             <div>
                                 <label className={"form-label"}>Escribe 'CONFIRMAR' para poder confirmar.</label>
-                                <input type="text" className={"form-control"} placeholder={"Escribe 'CONFIRMAR' para poder confirmar."} onChange={(e) => {
+                                <input type="text" className={"form-control"}
+                                       placeholder={"Escribe 'CONFIRMAR' para poder confirmar."} onChange={(e) => {
                                     setConfirmar(e.target.value.toUpperCase() == 'CONFIRMAR');
-                                }} />
-                                <button className={"btn btn-primary"} onClick={() => {return}} disabled={!!confirmar}>Confirmar</button>
-                                <button className={"btn btn-danger"} onClick={() => {return}} >Cancelar</button>
+                                }}/>
+                                <div className={"gap-3 d-flex justify-content-center mt-3 p-2"}>
+                                    <button className={"btn btn-primary"} onClick={() => {
+                                        setEstado('Confirmando cambios...');
+                                        const urlencoded = new URLSearchParams();
+                                        urlencoded.append("ruta", rutaAEditar);
+                                        fetch(import.meta.env.VITE_BACKEND_PERMISOS, {
+                                            method: 'DELETE', headers: {'token': user?.token}, body: urlencoded,
+                                        })
+                                            .then(res => res.json())
+                                            .then(data => {
+                                                setEstado('Cambios confirmados.');
+                                                setTimeout(() => {
+                                                    setEstado(undefined);
+                                                    setRutaAEditar(null);
+                                                    setEliminando(false);
+                                                    setEditando(false);
+                                                    setConfirmar(false);
+                                                    fetchInicio();
+                                                }, 2000);
+                                            });
+                                    }} disabled={!confirmar}>Confirmar
+                                    </button>
+                                    <button className={"btn btn-danger"} onClick={() => {
+                                        setEstado(undefined);
+                                        setRutaAEditar(null);
+                                        setEliminando(false);
+                                        setEditando(false);
+                                        setConfirmar(false);
+                                    }}>Cancelar
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -78,7 +112,8 @@ export function TablePermisos() {
                     </tr>
                     </thead>
                     <tbody className={"table-group-divider"}>
-                    {permisos ? Object.entries(permisos).map((permiso, index) => {
+                    {permisos && permisos != null && permisos != undefined ? Object.entries(permisos).map((permiso, index) => {
+                        if (permiso[1] == null || permiso[1] == undefined) return;
                         const hijos = Object.entries(permiso[1]);
                         try {
                             var permisoProtected = isProtected(hijos);
@@ -100,16 +135,22 @@ export function TablePermisos() {
                                 <tr className="h-auto table-group-divider" key={index}>
                                     <th scope="row">
                                         {permiso[0]}&nbsp;&nbsp;
-                                        { permisoProtected && <span className="badge bg-danger bi-shield">!</span>}
+                                        {permisoProtected && <span className="badge bg-danger bi-shield">!</span>}
                                     </th>
                                     <td className={"h-auto"}>
-                                        <input type="checkbox" className="form-check-input form-check bg-dark justificar-centro" disabled={permisoProtected} defaultChecked={!!permisoGet}/>
+                                        <input type="checkbox"
+                                               className="form-check-input form-check bg-dark justificar-centro"
+                                               disabled={permisoProtected} defaultChecked={!!permisoGet}/>
                                     </td>
                                     <td className={"h-auto"}>
-                                        <input type="checkbox" className="form-check-input form-check bg-dark justificar-centro" disabled={permisoProtected} defaultChecked={!!permisoPost}/>
+                                        <input type="checkbox"
+                                               className="form-check-input form-check bg-dark justificar-centro"
+                                               disabled={permisoProtected} defaultChecked={!!permisoPost}/>
                                     </td>
                                     <td className={"h-auto"}>
-                                        <input type="checkbox" className="form-check-input form-check bg-dark justificar-centro" disabled={permisoProtected} defaultChecked={!!permisoDelete}/>
+                                        <input type="checkbox"
+                                               className="form-check-input form-check bg-dark justificar-centro"
+                                               disabled={permisoProtected} defaultChecked={!!permisoDelete}/>
                                     </td>
                                     <td className={"h-auto"}>
                                         <button className="btn btn-danger bi-trash-fill mt-2" onClick={() => {
@@ -121,16 +162,17 @@ export function TablePermisos() {
                                 <tr className="h-auto" key={index + 100}>
                                     <td>Departamentos</td>
                                     <td>
-                                        { permisoGetTexto || ''}
+                                        {permisoGetTexto || ''}
                                     </td>
                                     <td>
-                                        { permisoPostTexto || ''}
+                                        {permisoPostTexto || ''}
                                     </td>
                                     <td>
-                                        { permisoDeleteTexto || ''}
+                                        {permisoDeleteTexto || ''}
                                     </td>
                                     <td>
-                                        <button className="btn btn-primary bi-pencil-fill" disabled={hijos[0][1]}></button>
+                                        <button className="btn btn-primary bi-pencil-fill"
+                                                disabled={hijos[0][1]}></button>
                                     </td>
                                 </tr>
                             </>
@@ -148,8 +190,9 @@ export function TablePermisos() {
 }
 
 function parseToText(perm, listaDepartamentos) {
-    return perm == '*' ? 'Todos' : perm[0].includes('>')  ? 'Al menos: ' + listaDepartamentos.get(parseInt(perm[0][1])) : perm.map(id => listaDepartamentos.get(parseInt(id))).join(', ') || 'N/A'
+    return perm == '*' ? 'Todos' : perm[0].includes('>') ? 'Al menos: ' + listaDepartamentos.get(parseInt(perm[0][1])) : perm.map(id => listaDepartamentos.get(parseInt(id))).join(', ') || 'N/A'
 }
+
 function isProtected(permiso) {
     for (const permisoElement of permiso) {
         if (permisoElement[0] == 'protected') {
@@ -157,6 +200,7 @@ function isProtected(permiso) {
         }
     }
 }
+
 function getValoresEnGet(permiso) {
     for (const permisoElement of permiso) {
         if (permisoElement[0] == 'GET') {

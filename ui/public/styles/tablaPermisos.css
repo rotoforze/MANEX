@@ -13,10 +13,7 @@
 }
 .confirmacion {
     width: 50dvw;
-    height: 25dvh;
+    height: fit-content;
     margin: 0px auto;
     align-self: center;
-}
-.confirmacion .card-body {
-    padding: 0px !important;
 }
