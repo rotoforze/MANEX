@@ -1,0 +1,22 @@
+.justificar-centro {
+    margin: 0px auto;
+}
+.superponer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 2000;
+    background-color: rgb(248 249 250 / 0.53);
+    display: flex;
+    height: 100dvh;
+    width: 100dvw;
+}
+.confirmacion {
+    width: 50dvw;
+    height: 25dvh;
+    margin: 0px auto;
+    align-self: center;
+}
+.confirmacion .card-body {
+    padding: 0px !important;
+}

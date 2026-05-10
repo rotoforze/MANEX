@@ -11,7 +11,7 @@ export const Profile = () => {
 
     useEffect(() => {
         try {
-            fetch(import.meta.env.VITE_BACKEND_EMPLEADO + user?.id,
+            fetch(import.meta.env.VITE_BACKEND_EMPLEADO + '?id=' +user?.id,
                 {method: 'GET', headers: {'Content-Type': 'application/json', 'token': user?.token}})
                 .then((response) => response.json()
                 ).then((data) => {

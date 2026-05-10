@@ -12,7 +12,7 @@ dotenv.config();
  * @param {Request} req
  * @param {Response} res
  */
-function getEmpleado(req, res) {
+function getIncidencia(req, res) {
 
     const idEmpleado = req.body.id;
 
@@ -74,4 +74,4 @@ function getEmpleado(req, res) {
     });
 }
 
-export default getEmpleado
+export default getIncidencia
