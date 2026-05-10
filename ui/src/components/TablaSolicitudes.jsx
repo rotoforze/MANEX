@@ -2,14 +2,16 @@ import { useEffect, useState } from "react";
 import { useUsers } from "../context/UserContext.jsx";
 
 /**
- * Muestra en formato tabla los fichajes recibidos.
+ * Muestra en formato tabla las solicitudes recibidas.
  *
+ * @author Eneas Menendez
+ * @version 1.0.0
  * @returns {React.JSX.Element}
  * @constructor
  */
-export function TablaFichajes() {
+export function TablaSolicitudes() {
 
-    const [listaFichajes, setListaFichajes] = useState([]);
+    const [listaSolicitudes, setListaSolicitudes] = useState([]);
 
     const [paginaActual, setPaginaActual] = useState(0);
     const [paginaMaxima, setPaginaMaxima] = useState(0);
@@ -21,8 +23,8 @@ export function TablaFichajes() {
     useEffect(() => {
         try {
             fetch(
-                import.meta.env.VITE_BACKEND +
-                '/fichajes?pagina=' + paginaActual +
+                import.meta.env.VITE_BACKEND_SOLICITUD +
+                '?pagina=' + paginaActual +
                 '&cantidad=' + cantidadPorPagina,
                 {
                     method: 'GET',
@@ -35,7 +37,7 @@ export function TablaFichajes() {
                 .then((response) => response.json())
                 .then((data) => {
                     if (data) {
-                        setListaFichajes(data?.data || []);
+                        setListaSolicitudes(data?.data || []);
                         setPaginaMaxima(data?.meta?.totalPaginas - 1);
                         setResultadosPorPagina(data?.meta?.resultados);
                     }
@@ -46,43 +48,75 @@ export function TablaFichajes() {
         }
     }, [paginaActual]);
 
+    /**
+     * Devuelve la clase bootstrap del badge segun el estado.
+     *
+     * @param estado
+     * @returns {string}
+     */
+    function obtenerClaseEstado(estado) {
+
+        switch (estado) {
+
+            case 'Pendiente':
+                return 'text-bg-danger';
+
+            case 'En proceso':
+                return 'text-bg-warning';
+
+            case 'Aprobada':
+            case 'Resuelta':
+                return 'text-bg-success';
+
+            case 'Rechazada':
+                return 'text-bg-secondary';
+
+            default:
+                return 'text-bg-primary';
+        }
+    }
+
     function formatearFecha(fecha) {
         return fecha
-            ? new Date(fecha).toLocaleString('es-ES', { timeZone: 'UTC' })
+            ? new Date(fecha).toLocaleDateString('es-ES', { timeZone: 'UTC' })
             : 'N/A';
     }
 
     return (
-        listaFichajes.length > 0 ?
+        listaSolicitudes.length > 0 ?
             (
                 <div className="table-responsive m-3 d-flex flex-column justify-content-start">
                     <table className="table table-striped align-middle">
                         <thead>
                             <tr>
-                                <th scope="col">Nombre</th>
-                                <th scope="col">Apellidos</th>
-                                <th scope="col">Entrada</th>
-                                <th scope="col">Salida</th>
+                                <th scope="col">#</th>
                                 <th scope="col">Tipo</th>
+                                <th scope="col">Descripcion</th>
+                                <th scope="col">Fecha</th>
+                                <th scope="col">Estado</th>
                                 <th scope="col">Acciones</th>
                             </tr>
                         </thead>
 
                         <tbody className="table-group-divider">
                             {
-                                listaFichajes.map((fichaje, index) => (
+                                listaSolicitudes.map((solicitud) => (
 
-                                    <tr key={`${fichaje?.nombre}-${fichaje?.fecha_entrada}-${index}`} className="h-auto">
+                                    <tr key={solicitud?.ID} className="h-auto">
 
-                                        <td>{fichaje?.nombre || 'N/A'}</td>
+                                        <th scope="row">{solicitud?.ID}</th>
 
-                                        <td>{fichaje?.apellidos || 'N/A'}</td>
+                                        <td>{solicitud?.Tipo || 'N/A'}</td>
 
-                                        <td>{formatearFecha(fichaje?.fecha_entrada)}</td>
+                                        <td>{solicitud?.Descripcion || 'N/A'}</td>
 
-                                        <td>{formatearFecha(fichaje?.fecha_salida)}</td>
+                                        <td>{formatearFecha(solicitud?.Fecha)}</td>
 
-                                        <td>{fichaje?.tipo || 'N/A'}</td>
+                                        <td>
+                                            <span className={`badge ${obtenerClaseEstado(solicitud?.Estado)}`}>
+                                                {solicitud?.Estado || 'Sin estado'}
+                                            </span>
+                                        </td>
 
                                         <td className={"row-cols-1 gap-2"}>
                                             <button className="btn btn-primary bi-pencil-fill"></button>
@@ -127,6 +161,6 @@ export function TablaFichajes() {
                     </div>
                 </div>
             )
-            : <b>No hay fichajes.</b>
+            : <b>No hay solicitudes.</b>
     );
 }

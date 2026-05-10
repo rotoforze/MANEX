@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { TablaIncidencias } from '../components/TablaIndicencias.jsx';
-import { NuevoProductoForm } from "../components/NewProduct.jsx";
+import { NuevaIncidenciaForm } from "../components/NuevaIncidenciaForm.jsx";
 import '../../public/styles/mainPages.css';
 
 /**
@@ -17,6 +17,11 @@ export function Incidencias() {
   const [registroVisible, setRegistroVisible] = useState(false);
   const [tipoIncidencia, setTipoIncidencia] = useState('general');
   const [refreshKey, setRefreshKey] = useState(0);
+
+  function handleNuevaIncidencia() {
+    setRefreshKey(prevKey => prevKey + 1);
+    setRegistroVisible(false);
+  }
 
   return (
 
@@ -104,6 +109,18 @@ export function Incidencias() {
           </button>
 
         </div>
+
+        {
+          registroVisible
+            ? (
+              <NuevaIncidenciaForm
+                funcionDeCierreDeFormulario={setRegistroVisible}
+                handleNuevaIncidencia={handleNuevaIncidencia}
+                tipoIncidencia={tipoIncidencia}
+              />
+            )
+            : null
+        }
 
       </div>
 

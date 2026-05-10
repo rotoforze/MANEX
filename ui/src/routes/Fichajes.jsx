@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-// import { NuevoFichajeForm } from "../components/NewFichaje.jsx";
-// import { TablaFichajes } from "../components/TablaFichajes.jsx";
+import { NuevoFichajeForm } from "../components/NuevoFichajeform.jsx";
+import { TablaFichajes } from "../components/TablaFichajes.jsx";
 import '../../public/styles/mainPages.css';
 
 /**
