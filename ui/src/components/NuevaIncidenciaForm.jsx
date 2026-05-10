@@ -1,6 +1,18 @@
 import React from 'react';
 import { useUsers } from "../context/UserContext.jsx";
 
+/**
+ *
+ * Nueva incidencia
+ *
+ * @returns {React.JSX.Element}
+ * @author Eneas de la Rosa Menendez Pedrosa
+ * @version 1.0.0
+ * @returns {React.JSX.Element}
+ * @constructor
+ */
+
+
 export function NuevaIncidenciaForm({ funcionDeCierreDeFormulario, handleNuevaIncidencia, tipoIncidencia }) {
 
     const { user } = useUsers();

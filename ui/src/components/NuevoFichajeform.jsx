@@ -1,6 +1,17 @@
 import React, { useState } from 'react';
 import { useUsers } from "../context/UserContext.jsx";
 
+/**
+ *
+ * Nuevo fichaje
+ *
+ * @returns {React.JSX.Element}
+ * @author Eneas de la Rosa Menendez Pedrosa
+ * @version 1.0.0
+ * @constructor
+ */
+
+
 export function NuevoFichajeForm({ funcionDeCierreDeFormulario, handleNuevoFichaje }) {
 
     const { user } = useUsers();

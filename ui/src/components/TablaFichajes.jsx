@@ -5,8 +5,12 @@ import { useUsers } from "../context/UserContext.jsx";
  * Muestra en formato tabla los fichajes recibidos.
  *
  * @returns {React.JSX.Element}
+ * @author Eneas de la Rosa Menéndez Pedrosa
+ * @version 1.0.0
+ * @returns {React.JSX.Element}
  * @constructor
  */
+
 export function TablaFichajes() {
 
     const [listaFichajes, setListaFichajes] = useState([]);

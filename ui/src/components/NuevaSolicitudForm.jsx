@@ -1,6 +1,17 @@
 import React from 'react';
 import { useUsers } from "../context/UserContext.jsx";
 
+/**
+ *
+ * Nueva solicitud
+ *
+ * @returns {React.JSX.Element}
+ * @author Eneas de la Rosa Menendez Pedrosa
+ * @version 1.0.0
+ * @constructor
+ */
+
+
 export function NuevaSolicitudForm({ funcionDeCierreDeFormulario, handleNuevaSolicitud }) {
 
     const { user } = useUsers();
