@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { Form, useActionData, useNavigate, useNavigation } from 'react-router-dom';
 import { useUsers } from "../context/UserContext.jsx";
 import { Loading } from "./Loading.jsx";
-import "../../public/styles/SignInPage.css";
 
 export function NuevoProductoForm({ funcionDeCierreDeFormulario, handleNuevoProducto }) {
 
@@ -33,27 +32,19 @@ export function NuevoProductoForm({ funcionDeCierreDeFormulario, handleNuevoProd
     }, [actionData]);
 
     return (
-        <section className="signin-container w-100 d-flex align-items-center justify-content-center">
+        <section className="w-100 mt-3">
 
             {cargando ? (
                 <Loading />
             ) : (
 
-                <div className="card shadow w-100 signin-form">
+                <div className="card shadow-sm w-100">
 
                     {actionData && actionData[1] && (
                         <div className={`alert ${actionData[0] ? 'alert-success' : 'alert-danger'}`}>
                             {actionData[1]}
                         </div>
                     )}
-
-                    <div className="card-header d-flex justify-content-end">
-                        <button
-                            className={"bi-x bi btn btn-outline-danger"}
-                            onClick={() => funcionDeCierreDeFormulario(false)}
-                        ></button>
-                    </div>
-
                     <div className="card-body p-4">
 
                         <h2 className="text-center mb-4">
@@ -78,9 +69,9 @@ export function NuevoProductoForm({ funcionDeCierreDeFormulario, handleNuevoProd
                                 Información del producto
                             </h4>
 
-                            <div className="row justify-content-center text-center">
+                            <div className="row">
 
-                                <div className="col-md-5 mb-3">
+                                <div className="col-md-6 mb-3">
                                     <label htmlFor="nombre" className="form-label">
                                         Nombre <span className="text-danger">*</span>
                                     </label>
@@ -94,7 +85,7 @@ export function NuevoProductoForm({ funcionDeCierreDeFormulario, handleNuevoProd
                                     />
                                 </div>
 
-                                <div className="col-md-5 mb-3">
+                                <div className="col-md-6 mb-3">
                                     <label htmlFor="estado" className="form-label">
                                         Estado <span className="text-danger">*</span>
                                     </label>

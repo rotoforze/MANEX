@@ -2,7 +2,6 @@ import React, {useEffect, useState} from 'react';
 import {Form, useActionData, useNavigate, useNavigation} from 'react-router-dom';
 import { useUsers } from "../context/UserContext.jsx";
 import { Loading } from "./Loading.jsx";
-import "../../public/styles/SignInPage.css";
 
 export function SignInForm( { funcionDeCierreDeFormulario, handleNuevoRegistro } ) {
 
@@ -33,15 +32,12 @@ export function SignInForm( { funcionDeCierreDeFormulario, handleNuevoRegistro }
     }, [actionData, navigate]);
 
     return (
-        <section className="signin-container w-100 d-flex align-items-center justify-content-center">
+        <section className="w-100 mt-3">
             {cargando ? (
                 <Loading />
             ) : (
-                <div className="card shadow w-100 signin-form">
+                <div className="card shadow-sm w-100">
                     { actionData && actionData[1] && <div className={`alert ${actionData[0] ? 'alert-success' : 'alert-danger'}`}>{actionData[1]}</div>}
-                    <div className="card-header d-flex justify-content-end">
-                        <button className={"bi-x bi btn btn-outline-danger"} onClick={() => funcionDeCierreDeFormulario(false)}></button>
-                    </div>
                     <div className="card-body p-4">
 
                         <h2 className="text-center mb-4">Registro</h2>
