@@ -54,7 +54,6 @@ const auth = async (req, res, next) => {
     const rutaRecortada = req.path;
     // comprobamos si la ruta tiene permisos
     const permisos = obtenerPermisos();
-    console.log(rutaRecortada, permisos[rutaRecortada])
 
     const metodosRuta = permisos[rutaRecortada];
     let permisoAprobado = false;
@@ -66,7 +65,10 @@ const auth = async (req, res, next) => {
         if (permiso.includes('*')) permisoAprobado = true;
 
         try {
-            const [nada, accesoMin] = permiso[0].split('>');
+            var accesoMin = permiso[0].split('>');
+            if (accesoMin.length == 2) {
+                accesoMin = accesoMin[1];
+            }
             // si tiene un valor mayor que el nivel de permiso, pasamos
             if (accesoMin) {
                 if (nivelAcceso >= parseInt(accesoMin)) {

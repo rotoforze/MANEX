@@ -14,7 +14,7 @@ dotenv.config();
  */
 function getEmpleado(req, res) {
 
-    const idEmpleado = req.body.id;
+    const idEmpleado = req.query.id;
 
     if (isNaN(idEmpleado) || !idEmpleado || idEmpleado < 0) {
         return res.status(400).send({
