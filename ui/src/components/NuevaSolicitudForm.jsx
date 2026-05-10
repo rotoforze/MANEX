@@ -8,6 +8,7 @@ import { useUsers } from "../context/UserContext.jsx";
  * @returns {React.JSX.Element}
  * @author Eneas de la Rosa Menendez Pedrosa
  * @version 1.0.0
+ * @returns {React.JSX.Element}
  * @constructor
  */
 
