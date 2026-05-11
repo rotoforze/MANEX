@@ -11,6 +11,18 @@
             "*"
         ]
     },
+    "/permisos": {
+        "protected": true,
+        "GET": [
+            ">1"
+        ],
+        "POST": [
+            "8"
+        ],
+        "DELETE": [
+            "8"
+        ]
+    },
     "/empleados": {
         "protected": false,
         "DELETE": [
@@ -73,15 +85,29 @@
             "8"
         ]
     },
-    "/permisos": {
+    "/incidencias": {
         "protected": false,
         "GET": [
             ">1"
         ],
         "POST": [
-            "8"
+            ">1"
         ],
         "DELETE": [
+            "7",
+            "8"
+        ]
+    },
+    "/vacaciones": {
+        "protected": false,
+        "GET": [
+            ">1"
+        ],
+        "POST": [
+            ">1"
+        ],
+        "DELETE": [
+            "7",
             "8"
         ]
     }

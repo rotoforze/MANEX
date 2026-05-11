@@ -2,7 +2,7 @@ import mysql from 'mysql2';
 import crypto from "crypto";
 import dotenv from 'dotenv';
 import verificadorDatos from "./empleados/verificadorDatos.mjs";
-import {verificarContrasenia} from "./empleados/hashDeContrasenias.mjs";
+import { verificarContrasenia } from "./empleados/hashDeContrasenias.mjs";
 
 //Cargamos las variables del archivo .env a process.env
 dotenv.config();
@@ -40,8 +40,8 @@ export function login(req, res) {
         console.log('Conexión %d liberada', connection.threadId);
     });
 
-    if (!req?.body) return res.status(401).send({status: 401})
-    const {usuario, pass, keepSession, token} = req.body;
+    if (!req?.body) return res.status(401).send({ status: 401 })
+    const { usuario, pass, keepSession, token } = req.body;
 
     // comprueba si no se han recibido credenciales ni token
     if ((!usuario || !pass) && !token) {
@@ -57,7 +57,7 @@ export function login(req, res) {
         if (err) {
             console.error("Error obteniendo conexión:", err);
             return res.status(500).send(
-                {status: 500, message: "Error de base de datos"}
+                { status: 500, message: "Error de base de datos" }
             );
         }
         // si hemos recibido token y es valido
@@ -92,59 +92,68 @@ export function login(req, res) {
                         });
                     } else {
                         return res.status(404).send(
-                            {status: 404, message: "Token incorrecto o inválido"}
+                            { status: 404, message: "Token incorrecto o inválido" }
                         );
                     }
                 });
         } else {
             connection.query('SELECT u.password, e.id, e.id_departamento FROM usuario u JOIN empleado e ON u.username = e.username WHERE u.username = ?',
                 [usuario], async (error, result) => {
-                // envia la consulta
-                connection.release();
+                    // envia la consulta
+                    connection.release();
 
-                if (error) {
-                    console.error("Error en la consulta:", error);
-                    return res.status(500).send(
-                        {status: 500, message: "Error en el servidor"}
-                    );
-                }
-
-                // al estar buscando el nombre, si recibimos una fila, es porque existe el usuario
-                // si no tiene longitud es porque no existe.
-                if (result.length > 0) {
-                    // al coinicdir las contraseñas, podemos iniciar sesión
-                    if (await verificarContrasenia(pass, result[0].password)) {
-                        // como hemos recibido en true, generamos un token para asignarlo al usuario
-                        var newToken = generarToken();
-
-                        var hasToken = crearToken(pool, usuario, newToken, !!keepSession);
-
-                        console.log(newToken, hasToken, !!keepSession)
-                        if (!hasToken) {
-                            newToken = '';
-                        }
-                        // como resuelve, enviamos status code 200.
-                        return res.status(200).send({
-                            status: 201,
-                            auth: {
-                                authorized: true,
-                                username: usuario,
-                                id: result[0].id,
-                                token: newToken,
-                                department: result[0].id_departamento
-                            }
-                        })
+                    if (error) {
+                        console.error("Error en la consulta:", error);
+                        return res.status(500).send(
+                            { status: 500, message: "Error en el servidor" }
+                        );
                     }
-                } else {
-                    res.status(404).send(
-                        {status: 404, message: "Credenciales incorrectas"}
-                    );
-                }
-            });
+
+                    // al estar buscando el nombre, si recibimos una fila, es porque existe el usuario
+                    // si no tiene longitud es porque no existe.
+                    if (result.length > 0) {
+                        // al coinicdir las contraseñas, podemos iniciar sesión
+                        if (await verificarContrasenia(pass, result[0].password)) {
+                            // como hemos recibido en true, generamos un token para asignarlo al usuario
+                            var newToken = generarToken();
+
+                            var hasToken = crearToken(pool, usuario, newToken, !!keepSession);
+
+                            console.log(newToken, hasToken, !!keepSession)
+                            if (!hasToken) {
+                                newToken = '';
+                            }
+                            // como resuelve, enviamos status code 200.
+                            return res.status(200).send({
+                                status: 201,
+                                auth: {
+                                    authorized: true,
+                                    username: usuario,
+                                    id: result[0].id,
+                                    token: newToken,
+                                    department: result[0].id_departamento
+                                }
+                            })
+                        } else {
+                            return res.status(404).send(
+                                { status: 404, message: "No se ha podido verificar la contraseña" }
+                            );
+                        }
+                    } else {
+                        return res.status(404).send(
+                            { status: 404, message: "Credenciales incorrectas" }
+                        );
+                    }
+                });
         }
 
 
     });
+    if (res.headerSent) {
+        return res.status(404).send(
+            { status: 404, message: "salida invalida" }
+        );;
+    }
 }
 
 /**

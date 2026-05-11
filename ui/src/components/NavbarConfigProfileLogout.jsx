@@ -1,4 +1,5 @@
-import {NavLink} from "react-router-dom";
+import { NavLink } from "react-router-dom";
+import "../../public/styles/mainPages.css";
 
 /**
  *
@@ -9,32 +10,34 @@ import {NavLink} from "react-router-dom";
  * @version 1.0.0
  * @constructor
  */
-export const NavbarConfigProfileLogout = ( {children} ) => {
+export const NavbarConfigProfileLogout = ({ children }) => {
     return (
-        <div className={"container-fluid justify-content-center mt-4"}>
-            <div className="card text-center">
-                <div className="card-header">
-                    <ul className="nav nav-tabs card-header-tabs">
-                        <li className="nav-item">
-                            <NavLink className="nav-link" to="/profile">
-                                Perfil
-                            </NavLink>
-                        </li>
-                        <li className="nav-item">
-                            <NavLink className="nav-link" to="/configuration">
-                                Configuración
-                            </NavLink>
-                        </li>
-                        <li className="nav-item">
-                            <NavLink className="nav-link text-danger" to="/logout">
-                                Cerrar sesión
-                            </NavLink>
-                        </li>
-                    </ul>
-                </div>
-                <div className="card-body">
-                    { children }
-                </div>
+        <div className="d-flex flex-column card w-100 h-100 empleados-container">
+            <div className="card-header">
+                <ul className="nav nav-tabs card-header-tabs justify-content-center flex-wrap">
+                    <li className="nav-item">
+                        <NavLink className="nav-link" to="/profile">
+                            Perfil
+                        </NavLink>
+                    </li>
+
+                    <li className="nav-item">
+                        <NavLink className="nav-link" to="/configuration">
+                            Configuración
+                        </NavLink>
+                    </li>
+
+                    <li className="nav-item">
+                        <NavLink className="nav-link text-danger" to="/logout">
+                            Cerrar sesión
+                        </NavLink>
+                    </li>
+                </ul>
             </div>
-        </div>)
+
+            <div className="card-body overflow-auto">
+                {children}
+            </div>
+        </div>
+    )
 }

@@ -17,3 +17,40 @@
     margin: 0px auto;
     align-self: center;
 }
+.acciones-tabla {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.acciones-tabla .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.permisos-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.permisos-table {
+    min-width: 720px;
+}
+
+.permisos-table-route,
+.permisos-table-text {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+@media (max-width: 768px) {
+    .confirmacion {
+        width: 90dvw;
+    }
+
+    .permisos-table {
+        min-width: 640px;
+    }
+}

@@ -68,14 +68,6 @@ export function NuevaSolicitudForm({ funcionDeCierreDeFormulario, handleNuevaSol
                                     <option value="Permiso">
                                         Permiso
                                     </option>
-
-                                    <option value="Material">
-                                        Material
-                                    </option>
-
-                                    <option value="Otra">
-                                        Otra
-                                    </option>
                                 </select>
                             </div>
 

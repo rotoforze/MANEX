@@ -5,18 +5,18 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 /**
- * Devuelve la información del empleado recibido.
+ * Devuelve la información de la solictud recibido.
  *
- * @author Alex Bernardos Gil
+ * @author Covadonga Blanco Álvarez
  * @version 1.0
  * @param {Request} req
  * @param {Response} res
  */
-function getEmpleado(req, res) {
+function getSolicitudVacaciones(req, res) {
 
-    const idEmpleado = req.body.id;
+    const id_incidencia = req.body.id;
 
-    if (isNaN(idEmpleado) || !idEmpleado || idEmpleado < 0) {
+    if (isNaN(id_incidencia) || !id_incidencia || id_incidencia < 0) {
         return res.status(400).send({
             status: 400,
             message: "Parámetros inválidos o nulos"
@@ -41,11 +41,10 @@ function getEmpleado(req, res) {
 
         connection.query(
             `SELECT *
-             FROM empleado
-             WHERE esVisible = 1
-               AND ID = ?
-             ORDER BY username LIMIT 1`,
-            [idEmpleado],
+             FROM solicitud_vacaciones
+             WHERE ID = ?
+             ORDER BY estado LIMIT 1`,
+            [id_incidencia],
             (error, result) => {
 
                 connection.release();
@@ -66,7 +65,7 @@ function getEmpleado(req, res) {
 
                 return res.status(404).send({
                     status: 404,
-                    message: "No se ha encontrado el usuario."
+                    message: "No se ha encontrado la solicitud."
                 });
 
             }
@@ -74,4 +73,4 @@ function getEmpleado(req, res) {
     });
 }
 
-export default getEmpleado
+export default getSolicitudVacaciones

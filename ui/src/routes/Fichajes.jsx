@@ -4,9 +4,13 @@ import { TablaFichajes } from "../components/Fichajes/TablaFichajes.jsx";
 import '../../public/styles/mainPages.css';
 
 /**
- * Gestión de fichajes
+ *
+ * Dashboard principal para el control de incidencias.
  *
  * @returns {React.JSX.Element}
+ * @author Eneas de la Rosa Menendez Pedrosa
+ * @version 1.0.0
+ * @constructor
  */
 export function Fichajes() {
 

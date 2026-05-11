@@ -18,9 +18,8 @@ async function registrarSolicitudVacaciones(req, res) {
     await verificadorDatos(req, res)
     if (res.headersSent) return;
 
-    const { fecha_inicio,fecha_fin, estado,id_incidencia} = req.body;
+    const { fecha_inicio,fecha_fin, tipo,estado,id_incidencia} = req.body;
 
-    // comenzamos la transaccion
     const config = {
         host: process.env.DB_HOST,
         user: process.env.DB_USER,
@@ -35,8 +34,8 @@ async function registrarSolicitudVacaciones(req, res) {
     try {
 
         const resultadoSolicitudVacaciones = await connection.query(
-            'INSERT INTO solicitud_vacaciones (fecha_inicio,fecha_fin,estado,id_incidencia) VALUES (?, ?, ?, ?)',
-            [fecha_inicio, fecha_fin, estado,id_incidencia]);
+            'INSERT INTO solicitud_vacaciones (fecha_inicio,fecha_fin,tipo,estado,id_incidencia) VALUES (?, ?, ?, ?, ?)',
+            [fecha_inicio, fecha_fin, tipo,estado,id_incidencia]);
 
         await connection.commit();
 

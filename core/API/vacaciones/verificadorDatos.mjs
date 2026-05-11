@@ -9,12 +9,12 @@
  */
 async function verificadorDatos(req, res) {
     const {
-         fecha_inicio, fecha_fin, estado, id_incidencia
+        fecha_inicio,fecha_fin,tipo,estado,id_incidencia
     } = req.body;
 
     // validaciones
     if (!id) {
-        if (!estado || !fecha_inicio || !fecha_fin) {
+        if (!estado || !tipo || !fecha_inicio || !fecha_fin) {
             return res.status(400).send({ status: 400, message: 'Faltan datos.' })
         }
     }

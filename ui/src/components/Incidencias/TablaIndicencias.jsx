@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { useUsers } from "../../context/UserContext.jsx";
+import {apiFetch} from "../../utils/apiFetch.jsx";
+import "../../../public/styles/tablaPermisos.css";
 
 /**
  * Muestra en formato tabla las incidencias recibidas
@@ -24,7 +26,7 @@ export function TablaIncidencias({ tipoIncidencia }) {
 
         try {
 
-            fetch(
+            apiFetch(
                 import.meta.env.VITE_BACKEND_INCIDENCIA +
                 '?pagina=' + paginaActual +
                 '&cantidad=' + cantidadPorPagina +
@@ -89,7 +91,7 @@ export function TablaIncidencias({ tipoIncidencia }) {
 
                 <div className="table-responsive m-3 d-flex flex-column justify-content-start">
 
-                    <table className="table table-striped align-middle">
+                    <table className="table table-striped">
 
                         <thead>
 
@@ -145,11 +147,11 @@ export function TablaIncidencias({ tipoIncidencia }) {
                                             {incidencia?.Prioridad}
                                         </td>
 
-                                        <td className={"row-cols-1 gap-2"}>
+                                        <td className={"h-auto acciones-tabla"}>
 
                                             <button className="btn btn-primary bi-pencil-fill"></button>
 
-                                            <button className="btn btn-danger bi-trash-fill mt-2"></button>
+                                            <button className="btn btn-danger bi-trash-fill"></button>
 
                                         </td>
 

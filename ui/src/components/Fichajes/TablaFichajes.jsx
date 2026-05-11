@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { useUsers } from "../../context/UserContext.jsx";
+import {apiFetch} from "../../utils/apiFetch.jsx";
+import "../../../public/styles/tablaPermisos.css";
 
 /**
  * Muestra en formato tabla los fichajes recibidos.
@@ -24,7 +26,7 @@ export function TablaFichajes() {
 
     useEffect(() => {
         try {
-            fetch(
+            apiFetch(
                 import.meta.env.VITE_BACKEND +
                 '/fichajes?pagina=' + paginaActual +
                 '&cantidad=' + cantidadPorPagina,
@@ -60,7 +62,7 @@ export function TablaFichajes() {
         listaFichajes.length > 0 ?
             (
                 <div className="table-responsive m-3 d-flex flex-column justify-content-start">
-                    <table className="table table-striped align-middle">
+                    <table className="table table-striped">
                         <thead>
                             <tr>
                                 <th scope="col">Nombre</th>
@@ -88,10 +90,10 @@ export function TablaFichajes() {
 
                                         <td>{fichaje?.tipo || 'N/A'}</td>
 
-                                        <td className={"row-cols-1 gap-2"}>
+                                        <td className={"h-auto acciones-tabla"}>
                                             <button className="btn btn-primary bi-pencil-fill"></button>
 
-                                            <button className="btn btn-danger bi-trash-fill mt-2"></button>
+                                            <button className="btn btn-danger bi-trash-fill"></button>
                                         </td>
 
                                     </tr>
@@ -102,32 +104,15 @@ export function TablaFichajes() {
                     </table>
 
                     <div className="gap-3 d-flex justify-content-center mb-3">
-
-                        <button
-                            className="btn btn-primary bi-chevron-left"
-                            disabled={paginaActual == 0}
+                        <button className="btn btn-primary bi-chevron-left" disabled={paginaActual == 0}
                             onClick={() => {
-                                if (paginaActual > 0) {
-                                    setPaginaActual(paginaActual - 1);
-                                }
-                            }}>
-                        </button>
-
-                        <b>
-                            Mostrando {resultadosPorPagina}/{cantidadPorPagina}
-                            en la pagina {paginaActual}
-                        </b>
-
-                        <button
-                            className="btn btn-primary bi-chevron-right"
-                            disabled={!(paginaActual < paginaMaxima)}
+                                if (paginaActual > 0) setPaginaActual(paginaActual - 1);
+                            }}></button>
+                        <b>Mostrando {resultadosPorPagina}/{cantidadPorPagina} en la página {paginaActual}</b>
+                        <button className="btn btn-primary bi-chevron-right" disabled={!(paginaActual < paginaMaxima)}
                             onClick={() => {
-                                if (paginaActual < paginaMaxima) {
-                                    setPaginaActual(paginaActual + 1);
-                                }
-                            }}>
-                        </button>
-
+                                if (paginaActual < paginaMaxima) setPaginaActual(paginaActual + 1);
+                            }}></button>
                     </div>
                 </div>
             )

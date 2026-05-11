@@ -3,6 +3,7 @@ import {Form, useActionData, useNavigate, useNavigation} from 'react-router-dom'
 import {useUsers} from "../context/UserContext.jsx";
 import {Loading} from "../components/Loading.jsx";
 import '../../public/styles/mainPages.css'
+import {apiFetch} from "../utils/apiFetch.jsx";
 
 /**
  *
@@ -33,7 +34,7 @@ const LoginPage = () => {
     useEffect(() => {
 
         try {
-            fetch(import.meta.env.VITE_BACKEND,
+            apiFetch(import.meta.env.VITE_BACKEND,
                 {method: 'GET', headers: {'Content-Type': 'application/json'}})
                 .then((response) => response.json())
                 .then(data => {
@@ -53,7 +54,7 @@ const LoginPage = () => {
         if (!actionData) return;
 
         if (actionData.success) {
-            changeUserInformation(actionData.username, actionData.id, actionData.token, true);
+            changeUserInformation(actionData.username, actionData.id, actionData.token, actionData.department, true);
         }
     }, [actionData]);
 
@@ -154,7 +155,7 @@ const LoginPage = () => {
                             <button
                                 className="btn btn-link p-0"
                                 type="button"
-                                onClick={() => navigate('/FAQ.jsx')}
+                                onClick={() => navigate('/faq')}
                             >
                                 ¿Problemas para iniciar sesion?
                             </button>

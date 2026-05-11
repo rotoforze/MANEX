@@ -18,7 +18,7 @@ async function registrarIncidencias(req, res) {
     await verificadorDatos(req, res)
     if (res.headersSent) return;
 
-    const {id_empleado,fecha_creacion, observaciones, estado} = req.body;
+    const {id_empleado,fecha_creacion, observaciones, estado, comentario} = req.body;
 
     const config = {
         host: process.env.DB_HOST,
@@ -34,8 +34,8 @@ async function registrarIncidencias(req, res) {
     try {
 
         const resultadoIncidencia = await connection.query(
-            'INSERT INTO incidencia (id_empleado,fecha_creacion,observaciones,estado) VALUES (?,?, ?, ?)',
-            [id_empleado,fecha_creacion, observaciones, estado]);
+            'INSERT INTO incidencia (id_empleado,fecha_creacion,observaciones,estado,comentario) VALUES (?,?, ?, ?)',
+            [id_empleado,fecha_creacion, observaciones, estado,comentario]);
 
         await connection.commit();
 

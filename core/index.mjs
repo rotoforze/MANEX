@@ -146,24 +146,6 @@ app.get('/fichajes', (req, res) => {
     } else listaFichajes(req, res);
 });
 
-app.get('/incidencias', (req, res) => {
-    const parametrosRecibidos = Object.keys(req.query);
-
-    const parametrosNoValidos = parametrosRecibidos.filter(p => !paginacion.PARAMETROS_PERMITIDOS.includes(p));
-
-    if (parametrosNoValidos.length > 0) {
-        return res.status(400).send({
-            status: 400,
-            message: `Parámetros no permitidos: ${parametrosNoValidos.join(', ')}`
-        });
-    }
-
-    if (req?.query?.id) {
-        getIncidencia(req, res);
-
-    } else listaIncidencias(req, res);
-});
-
 
 app.get('/productos', (req, res) => {
     const parametrosRecibidos = Object.keys(req.query);
@@ -237,6 +219,23 @@ app.get('/vacaciones', (req, res) => {
     } else listaSolicitudesVacaciones(req, res);
 });
 
+app.get('/incidencias', (req, res) => {
+    const parametrosRecibidos = Object.keys(req.query);
+
+    const parametrosNoValidos = parametrosRecibidos.filter(p => !paginacion.PARAMETROS_PERMITIDOS.includes(p));
+
+    if (parametrosNoValidos.length > 0) {
+        return res.status(400).send({
+            status: 400,
+            message: `Parámetros no permitidos: ${parametrosNoValidos.join(', ')}`
+        });
+    }
+
+    if (req?.query?.id) {
+        getIncidencia(req, res);
+
+    } else listaIncidencias(req, res);
+});
 
 app.get('/permisos', listadoPermisos);
 

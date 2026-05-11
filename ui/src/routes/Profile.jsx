@@ -3,6 +3,7 @@ import {useUsers} from "../context/UserContext.jsx";
 import {Form} from "react-router-dom";
 import {NavbarConfigProfileLogout} from "../components/NavbarConfigProfileLogout.jsx";
 import "../../public/styles/Profile.css";
+import {apiFetch} from "../utils/apiFetch.jsx";
 
 
 export const Profile = () => {
@@ -11,7 +12,7 @@ export const Profile = () => {
 
     useEffect(() => {
         try {
-            fetch(import.meta.env.VITE_BACKEND_EMPLEADO + '?id=' +user?.id,
+            apiFetch(import.meta.env.VITE_BACKEND_EMPLEADO + '?id=' +user?.id,
                 {method: 'GET', headers: {'Content-Type': 'application/json', 'token': user?.token}})
                 .then((response) => response.json()
                 ).then((data) => {

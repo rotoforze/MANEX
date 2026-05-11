@@ -12,11 +12,11 @@ import mysql from "mysql2/promise";
  */
 async function actualizarSolicitudVacaciones(req, res) {
 
-    const {fecha_inicio,fecha_fin,estado,id_incidencia } = req.body;
+    const {fecha_inicio,fecha_fin,tipo,estado,id_incidencia } = req.body;
 
     await verificadorDatos(req, res);
 
-    // comenzamos la transaccion
+ 
     const config = {
         host: process.env.DB_HOST,
         user: process.env.DB_USER,
@@ -27,14 +27,14 @@ async function actualizarSolicitudVacaciones(req, res) {
 
     const connection = await mysql.createConnection(config);
     if (!connection) return res.status(500).send({status: 500, message: 'Error al conectar a la base de datos.'});
-    await connection.beginTransaction();
+ 
 
     try {
 
 
         const resultadoEmpleado = await connection.query(
-            'UPDATE solicitud_vacaciones SET fecha_inicio = ?, fecha_fin = ?, estado = ? WHERE id_incidencia = ?',
-            [fecha_inicio, fecha_fin, estado, id_incidencia]);
+            'UPDATE solicitud_vacaciones SET fecha_inicio = ?, fecha_fin = ?,tipo = ?, estado = ? WHERE id_incidencia = ?',
+            [fecha_inicio, fecha_fin, tipo,estado, id_incidencia]);
 
         await connection.commit();
 

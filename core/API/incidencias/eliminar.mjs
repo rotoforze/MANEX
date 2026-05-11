@@ -17,7 +17,6 @@ async function delIncidencia(req, res) {
         return res.status(400).send({status: 400, message: 'El ID de la incidencia no puede ser negativo.'});
     }
 
-    // comenzamos la transaccion
     const config = {
         host: process.env.DB_HOST,
         user: process.env.DB_USER,

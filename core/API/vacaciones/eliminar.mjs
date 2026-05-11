@@ -17,7 +17,6 @@ async function delVacaciones(req, res) {
         return res.status(400).send({status: 400, message: 'El ID de la solicitud no puede ser negativo.'});
     }
 
-    // comenzamos la transaccion
     const config = {
         host: process.env.DB_HOST,
         user: process.env.DB_USER,
