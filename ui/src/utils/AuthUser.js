@@ -55,7 +55,7 @@ export const authUser = async (usuario, password, wantsToKeepSession, sessionTok
 
         if (!response.ok) {
             console.error('Error en la red o servidor');
-            return;
+            return false;
         }
 
         const respuesta = await response.json();

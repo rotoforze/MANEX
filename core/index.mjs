@@ -246,7 +246,7 @@ app.delete('/incidencias', delIncidencia);
 app.delete('/contratos', delContrato);
 app.delete('/departamentos', delDepartamento);
 app.delete('/permisos', eliminarPermisos);
-app.delete('/vacaciones', eliminarSolicitud);
+app.delete('/vacaciones', delVacaciones);
 
 app.post('/empleados', (req, res) => {
     if (!req.body) {

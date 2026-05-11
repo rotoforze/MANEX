@@ -12,7 +12,7 @@ import mysql from "mysql2/promise";
  */
 async function actualizarIncidencia(req, res) {
 
-    const {fecha_creacion, observaciones,estado, id } = req.body;
+    const {id_empleado,fecha_creacion, observaciones,estado, id } = req.body;
 
     await verificadorDatos(req, res);
 
@@ -33,8 +33,8 @@ async function actualizarIncidencia(req, res) {
 
 
         const resultadoEmpleado = await connection.query(
-            'UPDATE incidencia SET fecha_creacion = ?, observaciones = ?, estado = ? WHERE id = ?',
-            [fecha_creacion, observaciones, estado, id]);
+            'UPDATE incidencia SET id_empleado = ?,fecha_creacion = ?, observaciones = ?, estado = ? WHERE id = ?',
+            [id_empleado,fecha_creacion, observaciones, estado, id]);
 
         await connection.commit();
 

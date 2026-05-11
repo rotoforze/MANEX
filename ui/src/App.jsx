@@ -16,7 +16,7 @@ import { Logout } from "./routes/Logout.jsx";
 import { Empleados } from "./routes/Empleados.jsx";
 import { Productos } from "./routes/Productos.jsx";
 import { Fichajes } from "./routes/Fichajes.jsx";
-import { Incidencia } from "./routes/Incidencia.jsx";
+import { Incidencias } from "./routes/Incidencia.jsx";
 import { Solicitudes } from "./routes/Solicitudes.jsx";
 
 /**
@@ -41,7 +41,7 @@ function App() {
             { path: '/empleados', element: <Empleados />, action: actionRegistro },
             { path: '/productos', element: <Productos />, action: actionRegistro },
             { path: '/fichajes', element: <Fichajes />, action: actionRegistro },
-            { path: '/incidencia', element: <Incidencia />, action: actionRegistro },
+            { path: '/incidencia', element: <Incidencias />, action: actionRegistro },
             { path: '/solicitudes', element: <Solicitudes />, action: actionRegistro },
             { path: '/profile', element: <Profile /> },
             { path: '/configuration', element: <Configuration /> },

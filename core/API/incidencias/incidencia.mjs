@@ -1,22 +1,22 @@
 import mysql from 'mysql2';
 import dotenv from 'dotenv';
 
-//Cargamos las variables del archivo .env a process.env
+
 dotenv.config();
 
 /**
- * Devuelve la información del empleado recibido.
+ * Devuelve la información de la incidencia recibida.
  *
- * @author Alex Bernardos Gil
+ * @author Covadonga Blanco Álvarez
  * @version 1.0
  * @param {Request} req
  * @param {Response} res
  */
-function getEmpleado(req, res) {
+function getIncidencia(req, res) {
 
-    const idEmpleado = req.body.id;
+    const id = req.query.id;
 
-    if (isNaN(idEmpleado) || !idEmpleado || idEmpleado < 0) {
+    if (isNaN(id) || !id || id < 0) {
         return res.status(400).send({
             status: 400,
             message: "Parámetros inválidos o nulos"
@@ -41,11 +41,10 @@ function getEmpleado(req, res) {
 
         connection.query(
             `SELECT *
-             FROM empleado
-             WHERE esVisible = 1
-               AND ID = ?
+             FROM incidencia
+             WHERE ID = ?
              ORDER BY username LIMIT 1`,
-            [idEmpleado],
+            [id],
             (error, result) => {
 
                 connection.release();
@@ -66,7 +65,7 @@ function getEmpleado(req, res) {
 
                 return res.status(404).send({
                     status: 404,
-                    message: "No se ha encontrado el usuario."
+                    message: "No se ha encontrado la incidencia."
                 });
 
             }
@@ -74,4 +73,4 @@ function getEmpleado(req, res) {
     });
 }
 
-export default getEmpleado
+export default getIncidencia

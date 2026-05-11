@@ -9,7 +9,7 @@
  */
 async function verificadorDatos(req, res) {
     const {
-        id, fecha_creacion,observaciones,estado
+        id,id_empleado, fecha_creacion,observaciones,estado
     } = req.body;
 
     // validaciones
@@ -19,7 +19,7 @@ async function verificadorDatos(req, res) {
         }
     }
 
-    if (estado.length > 10 || (observaciones && observaciones?.length > 60) || (id && id < 0)) {
+    if (estado.length > 10 || (observaciones && observaciones?.length > 60)|| (id_empleado && id_empleado < 0) || (id && id < 0)) {
         return res.status(400).send({status: 400, message: 'Datos inválidos.'})
     }
 }
