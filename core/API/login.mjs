@@ -113,7 +113,6 @@ export function login(req, res) {
                     // si no tiene longitud es porque no existe.
                     if (result.length > 0) {
                         // al coinicdir las contraseñas, podemos iniciar sesión
-                        console.log(pass, result[0].password)
                         if (await verificarContrasenia(pass, result[0].password)) {
                             // como hemos recibido en true, generamos un token para asignarlo al usuario
                             var newToken = generarToken();
