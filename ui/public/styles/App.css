@@ -40,6 +40,32 @@ form div {
     border-radius: .75rem;
 }
 
+.faq-card {
+    max-width: 760px;
+    border-radius: .75rem;
+}
+
+.faq-icon {
+    width: 72px;
+    height: 72px;
+    background-color: rgba(13, 110, 253, .12);
+    color: #0d6efd;
+    font-size: 2rem;
+}
+
+.support-card {
+    background-color: rgba(248, 249, 250, .9);
+}
+
+.support-icon {
+    width: 48px;
+    height: 48px;
+    background-color: rgba(13, 110, 253, .12);
+    color: #0d6efd;
+    font-size: 1.35rem;
+    flex: 0 0 auto;
+}
+
 .main-nav .nav {
     position: static;
     width: auto;
@@ -97,17 +123,40 @@ form div {
 
 .loading {
     position: fixed;
-    background-color: #1f1f1f;
-    color: #e5e5f7;
-    padding: 4px;
-    border-radius: 4px;
+    width: min(100% - 2rem, 360px);
+    border-radius: .75rem;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    z-index: 2100;
     transition: all 0.3s ease-in-out;
+}
+
+.loading-spinner {
+    width: 2rem;
+    height: 2rem;
+    flex: 0 0 auto;
+}
+
+.error-page {
+    min-height: 100dvh;
+}
+
+.app-content .error-page {
+    min-height: 100%;
+}
+
+.error-card {
+    width: min(100%, 520px);
+    border-radius: .75rem;
+}
+
+.error-icon {
+    width: 72px;
+    height: 72px;
+    background-color: rgba(220, 53, 69, .12);
+    color: #dc3545;
+    font-size: 2rem;
 }
 
 .mobile-menu-header {
