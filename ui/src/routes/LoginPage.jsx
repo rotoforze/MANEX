@@ -155,7 +155,7 @@ const LoginPage = () => {
                             <button
                                 className="btn btn-link p-0"
                                 type="button"
-                                onClick={() => navigate('/FAQ.jsx')}
+                                onClick={() => navigate('/faq')}
                             >
                                 ¿Problemas para iniciar sesion?
                             </button>

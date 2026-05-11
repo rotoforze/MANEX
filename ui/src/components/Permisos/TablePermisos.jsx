@@ -1,9 +1,9 @@
-import {useUsers} from "../../context/UserContext.jsx";
+import { useUsers } from "../../context/UserContext.jsx";
 import "../../../public/styles/tablaPermisos.css";
-import React, {useEffect, useState} from "react";
 import {DelPermiso} from "./DelPermiso.jsx";
 import EditPermiso from "./EditPermiso.jsx";
 import {apiFetch} from "../../utils/apiFetch.jsx";
+import React, { useEffect, useState } from "react";
 
 /**
  * Muestra en formato tabla los permisos de MANEX. permite ver y borrar
@@ -15,7 +15,7 @@ import {apiFetch} from "../../utils/apiFetch.jsx";
  * @constructor
  */
 export function TablePermisos() {
-    const {user} = useUsers();
+    const { user } = useUsers();
 
     const [permisos, setPermisos] = useState({});
     const [departamentos, setDepartamentos] = useState(new Map())

@@ -18,6 +18,7 @@ import { Productos } from "./routes/Productos.jsx";
 import { Fichajes } from "./routes/Fichajes.jsx";
 import { Incidencias } from "./routes/Incidencia.jsx";
 import { Solicitudes } from "./routes/Solicitudes.jsx";
+import { FAQ } from "./routes/FAQ.jsx";
 
 /**
  * Contiene el router de la aplicación, parte más alta de la aplicación.
@@ -36,6 +37,7 @@ function App() {
         children: [
 
             { path: '/', element: <LoginPage />, action: actionInicioSesion },
+            { path: '/faq', element: <FAQ /> },
             { path: '/error', element: <ErrorPage /> },
             { path: '/dashboard', element: <Dashboard /> },
             { path: '/empleados', element: <Empleados />, action: actionRegistro },
@@ -45,7 +47,8 @@ function App() {
             { path: '/solicitudes', element: <Solicitudes />, action: actionRegistro },
             { path: '/profile', element: <Profile /> },
             { path: '/configuration', element: <Configuration /> },
-            { path: '/logout', element: <Logout /> }
+            { path: '/logout', element: <Logout /> },
+            { path: '*', element: <ErrorPage /> }
 
         ]
     }]);

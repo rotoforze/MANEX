@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useUsers } from "../../context/UserContext.jsx";
 import {apiFetch} from "../../utils/apiFetch.jsx";
+import "../../../public/styles/tablaPermisos.css";
 
 /**
  * Muestra en formato tabla los empleados recibidos
@@ -80,9 +81,9 @@ export function TablaEmpleados() {
                                     </td>
                                     <td>{user?.ID_DEPARTAMENTO}</td>
                                     <td>{user?.ID_CONTRATO}</td>
-                                    <td className={"row-cols-1 gap-2"}>
+                                    <td className={"h-auto acciones-tabla"}>
                                         <button className="btn btn-primary bi-pencil-fill"></button>
-                                        <button className="btn btn-danger bi-trash-fill mt-2"></button>
+                                        <button className="btn btn-danger bi-trash-fill"></button>
                                     </td>
                                 </tr>
                             )

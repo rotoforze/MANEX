@@ -10,10 +10,15 @@ import React from 'react'
  */
 export const Loading = () => {
     return (
-        <div className={"loading"}>
+        <div className="loading card shadow-sm" role="status" aria-live="polite">
+            <div className="card-body d-flex align-items-center gap-3">
+                <div className="spinner-border text-primary loading-spinner" aria-hidden="true"></div>
 
-            <p>Cargando...</p>
-
+                <div className="text-start">
+                    <p className="fw-semibold mb-0">Cargando</p>
+                    <small className="text-muted">Preparando la información...</small>
+                </div>
+            </div>
         </div>
     )
 }

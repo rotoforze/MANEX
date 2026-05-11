@@ -44,13 +44,13 @@ export function Incidencias() {
 
         </div>
 
-        <div className={"d-flex gap-2 align-items-start justify-content-start top-productos"}>
+        <div className={"d-flex gap-2 align-items-start justify-content-start top-productos incidencias-actions"}>
 
           <button
             className={`btn ${tipoIncidencia === 'general'
               ? 'btn-primary'
               : 'btn-outline-primary'
-              }`}
+              } incidencia-action-btn`}
             onClick={() => setTipoIncidencia('general')}
           >
 
@@ -64,7 +64,7 @@ export function Incidencias() {
             className={`btn ${tipoIncidencia === 'it'
               ? 'btn-primary'
               : 'btn-outline-primary'
-              }`}
+              } incidencia-action-btn`}
             onClick={() => setTipoIncidencia('it')}
           >
 
@@ -78,7 +78,7 @@ export function Incidencias() {
             className={`btn ${tipoIncidencia === 'inventario'
               ? 'btn-primary'
               : 'btn-outline-primary'
-              }`}
+              } incidencia-action-btn`}
             onClick={() => setTipoIncidencia('inventario')}
           >
 
@@ -87,7 +87,7 @@ export function Incidencias() {
             Inventario
 
           </button>
-          <button className={"btn " + (registroVisible ? 'btn-danger' : 'btn-primary')} onClick={() => {
+          <button className={"btn incidencia-action-btn " + (registroVisible ? 'btn-danger' : 'btn-primary')} onClick={() => {
             // muestra el componente de registro
             setRegistroVisible(!registroVisible);
 
@@ -96,7 +96,7 @@ export function Incidencias() {
           </button>
 
           <button
-            className="btn btn-primary"
+            className="btn btn-primary incidencia-action-btn"
             onClick={() => {
 
               setRefreshKey(prevKey => prevKey + 1);

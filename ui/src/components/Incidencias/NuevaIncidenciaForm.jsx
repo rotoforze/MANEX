@@ -94,7 +94,7 @@ export function NuevaIncidenciaForm({ funcionDeCierreDeFormulario, handleNuevaIn
                                     </option>
                                 </select>
                             </div>
-
+                            
                             <div className="col-md-3 mb-3">
                                 <label htmlFor="estado" className="form-label">
                                     Estado <span className="text-danger">*</span>
