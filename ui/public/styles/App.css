@@ -162,7 +162,7 @@ form div {
     }
 
     .menu-toggle-btn i {
-        transition: transform 0.3s ease;
+        transition: transform 0.45s ease;
     }
 
     .main-nav.menu-open .menu-toggle-btn i {
@@ -173,23 +173,44 @@ form div {
         width: 100dvw;
         height: 10dvh;
         min-height: 10dvh;
-        max-height: 0;
+        max-height: 10dvh;
         position: static;
         flex-direction: column;
         overflow-y: hidden;
         overflow-x: hidden;
         padding: 0 1rem !important;
-        transition: max-height 0.3s ease-in-out;
+        transition: height 0.75s cubic-bezier(0.22, 1, 0.36, 1),
+                    max-height 0.75s cubic-bezier(0.22, 1, 0.36, 1),
+                    padding 0.55s ease;
         z-index: 999;
     }
 
     .main-nav.menu-open {
+        height: 100dvh;
         max-height: 100dvh;
         position: static;
-        height: max-content;
-        overflow-y: scroll;
+        overflow-y: auto;
         padding: 1rem !important;
-        transition: max-height 0.3s ease-in-out;
+        transition: height 0.75s cubic-bezier(0.22, 1, 0.36, 1),
+                    max-height 0.75s cubic-bezier(0.22, 1, 0.36, 1),
+                    padding 0.55s ease;
+    }
+
+    .main-nav > hr,
+    .main-nav > .nav,
+    .main-nav > #desplegableUsuario {
+        opacity: 0;
+        transform: translateY(-0.5rem);
+        transition: opacity 0.35s ease,
+                    transform 0.45s ease;
+    }
+
+    .main-nav.menu-open > hr,
+    .main-nav.menu-open > .nav,
+    .main-nav.menu-open > #desplegableUsuario {
+        opacity: 1;
+        transform: translateY(0);
+        transition-delay: 0.12s;
     }
 
     .mobile-menu-header {

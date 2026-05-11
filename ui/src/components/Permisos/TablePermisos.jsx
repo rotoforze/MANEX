@@ -1,9 +1,9 @@
-import {useUsers} from "../../context/UserContext.jsx";
+import { useUsers } from "../../context/UserContext.jsx";
 import "../../../public/styles/tablaPermisos.css";
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 
 export function TablePermisos() {
-    const {user} = useUsers();
+    const { user } = useUsers();
 
     const [permisos, setPermisos] = useState({});
     const [departamentos, setDepartamentos] = useState(new Map())
@@ -16,14 +16,14 @@ export function TablePermisos() {
 
     const fetchInicio = () => {
         fetch(import.meta.env.VITE_BACKEND_PERMISOS, {
-            method: 'GET', headers: {'token': user?.token}
+            method: 'GET', headers: { 'token': user?.token }
         })
             .then(res => res.json())
             .then(data => {
                 setPermisos(data);
             });
         fetch(import.meta.env.VITE_BACKEND_DEPARTAMENTOS, {
-            method: 'GET', headers: {'token': user?.token}
+            method: 'GET', headers: { 'token': user?.token }
         })
             .then(res => res.json())
             .then(data => {
@@ -59,16 +59,16 @@ export function TablePermisos() {
                             <div>
                                 <label className={"form-label"}>Escribe 'CONFIRMAR' para poder confirmar.</label>
                                 <input type="text" className={"form-control"}
-                                       placeholder={"Escribe 'CONFIRMAR' para poder confirmar."} onChange={(e) => {
-                                    setConfirmar(e.target.value.toUpperCase() == 'CONFIRMAR');
-                                }}/>
+                                    placeholder={"Escribe 'CONFIRMAR' para poder confirmar."} onChange={(e) => {
+                                        setConfirmar(e.target.value.toUpperCase() == 'CONFIRMAR');
+                                    }} />
                                 <div className={"gap-3 d-flex justify-content-center mt-3 p-2"}>
                                     <button className={"btn btn-primary"} onClick={() => {
                                         setEstado('Confirmando cambios...');
                                         const urlencoded = new URLSearchParams();
                                         urlencoded.append("ruta", rutaAEditar);
                                         fetch(import.meta.env.VITE_BACKEND_PERMISOS, {
-                                            method: 'DELETE', headers: {'token': user?.token}, body: urlencoded,
+                                            method: 'DELETE', headers: { 'token': user?.token }, body: urlencoded,
                                         })
                                             .then(res => res.json())
                                             .then(data => {
@@ -99,90 +99,102 @@ export function TablePermisos() {
                 </div>) : null
             }
             {permisos ? (<>
-                <h2>Permisos</h2>
+                <div className="d-flex flex-column flex-md-row justify-content-between align-items-start w-100 mb-4 gap-3">
 
-                <h4>Selecciona un permiso para ver su configuración.</h4>
-                <table className="table table-striped">
-                    <thead>
-                    <tr>
-                        <th className={"col"}>Permiso</th>
-                        <th className={"col"}>GET</th>
-                        <th className={"col"}>POST</th>
-                        <th className={"col"}>DELETE</th>
-                        <th className={"col"}>Acciones</th>
-                    </tr>
-                    </thead>
-                    <tbody className={"table-group-divider"}>
-                    {permisos && permisos != null && permisos != undefined ? Object.entries(permisos).map((permiso, index) => {
-                        if (permiso[1] == null || permiso[1] == undefined) return;
-                        const hijos = Object.entries(permiso[1]);
-                        try {
-                            var permisoProtected = isProtected(hijos);
+                    <div>
+                        <h2 className="fw-bold mb-1">
+                            Permisos
+                        </h2>
 
-                            var permisoGet = getValoresEnGet(hijos);
-                            var permisoGetTexto = parseToText(permisoGet, departamentos);
+                        <p className="text-muted mb-0">
+                            Administrar y gestionar los permisos de los roles.
+                        </p>
+                    </div>
 
-                            var permisoPost = getValoresEnPost(hijos);
-                            var permisoPostTexto = parseToText(permisoPost, departamentos);
+                </div>
+                <div className="table-responsive permisos-table-wrapper">
+                    <table className="table table-striped permisos-table">
+                        <thead>
+                            <tr>
+                                <th className={"col"}>Permiso</th>
+                                <th className={"col"}>GET</th>
+                                <th className={"col"}>POST</th>
+                                <th className={"col"}>DELETE</th>
+                                <th className={"col"}>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody className={"table-group-divider"}>
+                            {permisos && permisos != null && permisos != undefined ? Object.entries(permisos).map((permiso, index) => {
+                                if (permiso[1] == null || permiso[1] == undefined) return;
+                                const hijos = Object.entries(permiso[1]);
+                                try {
+                                    var permisoProtected = isProtected(hijos);
 
-                            var permisoDelete = getValoresEnDelete(hijos);
-                            var permisoDeleteTexto = parseToText(permisoDelete, departamentos);
+                                    var permisoGet = getValoresEnGet(hijos);
+                                    var permisoGetTexto = parseToText(permisoGet, departamentos);
 
-                        } catch (e) {
-                            console.error(e); // TODO quitar mas adelante
-                        }
-                        return (
-                            <>
-                                <tr className="h-auto table-group-divider" key={index}>
-                                    <th scope="row">
-                                        {permiso[0]}&nbsp;&nbsp;
-                                        {permisoProtected && <span className="badge bg-danger bi-shield">!</span>}
-                                    </th>
-                                    <td className={"h-auto"}>
-                                        <input type="checkbox"
-                                               className="form-check-input form-check bg-dark justificar-centro"
-                                               disabled={permisoProtected} defaultChecked={!!permisoGet}/>
-                                    </td>
-                                    <td className={"h-auto"}>
-                                        <input type="checkbox"
-                                               className="form-check-input form-check bg-dark justificar-centro"
-                                               disabled={permisoProtected} defaultChecked={!!permisoPost}/>
-                                    </td>
-                                    <td className={"h-auto"}>
-                                        <input type="checkbox"
-                                               className="form-check-input form-check bg-dark justificar-centro"
-                                               disabled={permisoProtected} defaultChecked={!!permisoDelete}/>
-                                    </td>
-                                    <td className={"h-auto"}>
-                                        <button className="btn btn-danger bi-trash-fill mt-2" onClick={() => {
-                                            setEliminando(true);
-                                            setRutaAEditar(permiso[0]);
-                                        }} disabled={hijos[0][1]}></button>
-                                    </td>
-                                </tr>
-                                <tr className="h-auto" key={index + 100}>
-                                    <td>Departamentos</td>
-                                    <td>
-                                        {permisoGetTexto || ''}
-                                    </td>
-                                    <td>
-                                        {permisoPostTexto || ''}
-                                    </td>
-                                    <td>
-                                        {permisoDeleteTexto || ''}
-                                    </td>
-                                    <td>
-                                        <button className="btn btn-primary bi-pencil-fill"
-                                                disabled={hijos[0][1]}></button>
-                                    </td>
-                                </tr>
-                            </>
-                        )
-                    }) : (<tr>
-                        <td>No hay permisos disponibles</td>
-                    </tr>)}
-                    </tbody>
-                </table>
+                                    var permisoPost = getValoresEnPost(hijos);
+                                    var permisoPostTexto = parseToText(permisoPost, departamentos);
+
+                                    var permisoDelete = getValoresEnDelete(hijos);
+                                    var permisoDeleteTexto = parseToText(permisoDelete, departamentos);
+
+                                } catch (e) {
+                                    console.error(e); // TODO quitar mas adelante
+                                }
+                                return (
+                                    <React.Fragment key={permiso[0]}>
+                                        <tr className="h-auto table-group-divider">
+                                            <th scope="row" className="permisos-table-route">
+                                                {permiso[0]}&nbsp;&nbsp;
+                                                {permisoProtected && <span className="badge bg-danger bi-shield">!</span>}
+                                            </th>
+                                            <td className={"h-auto"}>
+                                                <input type="checkbox"
+                                                    className="form-check-input form-check bg-dark justificar-centro"
+                                                    disabled={permisoProtected} defaultChecked={!!permisoGet} />
+                                            </td>
+                                            <td className={"h-auto"}>
+                                                <input type="checkbox"
+                                                    className="form-check-input form-check bg-dark justificar-centro"
+                                                    disabled={permisoProtected} defaultChecked={!!permisoPost} />
+                                            </td>
+                                            <td className={"h-auto"}>
+                                                <input type="checkbox"
+                                                    className="form-check-input form-check bg-dark justificar-centro"
+                                                    disabled={permisoProtected} defaultChecked={!!permisoDelete} />
+                                            </td>
+                                            <td className={"h-auto"}>
+                                                <button className="btn btn-danger bi-trash-fill mt-2" onClick={() => {
+                                                    setEliminando(true);
+                                                    setRutaAEditar(permiso[0]);
+                                                }} disabled={hijos[0][1]}></button>
+                                            </td>
+                                        </tr>
+                                        <tr className="h-auto">
+                                            <td>Departamentos</td>
+                                            <td className="permisos-table-text">
+                                                {permisoGetTexto || ''}
+                                            </td>
+                                            <td className="permisos-table-text">
+                                                {permisoPostTexto || ''}
+                                            </td>
+                                            <td className="permisos-table-text">
+                                                {permisoDeleteTexto || ''}
+                                            </td>
+                                            <td>
+                                                <button className="btn btn-primary bi-pencil-fill"
+                                                    disabled={hijos[0][1]}></button>
+                                            </td>
+                                        </tr>
+                                    </React.Fragment>
+                                )
+                            }) : (<tr>
+                                <td>No hay permisos disponibles</td>
+                            </tr>)}
+                        </tbody>
+                    </table>
+                </div>
             </>) : (<h2>No tienes acceso a la configuración</h2>)}
 
 

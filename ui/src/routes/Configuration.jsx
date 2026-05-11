@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import {NavbarConfigProfileLogout} from "../components/NavbarConfigProfileLogout.jsx";
 import {TablePermisos} from "../components/Permisos/TablePermisos.jsx";
+import '../../public/styles/mainPages.css';
 
 export const Configuration = () => {
     return (<NavbarConfigProfileLogout>
@@ -14,7 +15,7 @@ const FormularioPermisos = ({ruta, metodo, permisos, onGuardar, onEliminar}) => 
 
     return (
 
-        <div className="mb-3">
+        <div className="d-flex flex-column card w-100 h-100 empleados-container">
 
             <label>
                 <strong>{metodo}</strong>
