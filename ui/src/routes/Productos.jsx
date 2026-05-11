@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { NuevoProductoForm } from "../components/NewProduct.jsx";
-import { TablaProductos } from "../components/TablaProductos.jsx";
+import { NuevoProductoForm } from "../components/Productos/NewProduct.jsx";
+import { TablaProductos } from "../components/Productos/TablaProductos.jsx";
 import '../../public/styles/mainPages.css';
 
 /**

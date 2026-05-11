@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { SignInForm } from "../components/SignInForm.jsx";
-import { TablaEmpleados } from "../components/TablaEmpleados.jsx";
+import { SignInForm } from "../components/Empleados/SignInForm.jsx";
+import { TablaEmpleados } from "../components/Empleados/TablaEmpleados.jsx";
 import '../../public/styles/mainPages.css';
 
 /**

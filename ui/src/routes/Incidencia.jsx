@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { TablaIncidencias } from '../components/TablaIndicencias.jsx';
-import { NuevaIncidenciaForm } from "../components/NuevaIncidenciaForm.jsx";
+import { TablaIncidencias } from '../components/Incidencias/TablaIndicencias.jsx';
+import { NuevaIncidenciaForm } from "../components/Incidencias/NuevaIncidenciaForm.jsx";
 import '../../public/styles/mainPages.css';
 
 /**
