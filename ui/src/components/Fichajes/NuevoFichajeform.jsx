@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useUsers } from "../../context/UserContext.jsx";
+import {apiFetch} from "../../utils/apiFetch.jsx";
 
 /**
  *
@@ -27,7 +28,7 @@ export function NuevoFichajeForm({ funcionDeCierreDeFormulario, handleNuevoFicha
         const datos = new URLSearchParams(formData);
 
         try {
-            const response = await fetch(import.meta.env.VITE_BACKEND + '/fichajes', {
+            const response = await apiFetch(import.meta.env.VITE_BACKEND + '/fichajes', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',

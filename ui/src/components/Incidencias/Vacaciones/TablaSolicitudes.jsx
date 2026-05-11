@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useUsers } from "../../../context/UserContext.jsx";
+import {apiFetch} from "../../../utils/apiFetch.jsx";
 import "../../../../public/styles/tablaPermisos.css";
 
 /**
@@ -23,7 +24,7 @@ export function TablaSolicitudes() {
 
     useEffect(() => {
         try {
-            fetch(
+            apiFetchw(
                 import.meta.env.VITE_BACKEND_SOLICITUD +
                 '?pagina=' + paginaActual +
                 '&cantidad=' + cantidadPorPagina,
