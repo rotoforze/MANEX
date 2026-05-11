@@ -1,5 +1,5 @@
-import {useUsers} from "../context/UserContext.jsx";
-import "../../public/styles/tablaPermisos.css";
+import {useUsers} from "../../context/UserContext.jsx";
+import "../../../public/styles/tablaPermisos.css";
 import React, {useEffect, useState} from "react";
 
 export function TablePermisos() {

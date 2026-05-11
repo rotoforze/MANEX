@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { NuevaSolicitudForm } from "../components/NuevaSolicitudForm.jsx";
-import { TablaSolicitudes } from "../components/TablaSolicitudes.jsx";
+import { NuevaSolicitudForm } from "../components/Incidencias/Vacaciones/NuevaSolicitudForm.jsx";
+import { TablaSolicitudes } from "../components/Incidencias/Vacaciones/TablaSolicitudes.jsx";
 import '../../public/styles/mainPages.css';
 
 /**

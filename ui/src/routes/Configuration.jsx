@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {NavbarConfigProfileLogout} from "../components/NavbarConfigProfileLogout.jsx";
-import {TablePermisos} from "../components/TablePermisos.jsx";
+import {TablePermisos} from "../components/Permisos/TablePermisos.jsx";
 
 export const Configuration = () => {
     return (<NavbarConfigProfileLogout>

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Form, useActionData, useNavigate, useNavigation } from 'react-router-dom';
-import { useUsers } from "../context/UserContext.jsx";
-import { Loading } from "./Loading.jsx";
+import { useUsers } from "../../context/UserContext.jsx";
+import { Loading } from "../Loading.jsx";
 
 export function NuevoProductoForm({ funcionDeCierreDeFormulario, handleNuevoProducto }) {
 
