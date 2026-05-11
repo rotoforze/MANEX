@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {Form, useActionData, useNavigate, useNavigation} from 'react-router-dom';
 import { useUsers } from "../../context/UserContext.jsx";
 import { Loading } from "../Loading.jsx";
+import {apiFetch} from "../../utils/apiFetch.jsx";
 
 export function SignInForm( { funcionDeCierreDeFormulario, handleNuevoRegistro } ) {
 
@@ -16,7 +17,7 @@ export function SignInForm( { funcionDeCierreDeFormulario, handleNuevoRegistro }
     const [confirmPasswordShown, setConfirmPasswordShown] = useState(false);
 
     useEffect(() => {
-        fetch(import.meta.env.VITE_BACKEND)
+        apiFetch(import.meta.env.VITE_BACKEND)
             .then(res => res.json())
             .then(data => {
                 if (data.status !== 200) navigate('/error');

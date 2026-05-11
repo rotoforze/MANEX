@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useUsers } from "../../../context/UserContext.jsx";
+import {apiFetch} from "../../../utils/apiFetch.jsx";
 
 /**
  * Muestra en formato tabla las solicitudes recibidas.
@@ -22,7 +23,7 @@ export function TablaSolicitudes() {
 
     useEffect(() => {
         try {
-            fetch(
+            apiFetchw(
                 import.meta.env.VITE_BACKEND_SOLICITUD +
                 '?pagina=' + paginaActual +
                 '&cantidad=' + cantidadPorPagina,
