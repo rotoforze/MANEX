@@ -13,12 +13,12 @@ dotenv.config();
  * @param req
  * @param res
  */
-async function registrarIncidencias(req, res) {
+async function registrarSolicitudVacaciones(req, res) {
 
     await verificadorDatos(req, res)
     if (res.headersSent) return;
 
-    const {id_empleado,fecha_creacion, observaciones, estado, comentario} = req.body;
+    const { fecha_inicio,fecha_fin, tipo,estado,id_incidencia} = req.body;
 
     const config = {
         host: process.env.DB_HOST,
@@ -33,21 +33,21 @@ async function registrarIncidencias(req, res) {
 
     try {
 
-        const resultadoIncidencia = await connection.query(
-            'INSERT INTO incidencia (id_empleado,fecha_creacion,observaciones,estado,comentario) VALUES (?,?, ?, ?)',
-            [id_empleado,fecha_creacion, observaciones, estado,comentario]);
+        const resultadoSolicitudVacaciones = await connection.query(
+            'INSERT INTO solicitud_vacaciones (fecha_inicio,fecha_fin,tipo,estado,id_incidencia) VALUES (?, ?, ?, ?, ?)',
+            [fecha_inicio, fecha_fin, tipo,estado,id_incidencia]);
 
         await connection.commit();
 
-        return res.status(201).send({status: 201, message: 'Incidencia registrado correctamente.'});
+        return res.status(201).send({status: 201, message: 'Solicitud Vacaciones registrada correctamente.'});
 
     } catch (error) {
 
         await connection.rollback();
 
-        console.error('Error al registrar la incidencia:', error);
+        console.error('Error al registrar la solicitud de vacaciones:', error);
 
-        return res.status(500).send({status: 500, message: 'Error al registrar la incidencia.'});
+        return res.status(500).send({status: 500, message: 'Error al registrar la solicitud de vacaciones.'});
 
     } finally {
         await connection.end();
@@ -55,4 +55,4 @@ async function registrarIncidencias(req, res) {
 
 }
 
-export default registrarIncidencias;
+export default registrarSolicitudVacaciones;

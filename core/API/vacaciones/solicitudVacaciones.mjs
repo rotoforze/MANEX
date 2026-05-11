@@ -1,22 +1,22 @@
 import mysql from 'mysql2';
 import dotenv from 'dotenv';
 
-
+//Cargamos las variables del archivo .env a process.env
 dotenv.config();
 
 /**
- * Devuelve la información de la incidencia recibida.
+ * Devuelve la información de la solictud recibido.
  *
  * @author Covadonga Blanco Álvarez
  * @version 1.0
  * @param {Request} req
  * @param {Response} res
  */
-function getIncidencia(req, res) {
+function getSolicitudVacaciones(req, res) {
 
-    const id = req.query.id;
+    const id_incidencia = req.body.id;
 
-    if (isNaN(id) || !id || id < 0) {
+    if (isNaN(id_incidencia) || !id_incidencia || id_incidencia < 0) {
         return res.status(400).send({
             status: 400,
             message: "Parámetros inválidos o nulos"
@@ -41,10 +41,10 @@ function getIncidencia(req, res) {
 
         connection.query(
             `SELECT *
-             FROM incidencia
+             FROM solicitud_vacaciones
              WHERE ID = ?
-             ORDER BY username LIMIT 1`,
-            [id],
+             ORDER BY estado LIMIT 1`,
+            [id_incidencia],
             (error, result) => {
 
                 connection.release();
@@ -65,7 +65,7 @@ function getIncidencia(req, res) {
 
                 return res.status(404).send({
                     status: 404,
-                    message: "No se ha encontrado la incidencia."
+                    message: "No se ha encontrado la solicitud."
                 });
 
             }
@@ -73,4 +73,4 @@ function getIncidencia(req, res) {
     });
 }
 
-export default getIncidencia
+export default getSolicitudVacaciones

@@ -36,6 +36,12 @@ import actualizarIncidencia from "./API/incidencias/actualizar.mjs";
 import delIncidencia from "./API/incidencias/eliminar.mjs";
 import getIncidencia from "./API/incidencias/incidencia.mjs";
 
+import {listaSolicitudesVacaciones} from "./API/vacaciones/listado.mjs";
+import registrarSolicitudVacaciones from "./API/vacaciones/nuevo.mjs";
+import actualizarSolicitudVacaciones from "./API/vacaciones/actualizar.mjs";
+import delVacaciones from "./API/vacaciones/eliminar.mjs";
+import getSolicitud from "./API/vacaciones/solicitudVacaciones.mjs";
+
 const app = express();
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
@@ -81,6 +87,12 @@ app.get('/', (req, res) => {
                 'incidencia': ['/fichajes/', 'GET'],
                 'nuevaIncidencia': ['/fichajes', 'POST'],
                 'eliminarIncidencia': ['/fichajes/', 'DELETE']
+            },
+            'solicitud_Vacacion': {
+                'listado': ['/fichajes', 'GET'],
+                'solicitudVacacion': ['/fichajes/', 'GET'],
+                'nuevaSolicitud': ['/fichajes', 'POST'],
+                'eliminarSolicitud': ['/fichajes/', 'DELETE']
             }
         }
     });
@@ -132,24 +144,6 @@ app.get('/fichajes', (req, res) => {
         getFichaje(req, res);
 
     } else listaFichajes(req, res);
-});
-
-app.get('/incidencias', (req, res) => {
-    const parametrosRecibidos = Object.keys(req.query);
-
-    const parametrosNoValidos = parametrosRecibidos.filter(p => !paginacion.PARAMETROS_PERMITIDOS.includes(p));
-
-    if (parametrosNoValidos.length > 0) {
-        return res.status(400).send({
-            status: 400,
-            message: `Parámetros no permitidos: ${parametrosNoValidos.join(', ')}`
-        });
-    }
-
-    if (req?.query?.id) {
-        getIncidencia(req, res);
-
-    } else listaIncidencias(req, res);
 });
 
 
@@ -207,6 +201,42 @@ app.get('/departamentos', (req, res) => {
     } else listaDepartamentos(req, res);
 });
 
+app.get('/vacaciones', (req, res) => {
+    const parametrosRecibidos = Object.keys(req.query);
+
+    const parametrosNoValidos = parametrosRecibidos.filter(p => !paginacion.PARAMETROS_PERMITIDOS.includes(p));
+
+    if (parametrosNoValidos.length > 0) {
+        return res.status(400).send({
+            status: 400,
+            message: `Parámetros no permitidos: ${parametrosNoValidos.join(', ')}`
+        });
+    }
+
+    if (req?.query?.id) {
+        getSolicitud(req, res);
+
+    } else listaSolicitudesVacaciones(req, res);
+});
+
+app.get('/incidencias', (req, res) => {
+    const parametrosRecibidos = Object.keys(req.query);
+
+    const parametrosNoValidos = parametrosRecibidos.filter(p => !paginacion.PARAMETROS_PERMITIDOS.includes(p));
+
+    if (parametrosNoValidos.length > 0) {
+        return res.status(400).send({
+            status: 400,
+            message: `Parámetros no permitidos: ${parametrosNoValidos.join(', ')}`
+        });
+    }
+
+    if (req?.query?.id) {
+        getIncidencia(req, res);
+
+    } else listaIncidencias(req, res);
+});
+
 app.get('/permisos', listadoPermisos);
 
 app.delete('/empleados', delEmpleado);
@@ -215,6 +245,7 @@ app.delete('/incidencias', delIncidencia);
 app.delete('/contratos', delContrato);
 app.delete('/departamentos', delDepartamento);
 app.delete('/permisos', eliminarPermisos);
+app.delete('/vacaciones', delVacaciones);
 
 app.post('/empleados', (req, res) => {
     if (!req.body) {
@@ -265,6 +296,21 @@ app.post('/incidencias', (req, res) => {
     } else registrarIncidencias(req, res);
 });
 
+app.post('/vacaciones', (req, res) => {
+    if (!req.body) {
+        return res.send({
+            status: 400,
+            body: {
+                'message': 'Not valid body: ' + req
+            }
+        });
+    }
+    // si en la petición viene un ID, vamos a actualizarUsuario
+    // en vez de a registrar
+    if (req?.body?.id) {
+        actualizarSolicitudVacaciones(req, res);
+    } else registrarSolicitudVacaciones(req, res);
+});
 
 app.post('/contratos', newContrato);
 app.post('/departamentos', newDepartamento);

@@ -10,12 +10,13 @@ import mysql from "mysql2/promise";
  * @param req
  * @param res
  */
-async function actualizarIncidencia(req, res) {
+async function actualizarSolicitudVacaciones(req, res) {
 
-    const {id_empleado,fecha_creacion, observaciones,estado,comentario, id } = req.body;
+    const {fecha_inicio,fecha_fin,tipo,estado,id_incidencia } = req.body;
 
     await verificadorDatos(req, res);
 
+ 
     const config = {
         host: process.env.DB_HOST,
         user: process.env.DB_USER,
@@ -26,25 +27,26 @@ async function actualizarIncidencia(req, res) {
 
     const connection = await mysql.createConnection(config);
     if (!connection) return res.status(500).send({status: 500, message: 'Error al conectar a la base de datos.'});
+ 
 
     try {
 
 
         const resultadoEmpleado = await connection.query(
-            'UPDATE incidencia SET id_empleado = ?,fecha_creacion = ?, observaciones = ?, estado = ?, comentario = ? WHERE id = ?',
-            [id_empleado,fecha_creacion, observaciones, estado, comentario, id]);
+            'UPDATE solicitud_vacaciones SET fecha_inicio = ?, fecha_fin = ?,tipo = ?, estado = ? WHERE id_incidencia = ?',
+            [fecha_inicio, fecha_fin, tipo,estado, id_incidencia]);
 
         await connection.commit();
 
-        return res.status(201).send({status: 201, message: 'Incidencia registrado correctamente.'});
+        return res.status(201).send({status: 201, message: 'Solicitud registrada correctamente.'});
 
     } catch (error) {
 
         await connection.rollback();
 
-        console.error('Error al registrar la incidencia:', error);
+        console.error('Error al registrar la solicitud:', error);
 
-        return res.status(500).send({status: 500, message: 'Error al registrar la incidencia.'});
+        return res.status(500).send({status: 500, message: 'Error al registrar la solicitud.'});
 
     } finally {
         await connection.end();
@@ -52,4 +54,4 @@ async function actualizarIncidencia(req, res) {
 
 }
 
-export default actualizarIncidencia;
+export default actualizarSolicitudVacaciones;
