@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useUsers } from "../../../context/UserContext.jsx";
+import "../../../../public/styles/tablaPermisos.css";
 
 /**
  * Muestra en formato tabla las solicitudes recibidas.
@@ -86,7 +87,7 @@ export function TablaSolicitudes() {
         listaSolicitudes.length > 0 ?
             (
                 <div className="table-responsive m-3 d-flex flex-column justify-content-start">
-                    <table className="table table-striped align-middle">
+                    <table className="table table-striped">
                         <thead>
                             <tr>
                                 <th scope="col">#</th>
@@ -118,10 +119,10 @@ export function TablaSolicitudes() {
                                             </span>
                                         </td>
 
-                                        <td className={"row-cols-1 gap-2"}>
+                                        <td className={"h-auto acciones-tabla"}>
                                             <button className="btn btn-primary bi-pencil-fill"></button>
 
-                                            <button className="btn btn-danger bi-trash-fill mt-2"></button>
+                                            <button className="btn btn-danger bi-trash-fill"></button>
                                         </td>
 
                                     </tr>

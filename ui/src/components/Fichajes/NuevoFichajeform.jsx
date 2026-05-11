@@ -62,15 +62,6 @@ export function NuevoFichajeForm({ funcionDeCierreDeFormulario, handleNuevoFicha
                         {mensaje.texto}
                     </div>
                 )}
-
-                <div className="card-header d-flex justify-content-end">
-                    <button
-                        type="button"
-                        className="bi-x bi btn btn-outline-danger"
-                        onClick={() => funcionDeCierreDeFormulario(false)}
-                    ></button>
-                </div>
-
                 <div className="card-body p-4">
 
                     <h2 className="text-center mb-4">

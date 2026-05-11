@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useUsers } from "../../context/UserContext.jsx";
+import "../../../public/styles/tablaPermisos.css";
 
 /**
  * Muestra en formato tabla los productos recibidos
@@ -77,10 +78,10 @@ export function TablaProductos() {
 
                                         <td>{producto?.Estado}</td>
 
-                                        <td className={"row-cols-1 gap-2"}>
+                                        <td className={"h-auto acciones-tabla"}>
                                             <button className="btn btn-primary bi-pencil-fill"></button>
 
-                                            <button className="btn btn-danger bi-trash-fill mt-2"></button>
+                                            <button className="btn btn-danger bi-trash-fill"></button>
                                         </td>
 
                                     </tr>
@@ -91,32 +92,15 @@ export function TablaProductos() {
                     </table>
 
                     <div className="gap-3 d-flex justify-content-center mb-3">
-
-                        <button
-                            className="btn btn-primary bi-chevron-left"
-                            disabled={paginaActual == 0}
+                        <button className="btn btn-primary bi-chevron-left" disabled={paginaActual == 0}
                             onClick={() => {
-                                if (paginaActual > 0) {
-                                    setPaginaActual(paginaActual - 1);
-                                }
-                            }}>
-                        </button>
-
-                        <b>
-                            Mostrando {resultadosPorPagina}/{cantidadPorPagina}
-                            en la página {paginaActual}
-                        </b>
-
-                        <button
-                            className="btn btn-primary bi-chevron-right"
-                            disabled={!(paginaActual < paginaMaxima)}
+                                if (paginaActual > 0) setPaginaActual(paginaActual - 1);
+                            }}></button>
+                        <b>Mostrando {resultadosPorPagina}/{cantidadPorPagina} en la página {paginaActual}</b>
+                        <button className="btn btn-primary bi-chevron-right" disabled={!(paginaActual < paginaMaxima)}
                             onClick={() => {
-                                if (paginaActual < paginaMaxima) {
-                                    setPaginaActual(paginaActual + 1);
-                                }
-                            }}>
-                        </button>
-
+                                if (paginaActual < paginaMaxima) setPaginaActual(paginaActual + 1);
+                            }}></button>
                     </div>
                 </div>
             )

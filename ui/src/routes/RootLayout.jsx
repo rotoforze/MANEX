@@ -18,7 +18,7 @@ export const RootLayout = () => {
     const location = useLocation();
 
     useEffect(() => {
-        if (location.pathname === '/error') return;
+        if (location.pathname === '/error' || location.pathname === '/faq') return;
 
         if (user?.username && user?.authenticated) {
             if (location.pathname === '/') navigate('/dashboard');
