@@ -67,7 +67,7 @@ export function listaIncidencias(req, res) {
         connection.query(
             `SELECT i.*
              FROM incidencia i 
-             ORDER BY i.id DESC LIMIT ?
+             ORDER BY i.estado DESC LIMIT ?
              OFFSET ?`,
             [cantidad, offset],
             (error, result) => {

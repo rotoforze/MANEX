@@ -34,11 +34,11 @@ async function actualizarSolicitudVacaciones(req, res) {
 
         const resultadoEmpleado = await connection.query(
             'UPDATE solicitud_vacaciones SET fecha_inicio = ?, fecha_fin = ?,tipo = ?, estado = ? WHERE id_incidencia = ?',
-            [fecha_inicio, fecha_fin, tipo,estado, id_incidencia]);
+            [fecha_inicio, fecha_fin, tipo ||"Solicitud de semana de vacaciones",estado || "En revision", id_incidencia]);
 
         await connection.commit();
 
-        return res.status(201).send({status: 201, message: 'Solicitud registrada correctamente.'});
+        return res.status(201).send({status: 201, message: 'Solicitud actualizada correctamente.'});
 
     } catch (error) {
 
@@ -46,7 +46,7 @@ async function actualizarSolicitudVacaciones(req, res) {
 
         console.error('Error al registrar la solicitud:', error);
 
-        return res.status(500).send({status: 500, message: 'Error al registrar la solicitud.'});
+        return res.status(500).send({status: 500, message: 'Error al actualizar la solicitud.'});
 
     } finally {
         await connection.end();

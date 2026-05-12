@@ -14,9 +14,9 @@ dotenv.config();
  */
 function getIncidencia(req, res) {
 
-    const id = req.query.id;
+    const id_empleado = req.query.id;
 
-    if (isNaN(id) || !id || id < 0) {
+    if (isNaN(id_empleado) || !id_empleado || id_empleado < 0) {
         return res.status(400).send({
             status: 400,
             message: "Parámetros inválidos o nulos"
@@ -42,9 +42,9 @@ function getIncidencia(req, res) {
         connection.query(
             `SELECT *
              FROM incidencia
-             WHERE ID = ?
-             ORDER BY username LIMIT 1`,
-            [id],
+             WHERE ID_empleado = ?
+             ORDER BY estado`,
+            [id_empleado],
             (error, result) => {
 
                 connection.release();

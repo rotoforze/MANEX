@@ -33,9 +33,10 @@ async function registrarIncidencias(req, res) {
 
     try {
 
+        
         const resultadoIncidencia = await connection.query(
-            'INSERT INTO incidencia (id_empleado,fecha_creacion,observaciones,estado,comentario) VALUES (?,?, ?, ?)',
-            [id_empleado,fecha_creacion, observaciones, estado,comentario]);
+            'INSERT INTO incidencia (ID_empleado,fecha_creacion,estado,Observaciones,Comentario) VALUES (?,?, ?, ?, ?)',
+            [id_empleado,fecha_creacion, estado || 'Abierta', observaciones,comentario]);
 
         await connection.commit();
 

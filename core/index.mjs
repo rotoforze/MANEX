@@ -213,7 +213,7 @@ app.get('/vacaciones', (req, res) => {
         });
     }
 
-    if (req?.query?.id) {
+    if (req?.query?.id_empleado || req?.query?.fecha_inicio && req?.query?.fecha_fin) {
         getSolicitud(req, res);
 
     } else listaSolicitudesVacaciones(req, res);
@@ -291,7 +291,7 @@ app.post('/incidencias', (req, res) => {
     }
     // si en la petición viene un ID, vamos a actualizarUsuario
     // en vez de a registrar
-    if (req?.body?.id) {
+    if (req?.body?.id_incidencia) {
         actualizarIncidencia(req, res);
     } else registrarIncidencias(req, res);
 });
@@ -307,7 +307,7 @@ app.post('/vacaciones', (req, res) => {
     }
     // si en la petición viene un ID, vamos a actualizarUsuario
     // en vez de a registrar
-    if (req?.body?.id) {
+    if (req?.body?.id_incidencia) {
         actualizarSolicitudVacaciones(req, res);
     } else registrarSolicitudVacaciones(req, res);
 });

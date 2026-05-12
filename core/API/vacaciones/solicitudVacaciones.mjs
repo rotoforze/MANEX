@@ -14,14 +14,7 @@ dotenv.config();
  */
 function getSolicitudVacaciones(req, res) {
 
-    const id_incidencia = req.body.id;
-
-    if (isNaN(id_incidencia) || !id_incidencia || id_incidencia < 0) {
-        return res.status(400).send({
-            status: 400,
-            message: "Parámetros inválidos o nulos"
-        });
-    }
+    const { id_empleado, fecha_inicio, fecha_fin } = req.query;
 
     const pool = mysql.createPool({
         host: process.env.DB_HOST,
@@ -39,12 +32,35 @@ function getSolicitudVacaciones(req, res) {
             });
         }
 
-        connection.query(
-            `SELECT *
-             FROM solicitud_vacaciones
-             WHERE ID = ?
-             ORDER BY estado LIMIT 1`,
-            [id_incidencia],
+        let query = `
+        SELECT sv.*
+        FROM solicitud_vacaciones sv
+        JOIN incidencia i ON sv.ID_INCIDENCIA = i.ID
+    `;
+
+        const condiciones = [];
+        const params = [];
+
+        // Filtro por empleado
+        if (id_empleado) {
+            condiciones.push(`i.ID_empleado = ?`);
+            params.push(id_empleado);
+        }
+
+        // Filtro entre dos fechas
+        if (fecha_inicio && fecha_fin) {
+            condiciones.push("sv.fecha_inicio <= ? AND sv.fecha_fin >= ?");
+            params.push(fecha_fin, fecha_inicio);
+          }
+
+        // Compruebo si hay condiciones, si las hay añado el Where
+        if (condiciones.length > 0) {
+            query += ` WHERE ` + condiciones.join(' AND ');
+        }
+
+        query += ` ORDER BY sv.fecha_inicio DESC`;
+
+        connection.query(query, params,
             (error, result) => {
 
                 connection.release();

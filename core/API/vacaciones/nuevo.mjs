@@ -35,7 +35,7 @@ async function registrarSolicitudVacaciones(req, res) {
 
         const resultadoSolicitudVacaciones = await connection.query(
             'INSERT INTO solicitud_vacaciones (fecha_inicio,fecha_fin,tipo,estado,id_incidencia) VALUES (?, ?, ?, ?, ?)',
-            [fecha_inicio, fecha_fin, tipo,estado,id_incidencia]);
+            [fecha_inicio, fecha_fin, tipo ||"Solicitud de semana de vacaciones",estado || "En revision",id_incidencia]);
 
         await connection.commit();
 
