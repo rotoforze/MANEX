@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useUsers } from "../../context/UserContext.jsx";
+import {apiFetch} from "../../utils/apiFetch.jsx";
 import "../../../public/styles/tablaPermisos.css";
 
 /**
@@ -25,7 +26,7 @@ export function TablaFichajes() {
 
     useEffect(() => {
         try {
-            fetch(
+            apiFetch(
                 import.meta.env.VITE_BACKEND +
                 '/fichajes?pagina=' + paginaActual +
                 '&cantidad=' + cantidadPorPagina,

@@ -1,7 +1,19 @@
 import { useUsers } from "../../context/UserContext.jsx";
 import "../../../public/styles/tablaPermisos.css";
+import {DelPermiso} from "./DelPermiso.jsx";
+import EditPermiso from "./EditPermiso.jsx";
+import {apiFetch} from "../../utils/apiFetch.jsx";
 import React, { useEffect, useState } from "react";
 
+/**
+ * Muestra en formato tabla los permisos de MANEX. permite ver y borrar
+ * WIP: Crear y editar.
+ *
+ * @author Alex Bernardos Gil
+ * @version 2.1
+ * @returns {React.JSX.Element}
+ * @constructor
+ */
 export function TablePermisos() {
     const { user } = useUsers();
 
@@ -13,17 +25,19 @@ export function TablePermisos() {
     const [editando, setEditando] = useState(false);
     const [confirmar, setConfirmar] = useState(false);
     const [estado, setEstado] = useState(undefined);
+    const [permisoParaEditarOBorrar, setPermisoParaEditarOBorrar] = useState(user.departamento == 8);
+    const [permisosNuevos, setPermisosNuevos] = useState({});
 
     const fetchInicio = () => {
-        fetch(import.meta.env.VITE_BACKEND_PERMISOS, {
-            method: 'GET', headers: { 'token': user?.token }
+        apiFetch(import.meta.env.VITE_BACKEND_PERMISOS, {
+            method: 'GET', headers: {'token': user?.token}
         })
             .then(res => res.json())
             .then(data => {
                 setPermisos(data);
             });
-        fetch(import.meta.env.VITE_BACKEND_DEPARTAMENTOS, {
-            method: 'GET', headers: { 'token': user?.token }
+        apiFetch(import.meta.env.VITE_BACKEND_DEPARTAMENTOS, {
+            method: 'GET', headers: {'token': user?.token}
         })
             .then(res => res.json())
             .then(data => {
@@ -41,160 +55,169 @@ export function TablePermisos() {
     return (
         <div>
             {
-                editando || eliminando ? (<div className="superponer">
-                    <div className={"card confirmacion"}>
-                        <div className="card-header d-flex justify-content-end">
-                            <button className={"bi-x bi btn btn-outline-danger"} onClick={() => {
-                                setRutaAEditar(null);
-                                setEliminando(false);
-                                setEditando(false);
-                                setConfirmar(false);
-                            }}></button>
-                        </div>
-                        <div className={"card-body"}>
-                            <h1 className={"card-title"}>{eliminando ? 'Eliminar ' : ''}{editando ? 'Guardar ' : ''}{rutaAEditar || ''}</h1>
-                            <p>¿Quieres {eliminando ? 'eliminar ' : ''}{editando ? 'guardar ' : ''} los permisos
-                                de {rutaAEditar || ''}?</p>
-                            {estado && <p className={"text-danger"}>{estado}</p>}
-                            <div>
-                                <label className={"form-label"}>Escribe 'CONFIRMAR' para poder confirmar.</label>
-                                <input type="text" className={"form-control"}
-                                    placeholder={"Escribe 'CONFIRMAR' para poder confirmar."} onChange={(e) => {
-                                        setConfirmar(e.target.value.toUpperCase() == 'CONFIRMAR');
-                                    }} />
-                                <div className={"gap-3 d-flex justify-content-center mt-3 p-2"}>
-                                    <button className={"btn btn-primary"} onClick={() => {
-                                        setEstado('Confirmando cambios...');
-                                        const urlencoded = new URLSearchParams();
-                                        urlencoded.append("ruta", rutaAEditar);
-                                        fetch(import.meta.env.VITE_BACKEND_PERMISOS, {
-                                            method: 'DELETE', headers: { 'token': user?.token }, body: urlencoded,
-                                        })
-                                            .then(res => res.json())
-                                            .then(data => {
-                                                setEstado('Cambios confirmados.');
-                                                setTimeout(() => {
-                                                    setEstado(undefined);
-                                                    setRutaAEditar(null);
-                                                    setEliminando(false);
-                                                    setEditando(false);
-                                                    setConfirmar(false);
-                                                    fetchInicio();
-                                                }, 2000);
-                                            });
-                                    }} disabled={!confirmar || estado}>Confirmar
-                                    </button>
-                                    <button className={"btn btn-danger"} onClick={() => {
-                                        setEstado(undefined);
-                                        setRutaAEditar(null);
-                                        setEliminando(false);
-                                        setEditando(false);
-                                        setConfirmar(false);
-                                    }}>Cancelar
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>) : null
+                (eliminando) && permisoParaEditarOBorrar ?
+                    <DelPermiso setRutaAEditar={setRutaAEditar} rutaAEditar={rutaAEditar} eliminando={eliminando}
+                                setEliminando={setEliminando} setEditando={setEditando}
+                                confirmar={confirmar} setConfirmar={setConfirmar} estado={estado} setEstado={setEstado}
+                                user={user} fetchInicio={fetchInicio}/> : null
             }
-            {permisos ? (<>
-                <div className="d-flex flex-column flex-md-row justify-content-between align-items-start w-100 mb-4 gap-3">
+            {
+                (editando) && permisoParaEditarOBorrar ?
+                    <EditPermiso setRutaAEditar={setRutaAEditar} rutaAEditar={rutaAEditar} editando={editando}
+                                 setEliminando={setEliminando} setEditando={setEditando} oldPermisos={permisos}
+                                 confirmar={confirmar} setConfirmar={setConfirmar} estado={estado} setEstado={setEstado}
+                                 user={user} fetchInicio={fetchInicio} nuevosPermisos={permisosNuevos}
+                                 listaDepartamentos={departamentos}/> : null
+            }
+            {permisos && permisoParaEditarOBorrar ? (<>
+                <h2>Permisos</h2>
 
-                    <div>
-                        <h2 className="fw-bold mb-1">
-                            Permisos
-                        </h2>
+                <h4>Selecciona un permiso para ver su configuración.</h4>
+                <table className="table table-striped">
+                    <thead>
+                    <tr>
+                        <th className={"col"}>Permiso</th>
+                        <th className={"col"}>GET</th>
+                        <th className={"col"}>POST</th>
+                        <th className={"col"}>DELETE</th>
+                        <th className={"col"}>Acciones</th>
+                    </tr>
+                    </thead>
+                    <tbody className={"table-group-divider"}>
+                    {permisos && permisos != null && permisos != undefined ? Object.entries(permisos).map((permiso, index) => {
+                        if (permiso[1] == null || permiso[1] == undefined) return;
+                        const hijos = Object.entries(permiso[1]);
+                        try {
+                            var permisoProtected = isProtected(hijos);
 
-                        <p className="text-muted mb-0">
-                            Administrar y gestionar los permisos de los roles.
-                        </p>
-                    </div>
+                            var permisoGet = getValoresEnGet(hijos);
+                            var permisoGetTexto = parseToText(permisoGet, departamentos);
 
-                </div>
-                <div className="table-responsive permisos-table-wrapper">
-                    <table className="table table-striped permisos-table">
-                        <thead>
-                            <tr>
-                                <th className={"col"}>Permiso</th>
-                                <th className={"col"}>GET</th>
-                                <th className={"col"}>POST</th>
-                                <th className={"col"}>DELETE</th>
-                                <th className={"col"}>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody className={"table-group-divider"}>
-                            {permisos && permisos != null && permisos != undefined ? Object.entries(permisos).map((permiso, index) => {
-                                if (permiso[1] == null || permiso[1] == undefined) return;
-                                const hijos = Object.entries(permiso[1]);
-                                try {
-                                    var permisoProtected = isProtected(hijos);
+                            var permisoPost = getValoresEnPost(hijos);
+                            var permisoPostTexto = parseToText(permisoPost, departamentos);
 
-                                    var permisoGet = getValoresEnGet(hijos);
-                                    var permisoGetTexto = parseToText(permisoGet, departamentos);
+                            var permisoDelete = getValoresEnDelete(hijos);
+                            var permisoDeleteTexto = parseToText(permisoDelete, departamentos);
 
-                                    var permisoPost = getValoresEnPost(hijos);
-                                    var permisoPostTexto = parseToText(permisoPost, departamentos);
+                        } catch (e) {
+                            console.error(e);
+                        }
+                        return (
+                            <>
+                                <tr className="h-auto table-group-divider" key={index}>
+                                    <th scope="row">
+                                        {permiso[0]}&nbsp;&nbsp;
+                                        {permisoProtected && <span className="badge bg-danger bi-shield">!</span>}
+                                    </th>
+                                    <td className={"h-auto"}>
+                                        <input type="checkbox"
+                                               className="form-check-input form-check bg-dark justificar-centro"
+                                               disabled={permisoProtected || !permisoParaEditarOBorrar}
+                                               defaultChecked={!!permisoGet} onChange={(e) => {
 
-                                    var permisoDelete = getValoresEnDelete(hijos);
-                                    var permisoDeleteTexto = parseToText(permisoDelete, departamentos);
+                                            if (e.target.checked) {
+                                                setPermisosNuevos({
+                                                    ...permisosNuevos,
+                                                    [permiso[0]]: {
+                                                        ...permisosNuevos[permiso[0]],
+                                                        GET: permisoGet
+                                                    }
+                                                });
+                                            } else {
+                                                setPermisosNuevos({
+                                                    ...permisosNuevos,
+                                                    [permiso[0]]: {
+                                                        ...permisosNuevos[permiso[0]],
+                                                        GET: false
+                                                    }
+                                                });
+                                            }
+                                        }}/>
+                                    </td>
+                                    <td className={"h-auto"}>
+                                        <input type="checkbox"
+                                               className="form-check-input form-check bg-dark justificar-centro"
+                                               disabled={permisoProtected || !permisoParaEditarOBorrar}
+                                               defaultChecked={!!permisoPost} onChange={(e) => {
 
-                                } catch (e) {
-                                    console.error(e); // TODO quitar mas adelante
-                                }
-                                return (
-                                    <React.Fragment key={permiso[0]}>
-                                        <tr className="h-auto table-group-divider">
-                                            <th scope="row" className="permisos-table-route">
-                                                {permiso[0]}&nbsp;&nbsp;
-                                                {permisoProtected && <span className="badge bg-danger bi-shield">!</span>}
-                                            </th>
-                                            <td className={"h-auto"}>
-                                                <input type="checkbox"
-                                                    className="form-check-input form-check bg-dark justificar-centro"
-                                                    disabled={permisoProtected} defaultChecked={!!permisoGet} />
-                                            </td>
-                                            <td className={"h-auto"}>
-                                                <input type="checkbox"
-                                                    className="form-check-input form-check bg-dark justificar-centro"
-                                                    disabled={permisoProtected} defaultChecked={!!permisoPost} />
-                                            </td>
-                                            <td className={"h-auto"}>
-                                                <input type="checkbox"
-                                                    className="form-check-input form-check bg-dark justificar-centro"
-                                                    disabled={permisoProtected} defaultChecked={!!permisoDelete} />
-                                            </td>
-                                            <td className={"h-auto"}>
-                                                <button className="btn btn-danger bi-trash-fill mt-2" onClick={() => {
-                                                    setEliminando(true);
-                                                    setRutaAEditar(permiso[0]);
-                                                }} disabled={hijos[0][1]}></button>
-                                            </td>
-                                        </tr>
-                                        <tr className="h-auto">
-                                            <td>Departamentos</td>
-                                            <td className="permisos-table-text">
-                                                {permisoGetTexto || ''}
-                                            </td>
-                                            <td className="permisos-table-text">
-                                                {permisoPostTexto || ''}
-                                            </td>
-                                            <td className="permisos-table-text">
-                                                {permisoDeleteTexto || ''}
-                                            </td>
-                                            <td>
-                                                <button className="btn btn-primary bi-pencil-fill"
-                                                    disabled={hijos[0][1]}></button>
-                                            </td>
-                                        </tr>
-                                    </React.Fragment>
-                                )
-                            }) : (<tr>
-                                <td>No hay permisos disponibles</td>
-                            </tr>)}
-                        </tbody>
-                    </table>
-                </div>
+                                            if (e.target.checked) {
+                                                setPermisosNuevos({
+                                                    ...permisosNuevos,
+                                                    [permiso[0]]: {
+                                                        ...permisosNuevos[permiso[0]],
+                                                        POST: permisoGet
+                                                    }
+                                                });
+                                            } else {
+                                                setPermisosNuevos({
+                                                    ...permisosNuevos,
+                                                    [permiso[0]]: {
+                                                        ...permisosNuevos[permiso[0]],
+                                                        POST: false
+                                                    }
+                                                });
+                                            }
+                                        }}/>
+                                    </td>
+                                    <td className={"h-auto"}>
+                                        <input type="checkbox"
+                                               className="form-check-input form-check bg-dark justificar-centro"
+                                               disabled={permisoProtected || !permisoParaEditarOBorrar}
+                                               defaultChecked={!!permisoDelete} onChange={(e) => {
+                                            if (e.target.checked) {
+                                                setPermisosNuevos({
+                                                    ...permisosNuevos,
+                                                    [permiso[0]]: {
+                                                        ...permisosNuevos[permiso[0]],
+                                                        DELETE: permisoGet
+                                                    }
+                                                });
+                                            } else {
+                                                setPermisosNuevos({
+                                                    ...permisosNuevos,
+                                                    [permiso[0]]: {
+                                                        ...permisosNuevos[permiso[0]],
+                                                        DELETE: false
+                                                    }
+                                                });
+                                            }
+                                        }}/>
+                                    </td>
+                                    <td className={"h-auto"}>
+                                        <button className="btn btn-danger bi-trash-fill mt-2" onClick={() => {
+                                            setEliminando(true);
+                                            setRutaAEditar(permiso[0]);
+                                        }} disabled={permisoProtected || !permisoParaEditarOBorrar}></button>
+                                    </td>
+                                </tr>
+                                <tr className="h-auto" key={index + 100}>
+                                    <td>Departamentos</td>
+                                    <td>
+                                        {permisoGetTexto || ''}
+                                    </td>
+                                    <td>
+                                        {permisoPostTexto || ''}
+                                    </td>
+                                    <td>
+                                        {permisoDeleteTexto || ''}
+                                    </td>
+                                    <td>
+                                        <button className="btn btn-primary bi-pencil-fill"
+                                                disabled={permisoProtected || !permisoParaEditarOBorrar}
+                                                onClick={() => {
+                                                    setRutaAEditar(permiso[0])
+                                                    setEditando(true)
+                                                }
+                                                }></button>
+                                    </td>
+                                </tr>
+                            </>
+                        )
+                    }) : (<tr>
+                        <td>No hay permisos disponibles</td>
+                    </tr>)}
+                    </tbody>
+                </table>
             </>) : (<h2>No tienes acceso a la configuración</h2>)}
 
 
@@ -203,6 +226,7 @@ export function TablePermisos() {
 }
 
 function parseToText(perm, listaDepartamentos) {
+    if (perm == undefined) return 'N/A';
     return perm == '*' ? 'Todos' : perm[0].includes('>') ? 'Al menos: ' + listaDepartamentos.get(parseInt(perm[0][1])) : perm.map(id => listaDepartamentos.get(parseInt(id))).join(', ') || 'N/A'
 }
 
@@ -233,7 +257,6 @@ function getValoresEnPost(permiso) {
 function getValoresEnDelete(permiso) {
     for (const permisoElement of permiso) {
         if (permisoElement[0] == 'DELETE') {
-            return permisoElement[1];
             return permisoElement[1];
         }
     }

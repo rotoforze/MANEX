@@ -46,7 +46,7 @@ const auth = async (req, res, next) => {
     const nivelAcceso = await getNivelAcceso(req?.headers?.token, pool);
 
     if (nivelAcceso == -1) {
-        return res.status(401).json({
+        return res.status(444).json({
             message: 'El token ha caducado o no es válido'
         });
     }

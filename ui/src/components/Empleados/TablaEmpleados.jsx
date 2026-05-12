@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useUsers } from "../../context/UserContext.jsx";
+import {apiFetch} from "../../utils/apiFetch.jsx";
 import "../../../public/styles/tablaPermisos.css";
 
 /**
@@ -23,7 +24,7 @@ export function TablaEmpleados() {
 
     useEffect(() => {
         try {
-            fetch(import.meta.env.VITE_BACKEND_EMPLEADO + '?pagina=' + paginaActual + '&cantidad=' + cantidadPorPagina,
+            apiFetch(import.meta.env.VITE_BACKEND_EMPLEADO + '?pagina=' + paginaActual + '&cantidad=' + cantidadPorPagina,
                 {
                     method: 'GET',
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'token': user?.token }
