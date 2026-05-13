@@ -1,5 +1,6 @@
 import React from 'react';
 import { useUsers } from "../../context/UserContext.jsx";
+import "../../../public/styles/tablaPermisos.css";
 
 /**
  *
@@ -23,14 +24,16 @@ export function NuevaIncidenciaForm({ funcionDeCierreDeFormulario, handleNuevaIn
     }
 
     return (
-        <section className="w-100 mt-3">
+        <div className="superponer">
+            <div className="card confirmacion" style={{width: '90dvw', maxWidth: '600px', maxHeight: '90dvh', overflowY: 'auto'}}>
+                <div className="card-header d-flex justify-content-end">
+                    <button className={"bi-x bi btn btn-outline-danger"} onClick={() => {
+                        funcionDeCierreDeFormulario();
+                    }}></button>
+                </div>
 
-            <div className="card shadow-sm w-100">
-                <div className="card-body p-4">
-
-                    <h2 className="text-center mb-4">
-                        Nueva incidencia
-                    </h2>
+                <div className="card-body p-2">
+                    <h2 className="text-center mb-2">Nueva incidencia</h2>
 
                     <form onSubmit={handleSubmit}>
 
@@ -46,62 +49,33 @@ export function NuevaIncidenciaForm({ funcionDeCierreDeFormulario, handleNuevaIn
                             defaultValue={tipoIncidencia}
                         />
 
-                        <h4 className="mb-4 border-bottom pb-2 text-center">
-                            Informacion de la incidencia
+                        <h4 className="mb-2 mt-1 border-bottom pb-1" style={{fontSize: '0.9rem'}}>
+                            Información de la incidencia
                         </h4>
 
-                        <div className="row">
+                        <div className="row g-2">
 
-                            <div className="col-md-6 mb-3">
-                                <label htmlFor="titulo" className="form-label">
+                            <div className="col-md-6 mb-2">
+                                <label htmlFor="titulo" className="form-label mb-1" style={{fontSize: '0.85rem'}}>
                                     Titulo <span className="text-danger">*</span>
                                 </label>
 
                                 <input
                                     type="text"
-                                    className="form-control"
+                                    className="form-control form-control-sm"
                                     id="titulo"
                                     name="titulo"
                                     required
                                 />
                             </div>
 
-                            <div className="col-md-3 mb-3">
-                                <label htmlFor="prioridad" className="form-label">
-                                    Prioridad <span className="text-danger">*</span>
-                                </label>
-
-                                <select
-                                    className="form-select"
-                                    id="prioridad"
-                                    name="prioridad"
-                                    required
-                                >
-                                    <option value="">
-                                        Selecciona
-                                    </option>
-
-                                    <option value="Baja">
-                                        Baja
-                                    </option>
-
-                                    <option value="Media">
-                                        Media
-                                    </option>
-
-                                    <option value="Alta">
-                                        Alta
-                                    </option>
-                                </select>
-                            </div>
-                            
-                            <div className="col-md-3 mb-3">
-                                <label htmlFor="estado" className="form-label">
+                            <div className="col-md-3 mb-2">
+                                <label htmlFor="estado" className="form-label mb-1" style={{fontSize: '0.85rem'}}>
                                     Estado <span className="text-danger">*</span>
                                 </label>
 
                                 <select
-                                    className="form-select"
+                                    className="form-select form-select-sm"
                                     id="estado"
                                     name="estado"
                                     defaultValue="Pendiente"
@@ -123,30 +97,31 @@ export function NuevaIncidenciaForm({ funcionDeCierreDeFormulario, handleNuevaIn
 
                         </div>
 
-                        <div className="mb-3">
-                            <label htmlFor="descripcion" className="form-label">
-                                Descripcion <span className="text-danger">*</span>
+                        <div className="mb-2">
+                            <label htmlFor="descripcion" className="form-label mb-1" style={{fontSize: '0.85rem'}}>
+                                Descripción <span className="text-danger">*</span>
                             </label>
 
                             <textarea
-                                className="form-control w-100 p-2"
+                                className="form-control form-control-sm"
                                 id="descripcion"
                                 name="descripcion"
-                                rows="5"
+                                rows="3"
                                 maxLength="512"
                                 required
                             ></textarea>
                         </div>
 
-                        <button className="btn btn-primary w-100" type="submit">
-                            Registrar incidencia
-                        </button>
+                        <div className="d-flex justify-content-end gap-2 mt-2">
+                            <button className="btn btn-primary btn-sm" type="submit">
+                                Registrar
+                            </button>
+                        </div>
 
                     </form>
 
                 </div>
             </div>
-
-        </section>
+        </div>
     );
 }

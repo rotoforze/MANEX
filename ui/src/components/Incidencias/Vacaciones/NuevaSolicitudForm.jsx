@@ -1,5 +1,6 @@
 import React from 'react';
 import { useUsers } from "../../../context/UserContext.jsx";
+import "../../../../public/styles/tablaPermisos.css";
 
 /**
  *
@@ -23,14 +24,16 @@ export function NuevaSolicitudForm({ funcionDeCierreDeFormulario, handleNuevaSol
     }
 
     return (
-        <section className="w-100 mt-3">
+        <div className="superponer">
+            <div className="card confirmacion" style={{width: '90dvw', maxWidth: '600px', maxHeight: '90dvh', overflowY: 'auto'}}>
+                <div className="card-header d-flex justify-content-end">
+                    <button className={"bi-x bi btn btn-outline-danger"} onClick={() => {
+                        funcionDeCierreDeFormulario();
+                    }}></button>
+                </div>
 
-            <div className="card shadow-sm w-100">
-                <div className="card-body p-4">
-
-                    <h2 className="text-center mb-4">
-                        Nueva solicitud
-                    </h2>
+                <div className="card-body p-2">
+                    <h2 className="text-center mb-2">Nueva solicitud</h2>
 
                     <form onSubmit={handleSubmit}>
 
@@ -40,45 +43,41 @@ export function NuevaSolicitudForm({ funcionDeCierreDeFormulario, handleNuevaSol
                             defaultValue={user?.token}
                         />
 
-                        <h4 className="mb-4 border-bottom pb-2 text-center">
-                        Informacion de la solicitud
-                    </h4>
+                        <h4 className="mb-2 mt-1 border-bottom pb-1" style={{fontSize: '0.9rem'}}>
+                            Información de la solicitud
+                        </h4>
 
-                        <div className="row">
+                        <div className="row g-2">
 
-                            <div className="col-md-6 mb-3">
-                                <label htmlFor="tipo" className="form-label">
+                            <div className="col-md-6 mb-2">
+                                <label htmlFor="tipo" className="form-label mb-1" style={{fontSize: '0.85rem'}}>
                                     Tipo <span className="text-danger">*</span>
                                 </label>
 
                                 <select
-                                    className="form-select"
+                                    className="form-select form-select-sm"
                                     id="tipo"
                                     name="tipo"
                                     required
                                 >
                                     <option value="">
-                                        Selecciona un tipo
+                                       
                                     </option>
 
                                     <option value="Vacaciones">
                                         Vacaciones
                                     </option>
-
-                                    <option value="Permiso">
-                                        Permiso
-                                    </option>
                                 </select>
                             </div>
 
-                            <div className="col-md-6 mb-3">
-                                <label htmlFor="fecha" className="form-label">
+                            <div className="col-md-6 mb-2">
+                                <label htmlFor="fecha" className="form-label mb-1" style={{fontSize: '0.85rem'}}>
                                     Fecha <span className="text-danger">*</span>
                                 </label>
 
                                 <input
                                     type="date"
-                                    className="form-control"
+                                    className="form-control form-control-sm"
                                     id="fecha"
                                     name="fecha"
                                     required
@@ -87,30 +86,32 @@ export function NuevaSolicitudForm({ funcionDeCierreDeFormulario, handleNuevaSol
 
                         </div>
 
-                        <div className="mb-3">
-                            <label htmlFor="descripcion" className="form-label">
-                                Descripcion <span className="text-danger">*</span>
+                        <div className="mb-2">
+                            <label htmlFor="descripcion" className="form-label mb-1" style={{fontSize: '0.85rem'}}>
+                                Descripción <span className="text-danger">*</span>
                             </label>
 
                             <textarea
-                                className="form-control w-100 p-2"
+                                className="form-control form-control-sm"
                                 id="descripcion"
                                 name="descripcion"
-                                rows="5"
+                                rows="3"
                                 maxLength="512"
                                 required
                             ></textarea>
                         </div>
 
-                        <button className="btn btn-primary w-100" type="submit">
-                            Registrar solicitud
-                        </button>
+                        <div className="d-flex justify-content-end gap-2 mt-2">
+
+                            <button className="btn btn-primary btn-sm" type="submit">
+                                Registrar
+                            </button>
+                        </div>
 
                     </form>
 
                 </div>
             </div>
-
-        </section>
+        </div>
     );
 }
