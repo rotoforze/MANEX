@@ -1,27 +1,20 @@
 import mysql from 'mysql2';
 import dotenv from 'dotenv';
 
-
+//Cargamos las variables del archivo .env a process.env
 dotenv.config();
 
 /**
- * Devuelve la información de la incidencia recibida.
+ * Devuelve la información de la solictud recibido.
  *
  * @author Covadonga Blanco Álvarez
  * @version 1.0
  * @param {Request} req
  * @param {Response} res
  */
-function getIncidencia(req, res) {
+function getSolicitudVacaciones(req, res) {
 
-    const id_empleado = req.query.id;
-
-    if (isNaN(id_empleado) || !id_empleado || id_empleado < 0) {
-        return res.status(400).send({
-            status: 400,
-            message: "Parámetros inválidos o nulos"
-        });
-    }
+    const { id_empleado, fecha_inicio, fecha_fin } = req.query;
 
     const pool = mysql.createPool({
         host: process.env.DB_HOST,
@@ -39,12 +32,35 @@ function getIncidencia(req, res) {
             });
         }
 
-        connection.query(
-            `SELECT *
-             FROM incidencia
-             WHERE ID_empleado = ?
-             ORDER BY estado`,
-            [id_empleado],
+        let query = `
+        SELECT sv.*
+        FROM solicitud_vacaciones sv
+        JOIN incidencia i ON sv.ID_INCIDENCIA = i.ID
+    `;
+
+        const condiciones = [];
+        const params = [];
+
+        // Filtro por empleado
+        if (id_empleado) {
+            condiciones.push(`i.ID_empleado = ?`);
+            params.push(id_empleado);
+        }
+
+        // Filtro entre dos fechas
+        if (fecha_inicio && fecha_fin) {
+            condiciones.push("sv.fecha_inicio <= ? AND sv.fecha_fin >= ?");
+            params.push(fecha_fin, fecha_inicio);
+          }
+
+        // Compruebo si hay condiciones, si las hay añado el Where
+        if (condiciones.length > 0) {
+            query += ` WHERE ` + condiciones.join(' AND ');
+        }
+
+        query += ` ORDER BY sv.fecha_inicio DESC`;
+
+        connection.query(query, params,
             (error, result) => {
 
                 connection.release();
@@ -65,7 +81,7 @@ function getIncidencia(req, res) {
 
                 return res.status(404).send({
                     status: 404,
-                    message: "No se ha encontrado la incidencia."
+                    message: "No se ha encontrado la solicitud."
                 });
 
             }
@@ -73,4 +89,4 @@ function getIncidencia(req, res) {
     });
 }
 
-export default getIncidencia
+export default getSolicitudVacaciones

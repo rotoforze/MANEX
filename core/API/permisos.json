@@ -84,5 +84,31 @@
             "7",
             "8"
         ]
+    },
+    "/incidencias": {
+        "protected": false,
+        "GET": [
+            ">1"
+        ],
+        "POST": [
+            ">1"
+        ],
+        "DELETE": [
+            "7",
+            "8"
+        ]
+    },
+    "/vacaciones": {
+        "protected": false,
+        "GET": [
+            ">1"
+        ],
+        "POST": [
+            ">1"
+        ],
+        "DELETE": [
+            "7",
+            "8"
+        ]
     }
 }

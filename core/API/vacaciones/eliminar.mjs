@@ -9,12 +9,12 @@ import verificadorDatos from "./verificadorDatos.mjs";
  * @param req
  * @param res
  */
-async function delIncidencia(req, res) {
+async function delVacaciones(req, res) {
 
-    const {id} = req.body;
+    const {id_incidencia} = req.body;
 
-    if ((id && id < 0) ) {
-        return res.status(400).send({status: 400, message: 'El ID de la incidencia no puede ser negativo.'});
+    if ((id_incidencia && id_incidencia < 0) ) {
+        return res.status(400).send({status: 400, message: 'El ID de la solicitud no puede ser negativo.'});
     }
 
     const config = {
@@ -31,21 +31,21 @@ async function delIncidencia(req, res) {
     try {
 
         const resultadoIncidencia = await connection.query(
-            'DELETE FROM incidencia WHERE id = ?',
-            [id]);
+            'DELETE FROM solicitud_vacaciones WHERE id_incidencia = ?',
+            [id_incidencia]);
 
 
         await connection.commit();
 
-        return res.status(201).send({status: 201, message: 'Incidencia eliminado correctamente.'});
+        return res.status(201).send({status: 201, message: 'Solicitud eliminada correctamente.'});
 
     } catch (error) {
 
         await connection.rollback();
 
-        console.error('Error al eliminar la incidenia:', error);
+        console.error('Error al eliminar la solicitud:', error);
 
-        return res.status(500).send({status: 500, message: 'Error al eliminado el la incidencia.'});
+        return res.status(500).send({status: 500, message: 'Error al eliminar la solicitud.'});
 
     } finally {
         await connection.end();
@@ -53,4 +53,4 @@ async function delIncidencia(req, res) {
 
 }
 
-export default delIncidencia;
+export default delVacaciones;
