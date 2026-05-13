@@ -7,6 +7,7 @@ import {
 const guardar = (req, res) => {
 
     const { ruta, metodo, permisos } = req?.body;
+    console.log(ruta, metodo, permisos);
 
     if (!ruta || !metodo || !permisos) {
         return res.status(400).json({ message: 'Datos inválidos' });
@@ -33,7 +34,7 @@ const guardar = (req, res) => {
         permisosActuales[ruta] = { protected: false };
     }
 
-    permisosActuales[ruta][metodo] = roles;
+    permisosActuales[ruta][metodo] = permisos;
 
     guardarPermisos(res, permisosActuales[ruta], ruta);
 }
