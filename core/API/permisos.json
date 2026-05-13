@@ -11,6 +11,18 @@
             "*"
         ]
     },
+    "/permisos": {
+        "protected": true,
+        "GET": [
+            ">1"
+        ],
+        "POST": [
+            "8"
+        ],
+        "DELETE": [
+            "8"
+        ]
+    },
     "/empleados": {
         "protected": false,
         "DELETE": [
@@ -70,18 +82,6 @@
         ],
         "DELETE": [
             "7",
-            "8"
-        ]
-    },
-    "/permisos": {
-        "protected": false,
-        "GET": [
-            ">1"
-        ],
-        "POST": [
-            "8"
-        ],
-        "DELETE": [
             "8"
         ]
     }

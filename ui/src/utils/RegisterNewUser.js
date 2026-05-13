@@ -1,3 +1,5 @@
+import {apiFetch} from "./apiFetch.jsx";
+
 /**
  * Recoge los valores del form y los manda a la BBDD usando enviarUsuario
  *
@@ -60,7 +62,7 @@ export async function enviarUsuario(token, id, nombre, apellidos, fecha_nacimien
     params.append('contrasenia', contrasenia);
 
     try {
-        const response = await fetch(url, {
+        const response = await apiFetch(url, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useUsers } from "../../context/UserContext.jsx";
+import {apiFetch} from "../../utils/apiFetch.jsx";
 import "../../../public/styles/tablaPermisos.css";
 
 /**
@@ -25,7 +26,7 @@ export function TablaIncidencias({ tipoIncidencia }) {
 
         try {
 
-            fetch(
+            apiFetch(
                 import.meta.env.VITE_BACKEND_INCIDENCIA +
                 '?pagina=' + paginaActual +
                 '&cantidad=' + cantidadPorPagina +

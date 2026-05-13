@@ -17,9 +17,12 @@ export function UserProvider({children}) {
     const [user, setUser] = useState({
         username: '',
         id: '',
+        departamento: 0,
         token: getCookie('token') || '',
         authenticated: false,
     });
+
+    const [isInitialLoading, setIsInitialLoading] = useState(true);
 
     /**
      * Comprueba si la cookie existe en el navegador, si existe, manda el formulario con
@@ -38,6 +41,7 @@ export function UserProvider({children}) {
             setUser({
                 username: result.username,
                 id: result.id,
+                departamento: result.department,
                 token,
                 authenticated: true
             });
@@ -48,7 +52,7 @@ export function UserProvider({children}) {
 
     useEffect(() => {
         // eslint-disable-next-line react-hooks/set-state-in-effect
-        autoLogin();
+        autoLogin().finally(() => setIsInitialLoading(false));
     }, []);
 
     /**
@@ -60,10 +64,11 @@ export function UserProvider({children}) {
      * @author Alex Bernardos Gil
      * @version 1.1.0
      */
-    function changeUserInformation(username = undefined, id = undefined, token = window?.token?.value, authenticated = false) {
+    function changeUserInformation(username = undefined, id = undefined, token = window?.token?.value, departamento = undefined, authenticated = false) {
         setUser({
             username: username || user.username,
             token: token || user.token,
+            departamento: departamento || user.departamento,
             id: id || user.id,
             authenticated: authenticated || user.authenticated
         })
@@ -72,7 +77,7 @@ export function UserProvider({children}) {
 
     return (
         <UserContext.Provider
-            value={{user, changeUserInformation}}>
+            value={{user, changeUserInformation, isInitialLoading}}>
             {children}
         </UserContext.Provider>
     )

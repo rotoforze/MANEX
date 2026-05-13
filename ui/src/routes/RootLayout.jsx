@@ -2,6 +2,7 @@ import React, {useEffect} from 'react'
 import {MainNav} from '../components/MainNav'
 import {Outlet, useLocation, useNavigate} from 'react-router-dom';
 import {useUsers} from "../context/UserContext.jsx";
+import {Loading} from "../components/Loading.jsx";
 
 /**
  *
@@ -13,21 +14,23 @@ import {useUsers} from "../context/UserContext.jsx";
  * @constructor
  */
 export const RootLayout = () => {
-    const {user} = useUsers();
+    const {user, isInitialLoading} = useUsers();
     const navigate = useNavigate();
     const location = useLocation();
 
     useEffect(() => {
-        if (location.pathname === '/error' || location.pathname === '/faq') return;
+        if (isInitialLoading || location.pathname === '/error') return;
 
-        if (user?.username && user?.authenticated) {
-            if (location.pathname === '/') navigate('/dashboard');
-        } else if (!user?.username && !user?.authenticated) {
+        if (user?.username && user?.authenticated && existeCookie()) {
+            if (location.pathname === '/') {
+                navigate('/dashboard');
+            }
+        } else {
             if (location.pathname !== '/') navigate('/');
         }
-    }, [user?.username, user?.authenticated, location.pathname, navigate])
-
-    if (user?.username && user?.authenticated) {
+    }, [user, isInitialLoading, location.pathname])
+    if (isInitialLoading) return <Loading/>;
+    if (user?.username && user?.authenticated  && existeCookie()) {
         return (
             <div className="app-shell d-flex min-vh-100">
                 <MainNav/>
@@ -39,4 +42,8 @@ export const RootLayout = () => {
     }
 
     return <Outlet/>
+}
+
+function existeCookie() {
+    return document.cookie.split('; ').some(cookie => cookie.startsWith('token='));
 }
