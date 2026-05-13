@@ -45,12 +45,16 @@
     word-break: break-word;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1000px) {
     .confirmacion {
         width: 90dvw;
     }
 
     .permisos-table {
         min-width: 640px;
+    }
+    .superponer .confirmacion {
+        width: 100dvw !important;
+        overflow: scroll;
     }
 }
