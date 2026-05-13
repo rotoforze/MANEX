@@ -190,7 +190,7 @@ export function TablePermisos() {
                                         }} disabled={permisoProtected || !permisoParaEditarOBorrar}></button>
                                     </td>
                                 </tr>
-                                <tr className="h-auto" key={index + 100}>
+                                <tr className="h-auto" key={index * 100}>
                                     <td>Departamentos</td>
                                     <td>
                                         {permisoGetTexto || ''}

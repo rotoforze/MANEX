@@ -12,7 +12,7 @@ dotenv.config();
  * @param {Request} req
  * @param {Response} res
  */
-export function listaIncidencias(req, res) {
+export function listaSolicitudesVacaciones(req, res) {
 
     const pool = mysql.createPool({
         host: process.env.DB_HOST,
@@ -61,13 +61,13 @@ export function listaIncidencias(req, res) {
             });
         }
         let totalResultados = 0;
-        connection.query(`SELECT COUNT(*) as total FROM incidencia;`, (error, result) => {
+        connection.query(`SELECT COUNT(*) as total FROM solicitud_vacaciones;`, (error, result) => {
             totalResultados = result[0].total;
         })
         connection.query(
-            `SELECT i.*
-             FROM incidencia i 
-             ORDER BY i.estado DESC LIMIT ?
+            `SELECT sv.*
+             FROM solicitud_vacaciones sv 
+             ORDER BY sv.id_incidencia DESC LIMIT ?
              OFFSET ?`,
             [cantidad, offset],
             (error, result) => {
