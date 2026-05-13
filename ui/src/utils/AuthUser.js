@@ -55,7 +55,7 @@ export const authUser = async (usuario, password, wantsToKeepSession, sessionTok
 
         if (!response.ok) {
             console.error('Error en la red o servidor');
-            return false;
+            return response;
         }
 
         const respuesta = await response.json();
@@ -77,7 +77,7 @@ export const authUser = async (usuario, password, wantsToKeepSession, sessionTok
         } else {
             console.log('ERROR: ' + respuesta.message);
             await deleteTokenCookie();
-            return false;
+            return respuesta.message;
         }
 
     } catch (error) {

@@ -26,6 +26,7 @@ const LoginPage = () => {
     const [cargando, setCargado] = useState(true);
 
     useEffect(() => {
+        if (actionData?.status === 404) return;
         if (actionData) navigate('/Dashboard');
 
     }, [actionData, navigate]);
@@ -51,8 +52,9 @@ const LoginPage = () => {
     }, [])
 
     useEffect(() => {
+        console.log(actionData?.status)
         if (!actionData) return;
-
+        if (actionData?.error == 404) return;
         if (actionData.success) {
             changeUserInformation(actionData.username, actionData.id, actionData.token, actionData.department, true);
         }
@@ -66,15 +68,16 @@ const LoginPage = () => {
             ) : (
                 <section className="card login-card shadow-lg border-0 w-100">
                     <div className="card-body p-4 p-md-5">
+
+                        {actionData?.status && (
+                            <div className="alert alert-danger" role="alert">
+                                <i className={"bi bi-patch-exclamation-fill"}> </i>{actionData.message}
+                            </div>
+                        )}
+
                         <h1 className="h3 text-center mb-4 fw-semibold">
                             Iniciar sesion
                         </h1>
-
-                        {actionData?.error && (
-                            <div className="alert alert-danger" role="alert">
-                                {actionData.error}
-                            </div>
-                        )}
 
                         <Form method="POST">
                             <input
