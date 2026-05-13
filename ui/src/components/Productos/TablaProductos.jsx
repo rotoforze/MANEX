@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useUsers } from "../../context/UserContext.jsx";
 import "../../../public/styles/tablaPermisos.css";
+import { EditarProductoForm } from "./EditarProductoForm.jsx";
 
 /**
  * Muestra en formato tabla los productos recibidos
@@ -13,6 +14,8 @@ import "../../../public/styles/tablaPermisos.css";
 export function TablaProductos() {
 
     const [listaProductos, setListaProductos] = useState([]);
+    const [productoSeleccionado, setProductoSeleccionado] = useState(null);
+    const [mostrarFormulario, setMostrarFormulario] = useState(false);
 
     const [paginaActual, setPaginaActual] = useState(0);
     const [paginaMaxima, setPaginaMaxima] = useState(0);
@@ -50,8 +53,19 @@ export function TablaProductos() {
     }, [paginaActual]);
 
     return (
-        listaProductos.length > 0 ?
-            (
+        <>
+            {mostrarFormulario && (
+                <EditarProductoForm
+                    producto={productoSeleccionado}
+                    funcionDeCierreDeFormulario={() => setMostrarFormulario(false)}
+                    handleProductoActualizado={() => {
+                        setMostrarFormulario(false);
+                        setPaginaActual(0); // Refrescar la tabla
+                    }}
+                />
+            )}
+
+            {listaProductos.length > 0 ? (
                 <div className="table-responsive m-3 d-flex flex-column justify-content-start">
                     <table className="table table-striped">
                         <thead>
@@ -65,45 +79,51 @@ export function TablaProductos() {
                         </thead>
 
                         <tbody className="table-group-divider">
-                            {
-                                listaProductos.map((producto) => (
+                            {listaProductos.map((producto) => (
+                                <tr key={producto?.ID} className="h-auto">
+                                    <th scope="row">{producto?.ID}</th>
+                                    <td>{producto?.Nombre}</td>
+                                    <td>{producto?.Descripcion}</td>
+                                    <td>{producto?.Estado}</td>
+                                    <td className={"h-auto acciones-tabla"}>
+                                        <button
+                                            className="btn btn-primary bi-pencil-fill"
+                                            onClick={() => {
+                                                setProductoSeleccionado(producto);
+                                                setMostrarFormulario(true);
+                                            }}
+                                        ></button>
 
-                                    <tr key={producto?.ID} className="h-auto">
-
-                                        <th scope="row">{producto?.ID}</th>
-
-                                        <td>{producto?.Nombre}</td>
-
-                                        <td>{producto?.Descripcion}</td>
-
-                                        <td>{producto?.Estado}</td>
-
-                                        <td className={"h-auto acciones-tabla"}>
-                                            <button className="btn btn-primary bi-pencil-fill"></button>
-
-                                            <button className="btn btn-danger bi-trash-fill"></button>
-                                        </td>
-
-                                    </tr>
-
-                                ))
-                            }
+                                        <button className="btn btn-danger bi-trash-fill"></button>
+                                    </td>
+                                </tr>
+                            ))}
                         </tbody>
                     </table>
 
                     <div className="gap-3 d-flex justify-content-center mb-3">
-                        <button className="btn btn-primary bi-chevron-left" disabled={paginaActual == 0}
+                        <button
+                            className="btn btn-primary bi-chevron-left"
+                            disabled={paginaActual == 0}
                             onClick={() => {
                                 if (paginaActual > 0) setPaginaActual(paginaActual - 1);
-                            }}></button>
-                        <b>Mostrando {resultadosPorPagina}/{cantidadPorPagina} en la página {paginaActual}</b>
-                        <button className="btn btn-primary bi-chevron-right" disabled={!(paginaActual < paginaMaxima)}
+                            }}
+                        ></button>
+                        <b>
+                            Mostrando {resultadosPorPagina}/{cantidadPorPagina} en la página {paginaActual}
+                        </b>
+                        <button
+                            className="btn btn-primary bi-chevron-right"
+                            disabled={!(paginaActual < paginaMaxima)}
                             onClick={() => {
                                 if (paginaActual < paginaMaxima) setPaginaActual(paginaActual + 1);
-                            }}></button>
+                            }}
+                        ></button>
                     </div>
                 </div>
-            )
-            : <b>No hay productos.</b>
+            ) : (
+                <b>No hay productos.</b>
+            )}
+        </>
     );
 }

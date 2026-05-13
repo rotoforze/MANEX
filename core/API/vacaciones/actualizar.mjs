@@ -34,7 +34,7 @@ async function actualizarSolicitudVacaciones(req, res) {
 
         const resultadoEmpleado = await connection.query(
             'UPDATE solicitud_vacaciones SET fecha_inicio = ?, fecha_fin = ?,tipo = ?, estado = ? WHERE id_incidencia = ?',
-            [fecha_inicio, fecha_fin, tipo ||"Solicitud de semana de vacaciones",estado || "En revision", id_incidencia]);
+            [fecha_inicio, fecha_fin, tipo ||"Solicitud de semana de vacaciones",estado || "En revisión", id_incidencia]);
 
         await connection.commit();
 

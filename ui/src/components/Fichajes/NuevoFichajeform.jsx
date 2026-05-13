@@ -86,21 +86,7 @@ export function NuevoFichajeForm({ funcionDeCierreDeFormulario, handleNuevoFicha
 
                         <div className="row g-2">
 
-                            <div className="col-md-6 mb-2">
-                                <label htmlFor="fecha_entrada" className="form-label mb-1" style={{fontSize: '0.85rem'}}>
-                                    Fecha de entrada <span className="text-danger">*</span>
-                                </label>
-
-                                <input
-                                    type="datetime-local"
-                                    className="form-control form-control-sm"
-                                    id="fecha_entrada"
-                                    name="fecha_entrada"
-                                    required
-                                />
-                            </div>
-
-                            <div className="col-md-6 mb-2">
+                            <div className="col-12 mb-2">
                                 <label htmlFor="tipo" className="form-label mb-1" style={{fontSize: '0.85rem'}}>
                                     Tipo <span className="text-danger">*</span>
                                 </label>

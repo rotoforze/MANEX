@@ -10,17 +10,18 @@ import { apiFetch } from "../../utils/apiFetch.jsx";
  *   id, nombre, apellidos, fecha_nacimiento, telefono,
  *   ID_contrato, ID_departamento, usuario, email, contrasenia
  *
- * @returns {React.JSX.Element}
- * @author Eneas de la Rosa Menendez Pedrosa
- * @version 1.2.0
- * @constructor
+ * @author Eneas de la Rosa Menéndez Pedrosa
+ * @version 1.2
+ * @param {Object}   empleado                   - Fila del empleado tal como llega del listado
+ * @param {Function} funcionDeCierreDeFormulario - Cierra el formulario sin guardar
+ * @param {Function} handleEmpleadoActualizado   - Callback tras actualización exitosa
  */
 export function EditarEmpleadoForm({ empleado, funcionDeCierreDeFormulario, handleEmpleadoActualizado }) {
 
     const { user } = useUsers();
 
-    const [enviando, setEnviando] = useState(false);
-    const [mensaje, setMensaje] = useState(null); // { tipo: 'success'|'danger', texto }
+    const [enviando, setEnviando]           = useState(false);
+    const [mensaje, setMensaje]             = useState(null); // { tipo: 'success'|'danger', texto }
     const [passwordShown, setPasswordShown] = useState(false);
 
     // Inicializamos con los datos del empleado recibido.
@@ -28,19 +29,19 @@ export function EditarEmpleadoForm({ empleado, funcionDeCierreDeFormulario, hand
     //   const { nombre, apellidos, fecha_nacimiento, telefono,
     //           ID_contrato, ID_departamento, usuario, email, contrasenia, id } = req.body;
     const [form, setForm] = useState({
-        id: empleado?.ID ?? '',
-        nombre: empleado?.Nombre ?? '',
-        apellidos: empleado?.Apellidos ?? '',
-        email: empleado?.email ?? '',
-        telefono: empleado?.telefono ?? '',
+        id:               empleado?.ID               ?? '',
+        nombre:           empleado?.Nombre            ?? '',
+        apellidos:        empleado?.Apellidos         ?? '',
+        email:            empleado?.email             ?? '',
+        telefono:         empleado?.telefono          ?? '',
         fecha_nacimiento: empleado?.fecha_nacimiento
             ? new Date(empleado.fecha_nacimiento).toISOString().split('T')[0]
             : '',
-        ID_departamento: empleado?.ID_DEPARTAMENTO ?? '',
-        ID_contrato: empleado?.ID_CONTRATO ?? '',
+        ID_departamento:  empleado?.ID_DEPARTAMENTO   ?? '',
+        ID_contrato:      empleado?.ID_CONTRATO       ?? '',
         // USERNAME viene en mayúsculas del SELECT * de listado.mjs
-        usuario: empleado?.USERNAME ?? '',
-        contrasenia: '',
+        usuario:          empleado?.USERNAME          ?? '',
+        contrasenia:      '',
     });
 
     const handleChange = (e) => {
@@ -59,10 +60,10 @@ export function EditarEmpleadoForm({ empleado, funcionDeCierreDeFormulario, hand
                 {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json',
+                        'Content-Type': 'application/x-www-form-urlencoded',
                         'token': user?.token,
                     },
-                    body: JSON.stringify(form),
+                    body: new URLSearchParams(form).toString(),
                 }
             );
 

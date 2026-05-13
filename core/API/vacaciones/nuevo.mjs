@@ -18,7 +18,7 @@ async function registrarSolicitudVacaciones(req, res) {
     await verificadorDatos(req, res)
     if (res.headersSent) return;
 
-    const { fecha_inicio,fecha_fin, tipo,estado,id_incidencia} = req.body;
+    const { fecha_inicio,fecha_fin, tipo,estado,id_incidencia,id_empleado,observaciones,comentario} = req.body;
 
     const config = {
         host: process.env.DB_HOST,
@@ -32,10 +32,34 @@ async function registrarSolicitudVacaciones(req, res) {
     if (!connection) return res.status(500).send({status: 500, message: 'Error al conectar a la base de datos.'});
 
     try {
+        await connection.beginTransaction();
 
-        const resultadoSolicitudVacaciones = await connection.query(
+        let idIncidenciaSolicitud = id_incidencia;
+
+        if (!idIncidenciaSolicitud) {
+            if (!id_empleado) {
+                await connection.rollback();
+                return res.status(400).send({status: 400, message: 'Falta el empleado de la solicitud.'});
+            }
+
+            const fechaCreacion = new Date().toISOString().slice(0, 10);
+            const [resultadoIncidencia] = await connection.query(
+                'INSERT INTO incidencia (ID_empleado,fecha_creacion,estado,Observaciones,Comentario) VALUES (?, ?, ?, ?, ?)',
+                [
+                    id_empleado,
+                    fechaCreacion,
+                    'Abierta',
+                    observaciones || 'Solicitud de vacaciones',
+                    comentario || tipo || 'Vacaciones'
+                ]
+            );
+
+            idIncidenciaSolicitud = resultadoIncidencia.insertId;
+        }
+
+        await connection.query(
             'INSERT INTO solicitud_vacaciones (fecha_inicio,fecha_fin,tipo,estado,id_incidencia) VALUES (?, ?, ?, ?, ?)',
-            [fecha_inicio, fecha_fin, tipo ||"Solicitud de semana de vacaciones",estado || "En revision",id_incidencia]);
+            [fecha_inicio, fecha_fin, tipo ||"Solicitud de semana de vacaciones",estado || "En revisión",idIncidenciaSolicitud]);
 
         await connection.commit();
 

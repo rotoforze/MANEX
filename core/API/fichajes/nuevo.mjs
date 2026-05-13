@@ -18,7 +18,7 @@ async function registrarFichaje(req, res) {
     await verificadorDatos(req, res)
     if (res.headersSent) return;
 
-    const { username, fecha_entrada, tipo } = req.body;
+    const { username, tipo } = req.body;
 
     const config = {
         host: process.env.DB_HOST,
@@ -33,9 +33,9 @@ async function registrarFichaje(req, res) {
 
     try {
         const id_empleado = await connection.query('SELECT id FROM empleado WHERE username = ?', [username]);
-        const resultadoFichaje = await connection.query(
-            'INSERT INTO fichajes (id_empleado,fecha_entrada,tipo) VALUES (?, ?, ?)',
-            [id_empleado[0][0].id, fecha_entrada || new Date(), tipo || 'Presencial']);
+        await connection.query(
+            'INSERT INTO fichajes (id_empleado,tipo) VALUES (?, ?)',
+            [id_empleado[0][0].id, tipo || 'Presencial']);
 
         await connection.commit();
 

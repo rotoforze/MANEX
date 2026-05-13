@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useUsers } from "../../../context/UserContext.jsx";
+import { apiFetch } from "../../../utils/apiFetch.jsx";
 import "../../../../public/styles/tablaPermisos.css";
 
 /**
@@ -17,10 +18,58 @@ import "../../../../public/styles/tablaPermisos.css";
 export function NuevaSolicitudForm({ funcionDeCierreDeFormulario, handleNuevaSolicitud }) {
 
     const { user } = useUsers();
+    const [seEstaEnviando, setSeEstaEnviando] = useState(false);
+    const [mensaje, setMensaje] = useState(null);
 
-    function handleSubmit(event) {
+    async function handleSubmit(event) {
         event.preventDefault();
-        handleNuevaSolicitud();
+        setSeEstaEnviando(true);
+        setMensaje(null);
+
+        const formData = new FormData(event.currentTarget);
+        const fechaInicio = formData.get('fecha_inicio');
+        const fechaFin = formData.get('fecha_fin');
+
+        if (fechaInicio && fechaFin && fechaFin < fechaInicio) {
+            setMensaje({ tipo: 'danger', texto: 'La fecha de fin no puede ser anterior a la fecha de inicio.' });
+            setSeEstaEnviando(false);
+            return;
+        }
+
+        formData.set('id_empleado', user?.id || '');
+        formData.set('estado', 'En revisión');
+
+        try {
+            const urlSolicitudes = import.meta.env.VITE_BACKEND_SOLICITUDES
+                || import.meta.env.VITE_BACKEND_SOLICITUD
+                || `${import.meta.env.VITE_BACKEND}/vacaciones`;
+
+            const response = await apiFetch(
+                urlSolicitudes,
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'token': user?.token,
+                    },
+                    body: new URLSearchParams(formData),
+                }
+            );
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                setMensaje({ tipo: 'danger', texto: data?.message || 'No se pudo registrar la solicitud.' });
+                return;
+            }
+
+            handleNuevaSolicitud();
+        } catch (error) {
+            console.error(error);
+            setMensaje({ tipo: 'danger', texto: 'Error al registrar la solicitud.' });
+        } finally {
+            setSeEstaEnviando(false);
+        }
     }
 
     return (
@@ -34,6 +83,12 @@ export function NuevaSolicitudForm({ funcionDeCierreDeFormulario, handleNuevaSol
 
                 <div className="card-body p-2">
                     <h2 className="text-center mb-2">Nueva solicitud</h2>
+
+                    {mensaje && (
+                        <div className={`alert alert-${mensaje.tipo} py-1 px-2 small mb-2`}>
+                            {mensaje.texto}
+                        </div>
+                    )}
 
                     <form onSubmit={handleSubmit}>
 
@@ -61,25 +116,47 @@ export function NuevaSolicitudForm({ funcionDeCierreDeFormulario, handleNuevaSol
                                     required
                                 >
                                     <option value="">
-                                       
+                                        Selecciona un tipo
                                     </option>
 
-                                    <option value="Vacaciones">
-                                        Vacaciones
+                                    <option value="Permiso de días">
+                                        Permiso de días
+                                    </option>
+
+                                    <option value="Solicitud de semana de vacaciones">
+                                        Solicitud de semana de vacaciones
+                                    </option>
+
+                                    <option value="Permiso familiar">
+                                        Permiso familiar
                                     </option>
                                 </select>
                             </div>
 
                             <div className="col-md-6 mb-2">
-                                <label htmlFor="fecha" className="form-label mb-1" style={{fontSize: '0.85rem'}}>
-                                    Fecha <span className="text-danger">*</span>
+                                <label htmlFor="fecha_inicio" className="form-label mb-1" style={{fontSize: '0.85rem'}}>
+                                    Fecha inicio <span className="text-danger">*</span>
                                 </label>
 
                                 <input
                                     type="date"
                                     className="form-control form-control-sm"
-                                    id="fecha"
-                                    name="fecha"
+                                    id="fecha_inicio"
+                                    name="fecha_inicio"
+                                    required
+                                />
+                            </div>
+
+                            <div className="col-md-6 mb-2">
+                                <label htmlFor="fecha_fin" className="form-label mb-1" style={{fontSize: '0.85rem'}}>
+                                    Fecha fin <span className="text-danger">*</span>
+                                </label>
+
+                                <input
+                                    type="date"
+                                    className="form-control form-control-sm"
+                                    id="fecha_fin"
+                                    name="fecha_fin"
                                     required
                                 />
                             </div>
@@ -94,17 +171,17 @@ export function NuevaSolicitudForm({ funcionDeCierreDeFormulario, handleNuevaSol
                             <textarea
                                 className="form-control form-control-sm"
                                 id="descripcion"
-                                name="descripcion"
+                                name="observaciones"
                                 rows="3"
-                                maxLength="512"
+                                maxLength="60"
                                 required
                             ></textarea>
                         </div>
 
                         <div className="d-flex justify-content-end gap-2 mt-2">
 
-                            <button className="btn btn-primary btn-sm" type="submit">
-                                Registrar
+                            <button className="btn btn-primary btn-sm" type="submit" disabled={seEstaEnviando}>
+                                {seEstaEnviando ? 'Registrando...' : 'Registrar'}
                             </button>
                         </div>
 
