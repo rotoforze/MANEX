@@ -2,19 +2,22 @@ import { useEffect, useState } from "react";
 import { useUsers } from "../../context/UserContext.jsx";
 import { apiFetch } from "../../utils/apiFetch.jsx";
 import { EditarEmpleadoForm } from "./EditarEmpleadoForm.jsx";
+import { DelEmpleado } from "./DelEmpleado.jsx";
 import "../../../public/styles/tablaPermisos.css";
 
 /**
  * Muestra en formato tabla los empleados recibidos.
  * Permite editar cada empleado abriendo un formulario superpuesto.
  *
+ *
+ * @author Alex Bernardos Gil
+ * @version 1.1.0
  * @returns {React.JSX.Element}
  * @author Eneas de la Rosa Menendez Pedrosa
  * @version 1.3.0
  * @constructor
  */
 export function TablaEmpleados() {
-
     const [listaEmpleados, setListaEmpleados] = useState([]);
     const [paginaActual, setPaginaActual] = useState(0);
     const [paginaMaxima, setPaginaMaxima] = useState(0);

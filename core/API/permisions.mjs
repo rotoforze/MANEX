@@ -18,12 +18,6 @@ export function obtenerPermisos(ruta = undefined) {
         const contenidoArchivo = fs.readFileSync(rutaArchivoPermisos, 'utf8');
         // simplificación del ifelse
         return ruta ? JSON.parse(contenidoArchivo)[ruta] : JSON.parse(contenidoArchivo);
-        // if (ruta) {
-        //     return JSON.parse(contenidoArchivo)[ruta];
-        // }
-        // else {
-        //     return JSON.parse(contenidoArchivo);
-        // }
 
     } catch (e) {
 
@@ -49,7 +43,7 @@ export function guardarPermisos(res, permisos, ruta = undefined, bypass = false)
 
         const permisoValido = comprobarPermisos(permisos);
 
-        if (!permisoValido && !bypass) {
+        if (!permisoValido) {
             return res.status(400).json({ message: 'Bad Request' });
         }
 

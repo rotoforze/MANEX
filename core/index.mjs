@@ -316,7 +316,7 @@ app.post('/contratos', newContrato);
 app.post('/departamentos', newDepartamento);
 
 app.post('/permisos', (req, res) => {
-    if (req?.body?.ruta && req?.body?.metodo && req?.body?.permisos) {
+    if (req?.body?.ruta && req?.body?.metodo) {
         return guardarPermisos(req, res);
     }
     return res.status(400).json({
