@@ -4,6 +4,7 @@ import {DelPermiso} from "./DelPermiso.jsx";
 import EditPermiso from "./EditPermiso.jsx";
 import {apiFetch} from "../../utils/apiFetch.jsx";
 import React, { useEffect, useState } from "react";
+import NewPermiso from "./NewPermiso.jsx";
 
 /**
  * Muestra en formato tabla los permisos de MANEX. permite ver y borrar
@@ -27,6 +28,8 @@ export function TablePermisos() {
     const [estado, setEstado] = useState(undefined);
     const [permisoParaEditarOBorrar, setPermisoParaEditarOBorrar] = useState(user.departamento == 8);
     const [permisosNuevos, setPermisosNuevos] = useState({});
+    const [formularioNuevoVisible, setFormularioNuevoVisible] = useState(false);
+    const [refreshKey, setRefreshKey] = useState(0);
 
     const fetchInicio = () => {
         apiFetch(import.meta.env.VITE_BACKEND_PERMISOS, {
@@ -69,10 +72,27 @@ export function TablePermisos() {
                                  user={user} fetchInicio={fetchInicio} nuevosPermisos={permisosNuevos}
                                  listaDepartamentos={departamentos}/> : null
             }
+            {
+                (formularioNuevoVisible) && permisoParaEditarOBorrar  ?
+                    <NewPermiso setFormularioNuevoVisible={setFormularioNuevoVisible} formularioNuevoVisible={formularioNuevoVisible} editando={editando}
+                                 setEliminando={setEliminando} setEditando={setEditando} oldPermisos={permisos}
+                                 confirmar={confirmar} setConfirmar={setConfirmar} estado={estado} setEstado={setEstado}
+                                 user={user} fetchInicio={fetchInicio} nuevosPermisos={permisosNuevos}
+                                 listaDepartamentos={departamentos}/> : null
+            }
             {permisos && permisoParaEditarOBorrar ? (<>
                 <h2>Permisos</h2>
 
                 <h4>Selecciona un permiso para ver su configuración.</h4>
+
+                <div className={"d-flex gap-2 align-items-start justify-content-start top-empleados"}>
+
+                    <button className={"btn " + (formularioNuevoVisible ? 'btn-danger' : 'btn-primary')} onClick={() => {
+                        // muestra el componente de registro
+                        setFormularioNuevoVisible(!formularioNuevoVisible);
+                    }}> {formularioNuevoVisible ? 'Cerrar formulario' : 'Nuevo registro'}</button>
+                </div>
+
                 <table className="table table-striped">
                     <thead>
                     <tr>
@@ -226,7 +246,7 @@ export function TablePermisos() {
 }
 
 function parseToText(perm, listaDepartamentos) {
-    if (perm == undefined) return 'N/A';
+    if (perm == undefined || perm.length < 1) return 'N/A';
     return perm == '*' ? 'Todos' : perm[0].includes('>') ? 'Al menos: ' + listaDepartamentos.get(parseInt(perm[0][1])) : perm.map(id => listaDepartamentos.get(parseInt(id))).join(', ') || 'N/A'
 }
 

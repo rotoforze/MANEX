@@ -7,8 +7,9 @@ import {
 const guardar = (req, res) => {
 
     const { ruta, metodo, permisos } = req?.body;
+    console.log(ruta, metodo, permisos);
 
-    if (!ruta || !metodo || !permisos) {
+    if (!ruta || !metodo) {
         return res.status(400).json({ message: 'Datos inválidos' });
     }
 
@@ -21,11 +22,11 @@ const guardar = (req, res) => {
         return res.status(400).json({ message: 'Método no permitido' });
     }
 
-    const roles = typeof permisos === 'string' ? JSON.parse(permisos) : permisos;
-
-    if (!Array.isArray(roles) || roles.length === 0) {
-        return res.status(400).json({ message: 'Permisos inválidos' });
-    }
+    // const roles = typeof permisos === 'string' ? JSON.parse(permisos) : permisos;
+    //
+    // if (!Array.isArray(roles) || roles.length === 0) {
+    //     return res.status(400).json({ message: 'Permisos inválidos' });
+    // }
 
     const permisosActuales = obtenerPermisos();
 
@@ -33,7 +34,7 @@ const guardar = (req, res) => {
         permisosActuales[ruta] = { protected: false };
     }
 
-    permisosActuales[ruta][metodo] = roles;
+    permisosActuales[ruta][metodo] = permisos || [];
 
     guardarPermisos(res, permisosActuales[ruta], ruta);
 }
