@@ -130,7 +130,7 @@ app.get('/empleados', (req, res) => {
 });
 
 app.get('/fichajes', (req, res) => {
-    const parametrosRecibidos = Object.keys(req.body);
+    const parametrosRecibidos = Object.keys(req.query);
 
     const parametrosNoValidos = parametrosRecibidos.filter(p => !paginacion.PARAMETROS_PERMITIDOS.includes(p));
 
@@ -140,7 +140,7 @@ app.get('/fichajes', (req, res) => {
             message: `Parámetros no permitidos: ${parametrosNoValidos.join(', ')}`
         });
     }
-    if (req?.body?.username) {
+    if (req?.query?.username) {
         getFichaje(req, res);
 
     } else listaFichajes(req, res);

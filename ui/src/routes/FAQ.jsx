@@ -23,7 +23,7 @@ export const FAQ = () => {
                         </div>
 
                         <h1 className="h3 fw-bold mb-2">
-                            Ayuda para iniciar sesion
+                            Ayuda para iniciar sesión
                         </h1>
                     </div>
                     <div className="support-card border rounded-3 p-3 p-md-4 mt-4">
@@ -39,7 +39,7 @@ export const FAQ = () => {
                                     </h2>
 
                                     <p className="text-muted mb-0">
-                                        Solicita ayuda para cambiar tu contrasena o recuperar el acceso a tu cuenta.
+                                        Solicita ayuda para cambiar tu contraseña o recuperar el acceso a tu cuenta.
                                     </p>
                                 </div>
                             </div>

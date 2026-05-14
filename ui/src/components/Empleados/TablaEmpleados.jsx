@@ -1,15 +1,20 @@
 import { useEffect, useState } from "react";
 import { useUsers } from "../../context/UserContext.jsx";
 import { apiFetch } from "../../utils/apiFetch.jsx";
+import { EditarEmpleadoForm } from "./EditarEmpleadoForm.jsx";
 import { DelEmpleado } from "./DelEmpleado.jsx";
 import "../../../public/styles/tablaPermisos.css";
 
 /**
  * Muestra en formato tabla los empleados recibidos.
+ * Permite editar cada empleado abriendo un formulario superpuesto.
+ *
  *
  * @author Alex Bernardos Gil
  * @version 1.1.0
  * @returns {React.JSX.Element}
+ * @author Eneas de la Rosa Menendez Pedrosa
+ * @version 1.3.0
  * @constructor
  */
 export function TablaEmpleados() {
@@ -19,27 +24,25 @@ export function TablaEmpleados() {
     const [resultadosPorPagina, setResultadosPorPagina] = useState(0);
     const [cantidadPorPagina] = useState(10);
 
-    const [eliminando, setEliminando] = useState(false);
-    const [usuarioAEditar, setUsuarioAEditar] = useState(undefined);
+    // Estado del formulario de edición
+    const [empleadoEditando, setEmpleadoEditando] = useState(null); // null = cerrado
 
     const { user } = useUsers();
 
-    function fetchInicio() {
+    const cargarEmpleados = () => {
         try {
             apiFetch(
-                import.meta.env.VITE_BACKEND_EMPLEADO +
-                    "?pagina=" + paginaActual +
-                    "&cantidad=" + cantidadPorPagina,
+                `${import.meta.env.VITE_BACKEND_EMPLEADO}?pagina=${paginaActual}&cantidad=${cantidadPorPagina}`,
                 {
-                    method: "GET",
+                    method: 'GET',
                     headers: {
-                        "Content-Type": "application/x-www-form-urlencoded",
-                        token: user?.token,
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'token': user?.token,
                     },
                 }
             )
-                .then((response) => response.json())
-                .then((data) => {
+                .then(res => res.json())
+                .then(data => {
                     if (data) {
                         setListaEmpleados(data?.data);
                         setPaginaMaxima(data?.meta?.totalPaginas - 1);
@@ -49,26 +52,30 @@ export function TablaEmpleados() {
         } catch (e) {
             console.error(e);
         }
-    }
+    };
 
     useEffect(() => {
-        fetchInicio();
+        cargarEmpleados();
     }, [paginaActual]);
+
+    // Llamado por EditarEmpleadoForm tras éxito: cierra el formulario y recarga la tabla
+    const handleEmpleadoActualizado = () => {
+        setEmpleadoEditando(null);
+        cargarEmpleados();
+    };
 
     return (
         <>
-            {eliminando && (
-                <DelEmpleado
-                    usuarioAEditar={usuarioAEditar}
-                    setUsuarioAEditar={setUsuarioAEditar}
-                    eliminando={eliminando}
-                    setEliminando={setEliminando}
-                    user={user}
-                    fetchInicio={fetchInicio}
+            {/* Formulario de edición superpuesto */}
+            {empleadoEditando && (
+                <EditarEmpleadoForm
+                    empleado={empleadoEditando}
+                    funcionDeCierreDeFormulario={() => setEmpleadoEditando(null)}
+                    handleEmpleadoActualizado={handleEmpleadoActualizado}
                 />
             )}
 
-            {listaEmpleados.length > 0 ? (
+            {listaEmpleados?.length > 0 ? (
                 <div className="table-responsive m-3 d-flex flex-column justify-content-start">
                     <table className="table table-striped">
                         <thead>
@@ -95,30 +102,25 @@ export function TablaEmpleados() {
                                     <td>{empleado?.telefono}</td>
                                     <td>
                                         {empleado?.fecha_nacimiento
-                                            ? new Date(empleado.fecha_nacimiento).toLocaleDateString(
-                                                  "es-ES",
-                                                  { timeZone: "UTC" }
-                                              )
-                                            : "N/A"}
+                                            ? new Date(empleado.fecha_nacimiento).toLocaleDateString('es-ES', { timeZone: 'UTC' })
+                                            : 'N/A'}
                                     </td>
                                     <td>
                                         {empleado?.fecha_alta
-                                            ? new Date(empleado.fecha_alta).toLocaleDateString(
-                                                  "es-ES",
-                                                  { timeZone: "UTC" }
-                                              )
-                                            : "N/A"}
+                                            ? new Date(empleado.fecha_alta).toLocaleDateString('es-ES', { timeZone: 'UTC' })
+                                            : 'N/A'}
                                     </td>
                                     <td>{empleado?.ID_DEPARTAMENTO}</td>
                                     <td>{empleado?.ID_CONTRATO}</td>
                                     <td className="h-auto acciones-tabla">
-                                        <button className="btn btn-primary bi-pencil-fill" />
+                                        <button
+                                            className="btn btn-primary bi-pencil-fill"
+                                            title="Editar empleado"
+                                            onClick={() => setEmpleadoEditando(empleado)}
+                                        />
                                         <button
                                             className="btn btn-danger bi-trash-fill"
-                                            onClick={() => {
-                                                setUsuarioAEditar(empleado);
-                                                setEliminando(true);
-                                            }}
+                                            title="Eliminar empleado"
                                         />
                                     </td>
                                 </tr>
@@ -126,6 +128,7 @@ export function TablaEmpleados() {
                         </tbody>
                     </table>
 
+                    {/* Paginación */}
                     <div className="gap-3 d-flex justify-content-center mb-3">
                         <button
                             className="btn btn-primary bi-chevron-left"
@@ -135,15 +138,13 @@ export function TablaEmpleados() {
                             }}
                         />
                         <b>
-                            Mostrando {resultadosPorPagina}/{cantidadPorPagina} en la
-                            página {paginaActual}
+                            Mostrando {resultadosPorPagina}/{cantidadPorPagina} en la página {paginaActual}
                         </b>
                         <button
                             className="btn btn-primary bi-chevron-right"
                             disabled={!(paginaActual < paginaMaxima)}
                             onClick={() => {
-                                if (paginaActual < paginaMaxima)
-                                    setPaginaActual(paginaActual + 1);
+                                if (paginaActual < paginaMaxima) setPaginaActual(paginaActual + 1);
                             }}
                         />
                     </div>

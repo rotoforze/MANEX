@@ -46,47 +46,6 @@ export function Incidencias() {
 
         <div className={"d-flex gap-2 align-items-start justify-content-start top-productos incidencias-actions"}>
 
-          <button
-            className={`btn ${tipoIncidencia === 'general'
-              ? 'btn-primary'
-              : 'btn-outline-primary'
-              } incidencia-action-btn`}
-            onClick={() => setTipoIncidencia('general')}
-          >
-
-            <i className="bi bi-exclamation-circle me-2"></i>
-
-            Generales
-
-          </button>
-
-          <button
-            className={`btn ${tipoIncidencia === 'it'
-              ? 'btn-primary'
-              : 'btn-outline-primary'
-              } incidencia-action-btn`}
-            onClick={() => setTipoIncidencia('it')}
-          >
-
-            <i className="bi bi-pc-display-horizontal me-2"></i>
-
-            IT
-
-          </button>
-
-          <button
-            className={`btn ${tipoIncidencia === 'inventario'
-              ? 'btn-primary'
-              : 'btn-outline-primary'
-              } incidencia-action-btn`}
-            onClick={() => setTipoIncidencia('inventario')}
-          >
-
-            <i className="bi bi-box-seam me-2"></i>
-
-            Inventario
-
-          </button>
           <button className={"btn incidencia-action-btn " + (registroVisible ? 'btn-danger' : 'btn-primary')} onClick={() => {
             // muestra el componente de registro
             setRegistroVisible(!registroVisible);

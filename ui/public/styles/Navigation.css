@@ -1,0 +1,9 @@
+.main-nav {
+    min-height: 12dvb ;
+}
+
+@media (max-width: 768px) {
+    .main-nav {
+        min-height: 12dvb ;
+    }
+}

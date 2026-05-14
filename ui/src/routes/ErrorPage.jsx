@@ -25,10 +25,6 @@ export const ErrorPage = () => {
             <i className="bi bi-exclamation-triangle-fill" aria-hidden="true"></i>
           </div>
 
-          <p className="text-uppercase text-muted fw-semibold small mb-2">
-            Error {status}
-          </p>
-
           <h1 className="h3 fw-bold mb-3">
             Algo no ha ido bien
           </h1>

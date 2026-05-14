@@ -62,13 +62,20 @@ export function listaFichajes(req, res) {
         }
         let totalResultados = 0;
         connection.query(`SELECT COUNT(*) as total FROM fichajes;`, (error, result) => {
-            totalResultados = result[0].total;
+            if (!error) totalResultados = result[0].total;
         })
         connection.query(
-            `SELECT e.nombre,e.apellidos, f.fecha_entrada,f.fecha_salida,f.tipo
+            `SELECT f.id,
+                    f.id_empleado,
+                    e.username,
+                    e.nombre,
+                    e.apellidos,
+                    f.fecha_entrada,
+                    f.fecha_salida,
+                    f.tipo
              FROM empleado e
                       JOIN fichajes f ON e.id = f.id_empleado
-             ORDER BY e.id DESC LIMIT ?
+             ORDER BY f.fecha_entrada DESC, f.id DESC LIMIT ?
              OFFSET ?`,
             [cantidad, offset],
             (error, result) => {

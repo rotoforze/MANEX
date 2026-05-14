@@ -9,17 +9,17 @@
  */
 async function verificadorDatos(req, res) {
     const {
-        id,id_empleado, fecha_creacion,observaciones,estado,comentario
+        id,id_empleado,observaciones,estado,comentario
     } = req.body;
 
     // validaciones
     if (!id) {
-        if (!estado || !fecha_creacion ) {
+        if (!id_empleado || !observaciones) {
             return res.status(400).send({status: 400, message: 'Faltan datos.'})
         }
     }
 
-    if (estado.length > 10 || (observaciones && observaciones?.length > 60)|| (comentario && comentario?.length > 60)|| (id_empleado && id_empleado < 0) || (id && id < 0)) {
+    if ((estado && estado.length > 10) || (observaciones && observaciones?.length > 60)|| (comentario && comentario?.length > 60)|| (id_empleado && id_empleado < 0) || (id && id < 0)) {
         return res.status(400).send({status: 400, message: 'Datos inválidos.'})
     }
 }
