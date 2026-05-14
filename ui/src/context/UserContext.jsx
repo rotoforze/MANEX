@@ -1,5 +1,6 @@
 import React, {createContext, useContext, useState, useEffect} from 'react'
 import {authUser} from '../utils/AuthUser'
+import {apiFetch} from "../utils/apiFetch.jsx";
 
 const UserContext = createContext();
 
@@ -21,6 +22,26 @@ export function UserProvider({children}) {
         token: getCookie('token') || '',
         authenticated: false,
     });
+
+    const [permisos, setPermisos] = useState();
+
+    async function getPermisos() {
+        return await apiFetch(import.meta.env.VITE_BACKEND_PERMISOS, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Token': user.token
+            }
+        }).then(res => res.json());
+    }
+
+    function tengoPermiso(ruta, metodo, departamento = user.departamento) {
+        return permisos[ruta][metodo].includes(departamento+'') || (permisos[ruta][metodo][0][0] === '>' && parseInt(departamento, 10) >= parseInt(permisos[ruta][metodo][0][1], 10))
+    }
+
+    useEffect(() => {
+        getPermisos().then(e => setPermisos(e));
+    }, []);
 
     const [isInitialLoading, setIsInitialLoading] = useState(true);
 
@@ -77,7 +98,7 @@ export function UserProvider({children}) {
 
     return (
         <UserContext.Provider
-            value={{user, changeUserInformation, isInitialLoading}}>
+            value={{user, changeUserInformation, isInitialLoading, permisos, tengoPermiso}}>
             {children}
         </UserContext.Provider>
     )

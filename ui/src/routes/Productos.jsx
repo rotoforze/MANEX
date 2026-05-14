@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { NuevoProductoForm } from "../components/Productos/NewProduct.jsx";
 import { TablaProductos } from "../components/Productos/TablaProductos.jsx";
 import '../../public/styles/mainPages.css';
+import {useUsers} from "../context/UserContext.jsx";
 
 /**
  *
@@ -16,6 +17,7 @@ export function Productos() {
 
     const [registroVisible, setRegistroVisible] = useState(false);
     const [refreshKey, setRefreshKey] = useState(0);
+    const { tengoPermiso } = useUsers();
 
     function handleNuevoRegistro() {
         setRefreshKey(prevKey => prevKey + 1);
@@ -49,7 +51,7 @@ export function Productos() {
                             // muestra el componente de registro
                             setRegistroVisible(!registroVisible);
 
-                        }}>
+                        }} disabled={!tengoPermiso('/productos', 'POST')}>
 
                         {
                             registroVisible

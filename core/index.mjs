@@ -41,6 +41,8 @@ import registrarSolicitudVacaciones from "./API/vacaciones/nuevo.mjs";
 import actualizarSolicitudVacaciones from "./API/vacaciones/actualizar.mjs";
 import delVacaciones from "./API/vacaciones/eliminar.mjs";
 import getSolicitud from "./API/vacaciones/solicitudVacaciones.mjs";
+import delProducto from "./API/productos/eliminar.mjs";
+import nuevoProducto from "./API/productos/nuevo.mjs";
 
 const app = express();
 
@@ -130,7 +132,7 @@ app.get('/empleados', (req, res) => {
 });
 
 app.get('/fichajes', (req, res) => {
-    const parametrosRecibidos = Object.keys(req.body);
+    const parametrosRecibidos = Object.keys(req.query);
 
     const parametrosNoValidos = parametrosRecibidos.filter(p => !paginacion.PARAMETROS_PERMITIDOS.includes(p));
 
@@ -140,7 +142,7 @@ app.get('/fichajes', (req, res) => {
             message: `Parámetros no permitidos: ${parametrosNoValidos.join(', ')}`
         });
     }
-    if (req?.body?.username) {
+    if (req?.query?.username) {
         getFichaje(req, res);
 
     } else listaFichajes(req, res);
@@ -240,6 +242,7 @@ app.get('/incidencias', (req, res) => {
 app.get('/permisos', listadoPermisos);
 
 app.delete('/empleados', delEmpleado);
+app.delete('/productos', delProducto);
 app.delete('/fichajes', delFichaje);
 app.delete('/incidencias', delIncidencia);
 app.delete('/contratos', delContrato);
@@ -261,6 +264,18 @@ app.post('/empleados', (req, res) => {
     if (req?.body?.id) {
         actualizar(req, res);
     } else registrar(req, res);
+});
+
+app.post('/productos', (req, res) => {
+    if (!req.body) {
+        return res.send({
+            status: 400,
+            body: {
+                'message': 'Not valid body: ' + req
+            }
+        });
+    }
+    return nuevoProducto(req, res);
 });
 
 

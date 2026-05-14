@@ -66,7 +66,9 @@ const LoginPage = () => {
             {cargando ? (
                 <Loading/>
             ) : (
+                
                 <section className="card login-card shadow-lg border-0 w-100">
+                    
                     <div className="card-body p-4 p-md-5">
 
                         {actionData?.status && (

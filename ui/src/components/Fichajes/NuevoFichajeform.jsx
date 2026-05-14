@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useUsers } from "../../context/UserContext.jsx";
 import {apiFetch} from "../../utils/apiFetch.jsx";
+import "../../../public/styles/tablaPermisos.css";
 
 /**
  *
@@ -54,20 +55,22 @@ export function NuevoFichajeForm({ funcionDeCierreDeFormulario, handleNuevoFicha
     }
 
     return (
-        <section className="w-100 mt-3">
+        <div className="superponer">
+            <div className="card confirmacion" style={{width: '90dvw', maxWidth: '600px', maxHeight: '90dvh', overflowY: 'auto'}}>
+                <div className="card-header d-flex justify-content-end">
+                    <button className={"bi-x bi btn btn-outline-danger"} onClick={() => {
+                        funcionDeCierreDeFormulario();
+                    }}></button>
+                </div>
 
-            <div className="card shadow-sm w-100">
+                <div className="card-body p-2">
+                    <h2 className="text-center mb-2">Nuevo fichaje</h2>
 
-                {mensaje && (
-                    <div className={`alert alert-${mensaje.tipo} mb-0`}>
-                        {mensaje.texto}
-                    </div>
-                )}
-                <div className="card-body p-4">
-
-                    <h2 className="text-center mb-4">
-                        Nuevo fichaje
-                    </h2>
+                    {mensaje && (
+                        <div className={`alert alert-${mensaje.tipo} alert-sm`} style={{padding: '0.25rem 0.5rem', fontSize: '0.85rem', marginBottom: '0.5rem'}}>
+                            {mensaje.texto}
+                        </div>
+                    )}
 
                     <form onSubmit={handleSubmit}>
 
@@ -77,33 +80,19 @@ export function NuevoFichajeForm({ funcionDeCierreDeFormulario, handleNuevoFicha
                             defaultValue={user?.username}
                         />
 
-                        <h4 className="mb-4 border-bottom pb-2 text-center">
-                            Informacion del fichaje
+                        <h4 className="mb-2 mt-1 border-bottom pb-1" style={{fontSize: '0.9rem'}}>
+                            Información del fichaje
                         </h4>
 
-                        <div className="row">
+                        <div className="row g-2">
 
-                            <div className="col-md-6 mb-3">
-                                <label htmlFor="fecha_entrada" className="form-label">
-                                    Fecha de entrada <span className="text-danger">*</span>
-                                </label>
-
-                                <input
-                                    type="datetime-local"
-                                    className="form-control"
-                                    id="fecha_entrada"
-                                    name="fecha_entrada"
-                                    required
-                                />
-                            </div>
-
-                            <div className="col-md-6 mb-3">
-                                <label htmlFor="tipo" className="form-label">
+                            <div className="col-12 mb-2">
+                                <label htmlFor="tipo" className="form-label mb-1" style={{fontSize: '0.85rem'}}>
                                     Tipo <span className="text-danger">*</span>
                                 </label>
 
                                 <select
-                                    className="form-select"
+                                    className="form-select form-select-sm"
                                     id="tipo"
                                     name="tipo"
                                     required
@@ -124,19 +113,20 @@ export function NuevoFichajeForm({ funcionDeCierreDeFormulario, handleNuevoFicha
 
                         </div>
 
-                        <button
-                            className="btn btn-primary w-100"
-                            type="submit"
-                            disabled={seEstaEnviando}
-                        >
-                            {seEstaEnviando ? 'Registrando fichaje...' : 'Registrar fichaje'}
-                        </button>
+                        <div className="d-flex justify-content-end gap-2 mt-2">
+                            <button
+                                className="btn btn-primary btn-sm"
+                                type="submit"
+                                disabled={seEstaEnviando}
+                            >
+                                {seEstaEnviando ? 'Registrando...' : 'Registrar'}
+                            </button>
+                        </div>
 
                     </form>
 
                 </div>
             </div>
-
-        </section>
+        </div>
     );
 }

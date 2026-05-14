@@ -19,7 +19,10 @@ const auth = async (req, res, next) => {
         user: process.env.DB_USER,
         password: process.env.DB_PASS,
         database: process.env.DB_NAME,
-        port: process.env.DB_PORT
+        port: process.env.DB_PORT,
+        waitForConnections: true,
+        connectionLimit: 10,
+        queueLimit: 0,
     })
 
     pool.on('enqueue', function () {
@@ -35,7 +38,7 @@ const auth = async (req, res, next) => {
     });
 
     // si es login o la raíz, dejamos pasar
-    if (req.path == '/login' || req.path == '/') return next();
+    if (req.path == '/login' || req.path == '/' || req.path == '/permisos') return next();
     // si no se recibe un token, no se permite el acceso
     if (!req?.headers?.token) {
         return res.status(401).json({
@@ -105,7 +108,7 @@ async function getNivelAcceso(token, pool) {
             'SELECT e.ID_DEPARTAMENTO FROM auth_token a JOIN EMPLEADO e ON a.USERNAME = e.USERNAME WHERE a.token = ? AND a.EXPIRES_AT > NOW();',
             [token]
         );
-        pool.end();
+        pool.releaseConnection();
         if (rows.length > 0) {
             return rows[0].ID_DEPARTAMENTO;
         }

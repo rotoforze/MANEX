@@ -17,7 +17,6 @@ function apiSave(ruta, metodo, perms, token) {
 
 function NewPermiso({
                         setFormularioNuevoVisible,
-                        formularioNuevoVisible,
                         confirmar,
                         setConfirmar,
                         estado,
@@ -196,7 +195,6 @@ function NewPermiso({
                                 </button>
                                 <button className={"btn btn-danger"} onClick={() => {
                                     setEstado(undefined);
-                                    setEditando(false);
                                     setConfirmar(false);
                                 }}>Cancelar
                                 </button>

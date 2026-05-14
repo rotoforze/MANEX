@@ -15,10 +15,7 @@ dotenv.config();
  */
 async function registrarIncidencias(req, res) {
 
-    await verificadorDatos(req, res)
-    if (res.headersSent) return;
-
-    const {id_empleado,fecha_creacion, observaciones, estado, comentario} = req.body;
+    let {id_empleado, observaciones, comentario} = req.body;
 
     const config = {
         host: process.env.DB_HOST,
@@ -32,11 +29,22 @@ async function registrarIncidencias(req, res) {
     if (!connection) return res.status(500).send({status: 500, message: 'Error al conectar a la base de datos.'});
 
     try {
+        if (!id_empleado && req?.headers?.token) {
+            const [empleados] = await connection.query(
+                'SELECT e.id FROM auth_token a JOIN empleado e ON a.username = e.username WHERE a.token = ? AND a.expires_at > NOW()',
+                [req.headers.token]
+            );
 
-        
-        const resultadoIncidencia = await connection.query(
-            'INSERT INTO incidencia (ID_empleado,fecha_creacion,estado,Observaciones,Comentario) VALUES (?,?, ?, ?, ?)',
-            [id_empleado,fecha_creacion, estado || 'Abierta', observaciones,comentario]);
+            id_empleado = empleados[0]?.id;
+            req.body.id_empleado = id_empleado;
+        }
+
+        await verificadorDatos(req, res)
+        if (res.headersSent) return;
+
+        await connection.query(
+            'INSERT INTO incidencia (ID_empleado,estado,Observaciones,Comentario) VALUES (?, ?, ?, ?)',
+            [id_empleado, 'Abierta', observaciones,comentario]);
 
         await connection.commit();
 

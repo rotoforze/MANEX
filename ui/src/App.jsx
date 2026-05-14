@@ -8,7 +8,8 @@ import { ErrorPage } from './routes/ErrorPage';
 import LoginPage from './routes/LoginPage';
 import { Dashboard } from './routes/Dashboard';
 import { inciarSesion as actionInicioSesion } from './utils/AuthUser';
-import { registrarUsuario as actionRegistro } from "./utils/RegisterNewUser.js";
+import { registrarUsuario as actionRegistroEmpleado } from "./utils/RegisterNewUser.js";
+import { registrarProducto as actionRegistroProducto } from "./utils/RegisterNewProduct.js";
 import { loaderAuthTokenCookie as loaderCookie, UserProvider } from './context/UserContext';
 import { Profile } from "./routes/Profile.jsx";
 import { Configuration } from "./routes/Configuration.jsx";
@@ -40,11 +41,11 @@ function App() {
             { path: '/faq', element: <FAQ /> },
             { path: '/error', element: <ErrorPage /> },
             { path: '/dashboard', element: <Dashboard /> },
-            { path: '/empleados', element: <Empleados />, action: actionRegistro },
-            { path: '/productos', element: <Productos />, action: actionRegistro },
-            { path: '/fichajes', element: <Fichajes />, action: actionRegistro },
-            { path: '/incidencia', element: <Incidencias />, action: actionRegistro },
-            { path: '/solicitudes', element: <Solicitudes />, action: actionRegistro },
+            { path: '/empleados', element: <Empleados />, action: actionRegistroEmpleado },
+            { path: '/productos', element: <Productos />, action: actionRegistroProducto },
+            { path: '/fichajes', element: <Fichajes />, action: undefined },
+            { path: '/incidencia', element: <Incidencias />, action: undefined },
+            { path: '/solicitudes', element: <Solicitudes />, action: undefined },
             { path: '/profile', element: <Profile /> },
             { path: '/configuration', element: <Configuration /> },
             { path: '/logout', element: <Logout /> },
