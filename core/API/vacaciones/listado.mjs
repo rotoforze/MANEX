@@ -31,6 +31,7 @@ export function listaSolicitudesVacaciones(req, res) {
 
 
     if (isNaN(cantidad) || isNaN(pagina)) {
+        pool.end();
         return res.status(400).send({
             status: 400,
             message: "Parámetros inválidos"
@@ -38,6 +39,7 @@ export function listaSolicitudesVacaciones(req, res) {
     }
 
     if (cantidad < Paginacion.MIN_PAGINACION || cantidad > Paginacion.MAX_PAGINACION_EMPLEADOS) {
+        pool.end();
         return res.status(400).send({
             status: 400,
             message: `cantidad debe estar entre ${Paginacion.MIN_PAGINACION} y ${Paginacion.MAX_PAGINACION_EMPLEADOS}`
@@ -45,6 +47,7 @@ export function listaSolicitudesVacaciones(req, res) {
     }
 
     if (pagina < Paginacion.MIN_PAGINACION) {
+        pool.end();
         return res.status(400).send({
             status: 400,
             message: "La página no puede ser negativa"
@@ -55,6 +58,8 @@ export function listaSolicitudesVacaciones(req, res) {
 
     pool.getConnection((err, connection) => {
         if (err) {
+            connection.release();
+            pool.end();
             return res.status(500).send({
                 status: 500,
                 message: "Error de base de datos"
@@ -75,12 +80,13 @@ export function listaSolicitudesVacaciones(req, res) {
                 connection.release();
 
                 if (error) {
+                    pool.end();
                     return res.status(500).send({
                         status: 500,
                         message: "Error en la consulta"
                     });
                 }
-
+                pool.end();
                 return res.status(200).send({
                     status: 200,
                     meta: {

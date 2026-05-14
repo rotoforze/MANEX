@@ -18,7 +18,7 @@ async function registrarSolicitudVacaciones(req, res) {
     await verificadorDatos(req, res)
     if (res.headersSent) return;
 
-    const { fecha_inicio,fecha_fin, tipo,estado,id_incidencia,id_empleado,observaciones,comentario} = req.body;
+    const {fecha_inicio, fecha_fin, tipo, estado, id_incidencia, id_empleado, observaciones, comentario} = req.body;
 
     const config = {
         host: process.env.DB_HOST,
@@ -29,7 +29,10 @@ async function registrarSolicitudVacaciones(req, res) {
     };
 
     const connection = await mysql.createConnection(config);
-    if (!connection) return res.status(500).send({status: 500, message: 'Error al conectar a la base de datos.'});
+    if (!connection) {
+        connection.end();
+        return res.status(500).send({status: 500, message: 'Error al conectar a la base de datos.'});
+    }
 
     try {
         await connection.beginTransaction();
@@ -39,6 +42,7 @@ async function registrarSolicitudVacaciones(req, res) {
         if (!idIncidenciaSolicitud) {
             if (!id_empleado) {
                 await connection.rollback();
+                connection.end();
                 return res.status(400).send({status: 400, message: 'Falta el empleado de la solicitud.'});
             }
 
@@ -59,22 +63,22 @@ async function registrarSolicitudVacaciones(req, res) {
 
         await connection.query(
             'INSERT INTO solicitud_vacaciones (fecha_inicio,fecha_fin,tipo,estado,id_incidencia) VALUES (?, ?, ?, ?, ?)',
-            [fecha_inicio, fecha_fin, tipo ||"Solicitud de semana de vacaciones",estado || "En revisión",idIncidenciaSolicitud]);
+            [fecha_inicio, fecha_fin, tipo || "Solicitud de semana de vacaciones", estado || "En revisión", idIncidenciaSolicitud]);
 
         await connection.commit();
+        connection.end();
 
         return res.status(201).send({status: 201, message: 'Solicitud Vacaciones registrada correctamente.'});
 
     } catch (error) {
 
         await connection.rollback();
+        connection.end();
 
         console.error('Error al registrar la solicitud de vacaciones:', error);
 
         return res.status(500).send({status: 500, message: 'Error al registrar la solicitud de vacaciones.'});
 
-    } finally {
-        await connection.end();
     }
 
 }

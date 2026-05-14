@@ -3,7 +3,9 @@ import React, {useState} from "react";
 
 function apiSave(ruta, metodo, perms, token) {
     const urlencoded = new URLSearchParams();
-    urlencoded.append("ruta", ruta);
+    let newRute = ruta.replaceAll(' ', '');
+    newRute = newRute.includes('/', 0) ? newRute : '/'+newRute;
+    urlencoded.append("ruta", newRute);
     urlencoded.append("metodo", metodo);
     perms.forEach(p => urlencoded.append("permisos[]", p));
     return apiFetch(import.meta.env.VITE_BACKEND_PERMISOS, {
@@ -15,7 +17,6 @@ function apiSave(ruta, metodo, perms, token) {
 
 function NewPermiso({
                         setFormularioNuevoVisible,
-                        formularioNuevoVisible,
                         confirmar,
                         setConfirmar,
                         estado,
@@ -98,10 +99,11 @@ function NewPermiso({
             const nameEtiqueta = quiereAlMenos
                 ? `radio${prefijo}${id}${nombre.replaceAll(' ', '')}`
                 : `checkbox${prefijo}${id}${nombre.replaceAll(' ', '')}`;
-            const defaultCheck = departamentos.some(d => String(d).startsWith('>'))
-                || departamentos.includes(String(id));
+            const defaultCheck = quiereAlMenos
+                ? departamentos[0] === '>' + String(id)
+                : departamentos.includes(String(id));
             const checkProps = quiereAlMenos
-                ? {checked: defaultCheck}
+                ? {checked: defaultCheck, value: id}
                 : {defaultChecked: defaultCheck};
             return (
                 <div className={"form-check form-switch w-100 text-start"} key={id}>
@@ -112,7 +114,7 @@ function NewPermiso({
                            onChange={() => handleDepartamentoParaMetodo(setDepartamentos, departamentos, String(id), quiereAlMenos)}
                            {...checkProps}
                            disabled={guardar}/>
-                    <label htmlFor={quiereAlMenos ? "radio" + prefijo : nameEtiqueta} id={nameEtiqueta}> {nombre} </label>
+                    <label htmlFor={nameEtiqueta}> {nombre} </label>
                 </div>
             );
         });
@@ -193,7 +195,6 @@ function NewPermiso({
                                 </button>
                                 <button className={"btn btn-danger"} onClick={() => {
                                     setEstado(undefined);
-                                    setEditando(false);
                                     setConfirmar(false);
                                 }}>Cancelar
                                 </button>

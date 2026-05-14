@@ -27,7 +27,7 @@ export function TablaEmpleados() {
     // Estado del formulario de edición
     const [empleadoEditando, setEmpleadoEditando] = useState(null); // null = cerrado
 
-    const { user } = useUsers();
+    const { user, tengoPermiso } = useUsers();
 
     const cargarEmpleados = () => {
         try {
@@ -117,10 +117,11 @@ export function TablaEmpleados() {
                                             className="btn btn-primary bi-pencil-fill"
                                             title="Editar empleado"
                                             onClick={() => setEmpleadoEditando(empleado)}
+                                            disabled={!tengoPermiso('/empleados', 'POST')}
                                         />
                                         <button
                                             className="btn btn-danger bi-trash-fill"
-                                            title="Eliminar empleado"
+                                            title="Eliminar empleado" disabled={!tengoPermiso('/empleados', 'DELETE')}
                                         />
                                     </td>
                                 </tr>

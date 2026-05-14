@@ -4,11 +4,24 @@ import { useUsers } from "../../context/UserContext.jsx";
 import { Loading } from "../Loading.jsx";
 import "../../../public/styles/tablaPermisos.css";
 
+/**
+ * Formulario para crear un nuevo producto
+ *
+ * @author Eneas de la Rosa Menéndez Pedrosa
+ * @contributor Alex Bernardos Gil
+ * @version 1.0.3
+ * @param param0
+ * @param param0.funcionDeCierreDeFormulario
+ * @param param0.handleNuevoProducto
+ * @returns {React.JSX.Element}
+ * @constructor
+ */
 export function NuevoProductoForm({ funcionDeCierreDeFormulario, handleNuevoProducto }) {
 
     const actionData = useActionData();
     const navigate = useNavigate();
     const navigation = useNavigation();
+    const [mensaje, setMensaje] = useState(null);
     const { user } = useUsers();
     const seEstaEnviando = navigation.state === 'submitting';
 
@@ -25,10 +38,18 @@ export function NuevoProductoForm({ funcionDeCierreDeFormulario, handleNuevoProd
     }, [navigate]);
 
     useEffect(() => {
+        console.log(actionData, seEstaEnviando);
         if (!actionData) return;
 
-        if (actionData.success) {
-            handleNuevoProducto();
+        if (actionData[0] === true && seEstaEnviando) {
+            let segSalida = 5;
+            const idSalida = setInterval(() => {
+                setMensaje(" Redirigiendo en " + --segSalida + " segundos...");
+                if (segSalida === -1) {
+                    clearInterval(idSalida);
+                    handleNuevoProducto();
+                }
+            }, 1000)
         }
     }, [actionData]);
 
@@ -49,8 +70,8 @@ export function NuevoProductoForm({ funcionDeCierreDeFormulario, handleNuevoProd
                     <h2 className="text-center mb-2">Nuevo producto</h2>
 
                     {actionData && actionData[1] && (
-                        <div className={`alert alert-sm ${actionData[0] ? 'alert-success' : 'alert-danger'}`} style={{padding: '0.25rem 0.5rem', fontSize: '0.85rem', marginBottom: '0.5rem'}}>
-                            {actionData[1]}
+                        <div className={`alert alert-sm ${actionData[1] ? 'alert-success' : 'alert-danger'}`} style={{padding: '0.25rem 0.5rem', fontSize: '0.85rem', marginBottom: '0.5rem'}}>
+                            {actionData[1]}{mensaje}
                         </div>
                     )}
 

@@ -12,8 +12,9 @@ const ESTADOS_VALIDOS = [
 /**
  * Formulario de edición de un producto existente.
  * Envía POST a VITE_BACKEND_PRODUCTO con idAModificar en el body → nuevo.mjs hace UPDATE.
- * * @author Eneas de la Rosa Menéndez Pedrosa
- * @version 1.0.0
+ * @author Eneas de la Rosa Menéndez Pedrosa
+ * @contributor Alex Bernardos Gil
+ * @version 1.2
  * @param {Object}   producto                   - Fila del producto tal como llega del listado
  * @param {Function} funcionDeCierreDeFormulario - Cierra el formulario sin guardar
  * @param {Function} handleProductoActualizado   - Callback tras actualización exitosa

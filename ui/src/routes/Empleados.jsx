@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { SignInForm } from "../components/Empleados/SignInForm.jsx";
 import { TablaEmpleados } from "../components/Empleados/TablaEmpleados.jsx";
 import '../../public/styles/mainPages.css';
+import {useUsers} from "../context/UserContext.jsx";
 
 /**
  *
@@ -16,6 +17,7 @@ export function Empleados() {
 
     const [registroVisible, setRegistroVisible] = useState(false);
     const [refreshKey, setRefreshKey] = useState(0);
+    const {user, tengoPermiso} = useUsers();
 
     function handleNuevoRegistro() {
         setRefreshKey(prevKey => prevKey + 1);
@@ -43,7 +45,7 @@ export function Empleados() {
                     <button className={"btn " + (registroVisible ? 'btn-danger' : 'btn-primary')} onClick={() => {
                         // muestra el componente de registro
                         setRegistroVisible(!registroVisible);
-                    }}> {registroVisible ? 'Cerrar formulario' : 'Nuevo registro'}</button>
+                    }} disabled={!tengoPermiso('/empleados', 'POST')}> {registroVisible ? 'Cerrar formulario' : 'Nuevo registro'}</button>
 
                     <button className="btn btn-primary" onClick={() => {
                         setRefreshKey(prevKey => prevKey + 1);

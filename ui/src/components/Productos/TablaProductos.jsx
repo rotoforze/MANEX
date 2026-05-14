@@ -22,7 +22,7 @@ export function TablaProductos() {
     const [resultadosPorPagina, setResultadosPorPagina] = useState(0);
     const [cantidadPorPagina, setCantidadPorPagina] = useState(10);
 
-    const { user } = useUsers();
+    const { user, tengoPermiso } = useUsers();
 
     useEffect(() => {
         try {
@@ -91,10 +91,10 @@ export function TablaProductos() {
                                             onClick={() => {
                                                 setProductoSeleccionado(producto);
                                                 setMostrarFormulario(true);
-                                            }}
+                                            }} disabled={ !tengoPermiso('/productos', 'POST')}
                                         ></button>
 
-                                        <button className="btn btn-danger bi-trash-fill"></button>
+                                        <button className="btn btn-danger bi-trash-fill" disabled={ !tengoPermiso('/productos', 'DELETE')}></button>
                                     </td>
                                 </tr>
                             ))}
@@ -107,7 +107,7 @@ export function TablaProductos() {
                             disabled={paginaActual == 0}
                             onClick={() => {
                                 if (paginaActual > 0) setPaginaActual(paginaActual - 1);
-                            }}
+                            }} disabled={!tengoPermiso('/productos', 'POST')}
                         ></button>
                         <b>
                             Mostrando {resultadosPorPagina}/{cantidadPorPagina} en la página {paginaActual}
