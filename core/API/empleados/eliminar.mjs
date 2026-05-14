@@ -13,6 +13,8 @@ async function delEmpleado(req, res) {
 
     const {id, usuario} = req.body;
 
+    console.log(usuario);
+
     if ((id && id < 0) || !usuario) {
         return res.status(400).send({status: 400, message: 'El ID del empleado no puede ser negativo.'});
     }
