@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useUsers } from "../../context/UserContext.jsx";
 import { apiFetch } from "../../utils/apiFetch.jsx";
+import { useMensaje } from "../../hooks/useMensaje.js";
 
 /**
  * Formulario de edición de un empleado existente.
@@ -21,7 +22,7 @@ export function EditarEmpleadoForm({ empleado, funcionDeCierreDeFormulario, hand
     const { user } = useUsers();
 
     const [enviando, setEnviando]           = useState(false);
-    const [mensaje, setMensaje]             = useState(null); // { tipo: 'success'|'danger', texto }
+    const [mensaje, setMensaje]             = useMensaje();
     const [passwordShown, setPasswordShown] = useState(false);
 
     // Inicializamos con los datos del empleado recibido.

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useMensaje } from "../../hooks/useMensaje.js";
 import { useUsers } from "../../context/UserContext.jsx";
 import { apiFetch } from "../../utils/apiFetch.jsx";
 
@@ -18,7 +19,7 @@ export function EditarContratoForm({ contrato, funcionDeCierreDeFormulario, hand
     const { user } = useUsers();
 
     const [enviando, setEnviando] = useState(false);
-    const [mensaje, setMensaje] = useState(null);
+    const [mensaje, setMensaje] = useMensaje();
 
     const [form, setForm] = useState({
         idAModificar: contrato?.ID ?? '',

@@ -40,21 +40,25 @@ export function Empleados() {
                     </div>
 
                 </div>
-                <div className={"d-flex gap-2 align-items-start justify-content-start top-empleados"}>
-
-                    <button className={"btn " + (registroVisible ? 'btn-danger' : 'btn-primary')} onClick={() => {
-                        // muestra el componente de registro
-                        setRegistroVisible(!registroVisible);
-                    }} disabled={!tengoPermiso('/empleados', 'POST')}> {registroVisible ? 'Cerrar formulario' : 'Nuevo registro'}</button>
-
-                    <button className="btn btn-primary" onClick={() => {
-                        setRefreshKey(prevKey => prevKey + 1);
-                    }}>Refrescar panel</button>
+                <div className="d-flex gap-2 align-items-start justify-content-start top-accion">
+                    <button
+                        className={"btn top-accion-btn " + (registroVisible ? 'btn-danger' : 'btn-primary')}
+                        onClick={() => setRegistroVisible(!registroVisible)}
+                        disabled={!tengoPermiso('/empleados', 'POST')}
+                    >
+                        {registroVisible ? 'Cerrar formulario' : 'Nuevo registro'}
+                    </button>
+                    <button
+                        className="btn btn-primary top-accion-btn"
+                        onClick={() => setRefreshKey(prevKey => prevKey + 1)}
+                    >
+                        Refrescar panel
+                    </button>
                 </div>
-                {registroVisible ? <SignInForm funcionDeCierreDeFormulario={setRegistroVisible} handleNuevoRegistro={handleNuevoRegistro} /> : <b></b>}
+                {registroVisible && <SignInForm funcionDeCierreDeFormulario={() => setRegistroVisible(false)} handleNuevoRegistro={handleNuevoRegistro} />}
             </div>
             <hr />
-            <div className={"d-flex flex-column gap-2 w-100 p-4 justify-content-center overflow-scroll"}>
+            <div className="d-flex flex-column gap-2 w-100 p-4 justify-content-center">
                 <TablaEmpleados key={refreshKey} />
             </div>
         </div>

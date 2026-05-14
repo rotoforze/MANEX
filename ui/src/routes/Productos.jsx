@@ -42,42 +42,27 @@ export function Productos() {
 
                 </div>
 
-                <div className={"d-flex gap-2 align-items-start justify-content-start top-productos"}>
-
+                <div className="d-flex gap-2 align-items-start justify-content-start top-accion">
                     <button
-                        className={"btn " + (registroVisible ? 'btn-danger' : 'btn-primary')}
-                        onClick={() => {
-
-                            // muestra el componente de registro
-                            setRegistroVisible(!registroVisible);
-
-                        }} disabled={!tengoPermiso('/productos', 'POST')}>
-
-                        {
-                            registroVisible
-                                ? 'Cerrar formulario'
-                                : 'Nuevo producto'
-                        }
-
+                        className={"btn top-accion-btn " + (registroVisible ? 'btn-danger' : 'btn-primary')}
+                        onClick={() => setRegistroVisible(!registroVisible)}
+                        disabled={!tengoPermiso('/productos', 'POST')}
+                    >
+                        {registroVisible ? 'Cerrar formulario' : 'Nuevo producto'}
                     </button>
-
                     <button
-                        className="btn btn-primary"
-                        onClick={() => {
-                            setRefreshKey(prevKey => prevKey + 1);
-                        }}>
-
+                        className="btn btn-primary top-accion-btn"
+                        onClick={() => setRefreshKey(prevKey => prevKey + 1)}
+                    >
                         Refrescar panel
-
                     </button>
-
                 </div>
 
                 {
                     registroVisible
                         ? (
                             <NuevoProductoForm
-                                funcionDeCierreDeFormulario={setRegistroVisible}
+                                funcionDeCierreDeFormulario={() => setRegistroVisible(false)}
                                 handleNuevoProducto={handleNuevoRegistro}
                             />
                         )
@@ -88,7 +73,7 @@ export function Productos() {
 
             <hr />
 
-            <div className={"d-flex flex-column gap-2 w-100 p-4 justify-content-center overflow-scroll"}>
+            <div className="d-flex flex-column gap-2 w-100 p-4 justify-content-center">
 
                 <TablaProductos key={refreshKey} />
 

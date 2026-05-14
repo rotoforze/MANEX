@@ -7,7 +7,7 @@ import { apiFetch } from "../../utils/apiFetch.jsx";
  * Requiere escribir 'CONFIRMAR' antes de permitir el borrado.
  *
  * @author Eneas de la Rosa Menéndez Pedrosa
- * @version 1.0.0
+ * @version 1.1.0
  * @param {Object}   contrato                   - Contrato a eliminar (debe tener .ID)
  * @param {Function} funcionDeCierreDeFormulario - Cierra el diálogo sin eliminar
  * @param {Function} handleContratoEliminado     - Callback tras eliminación exitosa
@@ -57,13 +57,15 @@ export function DelContrato({ contrato, funcionDeCierreDeFormulario, handleContr
             <div className="card confirmacion">
                 <div className="card-header d-flex justify-content-end">
                     <button
-                        className="bi-x bi btn btn-outline-danger"
+                        type="button"
+                        className="btn btn-outline-danger btn-sm bi bi-x"
                         onClick={funcionDeCierreDeFormulario}
+                        aria-label="Cerrar"
                     />
                 </div>
 
                 <div className="card-body">
-                    <h1 className="card-title">Eliminar contrato</h1>
+                    <h2 className="card-title">Eliminar contrato</h2>
                     <p>
                         ¿Quieres eliminar el contrato <b>#{contrato?.ID}</b> (
                         {contrato?.Salario_anual?.toLocaleString('es-ES')} € ·{' '}
@@ -79,7 +81,7 @@ export function DelContrato({ contrato, funcionDeCierreDeFormulario, handleContr
                         </label>
                         <input
                             type="text"
-                            className="form-control"
+                            className="form-control form-control-sm"
                             placeholder="Escribe 'CONFIRMAR' para poder confirmar."
                             onChange={(e) =>
                                 setConfirmar(e.target.value.toUpperCase() === 'CONFIRMAR')
@@ -88,13 +90,16 @@ export function DelContrato({ contrato, funcionDeCierreDeFormulario, handleContr
 
                         <div className="gap-3 d-flex justify-content-center mt-3 p-2">
                             <button
-                                className="btn btn-primary"
+                                className="btn btn-primary btn-sm"
                                 onClick={handleEliminar}
                                 disabled={!confirmar || !!estado}
                             >
                                 Confirmar
                             </button>
-                            <button className="btn btn-danger" onClick={funcionDeCierreDeFormulario}>
+                            <button
+                                className="btn btn-danger btn-sm"
+                                onClick={funcionDeCierreDeFormulario}
+                            >
                                 Cancelar
                             </button>
                         </div>
@@ -102,7 +107,7 @@ export function DelContrato({ contrato, funcionDeCierreDeFormulario, handleContr
                 </div>
 
                 {estado && (
-                    <div className="alert-danger alert">
+                    <div className="alert alert-danger" role="alert">
                         <b>{estado}</b>
                     </div>
                 )}

@@ -35,17 +35,16 @@ export function Contratos() {
                     </div>
                 </div>
 
-                <div className="d-flex gap-2 align-items-start justify-content-start top-empleados">
+                <div className="d-flex gap-2 align-items-start justify-content-start top-accion">
                     <button
-                        className={'btn ' + (registroVisible ? 'btn-danger' : 'btn-primary')}
+                        className={"btn top-accion-btn " + (registroVisible ? 'btn-danger' : 'btn-primary')}
                         onClick={() => setRegistroVisible(!registroVisible)}
                         disabled={!tengoPermiso('/contratos', 'POST')}
                     >
                         {registroVisible ? 'Cerrar formulario' : 'Nuevo contrato'}
                     </button>
-
                     <button
-                        className="btn btn-primary"
+                        className="btn btn-primary top-accion-btn"
                         onClick={() => setRefreshKey(prevKey => prevKey + 1)}
                     >
                         Refrescar panel
@@ -62,7 +61,7 @@ export function Contratos() {
 
             <hr />
 
-            <div className="d-flex flex-column gap-2 w-100 p-4 justify-content-center overflow-scroll">
+            <div className="d-flex flex-column gap-2 w-100 p-4 justify-content-center">
                 <TablaContratos key={refreshKey} />
             </div>
         </div>
