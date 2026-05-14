@@ -1,8 +1,7 @@
-import React, {useEffect, useState} from "react";
 import {apiFetch} from "../../utils/apiFetch.jsx";
+import React, {useState} from "react";
 
 function apiSave(ruta, metodo, perms, token) {
-    console.log(perms)
     const urlencoded = new URLSearchParams();
     urlencoded.append("ruta", ruta);
     urlencoded.append("metodo", metodo);
@@ -14,51 +13,40 @@ function apiSave(ruta, metodo, perms, token) {
     }).then(res => res.json());
 }
 
-function EditPermiso({
-                         setEditando,
-                         setRutaAEditar,
-                         editando,
-                         rutaAEditar,
-                         confirmar,
-                         setConfirmar,
-                         estado,
-                         setEstado,
-                         user,
-                         fetchInicio,
-                         nuevosPermisos,
-                         listaDepartamentos,
-                         oldPermisos
-                     }) {
+function NewPermiso({
+                        setFormularioNuevoVisible,
+                        formularioNuevoVisible,
+                        confirmar,
+                        setConfirmar,
+                        estado,
+                        setEstado,
+                        user,
+                        fetchInicio,
+                        listaDepartamentos
+                    }) {
 
     const [guardar, setGuardar] = useState(false);
-    const [departamentosRaw, setDepartamentosRaw] = useState({});
+    const [nuevoPermiso, setNuevoPermiso] = useState(undefined);
+    const [seHaEstablecidoNombre, setSeHaEstablecidoNombre] = useState(false);
 
-    const parsePermiso = (val) => {
-        if (Array.isArray(val)) return val.map(String);
-        if (typeof val === 'string') return [val];
-        return [];
+    const handleNewNombre = (nombre) => {
+        if (nombre) {
+            setNuevoPermiso(nombre);
+            setSeHaEstablecidoNombre(true);
+            return;
+        }
+        setNuevoPermiso(undefined);
+        setSeHaEstablecidoNombre(false);
     };
 
-    const [departamentosGet, setDepartamentosGet] = useState(() => parsePermiso(oldPermisos[rutaAEditar]['GET']));
-    const [quiereAlMenosGet, setQuiereAlMenosGet] = useState(String(oldPermisos[rutaAEditar]['GET']).includes('>'));
+    const [departamentosGet, setDepartamentosGet] = useState([]);
+    const [quiereAlMenosGet, setQuiereAlMenosGet] = useState(false);
 
-    const [departamentosPost, setDepartamentosPost] = useState(() => parsePermiso(oldPermisos[rutaAEditar]['POST']));
-    const [quiereAlMenosPost, setQuiereAlMenosPost] = useState(String(oldPermisos[rutaAEditar]['POST']).includes('>'));
+    const [departamentosPost, setDepartamentosPost] = useState([]);
+    const [quiereAlMenosPost, setQuiereAlMenosPost] = useState(false);
 
-    const [departamentosDelete, setDepartamentosDelete] = useState(() => parsePermiso(oldPermisos[rutaAEditar]['DELETE']));
-    const [quiereAlMenosDelete, setQuiereAlMenosDelete] = useState(String(oldPermisos[rutaAEditar]['DELETE']).includes('>'));
-
-    useEffect(() => {
-        setDepartamentosRaw(Object.fromEntries(listaDepartamentos));
-
-        for (const [metodo, valor] of Object.entries(oldPermisos[rutaAEditar])) {
-            if (valor === false) continue;
-            const permisos = Array.isArray(valor) ? valor.map(String) : [String(valor)];
-            if (metodo === 'GET') setDepartamentosGet(permisos);
-            if (metodo === 'POST') setDepartamentosPost(permisos);
-            if (metodo === 'DELETE') setDepartamentosDelete(permisos);
-        }
-    }, []);
+    const [departamentosDelete, setDepartamentosDelete] = useState([]);
+    const [quiereAlMenosDelete, setQuiereAlMenosDelete] = useState(false);
 
     const handleConfirmar = (val) => {
         setGuardar(val);
@@ -81,9 +69,9 @@ function EditPermiso({
         setEstado('Confirmando cambios...');
         try {
             await Promise.all([
-                apiSave(rutaAEditar, 'GET', departamentosGet, user?.token),
-                apiSave(rutaAEditar, 'POST', departamentosPost, user?.token),
-                apiSave(rutaAEditar, 'DELETE', departamentosDelete, user?.token),
+                apiSave(nuevoPermiso, 'GET', departamentosGet, user?.token),
+                apiSave(nuevoPermiso, 'POST', departamentosPost, user?.token),
+                apiSave(nuevoPermiso, 'DELETE', departamentosDelete, user?.token),
             ]);
 
             let seconds = 4;
@@ -95,8 +83,7 @@ function EditPermiso({
 
             const id = setTimeout(() => {
                 setEstado(undefined);
-                setRutaAEditar(null);
-                setEditando(false);
+                setFormularioNuevoVisible(false);
                 setConfirmar(false);
                 fetchInicio();
                 clearTimeout(id);
@@ -109,8 +96,8 @@ function EditPermiso({
     const renderDepartamentos = (lista, departamentos, setDepartamentos, quiereAlMenos, prefijo) => {
         return Array.from(lista).map(([id, nombre]) => {
             const nameEtiqueta = quiereAlMenos
-                ? `radio${prefijo}${id}${nombre}`
-                : `checkbox${prefijo}${id}${nombre}`;
+                ? `radio${prefijo}${id}${nombre.replaceAll(' ', '')}`
+                : `checkbox${prefijo}${id}${nombre.replaceAll(' ', '')}`;
             const defaultCheck = departamentos.some(d => String(d).startsWith('>'))
                 || departamentos.includes(String(id));
             const checkProps = quiereAlMenos
@@ -118,14 +105,14 @@ function EditPermiso({
                 : {defaultChecked: defaultCheck};
             return (
                 <div className={"form-check form-switch w-100 text-start"} key={id}>
-                    <input name={quiereAlMenos ? `radio${prefijo}` : nameEtiqueta}
+                    <input name={quiereAlMenos ? "radio" + prefijo : nameEtiqueta}
                            id={nameEtiqueta}
                            className={"mx-1"}
                            type={quiereAlMenos ? 'radio' : 'checkbox'}
                            onChange={() => handleDepartamentoParaMetodo(setDepartamentos, departamentos, String(id), quiereAlMenos)}
                            {...checkProps}
                            disabled={guardar}/>
-                    <label htmlFor={nameEtiqueta} id={nameEtiqueta}> {nombre} </label>
+                    <label htmlFor={quiereAlMenos ? "radio" + prefijo : nameEtiqueta} id={nameEtiqueta}> {nombre} </label>
                 </div>
             );
         });
@@ -149,30 +136,23 @@ function EditPermiso({
         <div className="superponer">
             <div className={"card w-75 confirmacion"}>
                 <div className="card-header d-flex justify-content-end">
-                    <button className={"bi-x bi btn btn-outline-danger"} onClick={() => setEditando(false)}></button>
+                    <button className={"bi-x bi btn btn-outline-danger"} onClick={() => setFormularioNuevoVisible(false)}></button>
                 </div>
                 <div className={"card-body"}>
-                    <h1 className={"card-title"}>{editando ? 'Editando ' : ''}{rutaAEditar || ''}</h1>
+                    <h1 className={"card-title"}>Creando nuevo permiso</h1>
+                    <label className={(seHaEstablecidoNombre ? "" : "bi-exclamation-triangle text-danger")} htmlFor={"nuevaRuta"}>
+                        &nbsp;Nombre del nuevo permiso
+                    </label>
+                    <input name={"nuevaRuta"} id={"nuevaRuta"} type={"text"} placeholder={"Nueva ruta"}
+                           className={"form-control mb-3"} onChange={(e) => handleNewNombre(e?.target?.value)}/>
 
                     <table className="table table-striped">
                         <thead>
                         <tr>
                             <th className={"col"}>Permiso</th>
-                            <th className={"col"}>
-                                {oldPermisos[rutaAEditar]['GET'] && <i className={"bi bi-check2-square text-success"}> </i>}
-                                {nuevosPermisos?.[rutaAEditar]?.['GET'] !== undefined && <i className={"bi bi-check2-square text-info"}> </i>}
-                                GET
-                            </th>
-                            <th className={"col"}>
-                                {oldPermisos[rutaAEditar]['POST'] && <i className={"bi bi-check2-square text-success"}> </i>}
-                                {nuevosPermisos?.[rutaAEditar]?.['POST'] !== undefined && <i className={"bi bi-check2-square text-info"}> </i>}
-                                POST
-                            </th>
-                            <th className={"col"}>
-                                {oldPermisos[rutaAEditar]['DELETE'] && <i className={"bi bi-check2-square text-success"}> </i>}
-                                {nuevosPermisos?.[rutaAEditar]?.['DELETE'] !== undefined && <i className={"bi bi-check2-square text-info"}> </i>}
-                                DELETE
-                            </th>
+                            <th className={"col"}>GET</th>
+                            <th className={"col"}>POST</th>
+                            <th className={"col"}>DELETE</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -191,13 +171,14 @@ function EditPermiso({
                         </tbody>
                     </table>
 
-                    <button className={"btn " + (guardar ? 'btn-success' : 'btn-outline-success')}
-                            onClick={() => handleConfirmar(!guardar)}>
-                        {guardar ? 'Seguir editando' : 'Guardar'}
+                    <button className={"btn " + (!nuevoPermiso ? 'btn-light' : guardar ? 'btn-success' : 'btn-outline-success')}
+                            onClick={() => handleConfirmar(!guardar)}
+                            disabled={!nuevoPermiso}>
+                        {!nuevoPermiso ? 'Primero indica el nuevo nombre' : guardar ? 'Seguir editando' : 'Guardar'}
                     </button>
 
                     {guardar && (<>
-                        <p>¿Quieres {editando ? 'guardar ' : ''} los permisos de {rutaAEditar || ''}?</p>
+                        <p className="mt-3">¿Quieres crear el permiso <b>{nuevoPermiso}</b>?</p>
                         {estado && <p className={"text-danger"}>{estado}</p>}
                         <div>
                             <label className={"form-label"}>Escribe '<b>CONFIRMAR</b>' para poder confirmar.</label>
@@ -212,7 +193,6 @@ function EditPermiso({
                                 </button>
                                 <button className={"btn btn-danger"} onClick={() => {
                                     setEstado(undefined);
-                                    setRutaAEditar(null);
                                     setEditando(false);
                                     setConfirmar(false);
                                 }}>Cancelar
@@ -227,4 +207,4 @@ function EditPermiso({
     );
 }
 
-export default EditPermiso;
+export default NewPermiso;
