@@ -142,9 +142,8 @@ app.get('/fichajes', (req, res) => {
             message: `Parámetros no permitidos: ${parametrosNoValidos.join(', ')}`
         });
     }
-    if (req?.query?.username) {
+    if (req?.query?.username && (!req?.query?.cantidad && !req?.query?.pagina)) {
         getFichaje(req, res);
-
     } else listaFichajes(req, res);
 });
 
@@ -288,9 +287,9 @@ app.post('/fichajes', (req, res) => {
             }
         });
     }
-    // si en la petición viene un ID, vamos a actualizarUsuario
+    // si en la petición viene un ID, vamos a actualizarFichaje
     // en vez de a registrar
-    if (req?.body?.id || (req?.body?.username && req?.body?.fecha_salida)) {
+    if (req?.body?.id && !req?.body?.tipo || (req?.body?.username && req?.body?.fecha_salida)) {
         actualizarFichaje(req, res);
     } else registrarFichaje(req, res);
 });
@@ -304,7 +303,7 @@ app.post('/incidencias', (req, res) => {
             }
         });
     }
-    // si en la petición viene un ID, vamos a actualizarUsuario
+    // si en la petición viene un ID, vamos a actualizarIncidencia
     // en vez de a registrar
     if (req?.body?.id_incidencia) {
         actualizarIncidencia(req, res);

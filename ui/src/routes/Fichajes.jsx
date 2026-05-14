@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import { NuevoFichajeForm } from "../components/Fichajes/NuevoFichajeform.jsx";
 import { TablaFichajes } from "../components/Fichajes/TablaFichajes.jsx";
 import '../../public/styles/mainPages.css';
@@ -16,6 +16,11 @@ export function Fichajes() {
 
     const [registroVisible, setRegistroVisible] = useState(false);
     const [refreshKey, setRefreshKey] = useState(0);
+    const [fichajeActivo, setFichajeActivo] = useState(false);
+
+    useEffect(() => {
+
+    }, []);
 
     function handleNuevoFichaje() {
         setRefreshKey(prev => prev + 1);
@@ -42,10 +47,12 @@ export function Fichajes() {
 
                     <button
                         className={"btn " + (registroVisible ? 'btn-danger' : 'btn-primary')}
-                        onClick={() => setRegistroVisible(!registroVisible)}
+                        onClick={fichajeActivo ? undefined : () => setRegistroVisible(!registroVisible)}
                     >
-                        {registroVisible ? 'Cerrar formulario' : 'Nuevo fichaje'}
+                        {fichajeActivo ? 'Cerrar fichaje' : 'Nuevo fichaje'}
                     </button>
+
+
 
                     <button
                         className="btn btn-primary"
