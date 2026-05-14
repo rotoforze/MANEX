@@ -40,10 +40,9 @@ export function guardarPermisos(res, permisos, ruta = undefined, bypass = false)
     try {
         const contenidoArchivo = fs.readFileSync(rutaArchivoPermisos, 'utf8');
         const contenedorParseado = JSON.parse(contenidoArchivo);
-
         const permisoValido = comprobarPermisos(permisos);
 
-        if (!permisoValido) {
+        if (!permisoValido && !bypass) {
             return res.status(400).json({ message: 'Bad Request' });
         }
 

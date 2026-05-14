@@ -111,8 +111,9 @@ function EditPermiso({
             const nameEtiqueta = quiereAlMenos
                 ? `radio${prefijo}${id}${nombre}`
                 : `checkbox${prefijo}${id}${nombre}`;
-            const defaultCheck = departamentos.some(d => String(d).startsWith('>'))
-                || departamentos.includes(String(id));
+            const defaultCheck = quiereAlMenos
+                ? departamentos[0] === '>' + String(id)
+                : departamentos.includes(String(id));
             const checkProps = quiereAlMenos
                 ? {checked: defaultCheck}
                 : {defaultChecked: defaultCheck};
@@ -125,7 +126,7 @@ function EditPermiso({
                            onChange={() => handleDepartamentoParaMetodo(setDepartamentos, departamentos, String(id), quiereAlMenos)}
                            {...checkProps}
                            disabled={guardar}/>
-                    <label htmlFor={nameEtiqueta} id={nameEtiqueta}> {nombre} </label>
+                    <label htmlFor={nameEtiqueta}> {nombre} </label>
                 </div>
             );
         });

@@ -31,9 +31,7 @@ const eliminar = (req, res) => {
         permisosActuales[ruta]
     ) {
 
-        console.log(permisosActuales, permisosActuales[ruta][metodo], permisosActuales[ruta]);
         delete (metodo && permisosActuales[ruta][metodo] ? permisosActuales[ruta][metodo] : permisosActuales[ruta]);
-        console.log(permisosActuales);
 
         if (
             Object.keys(permisosActuales[ruta]).length === 0
@@ -43,12 +41,8 @@ const eliminar = (req, res) => {
         }
 
         guardarPermisos(res, permisosActuales, ruta, true);
-
-        return res.status(200).json({
-            message: 'Permiso eliminado'
-        });
+        if (res.headersSent) return;
     }
-
     return res.status(404).json({
         message: 'Permiso no encontrado'
     });
