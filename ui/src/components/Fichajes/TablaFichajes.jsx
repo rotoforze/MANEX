@@ -19,7 +19,7 @@ export function TablaFichajes() {
             || `${import.meta.env.VITE_BACKEND}/fichajes`;
 
         apiFetch(
-            `${urlFichajes}?pagina=${paginaActual}&cantidad=${cantidadPorPagina}`,
+            `${urlFichajes}?pagina=${paginaActual}&cantidad=${cantidadPorPagina}&username=${user?.username}`,
             {
                 method: 'GET',
                 headers: {
