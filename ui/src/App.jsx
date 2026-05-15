@@ -21,6 +21,7 @@ import { Incidencias } from "./routes/Incidencia.jsx";
 import { Solicitudes } from "./routes/Solicitudes.jsx";
 import { FAQ } from "./routes/FAQ.jsx";
 import { Contratos } from "./routes/Contratos.jsx";
+import { Departamentos } from "./routes/Departamentos.jsx";
 
 /**
  * Contiene el router de la aplicación, parte más alta de la aplicación.
@@ -45,6 +46,7 @@ function App() {
             { path: '/empleados', element: <Empleados />, action: actionRegistroEmpleado },
             { path: '/productos', element: <Productos />, action: actionRegistroProducto },
             { path: '/contratos', element: <Contratos /> },
+            { path: '/departamentos', element: <Departamentos /> },
             { path: '/fichajes', element: <Fichajes />, action: undefined },
             { path: '/incidencia', element: <Incidencias />, action: undefined },
             { path: '/solicitudes', element: <Solicitudes />, action: undefined },
