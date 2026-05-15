@@ -41,29 +41,26 @@ export function Solicitudes() {
 
         </div>
 
-        <div className="d-flex gap-2 align-items-start justify-content-start top-productos">
-
+        <div className="d-flex gap-2 align-items-start justify-content-start top-accion">
           <button
-            className={"btn " + (registroVisible ? 'btn-danger' : 'btn-primary')}
+            className={"btn top-accion-btn " + (registroVisible ? 'btn-danger' : 'btn-primary')}
             onClick={() => setRegistroVisible(!registroVisible)}
           >
             {registroVisible ? 'Cerrar formulario' : 'Nueva solicitud'}
           </button>
-
           <button
-            className="btn btn-primary"
+            className="btn btn-primary top-accion-btn"
             onClick={() => setRefreshKey(prevKey => prevKey + 1)}
           >
             Refrescar panel
           </button>
-
         </div>
 
         {
           registroVisible
             ? (
               <NuevaSolicitudForm
-                funcionDeCierreDeFormulario={setRegistroVisible}
+                funcionDeCierreDeFormulario={() => setRegistroVisible(false)}
                 handleNuevaSolicitud={handleNuevaSolicitud}
               />
             )
@@ -74,7 +71,7 @@ export function Solicitudes() {
 
       <hr />
 
-      <div className="d-flex flex-column gap-2 w-100 p-4 justify-content-center overflow-scroll">
+      <div className="d-flex flex-column gap-2 w-100 p-4 justify-content-center">
 
         <TablaSolicitudes key={refreshKey} />
 

@@ -1,37 +1,30 @@
-import React, { useState } from 'react';
+import { useState } from "react";
 import { useMensaje } from "../../hooks/useMensaje.js";
 import { useUsers } from "../../context/UserContext.jsx";
 import { apiFetch } from "../../utils/apiFetch.jsx";
 
-const ESTADOS_VALIDOS = [
-    'En proceso de envio',
-    'Disponible',
-    'No disponible',
-    'En mantenimiento'
-];
-
 /**
- * Formulario de edición de un producto existente.
- * Envía POST a VITE_BACKEND_PRODUCTO con idAModificar en el body → nuevo.mjs hace UPDATE.
+ * Formulario de edición de un contrato existente.
+ * Envía POST a VITE_BACKEND_CONTRATOS con { salarioAnual, horasAnuales, idAModificar }.
+ *
  * @author Eneas de la Rosa Menéndez Pedrosa
- * @contributor Alex Bernardos Gil
- * @version 1.2
- * @param {Object}   producto                   - Fila del producto tal como llega del listado
+ * @version 1.0.0
+ * @param {Object}   contrato                   - Fila del contrato tal como llega del listado
  * @param {Function} funcionDeCierreDeFormulario - Cierra el formulario sin guardar
- * @param {Function} handleProductoActualizado   - Callback tras actualización exitosa
+ * @param {Function} handleContratoActualizado   - Callback tras actualización exitosa
+ * @returns {React.JSX.Element}
+ * @constructor
  */
-export function EditarProductoForm({ producto, funcionDeCierreDeFormulario, handleProductoActualizado }) {
-
+export function EditarContratoForm({ contrato, funcionDeCierreDeFormulario, handleContratoActualizado }) {
     const { user } = useUsers();
 
     const [enviando, setEnviando] = useState(false);
     const [mensaje, setMensaje] = useMensaje();
 
     const [form, setForm] = useState({
-        idAModificar: producto?.ID ?? '',
-        nombre: producto?.Nombre ?? '',
-        descripcion: producto?.Descripcion ?? '',
-        estado: producto?.Estado ?? ESTADOS_VALIDOS[0],
+        idAModificar: contrato?.ID ?? '',
+        salarioAnual: contrato?.Salario_anual ?? '',
+        horasAnuales: contrato?.Horas_anuales ?? '',
     });
 
     const handleChange = (e) => {
@@ -46,7 +39,7 @@ export function EditarProductoForm({ producto, funcionDeCierreDeFormulario, hand
 
         try {
             const response = await apiFetch(
-                import.meta.env.VITE_BACKEND_PRODUCTO,
+                import.meta.env.VITE_BACKEND_CONTRATOS,
                 {
                     method: 'POST',
                     headers: {
@@ -60,12 +53,12 @@ export function EditarProductoForm({ producto, funcionDeCierreDeFormulario, hand
             const data = await response.json();
 
             if (response.ok) {
-                setMensaje({ tipo: 'success', texto: data?.message ?? 'Producto actualizado correctamente.' });
+                setMensaje({ tipo: 'success', texto: 'Contrato actualizado correctamente.' });
                 setTimeout(() => {
-                    handleProductoActualizado?.();
+                    handleContratoActualizado?.();
                 }, 1000);
             } else {
-                setMensaje({ tipo: 'danger', texto: data?.message ?? 'Error al actualizar el producto.' });
+                setMensaje({ tipo: 'danger', texto: data?.message ?? 'Error al actualizar el contrato.' });
             }
         } catch (err) {
             console.error(err);
@@ -77,12 +70,9 @@ export function EditarProductoForm({ producto, funcionDeCierreDeFormulario, hand
 
     return (
         <div className="superponer">
-            <div
-                className="card confirmacion"
-                style={{ width: 'min(95dvw, 800px)', overflowY: 'auto' }}
-            >
+            <div className="card confirmacion" style={{ width: 'min(95dvw, 480px)' }}>
                 <div className="card-header d-flex justify-content-between align-items-center">
-                    <span className="small text-muted">ID: {producto?.ID}</span>
+                    <span className="small text-muted">ID: {contrato?.ID}</span>
                     <button
                         type="button"
                         className="btn btn-outline-danger btn-sm bi bi-x"
@@ -92,7 +82,7 @@ export function EditarProductoForm({ producto, funcionDeCierreDeFormulario, hand
                 </div>
 
                 <div className="card-body p-2">
-                    <h2 className="text-center mb-2">Editar producto</h2>
+                    <h2 className="text-center mb-2">Editar contrato</h2>
 
                     {mensaje && (
                         <div className={`alert alert-${mensaje.tipo} py-1 px-2 small mb-2`}>
@@ -101,52 +91,37 @@ export function EditarProductoForm({ producto, funcionDeCierreDeFormulario, hand
                     )}
 
                     <form onSubmit={handleSubmit}>
-
-                        <h4 className="mb-2 mt-1 border-bottom pb-1 small fw-semibold">Información del producto</h4>
-
                         <div className="mb-2">
-                            <label htmlFor="nombre" className="form-label small mb-1">
-                                Nombre <span className="text-danger">*</span>
+                            <label htmlFor="salarioAnual" className="form-label small mb-1">
+                                Salario anual (€) <span className="text-danger">*</span>
                             </label>
                             <input
-                                type="text"
+                                type="number"
                                 className="form-control form-control-sm"
-                                id="nombre"
-                                name="nombre"
-                                value={form.nombre}
+                                id="salarioAnual"
+                                name="salarioAnual"
+                                value={form.salarioAnual}
                                 onChange={handleChange}
+                                min="0"
+                                step="0.01"
                                 required
                             />
                         </div>
 
-                        <div className="mb-2">
-                            <label htmlFor="descripcion" className="form-label small mb-1">Descripción</label>
-                            <textarea
-                                className="form-control form-control-sm"
-                                id="descripcion"
-                                name="descripcion"
-                                value={form.descripcion}
-                                onChange={handleChange}
-                                rows={3}
-                            />
-                        </div>
-
-                        <div className="mb-2">
-                            <label htmlFor="estado" className="form-label small mb-1">
-                                Estado <span className="text-danger">*</span>
+                        <div className="mb-3">
+                            <label htmlFor="horasAnuales" className="form-label small mb-1">
+                                Horas anuales <span className="text-danger">*</span>
                             </label>
-                            <select
-                                className="form-select form-select-sm"
-                                id="estado"
-                                name="estado"
-                                value={form.estado}
+                            <input
+                                type="number"
+                                className="form-control form-control-sm"
+                                id="horasAnuales"
+                                name="horasAnuales"
+                                value={form.horasAnuales}
                                 onChange={handleChange}
+                                min="0"
                                 required
-                            >
-                                {ESTADOS_VALIDOS.map(e => (
-                                    <option key={e} value={e}>{e}</option>
-                                ))}
-                            </select>
+                            />
                         </div>
 
                         <div className="d-flex justify-content-end gap-2 mt-2">
@@ -166,7 +141,6 @@ export function EditarProductoForm({ producto, funcionDeCierreDeFormulario, hand
                                 {enviando ? 'Guardando...' : 'Guardar cambios'}
                             </button>
                         </div>
-
                     </form>
                 </div>
             </div>

@@ -76,6 +76,13 @@ export const MainNav = () => {
                         </NavLink>)
                     }
                     {
+                        (tengoPermiso('/contratos', 'POST') || tengoPermiso('/contratos', 'DELETE')) &&
+                        (<NavLink className={navLinkClass} to="/contratos" end onClick={closeMenu}>
+                            <i className="bi bi-file-earmark-text me-2" aria-hidden="true"/>
+                            Contratos
+                        </NavLink>)
+                    }
+                    {
                         (tengoPermiso('/fichajes', 'POST') || tengoPermiso('/fichajes', 'DELETE')) &&
                         (<NavLink className={navLinkClass} to="/fichajes" end onClick={closeMenu}>
                             <i className="bi bi-person-add me-2" aria-hidden="true"/>

@@ -1,8 +1,5 @@
 .empleados-container {
-    overflow: auto;
-    overflow-y: scroll;
-    width: 83dvw !important;
-    height: 98dvh !important;
+    min-height: 100%;
 }
 
 .nuevo-producto-form {
@@ -60,60 +57,17 @@
     color: #fff;
 }
 
-.incidencias-container {
-    animation: fadeIn .25s ease-in-out;
-}
-
-.incidencia-selector {
-    border: 1px solid #dee2e6;
-    background-color: #fff;
-    color: #212529;
-    padding: 1rem;
-    border-radius: 1rem;
-    transition: all .2s ease;
-    font-weight: 500;
-}
-
-.incidencia-selector:hover {
-    transform: translateY(-2px);
-    border-color: #0d6efd;
-    color: #0d6efd;
-    box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .08);
-}
-
-.incidencia-selector-activo {
-    background-color: #0d6efd;
-    color: #fff;
-    border-color: #0d6efd;
-    box-shadow: 0 .5rem 1rem rgba(13, 110, 253, .2);
-}
-
-.incidencia-selector-activo:hover {
-    color: #fff;
-}
-
 .table tbody tr {
     transition: background-color .15s ease;
 }
 
-@media (max-width: 1000px) {
-    .empleados-container {
-        height: 100%;
-        width: 100dvw !important;
-    }
-
-    .empleados-container .card {
-        width: 100%;
-        height: 100%;
-    }
-}
-
-.incidencias-actions {
+/* Barra de acciones superior de cada página */
+.top-accion {
     width: 100%;
     flex-wrap: wrap;
 }
 
-.incidencias-actions .incidencia-action-btn {
+.top-accion-btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -121,19 +75,34 @@
     white-space: nowrap;
 }
 
+/* Estado vacío de tablas */
+.tabla-empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2.5rem 1rem;
+    gap: 0.75rem;
+}
+
+.tabla-empty-icon {
+    font-size: 2.5rem;
+    color: #adb5bd;
+}
+
 @media (max-width: 1000px) {
-    .incidencias-actions {
+    .top-accion {
         align-items: stretch !important;
     }
 
-    .incidencias-actions .incidencia-action-btn {
+    .top-accion-btn {
         flex: 1 1 calc(50% - 0.5rem);
         min-width: 150px;
     }
 }
 
 @media (max-width: 480px) {
-    .incidencias-actions .incidencia-action-btn {
+    .top-accion-btn {
         flex-basis: 100%;
         width: 100%;
     }

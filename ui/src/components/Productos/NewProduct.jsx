@@ -5,19 +5,17 @@ import { Loading } from "../Loading.jsx";
 import "../../../public/styles/tablaPermisos.css";
 
 /**
- * Formulario para crear un nuevo producto
+ * Formulario para crear un nuevo producto.
  *
  * @author Eneas de la Rosa Menéndez Pedrosa
  * @contributor Alex Bernardos Gil
- * @version 1.0.3
- * @param param0
- * @param param0.funcionDeCierreDeFormulario
- * @param param0.handleNuevoProducto
+ * @version 1.1.0
+ * @param {Function} funcionDeCierreDeFormulario
+ * @param {Function} handleNuevoProducto
  * @returns {React.JSX.Element}
  * @constructor
  */
 export function NuevoProductoForm({ funcionDeCierreDeFormulario, handleNuevoProducto }) {
-
     const actionData = useActionData();
     const navigate = useNavigate();
     const navigation = useNavigation();
@@ -38,18 +36,16 @@ export function NuevoProductoForm({ funcionDeCierreDeFormulario, handleNuevoProd
     }, [navigate]);
 
     useEffect(() => {
-        console.log(actionData, seEstaEnviando);
         if (!actionData) return;
-
         if (actionData[0] === true && seEstaEnviando) {
             let segSalida = 5;
             const idSalida = setInterval(() => {
-                setMensaje(" Redirigiendo en " + --segSalida + " segundos...");
+                setMensaje('Redirigiendo en ' + --segSalida + ' segundos...');
                 if (segSalida === -1) {
                     clearInterval(idSalida);
                     handleNuevoProducto();
                 }
-            }, 1000)
+            }, 1000);
         }
     }, [actionData]);
 
@@ -59,47 +55,43 @@ export function NuevoProductoForm({ funcionDeCierreDeFormulario, handleNuevoProd
 
     return (
         <div className="superponer">
-            <div className="card confirmacion" style={{width: '90dvw', maxWidth: '600px', maxHeight: '90dvh', overflowY: 'auto'}}>
+            <div className="card confirmacion" style={{ width: 'min(95dvw, 600px)', overflowY: 'auto' }}>
                 <div className="card-header d-flex justify-content-end">
-                    <button className={"bi-x bi btn btn-outline-danger"} onClick={() => {
-                        funcionDeCierreDeFormulario();
-                    }}></button>
+                    <button
+                        type="button"
+                        className="btn btn-outline-danger btn-sm bi bi-x"
+                        onClick={funcionDeCierreDeFormulario}
+                        aria-label="Cerrar"
+                    />
                 </div>
 
                 <div className="card-body p-2">
                     <h2 className="text-center mb-2">Nuevo producto</h2>
 
                     {actionData && actionData[1] && (
-                        <div className={`alert alert-sm ${actionData[1] ? 'alert-success' : 'alert-danger'}`} style={{padding: '0.25rem 0.5rem', fontSize: '0.85rem', marginBottom: '0.5rem'}}>
+                        <div className={`alert py-1 px-2 small mb-2 ${actionData[0] ? 'alert-success' : 'alert-danger'}`} role="alert">
                             {actionData[1]}{mensaje}
                         </div>
                     )}
 
                     {actionData?.error && (
-                        <div className="alert alert-danger alert-sm" style={{padding: '0.25rem 0.5rem', fontSize: '0.85rem', marginBottom: '0.5rem'}}>
+                        <div className="alert alert-danger py-1 px-2 small mb-2" role="alert">
                             {actionData.error}
                         </div>
                     )}
 
                     <Form method="POST">
+                        <input type="hidden" name="token" defaultValue={user.token} />
 
-                        <input
-                            type="hidden"
-                            name="token"
-                            defaultValue={user.token}
-                        />
-
-                        <h4 className="mb-2 mt-1 border-bottom pb-1" style={{fontSize: '0.9rem'}}>
+                        <h4 className="mb-2 mt-1 border-bottom pb-1 small fw-semibold">
                             Información del producto
                         </h4>
 
                         <div className="row g-2">
-
                             <div className="col-md-6 mb-2">
-                                <label htmlFor="nombre" className="form-label mb-1" style={{fontSize: '0.85rem'}}>
+                                <label htmlFor="nombre" className="form-label small mb-1">
                                     Nombre <span className="text-danger">*</span>
                                 </label>
-
                                 <input
                                     type="text"
                                     className="form-control form-control-sm"
@@ -110,71 +102,55 @@ export function NuevoProductoForm({ funcionDeCierreDeFormulario, handleNuevoProd
                             </div>
 
                             <div className="col-md-6 mb-2">
-                                <label htmlFor="estado" className="form-label mb-1" style={{fontSize: '0.85rem'}}>
+                                <label htmlFor="estado" className="form-label small mb-1">
                                     Estado <span className="text-danger">*</span>
                                 </label>
-
                                 <select
                                     className="form-select form-select-sm"
                                     id="estado"
                                     name="estado"
                                     required
                                 >
-                                <option value="">
-                                    Selecciona un estado
-                                </option>
-
-                                <option value="En proceso de envio">
-                                    En proceso de envío
-                                </option>
-
-                                <option value="Disponible">
-                                    Disponible
-                                </option>
-
-                                <option value="No disponible">
-                                    No disponible
-                                </option>
-
-                                <option value="En mantenimiento">
-                                    En mantenimiento
-                                </option>
-                            </select>
+                                    <option value="">Selecciona un estado</option>
+                                    <option value="En proceso de envio">En proceso de envío</option>
+                                    <option value="Disponible">Disponible</option>
+                                    <option value="No disponible">No disponible</option>
+                                    <option value="En mantenimiento">En mantenimiento</option>
+                                </select>
                             </div>
                         </div>
 
                         <div className="mb-2">
-                            <label
-                                htmlFor="descripcion"
-                                className="form-label mb-1"
-                                style={{fontSize: '0.85rem'}}
-                            >
+                            <label htmlFor="descripcion" className="form-label small mb-1">
                                 Descripción
                             </label>
-
                             <textarea
                                 className="form-control form-control-sm"
                                 id="descripcion"
                                 name="descripcion"
                                 rows="3"
                                 maxLength="512"
-                            ></textarea>
+                            />
                         </div>
 
                         <div className="d-flex justify-content-end gap-2 mt-2">
+                            <button
+                                className="btn btn-secondary btn-sm"
+                                type="button"
+                                onClick={funcionDeCierreDeFormulario}
+                                disabled={seEstaEnviando}
+                            >
+                                Cancelar
+                            </button>
                             <button
                                 className="btn btn-primary btn-sm"
                                 type="submit"
                                 disabled={seEstaEnviando}
                             >
-                                {seEstaEnviando
-                                    ? "Registrando..."
-                                    : "Registrar"}
+                                {seEstaEnviando ? 'Registrando...' : 'Registrar'}
                             </button>
                         </div>
-
                     </Form>
-
                 </div>
             </div>
         </div>

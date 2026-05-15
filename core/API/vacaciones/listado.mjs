@@ -58,46 +58,54 @@ export function listaSolicitudesVacaciones(req, res) {
 
     pool.getConnection((err, connection) => {
         if (err) {
-            connection.release();
             pool.end();
             return res.status(500).send({
                 status: 500,
                 message: "Error de base de datos"
             });
         }
-        let totalResultados = 0;
-        connection.query(`SELECT COUNT(*) as total FROM solicitud_vacaciones;`, (error, result) => {
-            totalResultados = result[0].total;
-        })
-        connection.query(
-            `SELECT sv.*
-             FROM solicitud_vacaciones sv 
-             ORDER BY sv.id_incidencia DESC LIMIT ?
-             OFFSET ?`,
-            [cantidad, offset],
-            (error, result) => {
 
+        connection.query(`SELECT COUNT(*) as total FROM solicitud_vacaciones`, (errCount, countResult) => {
+            if (errCount) {
                 connection.release();
-
-                if (error) {
-                    pool.end();
-                    return res.status(500).send({
-                        status: 500,
-                        message: "Error en la consulta"
-                    });
-                }
                 pool.end();
-                return res.status(200).send({
-                    status: 200,
-                    meta: {
-                        pagina,
-                        cantidad,
-                        totalPaginas: Math.ceil(totalResultados / cantidad),
-                        resultados: result.length
-                    },
-                    data: result
+                return res.status(500).send({
+                    status: 500,
+                    message: "Error en la consulta"
                 });
             }
-        );
+
+            const totalResultados = countResult[0].total;
+
+            connection.query(
+                `SELECT sv.*
+                 FROM solicitud_vacaciones sv
+                 ORDER BY sv.id_incidencia DESC
+                 LIMIT ? OFFSET ?`,
+                [cantidad, offset],
+                (error, result) => {
+                    connection.release();
+                    pool.end();
+
+                    if (error) {
+                        return res.status(500).send({
+                            status: 500,
+                            message: "Error en la consulta"
+                        });
+                    }
+
+                    return res.status(200).send({
+                        status: 200,
+                        meta: {
+                            pagina,
+                            cantidad,
+                            totalPaginas: Math.ceil(totalResultados / cantidad),
+                            resultados: totalResultados
+                        },
+                        data: result
+                    });
+                }
+            );
+        });
     });
 }
