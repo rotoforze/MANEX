@@ -175,6 +175,8 @@ form div {
     display: flex;
     align-items: center;
     justify-content: center;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 .app-shell {
     overflow: hidden;

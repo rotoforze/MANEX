@@ -14,7 +14,7 @@ dotenv.config();
  */
 function getFichaje(req, res) {
 
-    const username = req.body.username;
+    const username = req.query.username;
 
     if (!username) {
         return res.status(400).send({

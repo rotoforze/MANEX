@@ -173,11 +173,16 @@ function NewPermiso({
                         </tbody>
                     </table>
 
-                    <button className={"btn " + (!nuevoPermiso ? 'btn-light' : guardar ? 'btn-success' : 'btn-outline-success')}
-                            onClick={() => handleConfirmar(!guardar)}
-                            disabled={!nuevoPermiso}>
-                        {!nuevoPermiso ? 'Primero indica el nuevo nombre' : guardar ? 'Seguir editando' : 'Guardar'}
-                    </button>
+                    <div className="d-flex gap-2 align-items-center">
+                        <button className={"btn " + (!nuevoPermiso ? 'btn-light' : guardar ? 'btn-success' : 'btn-outline-success')}
+                                onClick={() => handleConfirmar(!guardar)}
+                                disabled={!nuevoPermiso}>
+                            {!nuevoPermiso ? 'Primero indica el nuevo nombre' : guardar ? 'Seguir editando' : 'Guardar'}
+                        </button>
+                        <button className="btn btn-secondary btn-sm" type="button" onClick={() => setFormularioNuevoVisible(false)}>
+                            Cancelar
+                        </button>
+                    </div>
 
                     {guardar && (<>
                         <p className="mt-3">¿Quieres crear el permiso <b>{nuevoPermiso}</b>?</p>

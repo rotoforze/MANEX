@@ -3,17 +3,27 @@ import { useUsers } from "../../../context/UserContext.jsx";
 import { apiFetch } from "../../../utils/apiFetch.jsx";
 import { EditarSolicitudForm } from "./EditarSolicitudForm.jsx";
 import "../../../../public/styles/tablaPermisos.css";
+import "../../../../public/styles/mainPages.css";
 
+/**
+ * Muestra en formato tabla las solicitudes de vacaciones con paginación.
+ *
+ * @author Eneas de la Rosa Menendez Pedrosa
+ * @version 1.1.0
+ * @returns {React.JSX.Element}
+ * @constructor
+ */
 export function TablaSolicitudes() {
-
     const [listaSolicitudes, setListaSolicitudes] = useState([]);
     const [errorCarga, setErrorCarga] = useState('');
     const [paginaActual, setPaginaActual] = useState(0);
     const [paginaMaxima, setPaginaMaxima] = useState(0);
-    const [resultadosPorPagina, setResultadosPorPagina] = useState(0);
+    const [totalRegistros, setTotalRegistros] = useState(0);
     const [cantidadPorPagina] = useState(10);
     const [solicitudEditando, setSolicitudEditando] = useState(null);
     const [refreshKey, setRefreshKey] = useState(0);
+    const [filtros, setFiltros] = useState({ tipo: '', estado: '' });
+    const setFiltro = (campo, valor) => setFiltros(prev => ({ ...prev, [campo]: valor }));
 
     const { user } = useUsers();
 
@@ -36,7 +46,7 @@ export function TablaSolicitudes() {
             .then((data) => {
                 setListaSolicitudes(data?.data || []);
                 setPaginaMaxima((data?.meta?.totalPaginas || 1) - 1);
-                setResultadosPorPagina(data?.meta?.resultados || 0);
+                setTotalRegistros(data?.meta?.resultados || 0);
                 setErrorCarga('');
             })
             .catch((e) => {
@@ -75,7 +85,6 @@ export function TablaSolicitudes() {
         const valor = claves
             .map((clave) => solicitud?.[clave])
             .find((dato) => dato !== undefined && dato !== null && dato !== '');
-
         return valor ?? valorPorDefecto;
     }
 
@@ -86,8 +95,18 @@ export function TablaSolicitudes() {
     }
 
     if (errorCarga) {
-        return <b className="text-danger">{errorCarga}</b>;
+        return (
+            <div className="tabla-empty-state">
+                <i className="bi bi-exclamation-circle tabla-empty-icon text-danger" aria-hidden="true" />
+                <p className="text-danger mb-0">{errorCarga}</p>
+            </div>
+        );
     }
+
+    const solicitudesFiltradas = listaSolicitudes.filter(s => (
+        (!filtros.tipo || s?.tipo === filtros.tipo) &&
+        (!filtros.estado || s?.estado === filtros.estado)
+    ));
 
     return (
         <>
@@ -104,75 +123,112 @@ export function TablaSolicitudes() {
                     <table className="table table-striped">
                         <thead>
                             <tr>
-                                <th>#</th>
-                                <th>Tipo</th>
-                                <th>Fecha inicio</th>
-                                <th>Fecha fin</th>
-                                <th>Estado</th>
-                                <th>Acciones</th>
+                                <th scope="col">#</th>
+                                <th scope="col">Tipo</th>
+                                <th scope="col">Fecha inicio</th>
+                                <th scope="col">Fecha fin</th>
+                                <th scope="col">Estado</th>
+                                <th scope="col">Acciones</th>
+                            </tr>
+                            <tr className="table-light">
+                                <th />
+                                <th>
+                                    <select className="form-select form-select-sm" value={filtros.tipo} onChange={e => setFiltro('tipo', e.target.value)}>
+                                        <option value="">Todos</option>
+                                        <option value="Permiso de días">Permiso de días</option>
+                                        <option value="Solicitud de semana de vacaciones">Solicitud de semana de vacaciones</option>
+                                        <option value="Permiso familiar">Permiso familiar</option>
+                                    </select>
+                                </th>
+                                <th />
+                                <th />
+                                <th>
+                                    <select className="form-select form-select-sm" value={filtros.estado} onChange={e => setFiltro('estado', e.target.value)}>
+                                        <option value="">Todos</option>
+                                        <option value="Concedido">Concedido</option>
+                                        <option value="Rechazado">Rechazado</option>
+                                        <option value="En revisión">En revisión</option>
+                                    </select>
+                                </th>
+                                <th />
                             </tr>
                         </thead>
-
                         <tbody className="table-group-divider">
-                            {listaSolicitudes.map((solicitud) => {
-                                const idIncidencia = obtenerValor(solicitud, ['id_incidencia', 'ID_INCIDENCIA', 'ID']);
-                                const estado = obtenerValor(solicitud, ['estado', 'Estado'], 'Sin estado');
+                            {solicitudesFiltradas.length > 0 ? solicitudesFiltradas.map((solicitud) => {
+                                const idIncidencia = obtenerValor(solicitud, ['ID_INCIDENCIA']);
+                                const estado = obtenerValor(solicitud, ['estado'], 'Sin estado');
 
                                 return (
                                     <tr key={idIncidencia} className="h-auto">
-                                        <th>{idIncidencia}</th>
-
-                                        <td>{obtenerValor(solicitud, ['tipo', 'Tipo'])}</td>
-
-                                        <td>{formatearFecha(obtenerValor(solicitud, ['fecha_inicio', 'Fecha_inicio'], null))}</td>
-
-                                        <td>{formatearFecha(obtenerValor(solicitud, ['fecha_fin', 'Fecha_fin'], null))}</td>
-
+                                        <th scope="row">{idIncidencia}</th>
+                                        <td>{obtenerValor(solicitud, ['tipo'])}</td>
+                                        <td>{formatearFecha(obtenerValor(solicitud, ['fecha_inicio'], null))}</td>
+                                        <td>{formatearFecha(obtenerValor(solicitud, ['fecha_fin'], null))}</td>
                                         <td>
                                             <span className={`badge ${obtenerClaseEstado(estado)}`}>
                                                 {estado}
                                             </span>
                                         </td>
-
                                         <td className="h-auto acciones-tabla">
                                             <button
-                                                className="btn btn-primary bi-pencil-fill"
+                                                className="btn btn-primary btn-sm bi bi-pencil-fill"
                                                 title="Editar solicitud"
+                                                aria-label="Editar solicitud"
                                                 onClick={() => setSolicitudEditando(solicitud)}
                                             />
-
-                                            <button className="btn btn-danger bi-trash-fill" title="Eliminar solicitud" />
+                                            <button
+                                                className="btn btn-danger btn-sm bi bi-trash-fill"
+                                                title="Eliminar solicitud"
+                                                aria-label="Eliminar solicitud"
+                                            />
                                         </td>
                                     </tr>
                                 );
-                            })}
+                            }) : (
+                                <tr>
+                                    <td colSpan={6} className="text-center text-muted py-4 small">
+                                        Sin resultados con los filtros aplicados.
+                                    </td>
+                                </tr>
+                            )}
                         </tbody>
                     </table>
 
-                    <div className="gap-3 d-flex justify-content-center mb-3">
+                    <div className="d-flex align-items-center justify-content-center gap-2 mb-3">
                         <button
-                            className="btn btn-primary bi-chevron-left"
+                            className="btn btn-outline-secondary btn-sm bi bi-chevron-bar-left"
+                            aria-label="Primera página"
                             disabled={paginaActual === 0}
-                            onClick={() => {
-                                if (paginaActual > 0) setPaginaActual(paginaActual - 1);
-                            }}
+                            onClick={() => setPaginaActual(0)}
                         />
-
-                        <b>
-                            Mostrando {resultadosPorPagina}/{cantidadPorPagina} en la pagina {paginaActual}
-                        </b>
-
                         <button
-                            className="btn btn-primary bi-chevron-right"
+                            className="btn btn-outline-secondary btn-sm bi bi-chevron-left"
+                            aria-label="Página anterior"
+                            disabled={paginaActual === 0}
+                            onClick={() => { if (paginaActual > 0) setPaginaActual(paginaActual - 1); }}
+                        />
+                        <span className="small text-muted">
+                            Página {paginaActual + 1} de {paginaMaxima + 1} · {totalRegistros} registros
+                        </span>
+                        <button
+                            className="btn btn-outline-secondary btn-sm bi bi-chevron-right"
+                            aria-label="Página siguiente"
                             disabled={!(paginaActual < paginaMaxima)}
-                            onClick={() => {
-                                if (paginaActual < paginaMaxima) setPaginaActual(paginaActual + 1);
-                            }}
+                            onClick={() => { if (paginaActual < paginaMaxima) setPaginaActual(paginaActual + 1); }}
+                        />
+                        <button
+                            className="btn btn-outline-secondary btn-sm bi bi-chevron-bar-right"
+                            aria-label="Última página"
+                            disabled={!(paginaActual < paginaMaxima)}
+                            onClick={() => setPaginaActual(paginaMaxima)}
                         />
                     </div>
                 </div>
             ) : (
-                <b>No hay solicitudes.</b>
+                <div className="tabla-empty-state">
+                    <i className="bi bi-window-plus tabla-empty-icon" aria-hidden="true" />
+                    <p className="text-muted mb-0">No hay solicitudes registradas.</p>
+                </div>
             )}
         </>
     );
