@@ -4,6 +4,7 @@ import { apiFetch } from "../../utils/apiFetch.jsx";
 import { EditarProductoForm } from "./EditarProductoForm.jsx";
 import "../../../public/styles/tablaPermisos.css";
 import "../../../public/styles/mainPages.css";
+import { DelProducto } from "./DelProducto.jsx";
 
 /**
  * Muestra en formato tabla los productos recibidos.
@@ -25,17 +26,19 @@ export function TablaProductos() {
     const [cantidadPorPagina] = useState(10);
     const [filtros, setFiltros] = useState({ nombre: '', descripcion: '', estado: '' });
     const setFiltro = (campo, valor) => setFiltros(prev => ({ ...prev, [campo]: valor }));
+    const [eliminando, setEliminando] = useState(false);
+    const [productoAEliminar, setProductoAEliminar] = useState(undefined);
 
     const { user, tengoPermiso } = useUsers();
 
     function obtenerClaseEstado(estado) {
         switch (estado) {
-            case 'Disponible':           return 'text-bg-success';
-            case 'No disponible':        return 'text-bg-danger';
+            case 'Disponible': return 'text-bg-success';
+            case 'No disponible': return 'text-bg-danger';
             case 'En proceso de envio':
-            case 'En proceso de envío':  return 'text-bg-primary';
-            case 'En mantenimiento':     return 'text-bg-warning';
-            default:                     return 'text-bg-secondary';
+            case 'En proceso de envío': return 'text-bg-primary';
+            case 'En mantenimiento': return 'text-bg-warning';
+            default: return 'text-bg-secondary';
         }
     }
 
@@ -78,6 +81,16 @@ export function TablaProductos() {
 
     return (
         <>
+            {eliminando && (
+                <DelProducto
+                    productoAEliminar={productoAEliminar}
+                    setProductoAEliminar={setProductoAEliminar}
+                    eliminando={eliminando}
+                    setEliminando={setEliminando}
+                    user={user}
+                    fetchInicio={cargarProductos}
+                />
+            )}
             {mostrarFormulario && (
                 <EditarProductoForm
                     producto={productoSeleccionado}
@@ -138,12 +151,13 @@ export function TablaProductos() {
                                             }}
                                             disabled={!tengoPermiso('/productos', 'POST')}
                                         />
-                                        <button
-                                            className="btn btn-danger btn-sm bi bi-trash-fill"
-                                            title="Eliminar producto"
-                                            aria-label="Eliminar producto"
-                                            disabled={!tengoPermiso('/productos', 'DELETE')}
-                                        />
+                                        <button className="btn btn-danger btn-sm bi bi-trash-fill"title="Eliminar producto"
+                                                aria-label="Eliminar producto"disabled={!tengoPermiso('/productos', 'DELETE')}
+                                         onClick={() => {           
+                                                setProductoAEliminar(producto);
+                                                setEliminando(true);
+                                        }}
+                                    />
                                     </td>
                                 </tr>
                             )) : (

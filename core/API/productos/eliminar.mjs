@@ -43,7 +43,7 @@ function delProducto(req, res) {
 
         connection.query(
             `DELETE
-             FROM producto
+             FROM inventario
              WHERE ID = ?`,
             [id],
             (error, result) => {
