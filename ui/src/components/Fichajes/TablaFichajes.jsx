@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useUsers } from "../../context/UserContext.jsx";
 import { apiFetch } from "../../utils/apiFetch.jsx";
 import "../../../public/styles/tablaPermisos.css";
-import "../../../public/styles/mainPages.css";
 
 /**
  * Muestra en formato tabla los fichajes con paginación.
@@ -12,7 +11,8 @@ import "../../../public/styles/mainPages.css";
  * @returns {React.JSX.Element}
  * @constructor
  */
-export function TablaFichajes() {
+export function TablaFichajes({setFichajeActivo}) {
+
     const [listaFichajes, setListaFichajes] = useState([]);
     const [errorCarga, setErrorCarga] = useState('');
     const [paginaActual, setPaginaActual] = useState(0);
@@ -29,7 +29,7 @@ export function TablaFichajes() {
             || `${import.meta.env.VITE_BACKEND}/fichajes`;
 
         apiFetch(
-            `${urlFichajes}?pagina=${paginaActual}&cantidad=${cantidadPorPagina}`,
+            `${urlFichajes}?pagina=${paginaActual}&cantidad=${cantidadPorPagina}&username=${user?.username}`,
             {
                 method: 'GET',
                 headers: {
@@ -44,6 +44,7 @@ export function TablaFichajes() {
                 return data;
             })
             .then((data) => {
+                setFichajeActivo(data?.fichajeActivo)
                 setListaFichajes(data?.data || []);
                 setPaginaMaxima((data?.meta?.totalPaginas || 1) - 1);
                 setTotalRegistros(data?.meta?.resultados || 0);
