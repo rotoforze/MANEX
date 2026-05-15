@@ -71,19 +71,13 @@ export async function enviarUsuario(token, id, nombre, apellidos, fecha_nacimien
             body: params
         });
 
-        if (!response.ok) {
-            console.error('Error en la red o servidor');
-            return [false, 'Error en la red o servidor'];
-        }
-
         const respuesta = await response.json();
 
-        if (respuesta.status === 201) {
-            // Lógica registro correcto
+        if (response.ok && respuesta.status === 201) {
             return [true, 'Empleado registrado correctamente'];
         } else {
             console.log('ERROR: ' + respuesta.message);
-            return [false, respuesta.message];
+            return [false, respuesta.message ?? 'Error al registrar el empleado.'];
         }
 
     } catch (error) {

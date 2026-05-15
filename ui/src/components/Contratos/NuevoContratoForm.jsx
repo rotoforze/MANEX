@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useUsers } from "../../context/UserContext.jsx";
-import { apiFetch } from "../../utils/apiFetch.jsx";
+import { enviarContrato } from "../../utils/RegisterNewContrato.js";
 import { useMensaje } from "../../hooks/useMensaje.js";
 
 /**
@@ -35,35 +35,14 @@ export function NuevoContratoForm({ funcionDeCierreDeFormulario, handleNuevoCont
         setEnviando(true);
         setMensaje(null);
 
-        try {
-            const response = await apiFetch(
-                import.meta.env.VITE_BACKEND_CONTRATOS,
-                {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                        'token': user?.token,
-                    },
-                    body: new URLSearchParams(form).toString(),
-                }
-            );
-
-            const data = await response.json();
-
-            if (response.ok) {
-                setMensaje({ tipo: 'success', texto: 'Contrato creado correctamente.' });
-                setTimeout(() => {
-                    handleNuevoContrato?.();
-                }, 1000);
-            } else {
-                setMensaje({ tipo: 'danger', texto: data?.message ?? 'Error al crear el contrato.' });
-            }
-        } catch (err) {
-            console.error(err);
-            setMensaje({ tipo: 'danger', texto: 'Error de conexión con el servidor.' });
-        } finally {
-            setEnviando(false);
+        const [ok, texto] = await enviarContrato(user?.token, form.salarioAnual, form.horasAnuales);
+        if (ok) {
+            setMensaje({ tipo: 'success', texto });
+            setTimeout(() => handleNuevoContrato?.(), 1000);
+        } else {
+            setMensaje({ tipo: 'danger', texto });
         }
+        setEnviando(false);
     };
 
     return (

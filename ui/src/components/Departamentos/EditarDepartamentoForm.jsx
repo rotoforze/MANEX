@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useUsers } from "../../context/UserContext.jsx";
-import { apiFetch } from "../../utils/apiFetch.jsx";
+import { enviarDepartamento } from "../../utils/RegisterNewDepartamento.js";
 import { useMensaje } from "../../hooks/useMensaje.js";
 
 /**
@@ -25,33 +25,14 @@ export function EditarDepartamentoForm({ departamento, funcionDeCierreDeFormular
         setEnviando(true);
         setMensaje(null);
 
-        try {
-            const response = await apiFetch(
-                import.meta.env.VITE_BACKEND_DEPARTAMENTOS,
-                {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                        'token': user?.token,
-                    },
-                    body: new URLSearchParams({ nombre, idAModificar: departamento?.ID }).toString(),
-                }
-            );
-
-            const data = await response.json();
-
-            if (response.ok) {
-                setMensaje({ tipo: 'success', texto: 'Departamento actualizado correctamente.' });
-                setTimeout(() => handleDepartamentoActualizado?.(), 1000);
-            } else {
-                setMensaje({ tipo: 'danger', texto: data?.message ?? 'Error al actualizar el departamento.' });
-            }
-        } catch (err) {
-            console.error(err);
-            setMensaje({ tipo: 'danger', texto: 'Error de conexión con el servidor.' });
-        } finally {
-            setEnviando(false);
+        const [ok, texto] = await enviarDepartamento(user?.token, nombre, departamento?.ID);
+        if (ok) {
+            setMensaje({ tipo: 'success', texto });
+            setTimeout(() => handleDepartamentoActualizado?.(), 1000);
+        } else {
+            setMensaje({ tipo: 'danger', texto });
         }
+        setEnviando(false);
     };
 
     return (

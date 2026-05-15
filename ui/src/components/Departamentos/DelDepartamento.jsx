@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useUsers } from "../../context/UserContext.jsx";
-import { apiFetch } from "../../utils/apiFetch.jsx";
+import { eliminarDepartamento } from "../../utils/RegisterNewDepartamento.js";
 
 /**
  * Diálogo de confirmación para eliminar un departamento.
@@ -18,35 +18,21 @@ export function DelDepartamento({ departamento, funcionDeCierreDeFormulario, han
     const [confirmar, setConfirmar] = useState(false);
     const [estado, setEstado] = useState(null);
 
-    function handleEliminar() {
+    async function handleEliminar() {
         setEstado('Confirmando cambios...');
-
-        const urlencoded = new URLSearchParams();
-        urlencoded.append('id', departamento?.ID);
-
-        apiFetch(import.meta.env.VITE_BACKEND_DEPARTAMENTOS, {
-            method: 'DELETE',
-            headers: { token: user?.token },
-            body: urlencoded,
-        })
-            .then(res => res.json())
-            .then((data) => {
-                if (data?.status === 200) {
-                    let seconds = 4;
-                    const idSeg = setInterval(() => {
-                        seconds--;
-                        setEstado(`Departamento eliminado. Se refrescará en ${seconds}s.`);
-                        if (seconds <= 0) clearInterval(idSeg);
-                    }, 1000);
-                    setEstado(`Departamento eliminado. Se refrescará en ${seconds}s.`);
-                    setTimeout(() => handleDepartamentoEliminado?.(), 5000);
-                } else {
-                    setEstado(data?.message ?? 'Error al eliminar el departamento.');
-                }
-            })
-            .catch(() => {
-                setEstado('Error de conexión con el servidor.');
-            });
+        const [ok, texto] = await eliminarDepartamento(user?.token, departamento?.ID);
+        if (ok) {
+            let seconds = 4;
+            const idSeg = setInterval(() => {
+                seconds--;
+                setEstado(`Departamento eliminado. Se refrescará en ${seconds}s.`);
+                if (seconds <= 0) clearInterval(idSeg);
+            }, 1000);
+            setEstado(`Departamento eliminado. Se refrescará en ${seconds}s.`);
+            setTimeout(() => handleDepartamentoEliminado?.(), 5000);
+        } else {
+            setEstado(texto);
+        }
     }
 
     return (

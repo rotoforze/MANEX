@@ -10,6 +10,11 @@ import { Dashboard } from './routes/Dashboard';
 import { inciarSesion as actionInicioSesion } from './utils/AuthUser';
 import { registrarUsuario as actionRegistroEmpleado } from "./utils/RegisterNewUser.js";
 import { registrarProducto as actionRegistroProducto } from "./utils/RegisterNewProduct.js";
+import { registrarContrato as actionRegistroContrato } from "./utils/RegisterNewContrato.js";
+import { registrarDepartamento as actionRegistroDepartamento } from "./utils/RegisterNewDepartamento.js";
+import { registrarFichaje as actionRegistroFichaje } from "./utils/RegisterNewFichaje.js";
+import { registrarIncidencia as actionRegistroIncidencia } from "./utils/RegisterNewIncidencia.js";
+import { registrarSolicitud as actionRegistroSolicitud } from "./utils/RegisterNewSolicitud.js";
 import { loaderAuthTokenCookie as loaderCookie, UserProvider } from './context/UserContext';
 import { Profile } from "./routes/Profile.jsx";
 import { Configuration } from "./routes/Configuration.jsx";
@@ -45,11 +50,11 @@ function App() {
             { path: '/dashboard', element: <Dashboard /> },
             { path: '/empleados', element: <Empleados />, action: actionRegistroEmpleado },
             { path: '/productos', element: <Productos />, action: actionRegistroProducto },
-            { path: '/contratos', element: <Contratos /> },
-            { path: '/departamentos', element: <Departamentos /> },
-            { path: '/fichajes', element: <Fichajes />, action: undefined },
-            { path: '/incidencia', element: <Incidencias />, action: undefined },
-            { path: '/solicitudes', element: <Solicitudes />, action: undefined },
+            { path: '/contratos', element: <Contratos />, action: actionRegistroContrato },
+            { path: '/departamentos', element: <Departamentos />, action: actionRegistroDepartamento },
+            { path: '/fichajes', element: <Fichajes />, action: actionRegistroFichaje },
+            { path: '/incidencia', element: <Incidencias />, action: actionRegistroIncidencia },
+            { path: '/solicitudes', element: <Solicitudes />, action: actionRegistroSolicitud },
             { path: '/profile', element: <Profile /> },
             { path: '/configuration', element: <Configuration /> },
             { path: '/logout', element: <Logout /> },

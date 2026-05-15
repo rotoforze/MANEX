@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useUsers } from "../../context/UserContext.jsx";
-import { apiFetch } from "../../utils/apiFetch.jsx";
+import { eliminarContrato } from "../../utils/RegisterNewContrato.js";
 
 /**
  * Diálogo de confirmación para eliminar un contrato.
@@ -19,37 +19,21 @@ export function DelContrato({ contrato, funcionDeCierreDeFormulario, handleContr
     const [confirmar, setConfirmar] = useState(false);
     const [estado, setEstado] = useState(null);
 
-    function handleEliminar() {
+    async function handleEliminar() {
         setEstado('Confirmando cambios...');
-
-        const urlencoded = new URLSearchParams();
-        urlencoded.append('id', contrato?.ID);
-
-        apiFetch(import.meta.env.VITE_BACKEND_CONTRATOS, {
-            method: 'DELETE',
-            headers: { token: user?.token },
-            body: urlencoded,
-        })
-            .then(res => res.json())
-            .then((data) => {
-                if (data?.status === 200) {
-                    let seconds = 4;
-                    const idSeg = setInterval(() => {
-                        seconds--;
-                        setEstado(`Contrato eliminado. Se refrescará en ${seconds}s.`);
-                        if (seconds <= 0) clearInterval(idSeg);
-                    }, 1000);
-                    setEstado(`Contrato eliminado. Se refrescará en ${seconds}s.`);
-                    setTimeout(() => {
-                        handleContratoEliminado?.();
-                    }, 5000);
-                } else {
-                    setEstado(data?.message ?? 'Error al eliminar el contrato.');
-                }
-            })
-            .catch(() => {
-                setEstado('Error de conexión con el servidor.');
-            });
+        const [ok, texto] = await eliminarContrato(user?.token, contrato?.ID);
+        if (ok) {
+            let seconds = 4;
+            const idSeg = setInterval(() => {
+                seconds--;
+                setEstado(`Contrato eliminado. Se refrescará en ${seconds}s.`);
+                if (seconds <= 0) clearInterval(idSeg);
+            }, 1000);
+            setEstado(`Contrato eliminado. Se refrescará en ${seconds}s.`);
+            setTimeout(() => handleContratoEliminado?.(), 5000);
+        } else {
+            setEstado(texto);
+        }
     }
 
     return (
