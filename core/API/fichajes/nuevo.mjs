@@ -40,7 +40,7 @@ async function registrarFichaje(req, res) {
         );
         console.log(tieneFichajeActivo);
 
-        if (tieneFichajeActivo) {
+        if (tieneFichajeActivo[0].tieneFichajeActivo) {
             // actualizar el fichaje activo
             await connection.query(
                 'UPDATE fichajes SET fecha_salida = CURRENT_TIMESTAMP() WHERE ID_EMPLEADO = ? AND (fecha_entrada IS NOT NULL AND fecha_salida IS NULL);',

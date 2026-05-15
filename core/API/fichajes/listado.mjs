@@ -68,7 +68,7 @@ export async function listaFichajes(req, res) {
                 cantidad,
                 totalPaginas: Math.ceil(total / cantidad),
                 resultados: result.length,
-                fichajeActivo: tieneFichajeActivo
+                fichajeActivo: tieneFichajeActivo[0].tieneFichajeActivo
             },
             data: result
         });

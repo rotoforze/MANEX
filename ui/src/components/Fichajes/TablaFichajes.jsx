@@ -3,7 +3,7 @@ import { useUsers } from "../../context/UserContext.jsx";
 import { apiFetch } from "../../utils/apiFetch.jsx";
 import "../../../public/styles/tablaPermisos.css";
 
-export function TablaFichajes() {
+export function TablaFichajes({setFichajeActivo}) {
 
     const [listaFichajes, setListaFichajes] = useState([]);
     const [errorCarga, setErrorCarga] = useState('');
@@ -38,6 +38,7 @@ export function TablaFichajes() {
                 return data;
             })
             .then((data) => {
+                setFichajeActivo(data?.fichajeActivo)
                 setListaFichajes(data?.data || []);
                 setPaginaMaxima((data?.meta?.totalPaginas || 1) - 1);
                 setResultadosPorPagina(data?.meta?.resultados || 0);

@@ -18,10 +18,6 @@ export function Fichajes() {
     const [refreshKey, setRefreshKey] = useState(0);
     const [fichajeActivo, setFichajeActivo] = useState(false);
 
-    useEffect(() => {
-
-    }, []);
-
     function handleNuevoFichaje() {
         setRefreshKey(prev => prev + 1);
         setRegistroVisible(false);
@@ -46,10 +42,10 @@ export function Fichajes() {
                 <div className="d-flex gap-2 align-items-start justify-content-start top-productos">
 
                     <button
-                        className={"btn " + (registroVisible ? 'btn-danger' : 'btn-primary')}
+                        className={"btn " + (fichajeActivo > 0 ? 'btn-danger' : 'btn-primary')}
                         onClick={fichajeActivo ? undefined : () => setRegistroVisible(!registroVisible)}
                     >
-                        {fichajeActivo ? 'Cerrar fichaje' : 'Nuevo fichaje'}
+                        {fichajeActivo > 0 ? 'Finalizar turno' : 'Nuevo fichaje'}
                     </button>
 
 
@@ -75,7 +71,7 @@ export function Fichajes() {
             <hr />
 
             <div className="d-flex flex-column gap-2 w-100 p-4 justify-content-center overflow-scroll">
-                <TablaFichajes key={refreshKey} />
+                <TablaFichajes key={refreshKey} setFichajeActivo={setFichajeActivo} />
             </div>
 
         </div>
