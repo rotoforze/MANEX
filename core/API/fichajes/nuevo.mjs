@@ -15,9 +15,6 @@ dotenv.config();
  */
 async function registrarFichaje(req, res) {
 
-    await verificadorDatos(req, res)
-    if (res.headersSent) return;
-
     const { username, tipo } = req.body;
 
     const config = {
@@ -33,12 +30,11 @@ async function registrarFichaje(req, res) {
 
     try {
         const [ id ] = await connection.query('SELECT id FROM empleado WHERE username = ?', [username]);
-        console.log(id, id[0], id[0].id, id.id);
+
         const [tieneFichajeActivo] = await connection.query(
             `SELECT COUNT(*) as tieneFichajeActivo FROM fichajes WHERE ID_EMPLEADO = ? AND (fecha_entrada IS NOT NULL AND fecha_salida IS NULL);`,
             [id[0].id]
         );
-        console.log(tieneFichajeActivo);
 
         if (tieneFichajeActivo[0].tieneFichajeActivo) {
             // actualizar el fichaje activo
@@ -67,6 +63,7 @@ async function registrarFichaje(req, res) {
     } finally {
         await connection.end();
     }
+    if (!res.headersSent) res.status(500).send({ status: 500, message: 'Error al registrar el fichaje.' });
 
 }
 

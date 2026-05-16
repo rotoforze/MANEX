@@ -45,7 +45,8 @@ export function TablaFichajes({setFichajeActivo}) {
                 return data;
             })
             .then((data) => {
-                setFichajeActivo(data?.fichajeActivo)
+                console.log(data)
+                setFichajeActivo(data?.meta?.fichajeActivo)
                 setListaFichajes(data?.data || []);
                 setPaginaMaxima((data?.meta?.totalPaginas || 1) - 1);
                 setTotalRegistros(data?.meta?.resultados || 0);
@@ -102,7 +103,6 @@ export function TablaFichajes({setFichajeActivo}) {
                                 <th scope="col">Entrada</th>
                                 <th scope="col">Salida</th>
                                 <th scope="col">Tipo</th>
-                                <th scope="col">Acciones</th>
                             </tr>
                             <tr className="table-light">
                                 <th />
@@ -140,18 +140,6 @@ export function TablaFichajes({setFichajeActivo}) {
                                         <td>{formatearFecha(entrada)}</td>
                                         <td>{formatearFecha(obtenerValor(fichaje, ['fecha_salida'], null))}</td>
                                         <td>{obtenerValor(fichaje, ['tipo'])}</td>
-                                        <td className="h-auto acciones-tabla">
-                                            <button
-                                                className="btn btn-primary btn-sm bi bi-pencil-fill"
-                                                title="Editar fichaje"
-                                                aria-label="Editar fichaje"
-                                            />
-                                            <button
-                                                className="btn btn-danger btn-sm bi bi-trash-fill"
-                                                title="Eliminar fichaje"
-                                                aria-label="Eliminar fichaje"
-                                            />
-                                        </td>
                                     </tr>
                                 );
                             }) : (
