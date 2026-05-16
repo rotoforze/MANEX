@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { TablaDepartamentos } from "../components/Departamentos/TablaDepartamentos.jsx";
 import { NuevoDepartamentoForm } from "../components/Departamentos/NuevoDepartamentoForm.jsx";
 import { useUsers } from "../context/UserContext.jsx";
@@ -23,7 +23,7 @@ export function Departamentos() {
     }
 
     return (
-        <div className="d-flex flex-column card w-100 h-100 empleados-container">
+        <div className="d-flex flex-column card w-100 empleados-container">
             <div className="d-flex flex-column align-items-start justify-content-center gap-2 w-100 p-4">
                 <div className="d-flex flex-column flex-md-row justify-content-between align-items-start w-100 mb-4 gap-3">
                     <div>
@@ -60,7 +60,7 @@ export function Departamentos() {
 
             <hr />
 
-            <div className="d-flex flex-column gap-2 w-100 p-4 justify-content-center">
+            <div className="d-flex flex-column gap-2 w-100 p-4 justify-content-center overflow-auto">
                 <TablaDepartamentos key={refreshKey} />
             </div>
         </div>

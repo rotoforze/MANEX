@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { NuevaSolicitudForm } from "../components/Incidencias/Vacaciones/NuevaSolicitudForm.jsx";
 import { TablaSolicitudes } from "../components/Incidencias/Vacaciones/TablaSolicitudes.jsx";
+import { useUsers } from "../context/UserContext.jsx";
 import '../../public/styles/mainPages.css';
 
 /**
@@ -14,6 +15,9 @@ import '../../public/styles/mainPages.css';
  */
 export function Solicitudes() {
 
+  const { user } = useUsers();
+  const idEmpleadoFiltro = user?.departamento === 1 ? user?.id : undefined;
+
   const [registroVisible, setRegistroVisible] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
 
@@ -23,7 +27,7 @@ export function Solicitudes() {
   }
 
   return (
-    <div className="d-flex flex-column card w-100 h-100 empleados-container">
+    <div className="d-flex flex-column card w-100 empleados-container">
 
       <div className="d-flex flex-column align-items-start justify-content-center gap-2 w-100 p-4">
 
@@ -71,9 +75,9 @@ export function Solicitudes() {
 
       <hr />
 
-      <div className="d-flex flex-column gap-2 w-100 p-4 justify-content-center">
+      <div className="d-flex flex-column gap-2 w-100 p-4 justify-content-center overflow-auto">
 
-        <TablaSolicitudes key={refreshKey} />
+        <TablaSolicitudes key={refreshKey} idEmpleado={idEmpleadoFiltro} />
 
       </div>
 

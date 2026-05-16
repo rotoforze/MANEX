@@ -45,7 +45,7 @@ export function TablaFichajes({setFichajeActivo}) {
                 return data;
             })
             .then((data) => {
-                setFichajeActivo(data?.fichajeActivo)
+                setFichajeActivo(data?.meta?.fichajeActivo)
                 setListaFichajes(data?.data || []);
                 setPaginaMaxima((data?.meta?.totalPaginas || 1) - 1);
                 setTotalRegistros(data?.meta?.resultados || 0);
@@ -142,15 +142,15 @@ export function TablaFichajes({setFichajeActivo}) {
                                         <td>{obtenerValor(fichaje, ['tipo'])}</td>
                                         <td className="h-auto acciones-tabla">
                                             <button
-                                                className="btn btn-primary btn-sm bi bi-pencil-fill"
+                                                className="btn btn-primary btn-sm"
                                                 title="Editar fichaje"
                                                 aria-label="Editar fichaje"
-                                            />
+                                            ><i className="bi bi-pencil-fill" aria-hidden="true" /></button>
                                             <button
-                                                className="btn btn-danger btn-sm bi bi-trash-fill"
+                                                className="btn btn-danger btn-sm"
                                                 title="Eliminar fichaje"
                                                 aria-label="Eliminar fichaje"
-                                            />
+                                            ><i className="bi bi-trash-fill" aria-hidden="true" /></button>
                                         </td>
                                     </tr>
                                 );
