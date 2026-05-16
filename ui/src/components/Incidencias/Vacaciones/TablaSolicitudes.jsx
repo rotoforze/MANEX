@@ -13,7 +13,7 @@ import "../../../../public/styles/mainPages.css";
  * @returns {React.JSX.Element}
  * @constructor
  */
-export function TablaSolicitudes() {
+export function TablaSolicitudes({ idEmpleado }) {
     const [listaSolicitudes, setListaSolicitudes] = useState([]);
     const [errorCarga, setErrorCarga] = useState('');
     const [paginaActual, setPaginaActual] = useState(0);
@@ -32,8 +32,10 @@ export function TablaSolicitudes() {
             || import.meta.env.VITE_BACKEND_SOLICITUD
             || `${import.meta.env.VITE_BACKEND}/vacaciones`;
 
+        const filtroEmpleado = idEmpleado ? `&id_empleado=${idEmpleado}` : '';
+
         apiFetch(
-            `${urlSolicitudes}?pagina=${paginaActual}&cantidad=${cantidadPorPagina}`,
+            `${urlSolicitudes}?pagina=${paginaActual}&cantidad=${cantidadPorPagina}${filtroEmpleado}`,
             {
                 method: 'GET',
                 headers: {
@@ -54,7 +56,7 @@ export function TablaSolicitudes() {
                 setErrorCarga('No se han podido cargar las solicitudes.');
                 setListaSolicitudes([]);
             });
-    }, [paginaActual, cantidadPorPagina, user?.token, refreshKey]);
+    }, [paginaActual, cantidadPorPagina, user?.token, refreshKey, idEmpleado]);
 
     function handleSolicitudActualizada() {
         setSolicitudEditando(null);
@@ -171,16 +173,16 @@ export function TablaSolicitudes() {
                                         </td>
                                         <td className="h-auto acciones-tabla">
                                             <button
-                                                className="btn btn-primary btn-sm bi bi-pencil-fill"
+                                                className="btn btn-primary btn-sm"
                                                 title="Editar solicitud"
                                                 aria-label="Editar solicitud"
                                                 onClick={() => setSolicitudEditando(solicitud)}
-                                            />
+                                            ><i className="bi bi-pencil-fill" aria-hidden="true" /></button>
                                             <button
-                                                className="btn btn-danger btn-sm bi bi-trash-fill"
+                                                className="btn btn-danger btn-sm"
                                                 title="Eliminar solicitud"
                                                 aria-label="Eliminar solicitud"
-                                            />
+                                            ><i className="bi bi-trash-fill" aria-hidden="true" /></button>
                                         </td>
                                     </tr>
                                 );

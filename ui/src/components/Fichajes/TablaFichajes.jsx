@@ -12,7 +12,8 @@ import "../../../public/styles/mainPages.css";
  * @returns {React.JSX.Element}
  * @constructor
  */
-export function TablaFichajes() {
+export function TablaFichajes({setFichajeActivo}) {
+
     const [listaFichajes, setListaFichajes] = useState([]);
     const [errorCarga, setErrorCarga] = useState('');
     const [paginaActual, setPaginaActual] = useState(0);
@@ -29,7 +30,7 @@ export function TablaFichajes() {
             || `${import.meta.env.VITE_BACKEND}/fichajes`;
 
         apiFetch(
-            `${urlFichajes}?pagina=${paginaActual}&cantidad=${cantidadPorPagina}`,
+            `${urlFichajes}?pagina=${paginaActual}&cantidad=${cantidadPorPagina}&username=${user?.username}`,
             {
                 method: 'GET',
                 headers: {
@@ -44,6 +45,7 @@ export function TablaFichajes() {
                 return data;
             })
             .then((data) => {
+                setFichajeActivo(data?.meta?.fichajeActivo)
                 setListaFichajes(data?.data || []);
                 setPaginaMaxima((data?.meta?.totalPaginas || 1) - 1);
                 setTotalRegistros(data?.meta?.resultados || 0);
@@ -100,7 +102,6 @@ export function TablaFichajes() {
                                 <th scope="col">Entrada</th>
                                 <th scope="col">Salida</th>
                                 <th scope="col">Tipo</th>
-                                <th scope="col">Acciones</th>
                             </tr>
                             <tr className="table-light">
                                 <th />
@@ -138,18 +139,6 @@ export function TablaFichajes() {
                                         <td>{formatearFecha(entrada)}</td>
                                         <td>{formatearFecha(obtenerValor(fichaje, ['fecha_salida'], null))}</td>
                                         <td>{obtenerValor(fichaje, ['tipo'])}</td>
-                                        <td className="h-auto acciones-tabla">
-                                            <button
-                                                className="btn btn-primary btn-sm bi bi-pencil-fill"
-                                                title="Editar fichaje"
-                                                aria-label="Editar fichaje"
-                                            />
-                                            <button
-                                                className="btn btn-danger btn-sm bi bi-trash-fill"
-                                                title="Eliminar fichaje"
-                                                aria-label="Eliminar fichaje"
-                                            />
-                                        </td>
                                     </tr>
                                 );
                             }) : (

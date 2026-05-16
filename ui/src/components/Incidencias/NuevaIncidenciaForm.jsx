@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useMensaje } from "../../hooks/useMensaje.js";
 import { useUsers } from "../../context/UserContext.jsx";
-import { apiFetch } from "../../utils/apiFetch.jsx";
+import { enviarIncidencia } from "../../utils/RegisterNewIncidencia.js";
 import "../../../public/styles/tablaPermisos.css";
 
 /**
@@ -25,38 +25,19 @@ export function NuevaIncidenciaForm({ funcionDeCierreDeFormulario, handleNuevaIn
         setMensaje(null);
 
         const formData = new FormData(event.currentTarget);
-        formData.set('id_empleado', user?.id || '');
-
-        try {
-            const urlIncidencias = import.meta.env.VITE_BACKEND_INCIDENCIAS
-                || `${import.meta.env.VITE_BACKEND}/incidencias`;
-
-            const response = await apiFetch(
-                urlIncidencias,
-                {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                        'token': user?.token,
-                    },
-                    body: new URLSearchParams(formData),
-                }
-            );
-
-            const data = await response.json();
-
-            if (!response.ok) {
-                setMensaje({ tipo: 'danger', texto: data?.message || 'No se pudo registrar la incidencia.' });
-                return;
-            }
-
+        const [ok, texto] = await enviarIncidencia(
+            user?.token,
+            user?.id,
+            tipoIncidencia,
+            formData.get('observaciones'),
+            formData.get('comentario') || '',
+        );
+        if (ok) {
             handleNuevaIncidencia();
-        } catch (error) {
-            console.error(error);
-            setMensaje({ tipo: 'danger', texto: 'Error al registrar la incidencia.' });
-        } finally {
-            setSeEstaEnviando(false);
+        } else {
+            setMensaje({ tipo: 'danger', texto });
         }
+        setSeEstaEnviando(false);
     }
 
     return (
@@ -81,18 +62,6 @@ export function NuevaIncidenciaForm({ funcionDeCierreDeFormulario, handleNuevaIn
                     )}
 
                     <form onSubmit={handleSubmit}>
-                        <input
-                            type="hidden"
-                            name="token"
-                            defaultValue={user?.token}
-                        />
-
-                        <input
-                            type="hidden"
-                            name="tipo"
-                            defaultValue={tipoIncidencia}
-                        />
-
                         <h4 className="mb-2 mt-1 border-bottom pb-1" style={{fontSize: '0.9rem'}}>
                             Informacion de la incidencia
                         </h4>

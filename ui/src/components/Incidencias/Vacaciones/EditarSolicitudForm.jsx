@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useMensaje } from "../../../hooks/useMensaje.js";
 import { useUsers } from "../../../context/UserContext.jsx";
-import { apiFetch } from "../../../utils/apiFetch.jsx";
+import { enviarSolicitud } from "../../../utils/RegisterNewSolicitud.js";
 import "../../../../public/styles/tablaPermisos.css";
 
 const ESTADOS_SOLICITUD = [
@@ -30,11 +30,11 @@ export function EditarSolicitudForm({ solicitud, funcionDeCierreDeFormulario, ha
     const [enviando, setEnviando] = useState(false);
     const [mensaje, setMensaje] = useMensaje();
     const [form, setForm] = useState({
-        id_incidencia: obtenerValor(solicitud, ['id_incidencia', 'ID_INCIDENCIA', 'ID']),
-        tipo: obtenerValor(solicitud, ['tipo', 'Tipo']),
-        fecha_inicio: formatearFechaInput(obtenerValor(solicitud, ['fecha_inicio', 'Fecha_inicio'], null)),
-        fecha_fin: formatearFechaInput(obtenerValor(solicitud, ['fecha_fin', 'Fecha_fin'], null)),
-        estado: obtenerValor(solicitud, ['estado', 'Estado'], 'En revisión'),
+        id_incidencia: obtenerValor(solicitud, ['ID_INCIDENCIA']),
+        tipo: obtenerValor(solicitud, ['tipo']),
+        fecha_inicio: formatearFechaInput(obtenerValor(solicitud, ['fecha_inicio'], null)),
+        fecha_fin: formatearFechaInput(obtenerValor(solicitud, ['fecha_fin'], null)),
+        estado: obtenerValor(solicitud, ['estado'], 'En revisión'),
     });
 
     function handleChange(event) {
@@ -47,40 +47,20 @@ export function EditarSolicitudForm({ solicitud, funcionDeCierreDeFormulario, ha
         setEnviando(true);
         setMensaje(null);
 
-        try {
-            const urlSolicitudes = import.meta.env.VITE_BACKEND_SOLICITUDES
-                || import.meta.env.VITE_BACKEND_SOLICITUD
-                || `${import.meta.env.VITE_BACKEND}/vacaciones`;
-
-            const response = await apiFetch(
-                urlSolicitudes,
-                {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                        'token': user?.token,
-                    },
-                    body: new URLSearchParams(form).toString(),
-                }
-            );
-
-            const data = await response.json();
-
-            if (!response.ok) {
-                setMensaje({ tipo: 'danger', texto: data?.message || 'No se pudo actualizar la solicitud.' });
-                return;
-            }
-
-            setMensaje({ tipo: 'success', texto: data?.message || 'Solicitud actualizada correctamente.' });
-            setTimeout(() => {
-                handleSolicitudActualizada?.();
-            }, 700);
-        } catch (error) {
-            console.error(error);
-            setMensaje({ tipo: 'danger', texto: 'Error al actualizar la solicitud.' });
-        } finally {
-            setEnviando(false);
+        const [ok, texto] = await enviarSolicitud(user?.token, {
+            id_incidencia: form.id_incidencia,
+            tipo: form.tipo,
+            fecha_inicio: form.fecha_inicio,
+            fecha_fin: form.fecha_fin,
+            estado: form.estado,
+        });
+        if (ok) {
+            setMensaje({ tipo: 'success', texto });
+            setTimeout(() => handleSolicitudActualizada?.(), 700);
+        } else {
+            setMensaje({ tipo: 'danger', texto });
         }
+        setEnviando(false);
     }
 
     return (

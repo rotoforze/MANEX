@@ -35,7 +35,7 @@ export const MainNav = () => {
 
     return (
         <aside
-            className={`main-nav d-flex flex-column flex-shrink-0 p-3 text-white bg-dark fixed-left ${isMenuOpen ? 'menu-open' : ''}`}>
+            className={`main-nav d-flex flex-column flex-shrink-0 p-3 text-white bg-dark ${isMenuOpen ? 'menu-open' : ''}`}>
             <div className="d-flex align-items-center justify-content-between mb-3 mobile-menu-header">
                 <NavLink
                     className="d-flex align-items-center text-white text-decoration-none"
@@ -80,6 +80,13 @@ export const MainNav = () => {
                         (<NavLink className={navLinkClass} to="/contratos" end onClick={closeMenu}>
                             <i className="bi bi-file-earmark-text me-2" aria-hidden="true"/>
                             Contratos
+                        </NavLink>)
+                    }
+                    {
+                        (tengoPermiso('/departamentos', 'POST') || tengoPermiso('/departamentos', 'DELETE')) &&
+                        (<NavLink className={navLinkClass} to="/departamentos" end onClick={closeMenu}>
+                            <i className="bi bi-building me-2" aria-hidden="true"/>
+                            Departamentos
                         </NavLink>)
                     }
                     {

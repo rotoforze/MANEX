@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { SignInForm } from "../components/Empleados/SignInForm.jsx";
 import { TablaEmpleados } from "../components/Empleados/TablaEmpleados.jsx";
 import '../../public/styles/mainPages.css';
@@ -25,7 +25,7 @@ export function Empleados() {
     }
 
     return (
-        <div className="d-flex flex-column card w-100 h-100 empleados-container">
+        <div className="d-flex flex-column card w-100 empleados-container">
             <div className={"d-flex flex-column align-items-start justify-content-center gap-2 w-100 p-4"}>
                 <div className="d-flex flex-column flex-md-row justify-content-between align-items-start w-100 mb-4 gap-3">
 
@@ -58,7 +58,7 @@ export function Empleados() {
                 {registroVisible && <SignInForm funcionDeCierreDeFormulario={() => setRegistroVisible(false)} handleNuevoRegistro={handleNuevoRegistro} />}
             </div>
             <hr />
-            <div className="d-flex flex-column gap-2 w-100 p-4 justify-content-center">
+            <div className="d-flex flex-column gap-2 w-100 p-4 justify-content-center overflow-auto">
                 <TablaEmpleados key={refreshKey} />
             </div>
         </div>

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useMensaje } from "../../hooks/useMensaje.js";
 import { useUsers } from "../../context/UserContext.jsx";
-import {apiFetch} from "../../utils/apiFetch.jsx";
+import { enviarFichaje } from "../../utils/RegisterNewFichaje.js";
 import "../../../public/styles/tablaPermisos.css";
 
 /**
@@ -27,32 +27,13 @@ export function NuevoFichajeForm({ funcionDeCierreDeFormulario, handleNuevoFicha
         setMensaje(null);
 
         const formData = new FormData(event.currentTarget);
-        const datos = new URLSearchParams(formData);
-
-        try {
-            const response = await apiFetch(import.meta.env.VITE_BACKEND + '/fichajes', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'token': user?.token
-                },
-                body: datos
-            });
-
-            const data = await response.json();
-
-            if (!response.ok) {
-                setMensaje({ tipo: 'danger', texto: data?.message || 'No se pudo registrar el fichaje.' });
-                return;
-            }
-
+        const [ok, texto] = await enviarFichaje(user?.token, user?.username, formData.get('tipo') || '');
+        if (ok) {
             handleNuevoFichaje();
-        } catch (error) {
-            console.error(error);
-            setMensaje({ tipo: 'danger', texto: 'Error al registrar el fichaje.' });
-        } finally {
-            setSeEstaEnviando(false);
+        } else {
+            setMensaje({ tipo: 'danger', texto });
         }
+        setSeEstaEnviando(false);
     }
 
     return (
@@ -77,12 +58,6 @@ export function NuevoFichajeForm({ funcionDeCierreDeFormulario, handleNuevoFicha
                     )}
 
                     <form onSubmit={handleSubmit}>
-
-                        <input
-                            type="hidden"
-                            name="username"
-                            defaultValue={user?.username}
-                        />
 
                         <h4 className="mb-2 mt-1 border-bottom pb-1" style={{fontSize: '0.9rem'}}>
                             Información del fichaje
@@ -109,8 +84,8 @@ export function NuevoFichajeForm({ funcionDeCierreDeFormulario, handleNuevoFicha
                                         Presencial
                                     </option>
 
-                                    <option value="Teletrabajo">
-                                        Telematico
+                                    <option value="Remoto">
+                                        Remoto
                                     </option>
                                 </select>
                             </div>

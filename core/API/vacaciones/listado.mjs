@@ -22,7 +22,7 @@ export function listaSolicitudesVacaciones(req, res) {
         port: process.env.DB_PORT
     });
 
-    let {cantidad, pagina} = req.query;
+    let {cantidad, pagina, id_empleado} = req.query;
 
     // valores por defecto
 
@@ -65,47 +65,46 @@ export function listaSolicitudesVacaciones(req, res) {
             });
         }
 
-        connection.query(`SELECT COUNT(*) as total FROM solicitud_vacaciones`, (errCount, countResult) => {
-            if (errCount) {
-                connection.release();
-                pool.end();
-                return res.status(500).send({
-                    status: 500,
-                    message: "Error en la consulta"
-                });
-            }
+        const joinClause = id_empleado ? 'JOIN incidencia i ON sv.ID_INCIDENCIA = i.ID' : '';
+        const whereClause = id_empleado ? 'WHERE i.ID_EMPLEADO = ?' : '';
+        const params = id_empleado ? [id_empleado] : [];
 
-            const totalResultados = countResult[0].total;
-
-            connection.query(
-                `SELECT sv.*
-                 FROM solicitud_vacaciones sv
-                 ORDER BY sv.id_incidencia DESC
-                 LIMIT ? OFFSET ?`,
-                [cantidad, offset],
-                (error, result) => {
+        connection.query(
+            `SELECT COUNT(*) as total FROM solicitud_vacaciones sv ${joinClause} ${whereClause}`,
+            params,
+            (errCount, countResult) => {
+                if (errCount) {
                     connection.release();
                     pool.end();
+                    return res.status(500).send({ status: 500, message: "Error en la consulta" });
+                }
 
-                    if (error) {
-                        return res.status(500).send({
-                            status: 500,
-                            message: "Error en la consulta"
+                const totalResultados = countResult[0].total;
+
+                connection.query(
+                    `SELECT sv.* FROM solicitud_vacaciones sv ${joinClause} ${whereClause} ORDER BY sv.id_incidencia DESC LIMIT ? OFFSET ?`,
+                    [...params, cantidad, offset],
+                    (error, result) => {
+                        connection.release();
+                        pool.end();
+
+                        if (error) {
+                            return res.status(500).send({ status: 500, message: "Error en la consulta" });
+                        }
+
+                        return res.status(200).send({
+                            status: 200,
+                            meta: {
+                                pagina,
+                                cantidad,
+                                totalPaginas: Math.ceil(totalResultados / cantidad),
+                                resultados: totalResultados
+                            },
+                            data: result
                         });
                     }
-
-                    return res.status(200).send({
-                        status: 200,
-                        meta: {
-                            pagina,
-                            cantidad,
-                            totalPaginas: Math.ceil(totalResultados / cantidad),
-                            resultados: totalResultados
-                        },
-                        data: result
-                    });
-                }
-            );
-        });
+                );
+            }
+        );
     });
 }

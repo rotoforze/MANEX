@@ -24,6 +24,8 @@ import listadoPermisos from "./API/permisos/listado.mjs";
 import guardarPermisos from "./API/permisos/guardar.mjs";
 import eliminarPermisos from "./API/permisos/eliminar.mjs";
 
+import { resumenDashboard } from "./API/dashboard/resumen.mjs";
+import { cambiarPassword, solicitarRecuperacion, aplicarReset, listarSolicitudes, gestionarSolicitud } from "./API/password/password.mjs";
 import {listaFichajes} from "./API/fichajes/listado.mjs";
 import registrarFichaje from "./API/fichajes/nuevo.mjs";
 import actualizarFichaje from "./API/fichajes/actualizar.mjs";
@@ -85,16 +87,16 @@ app.get('/', (req, res) => {
                 'eliminarFichajes': ['/fichajes/', 'DELETE']
             },
             'incidencia': {
-                'listado': ['/fichajes', 'GET'],
-                'incidencia': ['/fichajes/', 'GET'],
-                'nuevaIncidencia': ['/fichajes', 'POST'],
-                'eliminarIncidencia': ['/fichajes/', 'DELETE']
+                'listado': ['/incidencias', 'GET'],
+                'incidencia': ['/incidencias/', 'GET'],
+                'nuevaIncidencia': ['/incidencias', 'POST'],
+                'eliminarIncidencia': ['/incidencias/', 'DELETE']
             },
             'solicitud_Vacacion': {
-                'listado': ['/fichajes', 'GET'],
-                'solicitudVacacion': ['/fichajes/', 'GET'],
-                'nuevaSolicitud': ['/fichajes', 'POST'],
-                'eliminarSolicitud': ['/fichajes/', 'DELETE']
+                'listado': ['/vacaciones', 'GET'],
+                'solicitudVacacion': ['/vacaciones/', 'GET'],
+                'nuevaSolicitud': ['/vacaciones', 'POST'],
+                'eliminarSolicitud': ['/vacaciones/', 'DELETE']
             }
         }
     });
@@ -112,6 +114,10 @@ app.post('/login', (req, res) => {
     login(req, res);
 
 })
+
+app.get('/dashboard', (req, res) => {
+    resumenDashboard(req, res);
+});
 
 app.get('/empleados', (req, res) => {
     const parametrosRecibidos = Object.keys(req.query);
@@ -142,9 +148,8 @@ app.get('/fichajes', (req, res) => {
             message: `Parámetros no permitidos: ${parametrosNoValidos.join(', ')}`
         });
     }
-    if (req?.query?.username) {
+    if (req?.query?.username && (!req?.query?.cantidad && !req?.query?.pagina)) {
         getFichaje(req, res);
-
     } else listaFichajes(req, res);
 });
 
@@ -215,9 +220,9 @@ app.get('/vacaciones', (req, res) => {
         });
     }
 
-    if (req?.query?.id_empleado || req?.query?.fecha_inicio && req?.query?.fecha_fin) {
+    const tienePaginacion = req?.query?.pagina !== undefined || req?.query?.cantidad !== undefined;
+    if (!tienePaginacion && (req?.query?.id_empleado || (req?.query?.fecha_inicio && req?.query?.fecha_fin))) {
         getSolicitud(req, res);
-
     } else listaSolicitudesVacaciones(req, res);
 });
 
@@ -288,9 +293,9 @@ app.post('/fichajes', (req, res) => {
             }
         });
     }
-    // si en la petición viene un ID, vamos a actualizarUsuario
+    // si en la petición viene un ID, vamos a actualizarFichaje
     // en vez de a registrar
-    if (req?.body?.id || (req?.body?.username && req?.body?.fecha_salida)) {
+    if (req?.body?.id && !req?.body?.tipo || (req?.body?.username && req?.body?.fecha_salida)) {
         actualizarFichaje(req, res);
     } else registrarFichaje(req, res);
 });
@@ -304,7 +309,7 @@ app.post('/incidencias', (req, res) => {
             }
         });
     }
-    // si en la petición viene un ID, vamos a actualizarUsuario
+    // si en la petición viene un ID, vamos a actualizarIncidencia
     // en vez de a registrar
     if (req?.body?.id_incidencia) {
         actualizarIncidencia(req, res);
@@ -338,5 +343,11 @@ app.post('/permisos', (req, res) => {
         message: 'Datos inválidos'
     });
 });
+
+app.post('/password', cambiarPassword);
+app.post('/recuperar', solicitarRecuperacion);
+app.post('/reset', aplicarReset);
+app.get('/password-requests', listarSolicitudes);
+app.post('/password-requests', gestionarSolicitud);
 
 app.listen(80, () => console.log('Escuchando llamadas en http://localhost:80'));

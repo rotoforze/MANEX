@@ -36,8 +36,9 @@ const auth = async (req, res, next) => {
         console.log('Conexión %d liberada', connection.threadId);
     });
 
-    // si es login o la raíz, dejamos pasar
-    if (req.path == '/login' || req.path == '/' || req.path == '/permisos') return next();
+    // rutas que no requieren autenticación
+    const rutasPublicas = ['/login', '/', '/permisos', '/recuperar', '/reset'];
+    if (rutasPublicas.includes(req.path)) return next();
     // si no se recibe un token, no se permite el acceso
     if (!req?.headers?.token) {
         return res.status(401).json({
@@ -45,7 +46,7 @@ const auth = async (req, res, next) => {
         });
     }
     // comprobamos si el token es valido (si existe en la bbdd)
-    const nivelAcceso = await getNivelAcceso(req?.headers?.token, pool);
+    const { nivel: nivelAcceso, username: authUsername } = await getNivelAcceso(req?.headers?.token, pool);
 
     if (nivelAcceso == -1) {
         return res.status(444).json({
@@ -63,24 +64,18 @@ const auth = async (req, res, next) => {
 
         const permiso = metodosRuta[req.method];
 
-        // si tiene * como valor, pasamos
-        if (permiso.includes('*')) permisoAprobado = true;
-
-        try {
-            var accesoMin = permiso[0].split('>');
-            if (accesoMin.length == 2) {
-                accesoMin = accesoMin[1];
+        if (permiso.includes('*')) {
+            permisoAprobado = true;
+        } else if (permiso.includes(String(nivelAcceso))) {
+            permisoAprobado = true;
+        } else {
+            const primero = permiso[0];
+            if (primero?.startsWith('>')) {
+                const minimo = parseInt(primero.slice(1), 10);
+                if (nivelAcceso >= minimo) permisoAprobado = true;
             }
-            // si tiene un valor mayor que el nivel de permiso, pasamos
-            if (accesoMin) {
-                if (nivelAcceso >= parseInt(accesoMin)) {
-                    permisoAprobado = true;
-                }
-            }
-
-        } catch (e) {
-            console.log(e);
         }
+
         if (!permisoAprobado) {
             return res.status(403).json({ message: 'No tienes permiso para esta acción' });
         }
@@ -88,7 +83,8 @@ const auth = async (req, res, next) => {
         return res.status(403).json({ message: 'No tienes permiso para esta acción' });
     }
 
-    // lo guardo en la request por si acaso
+    req.nivelAcceso = nivelAcceso;
+    req.authUsername = authUsername;
     return next();
 }
 
@@ -104,14 +100,14 @@ const auth = async (req, res, next) => {
 async function getNivelAcceso(token, pool) {
     try {
         const [rows] = await pool.query(
-            'SELECT e.ID_DEPARTAMENTO FROM auth_token a JOIN EMPLEADO e ON a.USERNAME = e.USERNAME WHERE a.token = ? AND a.EXPIRES_AT > NOW();',
+            'SELECT e.ID_DEPARTAMENTO, a.USERNAME FROM auth_token a JOIN EMPLEADO e ON a.USERNAME = e.USERNAME WHERE a.token = ? AND a.EXPIRES_AT > NOW();',
             [token]
         );
         if (rows.length > 0) {
-            return rows[0].ID_DEPARTAMENTO;
+            return { nivel: rows[0].ID_DEPARTAMENTO, username: rows[0].USERNAME };
         }
 
-        return -1;
+        return { nivel: -1, username: null };
     } catch (err) {
         console.error("Error en DB:", err);
         throw err;
