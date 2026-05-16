@@ -8,7 +8,7 @@ const Paginacion = {
     DEFAULT_CANTIDAD_PAGINACION: 10,
     DEFAULT_PAGINA: 0,
 
-    PARAMETROS_PERMITIDOS: ['cantidad', 'pagina', 'id', 'username',"id_empleado","id_incidencia","fecha_inicio","fecha_fin"],
+    PARAMETROS_PERMITIDOS: ['cantidad', 'pagina', 'id', 'username',"id_empleado","id_incidencia","fecha_inicio","fecha_fin","estado"],
 }
 
 export default Paginacion;
