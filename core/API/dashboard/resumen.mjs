@@ -12,30 +12,37 @@ const pool = mysql.createPool({
 });
 
 /**
- * Devuelve un resumen agregado de todos los módulos para el dashboard.
- * Modo admin (sin username): KPIs globales + últimos registros de cada módulo.
- * Modo empleado (con username): datos personales del empleado autenticado.
+ * Devuelve un resumen unificado del dashboard.
+ * Siempre incluye datos personales del empleado (user).
+ * Incluye estadísticas globales (globalStats) solo si el token pertenece a un admin (dept > 1).
  *
  * @author Eneas de la Rosa Menéndez Pedrosa
- * @version 1.0.0
+ * @version 2.0.0
  * @param {Request} req
  * @param {Response} res
  */
 export async function resumenDashboard(req, res) {
     const { username } = req.query;
+    const nivelAcceso = req.nivelAcceso ?? 1;
 
     try {
-        if (username) {
-            return await resumenEmpleado(username, res);
+        const [userData, globalStats] = await Promise.all([
+            username ? fetchUserData(username) : Promise.resolve(null),
+            nivelAcceso > 1 ? fetchGlobalStats() : Promise.resolve({}),
+        ]);
+
+        if (username && !userData) {
+            return res.status(404).send({ status: 404, message: 'Empleado no encontrado.' });
         }
-        return await resumenAdmin(res);
+
+        return res.status(200).send({ status: 200, user: userData, globalStats });
     } catch (err) {
         console.error('Error en /dashboard:', err);
         return res.status(500).send({ status: 500, message: 'Error al obtener el resumen del dashboard.' });
     }
 }
 
-async function resumenAdmin(res) {
+async function fetchGlobalStats() {
     const [
         [[{ empleados }]],
         [[{ fichajes }]],
@@ -44,6 +51,8 @@ async function resumenAdmin(res) {
         [incidenciasPorEstado],
         [inventarioPorEstado],
         [vacacionesPorEstado],
+        [[{ activas }]],
+        [[{ proximas }]],
     ] = await Promise.all([
         pool.query(`SELECT COUNT(*) AS empleados FROM empleado WHERE esVisible = 1`),
         pool.query(`SELECT COUNT(*) AS fichajes FROM fichajes`),
@@ -52,31 +61,33 @@ async function resumenAdmin(res) {
         pool.query(`SELECT estado, COUNT(*) AS total FROM incidencia GROUP BY estado`),
         pool.query(`SELECT Estado, COUNT(*) AS total FROM inventario GROUP BY Estado`),
         pool.query(`SELECT estado, COUNT(*) AS total FROM solicitud_vacaciones GROUP BY estado`),
+        pool.query(`SELECT COUNT(*) AS activas FROM solicitud_vacaciones
+                    WHERE estado IN ('Concedido','Aprobada')
+                      AND fecha_inicio <= CURDATE() AND fecha_fin >= CURDATE()`),
+        pool.query(`SELECT COUNT(*) AS proximas FROM solicitud_vacaciones
+                    WHERE estado IN ('Concedido','Aprobada')
+                      AND fecha_inicio > CURDATE()
+                      AND fecha_inicio <= DATE_ADD(CURDATE(), INTERVAL 7 DAY)`),
     ]);
 
-    return res.status(200).send({
-        status: 200,
-        kpis: {
-            empleados,
-            fichajes,
-            departamentos,
-            contratos,
-            incidencias: agrupar(incidenciasPorEstado, 'estado'),
-            inventario:  agrupar(inventarioPorEstado,  'Estado'),
-            vacaciones:  agrupar(vacacionesPorEstado,  'estado'),
-        },
-    });
+    return {
+        empleados,
+        fichajes,
+        departamentos,
+        contratos,
+        incidencias: agrupar(incidenciasPorEstado, 'estado'),
+        inventario:  agrupar(inventarioPorEstado,  'Estado'),
+        vacaciones:  { ...agrupar(vacacionesPorEstado, 'estado'), activas, proximas },
+    };
 }
 
-async function resumenEmpleado(username, res) {
+async function fetchUserData(username) {
     const [empleadoRows] = await pool.query(
         `SELECT e.*, u.email FROM empleado e JOIN usuario u ON e.USERNAME = u.USERNAME WHERE e.USERNAME = ? AND e.esVisible = 1`,
         [username]
     );
 
-    if (!empleadoRows.length) {
-        return res.status(404).send({ status: 404, message: 'Empleado no encontrado.' });
-    }
+    if (!empleadoRows.length) return null;
 
     const perfil = empleadoRows[0];
     const idEmpleado = perfil.id ?? perfil.ID;
@@ -116,8 +127,7 @@ async function resumenEmpleado(username, res) {
         ),
     ]);
 
-    return res.status(200).send({
-        status: 200,
+    return {
         perfil,
         fichajes,
         incidencias,
@@ -126,7 +136,7 @@ async function resumenEmpleado(username, res) {
             incidencias: { total: incKpis.total, abiertas: incKpis.abiertas ?? 0 },
             vacaciones:  { total: vacKpis.total, pendientes: vacKpis.pendientes ?? 0 },
         },
-    });
+    };
 }
 
 /** Convierte filas GROUP BY en { total, [estado]: count, ... } */
