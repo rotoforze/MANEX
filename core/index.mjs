@@ -85,16 +85,16 @@ app.get('/', (req, res) => {
                 'eliminarFichajes': ['/fichajes/', 'DELETE']
             },
             'incidencia': {
-                'listado': ['/fichajes', 'GET'],
-                'incidencia': ['/fichajes/', 'GET'],
-                'nuevaIncidencia': ['/fichajes', 'POST'],
-                'eliminarIncidencia': ['/fichajes/', 'DELETE']
+                'listado': ['/incidencias', 'GET'],
+                'incidencia': ['/incidencias/', 'GET'],
+                'nuevaIncidencia': ['/incidencias', 'POST'],
+                'eliminarIncidencia': ['/incidencias/', 'DELETE']
             },
             'solicitud_Vacacion': {
-                'listado': ['/fichajes', 'GET'],
-                'solicitudVacacion': ['/fichajes/', 'GET'],
-                'nuevaSolicitud': ['/fichajes', 'POST'],
-                'eliminarSolicitud': ['/fichajes/', 'DELETE']
+                'listado': ['/vacaciones', 'GET'],
+                'solicitudVacacion': ['/vacaciones/', 'GET'],
+                'nuevaSolicitud': ['/vacaciones', 'POST'],
+                'eliminarSolicitud': ['/vacaciones/', 'DELETE']
             }
         }
     });

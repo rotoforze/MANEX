@@ -12,8 +12,7 @@ async function verificadorDatos(req, res, updating = false) {
         username, id, tipo
     } = req.body;
 
-    // validaciones
-    if (!username || !tipo) {
+    if (!username || (!updating && !tipo)) {
         return res.status(400).send({status: 400, message: 'Faltan datos.'})
     }
 

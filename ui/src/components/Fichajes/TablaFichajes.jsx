@@ -45,7 +45,7 @@ export function TablaFichajes({setFichajeActivo}) {
                 return data;
             })
             .then((data) => {
-                setFichajeActivo(data?.fichajeActivo)
+                setFichajeActivo(data?.meta?.fichajeActivo)
                 setListaFichajes(data?.data || []);
                 setPaginaMaxima((data?.meta?.totalPaginas || 1) - 1);
                 setTotalRegistros(data?.meta?.resultados || 0);
