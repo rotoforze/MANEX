@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
+import { NavLink } from "react-router-dom";
 import { useUsers } from "../../context/UserContext.jsx";
 import { apiFetch } from "../../utils/apiFetch.jsx";
 import { useMensaje } from "../../hooks/useMensaje.js";
@@ -59,7 +60,8 @@ export function InfoDashboardEmpleado() {
     const [fichajes, setFichajes]       = useState([]);
     const [incidencias, setIncidencias] = useState([]);
     const [vacaciones, setVacaciones]   = useState([]);
-    const [cargando, setCargando]           = useState(true);
+    const [kpisEmpleado, setKpisEmpleado] = useState(null);
+    const [cargando, setCargando]         = useState(true);
     const [mensajeFichaje, setMensajeFichaje] = useMensaje();
     const [enviandoFichaje, setEnviandoFichaje] = useState(false);
     const [tipoSeleccionado, setTipoSeleccionado] = useState('Presencial');
@@ -73,32 +75,32 @@ export function InfoDashboardEmpleado() {
     const cargarDatos = useCallback(async (silencioso = false) => {
         if (!silencioso) setCargando(true);
         try {
-            const headers = { token: user?.token };
-            const [resPerfil, resFich, resInc, resVac] = await Promise.all([
-                apiFetch(`${base}/empleados?id=${user?.id}`, { headers }),
-                apiFetch(`${base}/fichajes?username=${encodeURIComponent(user?.username)}&cantidad=10&pagina=0`, { headers }),
-                apiFetch(`${base}/incidencias?id=${user?.id}&cantidad=5&pagina=0`, { headers }),
-                apiFetch(`${base}/vacaciones?id_empleado=${user?.id}&cantidad=5&pagina=0`, { headers }),
-            ]);
-            const [dPerfil, dFich, dInc, dVac] = await Promise.all([
-                resPerfil.json(), resFich.json(), resInc.json(), resVac.json(),
-            ]);
-            setPerfil(dPerfil?.usuario?.[0] ?? null);
-            setFichajes(dFich?.usuario ?? []);
-            setIncidencias(dInc?.usuario ?? dInc?.data ?? []);
-            setVacaciones(dVac?.usuario ?? dVac?.data ?? []);
+            const urlDashboard = import.meta.env.VITE_BACKEND_DASHBOARD || `${base}/dashboard`;
+            const res = await apiFetch(
+                `${urlDashboard}?username=${encodeURIComponent(user?.username)}`,
+                { headers: { token: user?.token } }
+            );
+            const data = await res.json();
+            if (!res.ok) throw new Error(data?.message);
+            setPerfil(data?.perfil ?? null);
+            setFichajes(data?.fichajes ?? []);
+            setIncidencias(data?.incidencias ?? []);
+            setVacaciones(data?.vacaciones ?? []);
+            setKpisEmpleado(data?.kpis ?? null);
         } catch (e) {
             console.error(e);
         } finally {
             setCargando(false);
         }
-    }, [user?.token, user?.id, user?.username, base]);   // silencioso no va en deps, es parámetro de llamada
+    }, [user?.token, user?.username, base]);
 
     useEffect(() => { cargarDatos(); }, [cargarDatos]);
 
     const fichajeActivo = fichajes.find(f => f.fecha_entrada && !f.fecha_salida) ?? null;
-    const incAbiertas   = incidencias.filter(i => i?.estado === 'Abierta' || i?.estado === 'Pendiente').length;
-    const vacPendientes = vacaciones.filter(v => v?.estado === 'En revisión' || v?.estado === 'Pendiente').length;
+    const incAbiertas   = kpisEmpleado?.incidencias?.abiertas  ?? incidencias.filter(i => i?.estado === 'Abierta' || i?.estado === 'Pendiente').length;
+    const incTotal      = kpisEmpleado?.incidencias?.total     ?? incidencias.length;
+    const vacPendientes = kpisEmpleado?.vacaciones?.pendientes ?? vacaciones.filter(v => v?.estado === 'En revisión' || v?.estado === 'Pendiente').length;
+    const vacTotal      = kpisEmpleado?.vacaciones?.total      ?? vacaciones.length;
 
     async function handleFichaje(accion) {
         setEnviandoFichaje(true);
@@ -242,7 +244,7 @@ export function InfoDashboardEmpleado() {
                             <div>
                                 <div className="text-muted small">Incidencias abiertas</div>
                                 <div className="fs-3 fw-bold lh-1">{incAbiertas}</div>
-                                <div className="text-muted" style={{ fontSize: '0.75rem' }}>de {incidencias.length} totales</div>
+                                <div className="text-muted" style={{ fontSize: '0.75rem' }}>de {incTotal} totales</div>
                             </div>
                         </div>
                     </div>
@@ -258,7 +260,7 @@ export function InfoDashboardEmpleado() {
                             <div>
                                 <div className="text-muted small">Solicitudes pendientes</div>
                                 <div className="fs-3 fw-bold lh-1">{vacPendientes}</div>
-                                <div className="text-muted" style={{ fontSize: '0.75rem' }}>de {vacaciones.length} totales</div>
+                                <div className="text-muted" style={{ fontSize: '0.75rem' }}>de {vacTotal} totales</div>
                             </div>
                         </div>
                     </div>
@@ -267,10 +269,13 @@ export function InfoDashboardEmpleado() {
 
             {/* ── Fichajes recientes ── */}
             <div className="card border-0 shadow-sm mb-4">
-                <div className="card-header bg-transparent border-bottom pb-2 pt-3 px-3">
+                <div className="card-header bg-transparent border-bottom pb-2 pt-3 px-3 d-flex justify-content-between align-items-center">
                     <h6 className="fw-semibold mb-0">
                         <i className="bi bi-person-check me-2 text-primary" aria-hidden="true"></i>Fichajes recientes
                     </h6>
+                    <NavLink to="/fichajes" className="btn btn-outline-primary btn-sm">
+                        Ver más <i className="bi bi-arrow-right ms-1" aria-hidden="true"></i>
+                    </NavLink>
                 </div>
                 <div className="card-body p-0">
                     {fichajes.length > 0 ? (
@@ -314,10 +319,13 @@ export function InfoDashboardEmpleado() {
 
             {/* ── Mis incidencias ── */}
             <div className="card border-0 shadow-sm mb-4">
-                <div className="card-header bg-transparent border-bottom pb-2 pt-3 px-3">
+                <div className="card-header bg-transparent border-bottom pb-2 pt-3 px-3 d-flex justify-content-between align-items-center">
                     <h6 className="fw-semibold mb-0">
                         <i className="bi bi-bookmark me-2 text-warning" aria-hidden="true"></i>Mis incidencias
                     </h6>
+                    <NavLink to="/incidencia" className="btn btn-outline-warning btn-sm">
+                        Ver más <i className="bi bi-arrow-right ms-1" aria-hidden="true"></i>
+                    </NavLink>
                 </div>
                 <div className="card-body p-0">
                     {incidencias.length > 0 ? (
@@ -360,10 +368,13 @@ export function InfoDashboardEmpleado() {
 
             {/* ── Mis solicitudes de vacaciones ── */}
             <div className="card border-0 shadow-sm mb-4">
-                <div className="card-header bg-transparent border-bottom pb-2 pt-3 px-3">
+                <div className="card-header bg-transparent border-bottom pb-2 pt-3 px-3 d-flex justify-content-between align-items-center">
                     <h6 className="fw-semibold mb-0">
                         <i className="bi bi-calendar-check me-2 text-info" aria-hidden="true"></i>Mis solicitudes de vacaciones
                     </h6>
+                    <NavLink to="/solicitudes" className="btn btn-outline-info btn-sm">
+                        Ver más <i className="bi bi-arrow-right ms-1" aria-hidden="true"></i>
+                    </NavLink>
                 </div>
                 <div className="card-body p-0">
                     {vacaciones.length > 0 ? (

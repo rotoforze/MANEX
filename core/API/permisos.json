@@ -122,5 +122,11 @@
             "8"
         ]
     },
+    "/dashboard": {
+        "protected": false,
+        "GET": [
+            "*"
+        ]
+    },
     "/prueba": null
 }

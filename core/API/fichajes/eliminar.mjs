@@ -13,8 +13,12 @@ async function delFichaje(req, res) {
 
     const {id} = req.body;
 
-    if ((id && id < 0)) {
-        return res.status(400).send({status: 400, message: 'El ID del empleado no puede ser negativo.'});
+    if (!id) {
+        return res.status(400).send({status: 400, message: 'El ID del fichaje es obligatorio.'});
+    }
+
+    if (id < 0) {
+        return res.status(400).send({status: 400, message: 'El ID del fichaje no puede ser negativo.'});
     }
     const config = {
         host: process.env.DB_HOST,
@@ -43,7 +47,7 @@ async function delFichaje(req, res) {
 
         console.error('Error al eliminar el fichaje:', error);
 
-        return res.status(500).send({status: 500, message: 'Error al eliminar el fichake.'});
+        return res.status(500).send({status: 500, message: 'Error al eliminar el fichaje.'});
 
     } finally {
         await connection.end();

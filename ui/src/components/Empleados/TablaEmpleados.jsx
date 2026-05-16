@@ -150,19 +150,19 @@ export function TablaEmpleados() {
                                     <td>{empleado?.ID_CONTRATO}</td>
                                     <td className="h-auto acciones-tabla">
                                         <button
-                                            className="btn btn-primary btn-sm bi bi-pencil-fill"
+                                            className="btn btn-primary btn-sm"
                                             title="Editar empleado"
                                             aria-label="Editar empleado"
                                             onClick={() => setEmpleadoEditando(empleado)}
                                             disabled={!tengoPermiso('/empleados', 'POST')}
-                                        />
+                                        ><i className="bi bi-pencil-fill" aria-hidden="true" /></button>
                                         <button
-                                            className="btn btn-danger btn-sm bi bi-trash-fill"
+                                            className="btn btn-danger btn-sm"
                                             title="Eliminar empleado"
                                             aria-label="Eliminar empleado"
                                             onClick={() => setEmpleadoEliminando(empleado)}
                                             disabled={!tengoPermiso('/empleados', 'DELETE')}
-                                        />
+                                        ><i className="bi bi-trash-fill" aria-hidden="true" /></button>
                                     </td>
                                 </tr>
                             )) : (

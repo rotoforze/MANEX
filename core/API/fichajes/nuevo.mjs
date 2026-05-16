@@ -28,19 +28,20 @@ async function registrarFichaje(req, res) {
     const connection = await mysql.createConnection(config);
     if (!connection) return res.status(500).send({ status: 500, message: 'Error al conectar a la base de datos.' });
 
+    await connection.beginTransaction();
+
     try {
         const [ id ] = await connection.query('SELECT id FROM empleado WHERE username = ?', [username]);
-
         const [tieneFichajeActivo] = await connection.query(
             `SELECT COUNT(*) as tieneFichajeActivo FROM fichajes WHERE ID_EMPLEADO = ? AND (fecha_entrada IS NOT NULL AND fecha_salida IS NULL);`,
             [id[0].id]
         );
 
         if (tieneFichajeActivo[0].tieneFichajeActivo) {
-            // actualizar el fichaje activo
             await connection.query(
                 'UPDATE fichajes SET fecha_salida = CURRENT_TIMESTAMP() WHERE ID_EMPLEADO = ? AND (fecha_entrada IS NOT NULL AND fecha_salida IS NULL);',
-            [id[0].id])
+            [id[0].id]);
+            await connection.commit();
             return res.status(200).send({ status: 200, message: 'Fichaje actualizado correctamente.' });
         }
 

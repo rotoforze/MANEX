@@ -22,7 +22,7 @@ export function listaIncidencias(req, res) {
         port: process.env.DB_PORT
     });
 
-    let {cantidad, pagina} = req.query;
+    let {cantidad, pagina, id_empleado} = req.query;
 
     // valores por defecto
 
@@ -60,37 +60,41 @@ export function listaIncidencias(req, res) {
                 message: "Error de base de datos"
             });
         }
-        let totalResultados = 0;
-        connection.query(`SELECT COUNT(*) as total FROM incidencia;`, (error, result) => {
-            totalResultados = result[0].total;
-        })
+        const whereClause = id_empleado ? 'WHERE i.ID_EMPLEADO = ?' : '';
+        const params = id_empleado ? [id_empleado] : [];
+
         connection.query(
-            `SELECT i.*
-             FROM incidencia i 
-             ORDER BY i.estado DESC LIMIT ?
-             OFFSET ?`,
-            [cantidad, offset],
-            (error, result) => {
-
-                connection.release();
-
-                if (error) {
-                    return res.status(500).send({
-                        status: 500,
-                        message: "Error en la consulta"
-                    });
+            `SELECT COUNT(*) as total FROM incidencia i ${whereClause}`,
+            params,
+            (errCount, countResult) => {
+                if (errCount) {
+                    connection.release();
+                    return res.status(500).send({ status: 500, message: "Error en la consulta" });
                 }
+                const totalResultados = countResult[0].total;
 
-                return res.status(200).send({
-                    status: 200,
-                    meta: {
-                        pagina,
-                        cantidad,
-                        totalPaginas: Math.ceil(totalResultados / cantidad),
-                        resultados: result.length
-                    },
-                    data: result
-                });
+                connection.query(
+                    `SELECT i.* FROM incidencia i ${whereClause} ORDER BY i.estado DESC LIMIT ? OFFSET ?`,
+                    [...params, cantidad, offset],
+                    (error, result) => {
+                        connection.release();
+
+                        if (error) {
+                            return res.status(500).send({ status: 500, message: "Error en la consulta" });
+                        }
+
+                        return res.status(200).send({
+                            status: 200,
+                            meta: {
+                                pagina,
+                                cantidad,
+                                totalPaginas: Math.ceil(totalResultados / cantidad),
+                                resultados: result.length
+                            },
+                            data: result
+                        });
+                    }
+                );
             }
         );
     });
