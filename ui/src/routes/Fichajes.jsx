@@ -41,10 +41,8 @@ export function Fichajes() {
 
                 <div className="d-flex gap-2 align-items-start justify-content-start top-accion">
                     <button
-                        className={"btn " + (fichajeActivo > 0 ? 'btn-danger' : 'btn-primary')}
-                        onClick={fichajeActivo ? undefined : () => setRegistroVisible(!registroVisible)}
-                        className={"btn top-accion-btn " + (registroVisible ? 'btn-danger' : 'btn-primary')}
-                        onClick={() => setRegistroVisible(!registroVisible)}
+                        className={"btn top-accion-btn " + (registroVisible || fichajeActivo > 0 ? 'btn-danger' : 'btn-primary')}
+                        onClick={fichajeActivo > 0 ? undefined : () => setRegistroVisible(!registroVisible)}
                     >
                         {fichajeActivo > 0 ? 'Finalizar turno' : 'Nuevo fichaje'}
                     </button>
