@@ -7,7 +7,7 @@
  * @param res
  * @returns {Promise<*>}
  */
-async function verificadorDatos(req, res, updating = false) {
+async function verificadorDatos(req, res) {
     const {
         username, id, tipo
     } = req.body;

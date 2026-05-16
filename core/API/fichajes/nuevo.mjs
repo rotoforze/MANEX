@@ -15,9 +15,6 @@ dotenv.config();
  */
 async function registrarFichaje(req, res) {
 
-    await verificadorDatos(req, res)
-    if (res.headersSent) return;
-
     const { username, tipo } = req.body;
 
     const config = {
@@ -67,6 +64,7 @@ async function registrarFichaje(req, res) {
     } finally {
         await connection.end();
     }
+    if (!res.headersSent) res.status(500).send({ status: 500, message: 'Error al registrar el fichaje.' });
 
 }
 
