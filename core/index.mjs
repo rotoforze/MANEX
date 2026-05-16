@@ -25,6 +25,7 @@ import guardarPermisos from "./API/permisos/guardar.mjs";
 import eliminarPermisos from "./API/permisos/eliminar.mjs";
 
 import { resumenDashboard } from "./API/dashboard/resumen.mjs";
+import { cambiarPassword, solicitarRecuperacion, aplicarReset, listarSolicitudes, gestionarSolicitud } from "./API/password/password.mjs";
 import {listaFichajes} from "./API/fichajes/listado.mjs";
 import registrarFichaje from "./API/fichajes/nuevo.mjs";
 import actualizarFichaje from "./API/fichajes/actualizar.mjs";
@@ -342,5 +343,11 @@ app.post('/permisos', (req, res) => {
         message: 'Datos inválidos'
     });
 });
+
+app.post('/password', cambiarPassword);
+app.post('/recuperar', solicitarRecuperacion);
+app.post('/reset', aplicarReset);
+app.get('/password-requests', listarSolicitudes);
+app.post('/password-requests', gestionarSolicitud);
 
 app.listen(80, () => console.log('Escuchando llamadas en http://localhost:80'));

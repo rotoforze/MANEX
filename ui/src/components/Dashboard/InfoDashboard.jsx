@@ -106,6 +106,129 @@ function TablaResumen({ filas, columnas, vacia }) {
     );
 }
 
+// ── Panel RRHH: Solicitudes de cambio de contraseña ─────────────────────────
+
+function PanelSolicitudesPassword({ token, base }) {
+    const [solicitudes, setSolicitudes]   = useState([]);
+    const [cargando, setCargando]         = useState(true);
+    const [codigoAprobado, setCodigo]     = useState(null); // { username, code }
+    const [procesando, setProcesando]     = useState(null); // id en proceso
+
+    async function cargar() {
+        setCargando(true);
+        try {
+            const res = await apiFetch(`${base}/password-requests`, { headers: { token } });
+            const data = await res.json();
+            setSolicitudes(data?.solicitudes ?? []);
+        } catch { /* silent */ } finally {
+            setCargando(false);
+        }
+    }
+
+    useEffect(() => { cargar(); }, []);
+
+    async function gestionar(id, accion) {
+        setProcesando(id);
+        try {
+            const res = await apiFetch(`${base}/password-requests`, {
+                method: 'POST',
+                headers: { token, 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: new URLSearchParams({ id, accion }).toString(),
+            });
+            const data = await res.json();
+            if (res.ok) {
+                if (accion === 'aprobar') setCodigo({ username: data.username, code: data.code });
+                cargar();
+            }
+        } catch { /* silent */ } finally {
+            setProcesando(null);
+        }
+    }
+
+    function formatFechaSol(fechaStr) {
+        if (!fechaStr) return '—';
+        const d = new Date(fechaStr);
+        return d.toLocaleString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+    }
+
+    if (cargando) return null;
+    if (!solicitudes.length && !codigoAprobado) return null;
+
+    return (
+        <>
+            <hr className="my-4" />
+            <h6 className="fw-semibold text-muted mb-3 text-uppercase" style={{ letterSpacing: '0.05em', fontSize: '0.75rem' }}>
+                <i className="bi bi-key-fill me-2 text-warning" aria-hidden="true"></i>
+                Solicitudes de cambio de contraseña
+                {solicitudes.length > 0 && (
+                    <span className="badge text-bg-warning ms-2">{solicitudes.length}</span>
+                )}
+            </h6>
+
+            {/* Código generado tras aprobar */}
+            {codigoAprobado && (
+                <div className="alert alert-success d-flex align-items-start gap-3 mb-3" role="alert">
+                    <i className="bi bi-check-circle-fill fs-5 flex-shrink-0 mt-1"></i>
+                    <div>
+                        <div className="fw-semibold mb-1">Solicitud de <strong>{codigoAprobado.username}</strong> aprobada</div>
+                        <div className="small mb-1">Comunica este código al empleado para que restablezca su contraseña:</div>
+                        <span className="fs-4 fw-bold font-monospace letter-spacing-2 me-3">{codigoAprobado.code}</span>
+                        <span className="badge text-bg-light text-muted">Válido 24 horas</span>
+                    </div>
+                    <button type="button" className="btn-close ms-auto" onClick={() => setCodigo(null)} aria-label="Cerrar"></button>
+                </div>
+            )}
+
+            {solicitudes.length > 0 && (
+                <div className="card border-0 shadow-sm mb-4">
+                    <div className="card-body p-0">
+                        <div className="table-responsive">
+                            <table className="table table-sm table-striped mb-0">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" className="ps-3">Usuario</th>
+                                        <th scope="col">Fecha solicitud</th>
+                                        <th scope="col" className="text-end pe-3">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="table-group-divider">
+                                    {solicitudes.map(s => (
+                                        <tr key={s.id}>
+                                            <td className="ps-3 fw-semibold">
+                                                <i className="bi bi-person me-2 text-muted"></i>{s.username}
+                                            </td>
+                                            <td className="text-muted small align-middle">{formatFechaSol(s.fecha_solicitud)}</td>
+                                            <td className="text-end pe-3">
+                                                <button
+                                                    className="btn btn-sm btn-success me-2"
+                                                    onClick={() => gestionar(s.id, 'aprobar')}
+                                                    disabled={procesando === s.id}
+                                                >
+                                                    {procesando === s.id
+                                                        ? <span className="spinner-border spinner-border-sm" role="status"></span>
+                                                        : <><i className="bi bi-check-lg me-1"></i>Aprobar</>
+                                                    }
+                                                </button>
+                                                <button
+                                                    className="btn btn-sm btn-outline-danger"
+                                                    onClick={() => gestionar(s.id, 'rechazar')}
+                                                    disabled={procesando === s.id}
+                                                >
+                                                    <i className="bi bi-x-lg me-1"></i>Rechazar
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            )}
+        </>
+    );
+}
+
 // ── Componente principal ──────────────────────────────────────────────────────
 
 /**
@@ -120,7 +243,6 @@ function TablaResumen({ filas, columnas, vacia }) {
 export function InfoDashboard() {
     const { user, isInitialLoading } = useUsers();
     const base = import.meta.env.VITE_BACKEND_DASHBOARD || `${import.meta.env.VITE_BACKEND}/dashboard`;
-    const esAdmin = user?.departamento > 1;
 
     // ── Estado ──
     const [cargando, setCargando]             = useState(true);
@@ -133,7 +255,7 @@ export function InfoDashboard() {
     const [vacaciones, setVacaciones]         = useState([]);
     const [kpisPersonales, setKpisPersonales] = useState(null);
 
-    // Datos globales (solo admin)
+    // Datos globales (solo admin — el backend decide si los incluye)
     const [kpisGlobales, setKpisGlobales]     = useState(null);
 
     // Fichaje en curso
@@ -152,26 +274,21 @@ export function InfoDashboard() {
         if (isInitialLoading || !user?.username) return;
         if (!silencioso) setCargando(true);
         try {
-            const headers = { token: user?.token };
-            const peticiones = [
-                apiFetch(`${base}?username=${encodeURIComponent(user.username)}`, { headers }),
-            ];
-            if (esAdmin) peticiones.push(apiFetch(base, { headers }));
+            const res = await apiFetch(
+                `${base}?username=${encodeURIComponent(user.username)}`,
+                { headers: { token: user?.token } }
+            );
+            const data = await res.json();
 
-            const respuestas = await Promise.all(peticiones);
-            const [dataPersonal, dataAdmin] = await Promise.all(respuestas.map(r => r.json()));
+            const userData = data?.user ?? {};
+            setPerfil(userData.perfil ?? null);
+            setFichajes(userData.fichajes ?? []);
+            setIncidencias(userData.incidencias ?? []);
+            setVacaciones(userData.vacaciones ?? []);
+            setKpisPersonales(userData.kpis ?? null);
 
-            if (!dataPersonal?.perfil) {
-                console.error('Dashboard: no se encontró perfil para', user.username, dataPersonal);
-            }
-
-            setPerfil(dataPersonal?.perfil ?? null);
-            setFichajes(dataPersonal?.fichajes ?? []);
-            setIncidencias(dataPersonal?.incidencias ?? []);
-            setVacaciones(dataPersonal?.vacaciones ?? []);
-            setKpisPersonales(dataPersonal?.kpis ?? null);
-
-            if (esAdmin && dataAdmin) setKpisGlobales(dataAdmin?.kpis ?? null);
+            const stats = data?.globalStats ?? {};
+            setKpisGlobales(Object.keys(stats).length > 0 ? stats : null);
 
             setUltima(new Date());
         } catch (e) {
@@ -179,7 +296,7 @@ export function InfoDashboard() {
         } finally {
             setCargando(false);
         }
-    }, [isInitialLoading, user?.token, user?.username, esAdmin, base]);
+    }, [isInitialLoading, user?.token, user?.username, base]);
 
     useEffect(() => {
         if (isInitialLoading) return;
@@ -215,7 +332,9 @@ export function InfoDashboard() {
     const vacGlobalPendientes  = (vac['En revisión'] ?? vac['En revision'] ?? 0) + (vac['Pendiente'] ?? 0);
     const vacGlobalAprobadas   = (vac['Concedido']   ?? 0) + (vac['Aprobada']   ?? 0);
     const vacGlobalRechazadas  = (vac['Rechazado']   ?? 0) + (vac['Rechazada']  ?? 0);
-    const vacGlobalTotal       =  vac.total ?? 0;
+    const vacGlobalTotal       =  vac.total   ?? 0;
+    const vacActivas           =  vac.activas ?? 0;
+    const vacProximas          =  vac.proximas ?? 0;
 
     // ── Acción fichaje ──
     async function handleFichaje(accion) {
@@ -388,6 +507,11 @@ export function InfoDashboard() {
                 </div>
             </div>
 
+            {/* ── Panel RRHH: Solicitudes de cambio de contraseña ── */}
+            {user?.departamento >= 5 && (
+                <PanelSolicitudesPassword token={user?.token} base={import.meta.env.VITE_BACKEND} />
+            )}
+
             {/* ── Fichajes recientes ── */}
             <div className="card border-0 shadow-sm mb-4">
                 <div className="card-header bg-transparent border-bottom pb-2 pt-3 px-3 d-flex justify-content-between align-items-center">
@@ -472,7 +596,7 @@ export function InfoDashboard() {
             {/* ══════════════════════════════════════════════
                 SECCIÓN ESTADÍSTICAS GLOBALES (solo admins)
             ══════════════════════════════════════════════ */}
-            {esAdmin && kpisGlobales && (
+            {kpisGlobales && (
                 <>
                     <hr className="my-4" />
 
@@ -496,7 +620,7 @@ export function InfoDashboard() {
                             <KpiCard icono="bi-clock-history"             titulo="Fichajes"    valor={kpisGlobales.fichajes}                                           color="secondary" />
                         </div>
                         <div className="col-6 col-md-4 col-lg">
-                            <KpiCard icono="bi-umbrella-fill"             titulo="Vacaciones"  valor={vacGlobalTotal}   subtitulo={`${vacGlobalPendientes} pendientes`} color="success" />
+                            <KpiCard icono="bi-umbrella-fill"             titulo="De vacaciones" valor={vacActivas} subtitulo={`${vacProximas} próximas en 7 días`} color="success" />
                         </div>
                     </div>
 
