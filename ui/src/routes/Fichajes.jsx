@@ -46,14 +46,12 @@ export function Fichajes() {
                     >
                         {fichajeActivo > 0 ? 'Finalizar turno' : 'Nuevo fichaje'}
                     </button>
-
                     <button
                         className="btn btn-primary top-accion-btn"
                         onClick={() => setRefreshKey(prev => prev + 1)}
                     >
                         Refrescar panel
                     </button>
-
                 </div>
 
                 {registroVisible && (
