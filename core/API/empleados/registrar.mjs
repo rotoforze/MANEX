@@ -44,9 +44,13 @@ async function registrar(req, res) {
             'INSERT INTO usuario (USERNAME, PASSWORD, EMAIL) VALUES (?, ?, ?)',
             [usuario, contraseniaHasheada, email]);
 
+        const [[{ nextId }]] = await connection.query(
+            'SELECT COALESCE(MAX(ID), 0) + 1 AS nextId FROM empleado FOR UPDATE'
+        );
+
         const resultadoEmpleado = await connection.query(
-            'INSERT INTO empleado (Nombre, Apellidos, fecha_nacimiento, telefono, ID_CONTRATO, ID_DEPARTAMENTO, USERNAME) VALUES (?, ?, ?, ?, ?, ?, ?)',
-            [nombre, apellidos, fecha_nacimiento, telefono, ID_contrato, ID_departamento, usuario]);
+            'INSERT INTO empleado (ID, Nombre, Apellidos, fecha_nacimiento, telefono, ID_CONTRATO, ID_DEPARTAMENTO, USERNAME) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+            [nextId, nombre, apellidos, fecha_nacimiento, telefono, ID_contrato, ID_departamento, usuario]);
 
         await connection.commit();
 
@@ -57,6 +61,14 @@ async function registrar(req, res) {
         await connection.rollback();
 
         console.error('Error al registrar el empleado:', error);
+
+        if (error.code === 'ER_DUP_ENTRY') {
+            const esUsername = error.sql?.includes('INSERT INTO usuario');
+            const mensaje = esUsername
+                ? 'El nombre de usuario ya está en uso.'
+                : 'Ya existe un empleado con esos datos.';
+            return res.status(409).send({status: 409, message: mensaje});
+        }
 
         return res.status(500).send({status: 500, message: 'Error al registrar el empleado.'});
 

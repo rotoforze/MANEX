@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useMensaje } from "../../../hooks/useMensaje.js";
 import { useUsers } from "../../../context/UserContext.jsx";
-import { apiFetch } from "../../../utils/apiFetch.jsx";
+import { enviarSolicitud } from "../../../utils/RegisterNewSolicitud.js";
 import "../../../../public/styles/tablaPermisos.css";
 
 /**
@@ -37,40 +37,20 @@ export function NuevaSolicitudForm({ funcionDeCierreDeFormulario, handleNuevaSol
             return;
         }
 
-        formData.set('id_empleado', user?.id || '');
-        formData.set('estado', 'En revisión');
-
-        try {
-            const urlSolicitudes = import.meta.env.VITE_BACKEND_SOLICITUDES
-                || import.meta.env.VITE_BACKEND_SOLICITUD
-                || `${import.meta.env.VITE_BACKEND}/vacaciones`;
-
-            const response = await apiFetch(
-                urlSolicitudes,
-                {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                        'token': user?.token,
-                    },
-                    body: new URLSearchParams(formData),
-                }
-            );
-
-            const data = await response.json();
-
-            if (!response.ok) {
-                setMensaje({ tipo: 'danger', texto: data?.message || 'No se pudo registrar la solicitud.' });
-                return;
-            }
-
+        const [ok, texto] = await enviarSolicitud(user?.token, {
+            id_empleado: user?.id,
+            tipo: formData.get('tipo'),
+            fecha_inicio: fechaInicio,
+            fecha_fin: fechaFin,
+            observaciones: formData.get('observaciones'),
+            estado: 'En revisión',
+        });
+        if (ok) {
             handleNuevaSolicitud();
-        } catch (error) {
-            console.error(error);
-            setMensaje({ tipo: 'danger', texto: 'Error al registrar la solicitud.' });
-        } finally {
-            setSeEstaEnviando(false);
+        } else {
+            setMensaje({ tipo: 'danger', texto });
         }
+        setSeEstaEnviando(false);
     }
 
     return (
@@ -95,13 +75,6 @@ export function NuevaSolicitudForm({ funcionDeCierreDeFormulario, handleNuevaSol
                     )}
 
                     <form onSubmit={handleSubmit}>
-
-                        <input
-                            type="hidden"
-                            name="token"
-                            defaultValue={user?.token}
-                        />
-
                         <h4 className="mb-2 mt-1 border-bottom pb-1" style={{fontSize: '0.9rem'}}>
                             Información de la solicitud
                         </h4>
