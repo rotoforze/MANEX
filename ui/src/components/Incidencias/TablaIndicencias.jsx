@@ -12,7 +12,7 @@ import "../../../public/styles/mainPages.css";
  * @returns {React.JSX.Element}
  * @constructor
  */
-export function TablaIncidencias({ tipoIncidencia }) {
+export function TablaIncidencias({ tipoIncidencia, idEmpleado }) {
     const [listaIncidencias, setListaIncidencias] = useState([]);
     const [errorCarga, setErrorCarga] = useState('');
     const [paginaActual, setPaginaActual] = useState(0);
@@ -28,8 +28,10 @@ export function TablaIncidencias({ tipoIncidencia }) {
         const urlIncidencias = import.meta.env.VITE_BACKEND_INCIDENCIAS
             || `${import.meta.env.VITE_BACKEND}/incidencias`;
 
+        const filtroEmpleado = idEmpleado ? `&id_empleado=${idEmpleado}` : '';
+
         apiFetch(
-            `${urlIncidencias}?pagina=${paginaActual}&cantidad=${cantidadPorPagina}`,
+            `${urlIncidencias}?pagina=${paginaActual}&cantidad=${cantidadPorPagina}${filtroEmpleado}`,
             {
                 method: 'GET',
                 headers: {
@@ -50,7 +52,7 @@ export function TablaIncidencias({ tipoIncidencia }) {
                 setErrorCarga('No se han podido cargar las incidencias.');
                 setListaIncidencias([]);
             });
-    }, [paginaActual, tipoIncidencia, cantidadPorPagina, user?.token]);
+    }, [paginaActual, tipoIncidencia, cantidadPorPagina, user?.token, idEmpleado]);
 
     function obtenerClaseEstado(estado) {
         switch (estado) {
@@ -146,15 +148,15 @@ export function TablaIncidencias({ tipoIncidencia }) {
                                         <td>{obtenerValor(incidencia, ['Comentario'])}</td>
                                         <td className="acciones-tabla">
                                             <button
-                                                className="btn btn-primary btn-sm bi bi-pencil-fill"
+                                                className="btn btn-primary btn-sm"
                                                 title="Editar incidencia"
                                                 aria-label="Editar incidencia"
-                                            />
+                                            ><i className="bi bi-pencil-fill" aria-hidden="true" /></button>
                                             <button
-                                                className="btn btn-danger btn-sm bi bi-trash-fill"
+                                                className="btn btn-danger btn-sm"
                                                 title="Eliminar incidencia"
                                                 aria-label="Eliminar incidencia"
-                                            />
+                                            ><i className="bi bi-trash-fill" aria-hidden="true" /></button>
                                         </td>
                                     </tr>
                                 );

@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { TablaIncidencias } from '../components/Incidencias/TablaIndicencias.jsx';
 import { NuevaIncidenciaForm } from "../components/Incidencias/NuevaIncidenciaForm.jsx";
+import { useUsers } from "../context/UserContext.jsx";
 import '../../public/styles/mainPages.css';
 
 /**
@@ -14,6 +15,9 @@ import '../../public/styles/mainPages.css';
  */
 export function Incidencias() {
 
+  const { user } = useUsers();
+  const idEmpleadoFiltro = user?.departamento === 1 ? user?.id : undefined;
+
   const [registroVisible, setRegistroVisible] = useState(false);
   const [tipoIncidencia, setTipoIncidencia] = useState('general');
   const [refreshKey, setRefreshKey] = useState(0);
@@ -25,7 +29,7 @@ export function Incidencias() {
 
   return (
 
-    <div className="d-flex flex-column card w-100 h-100 empleados-container">
+    <div className="d-flex flex-column card w-100 empleados-container">
 
       <div className={"d-flex flex-column align-items-start justify-content-center gap-2 w-100 p-4"}>
         <div className="d-flex flex-column flex-md-row justify-content-between align-items-start w-100 mb-4 gap-3">
@@ -75,11 +79,12 @@ export function Incidencias() {
 
       <hr />
 
-      <div className="d-flex flex-column gap-2 w-100 p-4 justify-content-center">
+      <div className="d-flex flex-column gap-2 w-100 p-4 justify-content-center overflow-auto">
 
         <TablaIncidencias
           key={refreshKey}
           tipoIncidencia={tipoIncidencia}
+          idEmpleado={idEmpleadoFiltro}
         />
 
       </div>

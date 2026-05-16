@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+﻿import React, {useEffect, useState} from 'react';
 import { NuevoFichajeForm } from "../components/Fichajes/NuevoFichajeform.jsx";
 import { TablaFichajes } from "../components/Fichajes/TablaFichajes.jsx";
 import '../../public/styles/mainPages.css';
@@ -24,7 +24,7 @@ export function Fichajes() {
     }
 
     return (
-        <div className="d-flex flex-column card w-100 h-100 empleados-container">
+        <div className="d-flex flex-column card w-100 empleados-container">
 
             <div className="d-flex flex-column align-items-start justify-content-center gap-2 w-100 p-4">
 

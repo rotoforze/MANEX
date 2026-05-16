@@ -109,19 +109,19 @@ export function TablaDepartamentos() {
                                     <td>{departamento?.Nombre}</td>
                                     <td className="h-auto acciones-tabla">
                                         <button
-                                            className="btn btn-primary btn-sm bi bi-pencil-fill"
+                                            className="btn btn-primary btn-sm"
                                             title="Editar departamento"
                                             aria-label="Editar departamento"
                                             onClick={() => setDepartamentoEditando(departamento)}
                                             disabled={!tengoPermiso('/departamentos', 'POST')}
-                                        />
+                                        ><i className="bi bi-pencil-fill" aria-hidden="true" /></button>
                                         <button
-                                            className="btn btn-danger btn-sm bi bi-trash-fill"
+                                            className="btn btn-danger btn-sm"
                                             title="Eliminar departamento"
                                             aria-label="Eliminar departamento"
                                             onClick={() => setDepartamentoEliminando(departamento)}
                                             disabled={!tengoPermiso('/departamentos', 'DELETE')}
-                                        />
+                                        ><i className="bi bi-trash-fill" aria-hidden="true" /></button>
                                     </td>
                                 </tr>
                             )) : (
