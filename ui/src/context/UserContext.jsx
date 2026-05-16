@@ -36,7 +36,16 @@ export function UserProvider({children}) {
     }
 
     function tengoPermiso(ruta, metodo, departamento = user.departamento) {
-        return permisos[ruta][metodo].includes(departamento+'') || (permisos[ruta][metodo][0][0] === '>' && parseInt(departamento, 10) >= parseInt(permisos[ruta][metodo][0][1], 10))
+        if (!permisos) return false;
+        const permiso = permisos[ruta]?.[metodo];
+        if (!permiso) return false;
+        if (permiso.includes('*')) return true;
+        if (permiso.includes(String(departamento))) return true;
+        const primero = permiso[0];
+        if (primero?.startsWith('>')) {
+            return parseInt(departamento, 10) >= parseInt(primero.slice(1), 10);
+        }
+        return false;
     }
 
     useEffect(() => {

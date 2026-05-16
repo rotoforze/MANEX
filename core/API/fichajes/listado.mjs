@@ -46,10 +46,12 @@ export async function listaFichajes(req, res) {
             params
         );
 
-        const [tieneFichajeActivo] = await pool.query(
-            `SELECT COUNT(*) as tieneFichajeActivo FROM fichajes WHERE ID_EMPLEADO = ? AND (fecha_entrada IS NOT NULL AND fecha_salida IS NULL);`,
-            [idUsuario]
-        );
+        const [tieneFichajeActivo] = hayUsuario
+            ? await pool.query(
+                `SELECT COUNT(*) as tieneFichajeActivo FROM fichajes WHERE ID_EMPLEADO = ? AND (fecha_entrada IS NOT NULL AND fecha_salida IS NULL);`,
+                [idUsuario]
+            )
+            : [[{ tieneFichajeActivo: 0 }]];
 
         const [result] = await pool.query(
             `SELECT f.id, f.id_empleado, e.username, e.nombre, e.apellidos,

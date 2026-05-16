@@ -117,19 +117,19 @@ export function TablaContratos() {
                                     <td>{contrato?.Horas_anuales} h</td>
                                     <td className="h-auto acciones-tabla">
                                         <button
-                                            className="btn btn-primary btn-sm bi bi-pencil-fill"
+                                            className="btn btn-primary btn-sm"
                                             title="Editar contrato"
                                             aria-label="Editar contrato"
                                             onClick={() => setContratoEditando(contrato)}
                                             disabled={!tengoPermiso('/contratos', 'POST')}
-                                        />
+                                        ><i className="bi bi-pencil-fill" aria-hidden="true" /></button>
                                         <button
-                                            className="btn btn-danger btn-sm bi bi-trash-fill"
+                                            className="btn btn-danger btn-sm"
                                             title="Eliminar contrato"
                                             aria-label="Eliminar contrato"
                                             onClick={() => setContratoEliminando(contrato)}
                                             disabled={!tengoPermiso('/contratos', 'DELETE')}
-                                        />
+                                        ><i className="bi bi-trash-fill" aria-hidden="true" /></button>
                                     </td>
                                 </tr>
                             )) : (

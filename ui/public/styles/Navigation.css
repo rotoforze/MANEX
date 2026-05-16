@@ -1,9 +1,9 @@
 .main-nav {
-    min-height: 12dvb ;
+    min-height: 12dvh;
 }
 
 @media (max-width: 768px) {
     .main-nav {
-        min-height: 12dvb ;
+        min-height: 12dvh;
     }
 }

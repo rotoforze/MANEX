@@ -24,6 +24,7 @@ import listadoPermisos from "./API/permisos/listado.mjs";
 import guardarPermisos from "./API/permisos/guardar.mjs";
 import eliminarPermisos from "./API/permisos/eliminar.mjs";
 
+import { resumenDashboard } from "./API/dashboard/resumen.mjs";
 import {listaFichajes} from "./API/fichajes/listado.mjs";
 import registrarFichaje from "./API/fichajes/nuevo.mjs";
 import actualizarFichaje from "./API/fichajes/actualizar.mjs";
@@ -85,16 +86,16 @@ app.get('/', (req, res) => {
                 'eliminarFichajes': ['/fichajes/', 'DELETE']
             },
             'incidencia': {
-                'listado': ['/fichajes', 'GET'],
-                'incidencia': ['/fichajes/', 'GET'],
-                'nuevaIncidencia': ['/fichajes', 'POST'],
-                'eliminarIncidencia': ['/fichajes/', 'DELETE']
+                'listado': ['/incidencias', 'GET'],
+                'incidencia': ['/incidencias/', 'GET'],
+                'nuevaIncidencia': ['/incidencias', 'POST'],
+                'eliminarIncidencia': ['/incidencias/', 'DELETE']
             },
             'solicitud_Vacacion': {
-                'listado': ['/fichajes', 'GET'],
-                'solicitudVacacion': ['/fichajes/', 'GET'],
-                'nuevaSolicitud': ['/fichajes', 'POST'],
-                'eliminarSolicitud': ['/fichajes/', 'DELETE']
+                'listado': ['/vacaciones', 'GET'],
+                'solicitudVacacion': ['/vacaciones/', 'GET'],
+                'nuevaSolicitud': ['/vacaciones', 'POST'],
+                'eliminarSolicitud': ['/vacaciones/', 'DELETE']
             }
         }
     });
@@ -112,6 +113,10 @@ app.post('/login', (req, res) => {
     login(req, res);
 
 })
+
+app.get('/dashboard', (req, res) => {
+    resumenDashboard(req, res);
+});
 
 app.get('/empleados', (req, res) => {
     const parametrosRecibidos = Object.keys(req.query);
@@ -214,9 +219,9 @@ app.get('/vacaciones', (req, res) => {
         });
     }
 
-    if (req?.query?.id_empleado || req?.query?.fecha_inicio && req?.query?.fecha_fin) {
+    const tienePaginacion = req?.query?.pagina !== undefined || req?.query?.cantidad !== undefined;
+    if (!tienePaginacion && (req?.query?.id_empleado || (req?.query?.fecha_inicio && req?.query?.fecha_fin))) {
         getSolicitud(req, res);
-
     } else listaSolicitudesVacaciones(req, res);
 });
 

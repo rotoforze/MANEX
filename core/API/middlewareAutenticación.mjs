@@ -63,24 +63,18 @@ const auth = async (req, res, next) => {
 
         const permiso = metodosRuta[req.method];
 
-        // si tiene * como valor, pasamos
-        if (permiso.includes('*')) permisoAprobado = true;
-
-        try {
-            var accesoMin = permiso[0].split('>');
-            if (accesoMin.length == 2) {
-                accesoMin = accesoMin[1];
+        if (permiso.includes('*')) {
+            permisoAprobado = true;
+        } else if (permiso.includes(String(nivelAcceso))) {
+            permisoAprobado = true;
+        } else {
+            const primero = permiso[0];
+            if (primero?.startsWith('>')) {
+                const minimo = parseInt(primero.slice(1), 10);
+                if (nivelAcceso >= minimo) permisoAprobado = true;
             }
-            // si tiene un valor mayor que el nivel de permiso, pasamos
-            if (accesoMin) {
-                if (nivelAcceso >= parseInt(accesoMin)) {
-                    permisoAprobado = true;
-                }
-            }
-
-        } catch (e) {
-            console.log(e);
         }
+
         if (!permisoAprobado) {
             return res.status(403).json({ message: 'No tienes permiso para esta acción' });
         }

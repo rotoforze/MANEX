@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { TablaContratos } from "../components/Contratos/TablaContratos.jsx";
 import { NuevoContratoForm } from "../components/Contratos/NuevoContratoForm.jsx";
 import '../../public/styles/mainPages.css';
@@ -24,7 +24,7 @@ export function Contratos() {
     }
 
     return (
-        <div className="d-flex flex-column card w-100 h-100 empleados-container">
+        <div className="d-flex flex-column card w-100 empleados-container">
             <div className="d-flex flex-column align-items-start justify-content-center gap-2 w-100 p-4">
                 <div className="d-flex flex-column flex-md-row justify-content-between align-items-start w-100 mb-4 gap-3">
                     <div>
@@ -61,7 +61,7 @@ export function Contratos() {
 
             <hr />
 
-            <div className="d-flex flex-column gap-2 w-100 p-4 justify-content-center">
+            <div className="d-flex flex-column gap-2 w-100 p-4 justify-content-center overflow-auto">
                 <TablaContratos key={refreshKey} />
             </div>
         </div>

@@ -1,7 +1,9 @@
-import React, {useEffect, useState} from 'react';
+﻿import React, {useEffect, useState} from 'react';
 import { NuevoFichajeForm } from "../components/Fichajes/NuevoFichajeform.jsx";
 import { TablaFichajes } from "../components/Fichajes/TablaFichajes.jsx";
 import '../../public/styles/mainPages.css';
+import {enviarFichaje} from "../utils/RegisterNewFichaje.js";
+import {useUsers} from "../context/UserContext.jsx";
 
 /**
  *
@@ -14,17 +16,20 @@ import '../../public/styles/mainPages.css';
  */
 export function Fichajes() {
 
+    const { user } = useUsers();
+
     const [registroVisible, setRegistroVisible] = useState(false);
     const [refreshKey, setRefreshKey] = useState(0);
     const [fichajeActivo, setFichajeActivo] = useState(false);
 
-    function handleNuevoFichaje() {
+    function handleNuevoFichaje(n) {
         setRefreshKey(prev => prev + 1);
         setRegistroVisible(false);
+        setFichajeActivo(n);
     }
 
     return (
-        <div className="d-flex flex-column card w-100 h-100 empleados-container">
+        <div className="d-flex flex-column card w-100 empleados-container">
 
             <div className="d-flex flex-column align-items-start justify-content-center gap-2 w-100 p-4">
 
@@ -41,10 +46,10 @@ export function Fichajes() {
 
                 <div className="d-flex gap-2 align-items-start justify-content-start top-accion">
                     <button
-                        className={"btn top-accion-btn " + (registroVisible || fichajeActivo > 0 ? 'btn-danger' : 'btn-primary')}
-                        onClick={fichajeActivo > 0 ? undefined : () => setRegistroVisible(!registroVisible)}
+                        className={"btn top-accion-btn " + (fichajeActivo > 0 ? 'btn-danger' : 'btn-primary')}
+                        onClick={fichajeActivo ? () => {enviarFichaje(user?.token, user?.username, ''); setRefreshKey(prev => prev + 1);} : () => setRegistroVisible(!registroVisible)}
                     >
-                        {fichajeActivo > 0 ? 'Finalizar turno' : 'Nuevo fichaje'}
+                        {fichajeActivo > 0 ? 'Finalizar turno' : 'Empezar turno'}
                     </button>
                     <button
                         className="btn btn-primary top-accion-btn"
@@ -65,7 +70,7 @@ export function Fichajes() {
 
             <hr />
 
-            <div className="d-flex flex-column gap-2 w-100 p-4 justify-content-center overflow-scroll">
+            <div className="d-flex flex-column gap-2 w-100 p-4 justify-content-center overflow-auto">
                 <TablaFichajes key={refreshKey} setFichajeActivo={setFichajeActivo} />
             </div>
 

@@ -1,57 +1,60 @@
-import React, { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback } from "react";
+import { NavLink } from "react-router-dom";
 import { useUsers } from "../../context/UserContext.jsx";
 import { apiFetch } from "../../utils/apiFetch.jsx";
+import { useMensaje } from "../../hooks/useMensaje.js";
 
-const INTERVALO_RECARGA = 300; // segundos
+const INTERVALO_RECARGA = 300;
 
-// Límites máximos definidos en paginacion.mjs del backend
-const LIMITE = {
-    empleados:     15,
-    productos:     25,
-    contratos:     15,
-    departamentos: 15,
-    default:       10,
-};
+// ── Helpers ──────────────────────────────────────────────────────────────────
 
-/**
- * Recorre todas las páginas de un endpoint paginado y devuelve todos los registros.
- */
-async function fetchTodos(url, headers, cantidad) {
-    let pagina = 0;
-    let todos = [];
-    while (true) {
-        const res = await apiFetch(`${url}?pagina=${pagina}&cantidad=${cantidad}`, { headers });
-        if (!res.ok) break;
-        const data = await res.json();
-        const registros = data?.data ?? [];
-        todos = [...todos, ...registros];
-        // Paramos si recibimos menos registros de los pedidos (última página)
-        // o si el backend nos da totalPaginas fiable
-        const totalPaginas = data?.meta?.totalPaginas;
-        if (registros.length === 0) break;
-        if (totalPaginas != null && pagina >= totalPaginas - 1) break;
-        if (totalPaginas == null && registros.length < cantidad) break;
-        pagina++;
-    }
-    return todos;
+function formatHora(fechaStr) {
+    if (!fechaStr) return '—';
+    return fechaStr.slice(11, 16);
 }
 
-/**
- * Dashboard principal para el control general de la aplicación.
- * Muestra KPIs, gráficas y tablas de todos los módulos.
- *
- * @returns {React.JSX.Element}
- * @author Eneas de la Rosa Menendez Pedrosa
- * @version 1.1.0
- * @constructor
- */
+function formatFecha(fechaStr) {
+    if (!fechaStr) return '—';
+    const [y, m, d] = fechaStr.slice(0, 10).split('-');
+    return `${d}/${m}/${y}`;
+}
+
+function calcularDuracion(entrada, salida) {
+    if (!entrada) return '—';
+    const start = new Date(entrada.replace(' ', 'T'));
+    const end = salida ? new Date(salida.replace(' ', 'T')) : new Date();
+    const diffMs = end - start;
+    if (diffMs < 0) return '—';
+    const h = Math.floor(diffMs / 3600000);
+    const m = Math.floor((diffMs % 3600000) / 60000);
+    return `${h}h ${m.toString().padStart(2, '0')}m`;
+}
+
+function obtenerClaseEstado(estado) {
+    switch (estado) {
+        case 'Pendiente':
+        case 'Abierta':         return 'text-bg-danger';
+        case 'En proceso':
+        case 'En revision':
+        case 'En revisión':     return 'text-bg-warning';
+        case 'Aprobada':
+        case 'Concedido':
+        case 'Resuelta':        return 'text-bg-success';
+        case 'Rechazada':
+        case 'Rechazado':
+        case 'Cerrada':         return 'text-bg-secondary';
+        default:                return 'text-bg-primary';
+    }
+}
+
+// ── Sub-componentes ───────────────────────────────────────────────────────────
 
 function KpiCard({ icono, titulo, valor, subtitulo, color }) {
     return (
         <div className={`card border-0 shadow-sm h-100 border-start border-4 border-${color}`}>
             <div className="card-body d-flex align-items-center gap-3">
                 <div className={`fs-2 text-${color}`}>
-                    <i className={`bi ${icono}`}></i>
+                    <i className={`bi ${icono}`} aria-hidden="true"></i>
                 </div>
                 <div>
                     <div className="text-muted small">{titulo}</div>
@@ -81,373 +84,497 @@ function BarraProgreso({ etiqueta, valor, total, color }) {
     );
 }
 
-function Countdown({ segundos, total }) {
-    const pct = ((total - segundos) / total) * 100;
+function TablaResumen({ filas, columnas, vacia }) {
+    if (!filas?.length) {
+        return <p className="text-muted small text-center py-3 mb-0">{vacia}</p>;
+    }
     return (
-        <div className="d-flex align-items-center gap-2 text-muted small">
-            <div className="progress flex-grow-1" style={{ height: '4px' }}>
-                <div
-                    className="progress-bar bg-primary"
-                    style={{ width: `${pct}%`, transition: 'width 1s linear' }}
-                />
-            </div>
-            <span>Actualiza en {segundos}s</span>
+        <div className="table-responsive">
+            <table className="table table-sm table-striped mb-0">
+                <thead>
+                    <tr>{columnas.map(c => <th key={c.key} scope="col" className={c.className}>{c.label}</th>)}</tr>
+                </thead>
+                <tbody className="table-group-divider">
+                    {filas.map((fila, i) => (
+                        <tr key={fila.id ?? fila.ID ?? i}>
+                            {columnas.map(c => <td key={c.key} className={c.className}>{c.render(fila)}</td>)}
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
         </div>
     );
 }
 
+// ── Componente principal ──────────────────────────────────────────────────────
+
+/**
+ * Dashboard unificado. Muestra datos personales del usuario (todos los departamentos)
+ * y estadísticas globales (solo administradores, departamento > 1).
+ *
+ * @returns {React.JSX.Element}
+ * @author Eneas de la Rosa Menéndez Pedrosa
+ * @version 3.0.0
+ * @constructor
+ */
 export function InfoDashboard() {
-    const { user } = useUsers();
+    const { user, isInitialLoading } = useUsers();
+    const base = import.meta.env.VITE_BACKEND_DASHBOARD || `${import.meta.env.VITE_BACKEND}/dashboard`;
+    const esAdmin = user?.departamento > 1;
 
-    const [cargando, setCargando]          = useState(true);
-    const [ultimaActualizacion, setUltima] = useState(null);
-    const [countdown, setCountdown]        = useState(INTERVALO_RECARGA);
+    // ── Estado ──
+    const [cargando, setCargando]             = useState(true);
+    const [ultimaActualizacion, setUltima]    = useState(null);
 
-    const [empleados, setEmpleados]         = useState([]);
-    const [incidencias, setIncidencias]     = useState([]);
-    const [inventario, setInventario]       = useState([]);
-    const [fichajes, setFichajes]           = useState([]);
-    const [vacaciones, setVacaciones]       = useState([]);
-    const [departamentos, setDepartamentos] = useState([]);
-    const [contratos, setContratos]         = useState([]);
+    // Datos personales
+    const [perfil, setPerfil]                 = useState(null);
+    const [fichajes, setFichajes]             = useState([]);
+    const [incidencias, setIncidencias]       = useState([]);
+    const [vacaciones, setVacaciones]         = useState([]);
+    const [kpisPersonales, setKpisPersonales] = useState(null);
 
-    const cargarDatos = useCallback(async () => {
-        setCargando(true);
+    // Datos globales (solo admin)
+    const [kpisGlobales, setKpisGlobales]     = useState(null);
+
+    // Fichaje en curso
+    const [ahora, setAhora]                         = useState(new Date());
+    const [mensajeFichaje, setMensajeFichaje]       = useMensaje();
+    const [enviandoFichaje, setEnviandoFichaje]     = useState(false);
+    const [tipoSeleccionado, setTipoSeleccionado]   = useState('Presencial');
+
+    useEffect(() => {
+        const tick = setInterval(() => setAhora(new Date()), 1000);
+        return () => clearInterval(tick);
+    }, []);
+
+    // ── Carga de datos ──
+    const cargarDatos = useCallback(async (silencioso = false) => {
+        if (isInitialLoading || !user?.username) return;
+        if (!silencioso) setCargando(true);
         try {
             const headers = { token: user?.token };
-            const [
-                resEmp, resInc, resInv,
-                resFich, resVac, resDep, resCon
-            ] = await Promise.all([
-                fetchTodos(import.meta.env.VITE_BACKEND_EMPLEADO,             headers, LIMITE.empleados),
-                fetchTodos(import.meta.env.VITE_BACKEND_PERMISOS,             headers, LIMITE.default),
-                fetchTodos(import.meta.env.VITE_BACKEND_PRODUCTO,             headers, LIMITE.productos),
-                fetchTodos(import.meta.env.VITE_BACKEND_LISTA_EMPLEADOS?.replace('empleados', 'fichajes'),   headers, LIMITE.default).catch(() => []),
-                fetchTodos(import.meta.env.VITE_BACKEND_LISTA_EMPLEADOS?.replace('empleados', 'vacaciones'), headers, LIMITE.default).catch(() => []),
-                fetchTodos(import.meta.env.VITE_BACKEND_DEPARTAMENTOS,                                       headers, LIMITE.departamentos).catch(() => []),
-                fetchTodos(import.meta.env.VITE_BACKEND_LISTA_EMPLEADOS?.replace('empleados', 'contratos'),  headers, LIMITE.contratos).catch(() => []),
-            ]);
+            const peticiones = [
+                apiFetch(`${base}?username=${encodeURIComponent(user.username)}`, { headers }),
+            ];
+            if (esAdmin) peticiones.push(apiFetch(base, { headers }));
 
-            setEmpleados(resEmp);
-            setIncidencias(resInc);
-            setInventario(resInv);
-            setFichajes(resFich);
-            setVacaciones(resVac);
-            setDepartamentos(resDep);
-            setContratos(resCon);
+            const respuestas = await Promise.all(peticiones);
+            const [dataPersonal, dataAdmin] = await Promise.all(respuestas.map(r => r.json()));
+
+            if (!dataPersonal?.perfil) {
+                console.error('Dashboard: no se encontró perfil para', user.username, dataPersonal);
+            }
+
+            setPerfil(dataPersonal?.perfil ?? null);
+            setFichajes(dataPersonal?.fichajes ?? []);
+            setIncidencias(dataPersonal?.incidencias ?? []);
+            setVacaciones(dataPersonal?.vacaciones ?? []);
+            setKpisPersonales(dataPersonal?.kpis ?? null);
+
+            if (esAdmin && dataAdmin) setKpisGlobales(dataAdmin?.kpis ?? null);
+
             setUltima(new Date());
-            setCountdown(INTERVALO_RECARGA);
         } catch (e) {
             console.error('Error cargando dashboard:', e);
         } finally {
             setCargando(false);
         }
-    }, [user?.token]);
+    }, [isInitialLoading, user?.token, user?.username, esAdmin, base]);
 
     useEffect(() => {
+        if (isInitialLoading) return;
         cargarDatos();
-        const intervalo = setInterval(cargarDatos, INTERVALO_RECARGA * 1000);
+        const intervalo = setInterval(() => cargarDatos(true), INTERVALO_RECARGA * 1000);
         return () => clearInterval(intervalo);
-    }, [cargarDatos]);
+    }, [cargarDatos, isInitialLoading]);
 
-    useEffect(() => {
-        const tick = setInterval(() => {
-            setCountdown(prev => (prev > 0 ? prev - 1 : INTERVALO_RECARGA));
-        }, 1000);
-        return () => clearInterval(tick);
-    }, []);
+    // ── Derivados personales ──
+    const fichajeActivo  = fichajes.find(f => f.fecha_entrada && !f.fecha_salida) ?? null;
+    const incAbiertas    = kpisPersonales?.incidencias?.abiertas  ?? 0;
+    const incTotal       = kpisPersonales?.incidencias?.total     ?? 0;
+    const vacPendientes  = kpisPersonales?.vacaciones?.pendientes ?? 0;
+    const vacTotal       = kpisPersonales?.vacaciones?.total      ?? 0;
 
-    const incPendientes   = incidencias.filter(i => i?.estado === 'Abierta').length;
-    const incEnProceso    = incidencias.filter(i => i?.estado === 'En proceso').length;
-    const incResueltas    = incidencias.filter(i => i?.estado === 'Cerrada').length;
+    // ── Derivados globales ──
+    const inc = kpisGlobales?.incidencias ?? {};
+    const inv = kpisGlobales?.inventario  ?? {};
+    const vac = kpisGlobales?.vacaciones  ?? {};
 
-    const invDisponible   = inventario.filter(i => i?.Estado === 'Disponible').length;
-    const invNoDisponible = inventario.filter(i => i?.Estado === 'No disponible').length;
-    const invEnvio        = inventario.filter(i => i?.Estado === 'En proceso de envio').length;
-    const invMantenimiento= inventario.filter(i => i?.Estado === 'En mantenimiento').length;
+    const incGlobalPendientes = (inc['Abierta']   ?? 0) + (inc['Pendiente'] ?? 0);
+    const incGlobalEnProceso  =  inc['En proceso'] ?? 0;
+    const incGlobalResueltas  = (inc['Cerrada']   ?? 0) + (inc['Resuelta'] ?? 0);
+    const incGlobalTotal      =  inc.total         ?? 0;
+    const ratioResolucion     = incGlobalTotal > 0 ? Math.round((incGlobalResueltas / incGlobalTotal) * 100) : 0;
 
-    const vacPendientes   = vacaciones.filter(v => v?.estado === 'En revisión').length;
-    const vacAprobadas    = vacaciones.filter(v => v?.estado === 'Aprobada').length;
+    const invDisponible    = inv['Disponible']          ?? 0;
+    const invNoDisponible  = inv['No disponible']       ?? 0;
+    const invEnvio         = inv['En proceso de envio'] ?? 0;
+    const invMantenimiento = inv['En mantenimiento']    ?? 0;
+    const invTotal         = inv.total                  ?? 0;
 
-    const ratioResolucion = incidencias.length > 0
-        ? Math.round((incResueltas / incidencias.length) * 100)
-        : 0;
+    const vacGlobalPendientes  = (vac['En revisión'] ?? vac['En revision'] ?? 0) + (vac['Pendiente'] ?? 0);
+    const vacGlobalAprobadas   = (vac['Concedido']   ?? 0) + (vac['Aprobada']   ?? 0);
+    const vacGlobalRechazadas  = (vac['Rechazado']   ?? 0) + (vac['Rechazada']  ?? 0);
+    const vacGlobalTotal       =  vac.total ?? 0;
+
+    // ── Acción fichaje ──
+    async function handleFichaje(accion) {
+        setEnviandoFichaje(true);
+        setMensajeFichaje(null);
+        try {
+            const params = accion === 'entrada'
+                ? { username: user.username, tipo: tipoSeleccionado }
+                : { id: fichajeActivo.id, username: user.username, tipo: fichajeActivo.tipo ?? 'Presencial' };
+            const res = await apiFetch(`${import.meta.env.VITE_BACKEND}/fichajes`, {
+                method: 'POST',
+                headers: { token: user.token, 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: new URLSearchParams(params).toString(),
+            });
+            const data = await res.json();
+            if (res.ok) {
+                setMensajeFichaje({ tipo: 'success', texto: accion === 'entrada' ? 'Entrada registrada.' : 'Salida registrada.' });
+                cargarDatos(true);
+            } else {
+                setMensajeFichaje({ tipo: 'danger', texto: data?.message ?? 'Error al registrar fichaje.' });
+            }
+        } catch {
+            setMensajeFichaje({ tipo: 'danger', texto: 'Error de conexión.' });
+        } finally {
+            setEnviandoFichaje(false);
+        }
+    }
+
+    // ── Render ──
+    if (cargando) {
+        return (
+            <div className="d-flex justify-content-center align-items-center py-5">
+                <div className="spinner-border text-primary" role="status">
+                    <span className="visually-hidden">Cargando...</span>
+                </div>
+            </div>
+        );
+    }
 
     return (
-        <div className="container-fluid px-0">
+        <div className="container-fluid px-4 py-4">
 
-            {/* ── Cabecera ── */}
-            <div className="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
-                <div>
-                    {ultimaActualizacion && (
-                        <small className="text-muted">
-                            Última actualización: {ultimaActualizacion.toLocaleTimeString('es-ES')}
-                        </small>
-                    )}
-                </div>
+            {/* ══════════════════════════════════════════════
+                SECCIÓN PERSONAL
+            ══════════════════════════════════════════════ */}
+
+            {/* ── Bienvenida ── */}
+            <div className="card border-0 shadow-sm mb-4 dashboard-hero text-white rounded-3 p-4">
                 <div className="d-flex align-items-center gap-3">
-                    <div style={{ minWidth: '220px' }}>
-                        <Countdown segundos={countdown} total={INTERVALO_RECARGA} />
-                    </div>
-                    <button
-                        className="btn btn-outline-primary btn-sm bi bi-arrow-clockwise"
-                        onClick={cargarDatos}
-                        disabled={cargando}
-                        title="Recargar ahora"
+                    <div
+                        className="rounded-circle bg-white bg-opacity-25 d-flex align-items-center justify-content-center flex-shrink-0"
+                        style={{ width: 56, height: 56 }}
                     >
-                        {' '}Actualizar
-                    </button>
+                        <i className="bi bi-person-fill fs-3 text-white" aria-hidden="true"></i>
+                    </div>
+                    <div>
+                        <h5 className="mb-0 fw-bold">
+                            Bienvenido, {perfil?.Nombre ?? user.username}{perfil?.Apellidos ? ` ${perfil.Apellidos}` : ''}
+                        </h5>
+                        <p className="mb-0 opacity-75 small">
+                            {perfil?.email && (
+                                <span className="me-3">
+                                    <i className="bi bi-envelope me-1" aria-hidden="true"></i>{perfil.email}
+                                </span>
+                            )}
+                            {perfil?.fecha_alta && (
+                                <span>
+                                    <i className="bi bi-calendar3 me-1" aria-hidden="true"></i>
+                                    Desde {formatFecha(perfil.fecha_alta)}
+                                </span>
+                            )}
+                        </p>
+                    </div>
                 </div>
             </div>
 
-            {cargando && (
-                <div className="text-center text-muted py-3">
-                    <div className="spinner-border spinner-border-sm me-2" />
-                    Cargando datos...
-                </div>
-            )}
-
-            {/* ── Fila 1: KPIs ── */}
+            {/* ── KPIs personales ── */}
             <div className="row g-3 mb-4">
-                <div className="col-6 col-md-4 col-xl-2">
-                    <KpiCard icono="bi-people-fill"              titulo="Empleados"    valor={empleados.length}    color="primary" />
-                </div>
-                <div className="col-6 col-md-4 col-xl-2">
-                    <KpiCard icono="bi-exclamation-triangle-fill" titulo="Incidencias"  valor={incidencias.length}  subtitulo={`${incPendientes} pendientes`} color="warning" />
-                </div>
-                <div className="col-6 col-md-4 col-xl-2">
-                    <KpiCard icono="bi-box-seam-fill"            titulo="Inventario"   valor={inventario.length}   subtitulo={`${invDisponible} disponibles`} color="info" />
-                </div>
-                <div className="col-6 col-md-4 col-xl-2">
-                    <KpiCard icono="bi-clock-history"            titulo="Fichajes"     valor={fichajes.length}     color="secondary" />
-                </div>
-                <div className="col-6 col-md-4 col-xl-2">
-                    <KpiCard icono="bi-umbrella-fill"            titulo="Vacaciones"   valor={vacaciones.length}   subtitulo={`${vacPendientes} pendientes`} color="success" />
-                </div>
-                <div className="col-6 col-md-4 col-xl-2">
-                    <KpiCard icono="bi-building"                 titulo="Departamentos" valor={departamentos.length} color="danger" />
-                </div>
-            </div>
 
-            {/* ── Fila 2: Gráficas ── */}
-            <div className="row g-3 mb-4">
-                <div className="col-md-4">
-                    <div className="card border-0 shadow-sm h-100">
+                {/* Fichaje */}
+                <div className="col-md-6 col-lg-4">
+                    <div className={`card border-0 shadow-sm h-100 border-start border-4 border-${fichajeActivo ? 'success' : 'secondary'}`}>
                         <div className="card-body">
-                            <h6 className="fw-semibold mb-3">
-                                <i className="bi bi-exclamation-circle me-2 text-warning"></i>
-                                Incidencias por estado
-                            </h6>
-                            <BarraProgreso etiqueta="Abiertas" valor={incPendientes} total={incidencias.length} color="danger" />
-                            <BarraProgreso etiqueta="En proceso" valor={incEnProceso}  total={incidencias.length} color="warning" />
-                            <BarraProgreso etiqueta="Resueltas"  valor={incResueltas}  total={incidencias.length} color="success" />
-                            <div className="mt-3 pt-2 border-top d-flex justify-content-between align-items-center">
-                                <span className="text-muted small">Ratio de resolución</span>
-                                <span className={`fw-bold fs-5 text-${ratioResolucion >= 70 ? 'success' : ratioResolucion >= 40 ? 'warning' : 'danger'}`}>
-                                    {ratioResolucion}%
+                            <div className="d-flex align-items-center gap-2 mb-2">
+                                <i className={`bi bi-clock-fill fs-5 text-${fichajeActivo ? 'success' : 'secondary'}`} aria-hidden="true"></i>
+                                <span className="fw-semibold small">Fichaje</span>
+                                <span className={`badge ms-auto text-bg-${fichajeActivo ? 'success' : 'secondary'}`}>
+                                    {fichajeActivo ? 'EN CURSO' : 'FUERA'}
                                 </span>
                             </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div className="col-md-4">
-                    <div className="card border-0 shadow-sm h-100">
-                        <div className="card-body">
-                            <h6 className="fw-semibold mb-3">
-                                <i className="bi bi-boxes me-2 text-info"></i>
-                                Inventario por estado
-                            </h6>
-                            <BarraProgreso etiqueta="Disponible"          valor={invDisponible}    total={inventario.length} color="success" />
-                            <BarraProgreso etiqueta="No disponible"       valor={invNoDisponible}  total={inventario.length} color="danger" />
-                            <BarraProgreso etiqueta="En proceso de envío" valor={invEnvio}         total={inventario.length} color="primary" />
-                            <BarraProgreso etiqueta="En mantenimiento"    valor={invMantenimiento} total={inventario.length} color="warning" />
-                        </div>
-                    </div>
-                </div>
-
-                <div className="col-md-4">
-                    <div className="card border-0 shadow-sm h-100">
-                        <div className="card-body">
-                            <h6 className="fw-semibold mb-3">
-                                <i className="bi bi-calendar-check me-2 text-success"></i>
-                                Solicitudes de vacaciones
-                            </h6>
-                            <BarraProgreso etiqueta="Pendientes" valor={vacPendientes} total={vacaciones.length} color="warning" />
-                            <BarraProgreso etiqueta="Aprobadas"  valor={vacAprobadas}  total={vacaciones.length} color="success" />
-                            <div className="mt-3 pt-2 border-top">
-                                <div className="d-flex justify-content-between small text-muted">
-                                    <span>Total solicitudes</span>
-                                    <span className="fw-semibold text-dark">{vacaciones.length}</span>
+                            <div className="text-muted small mb-3">
+                                {fichajeActivo ? (
+                                    <>
+                                        <span>Entrada: <b>{formatHora(fichajeActivo.fecha_entrada)}</b></span>
+                                        <span className="mx-1">·</span>
+                                        <span>Duración: <b>{calcularDuracion(fichajeActivo.fecha_entrada, null)}</b></span>
+                                        <span className="mx-1">·</span>
+                                        <span className="text-primary fw-semibold">
+                                            {ahora.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+                                        </span>
+                                    </>
+                                ) : fichajes[0]?.fecha_salida ? (
+                                    <>Última salida: <b>{formatHora(fichajes[0].fecha_salida)}</b></>
+                                ) : (
+                                    'Sin fichajes registrados.'
+                                )}
+                            </div>
+                            {!fichajeActivo && (
+                                <div className="mb-2">
+                                    <label htmlFor="tipoFichaje" className="form-label small mb-1">Tipo de registro</label>
+                                    <select
+                                        id="tipoFichaje"
+                                        className="form-select form-select-sm"
+                                        value={tipoSeleccionado}
+                                        onChange={e => setTipoSeleccionado(e.target.value)}
+                                        disabled={enviandoFichaje}
+                                    >
+                                        <option value="Presencial">Presencial</option>
+                                        <option value="Teletrabajo">Teletrabajo</option>
+                                    </select>
                                 </div>
+                            )}
+                            {mensajeFichaje && (
+                                <div className={`alert alert-${mensajeFichaje.tipo} py-1 px-2 small mb-2`} role="alert">
+                                    {mensajeFichaje.texto}
+                                </div>
+                            )}
+                            <button
+                                className={`btn btn-sm w-100 btn-${fichajeActivo ? 'outline-danger' : 'outline-success'}`}
+                                onClick={() => handleFichaje(fichajeActivo ? 'salida' : 'entrada')}
+                                disabled={enviandoFichaje}
+                            >
+                                <i className={`bi bi-${fichajeActivo ? 'door-open' : 'door-closed-fill'} me-1`} aria-hidden="true"></i>
+                                {enviandoFichaje ? 'Procesando...' : fichajeActivo ? 'Registrar salida' : 'Registrar entrada'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Incidencias personales */}
+                <div className="col-md-6 col-lg-4">
+                    <div className="card border-0 shadow-sm h-100 border-start border-4 border-warning">
+                        <div className="card-body d-flex align-items-center gap-3">
+                            <div className="fs-2 text-warning">
+                                <i className="bi bi-exclamation-triangle-fill" aria-hidden="true"></i>
+                            </div>
+                            <div>
+                                <div className="text-muted small">Mis incidencias abiertas</div>
+                                <div className="fs-3 fw-bold lh-1">{incAbiertas}</div>
+                                <div className="text-muted" style={{ fontSize: '0.75rem' }}>de {incTotal} totales</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Vacaciones personales */}
+                <div className="col-md-6 col-lg-4">
+                    <div className="card border-0 shadow-sm h-100 border-start border-4 border-info">
+                        <div className="card-body d-flex align-items-center gap-3">
+                            <div className="fs-2 text-info">
+                                <i className="bi bi-calendar-check-fill" aria-hidden="true"></i>
+                            </div>
+                            <div>
+                                <div className="text-muted small">Mis solicitudes pendientes</div>
+                                <div className="fs-3 fw-bold lh-1">{vacPendientes}</div>
+                                <div className="text-muted" style={{ fontSize: '0.75rem' }}>de {vacTotal} totales</div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            {/* ── Fila 3: Tablas ── */}
-            <div className="row g-3">
+            {/* ── Fichajes recientes ── */}
+            <div className="card border-0 shadow-sm mb-4">
+                <div className="card-header bg-transparent border-bottom pb-2 pt-3 px-3 d-flex justify-content-between align-items-center">
+                    <h6 className="fw-semibold mb-0">
+                        <i className="bi bi-person-check me-2 text-primary" aria-hidden="true"></i>Fichajes recientes
+                    </h6>
+                    <NavLink to="/fichajes" className="btn btn-outline-primary btn-sm">
+                        Ver más <i className="bi bi-arrow-right ms-1" aria-hidden="true"></i>
+                    </NavLink>
+                </div>
+                <div className="card-body p-0">
+                    <TablaResumen
+                        vacia="No hay fichajes registrados."
+                        filas={fichajes.slice(0, 7)}
+                        columnas={[
+                            { key: 'fecha', label: 'Fecha', className: 'ps-3', render: f => formatFecha(f.fecha_entrada) },
+                            { key: 'entrada', label: 'Entrada', render: f => formatHora(f.fecha_entrada) },
+                            { key: 'salida', label: 'Salida', render: f => formatHora(f.fecha_salida) },
+                            { key: 'tipo', label: 'Tipo', render: f => f.tipo ?? '—' },
+                            { key: 'duracion', label: 'Duración', render: f => f.fecha_salida
+                                ? calcularDuracion(f.fecha_entrada, f.fecha_salida)
+                                : <span className="badge text-bg-success">En curso</span>
+                            },
+                        ]}
+                    />
+                </div>
+            </div>
 
-                <div className="col-lg-6">
-                    <div className="card border-0 shadow-sm">
-                        <div className="card-header bg-white border-bottom fw-semibold">
-                            <i className="bi bi-exclamation-triangle me-2 text-warning"></i>
-                            Últimas incidencias
+            {/* ── Mis incidencias ── */}
+            <div className="card border-0 shadow-sm mb-4">
+                <div className="card-header bg-transparent border-bottom pb-2 pt-3 px-3 d-flex justify-content-between align-items-center">
+                    <h6 className="fw-semibold mb-0">
+                        <i className="bi bi-bookmark me-2 text-warning" aria-hidden="true"></i>Mis incidencias
+                    </h6>
+                    <NavLink to="/incidencia" className="btn btn-outline-warning btn-sm">
+                        Ver más <i className="bi bi-arrow-right ms-1" aria-hidden="true"></i>
+                    </NavLink>
+                </div>
+                <div className="card-body p-0">
+                    <TablaResumen
+                        vacia="No hay incidencias registradas."
+                        filas={incidencias.slice(0, 5)}
+                        columnas={[
+                            { key: 'id', label: '#', className: 'ps-3', render: i => i.ID ?? i.id ?? '—' },
+                            { key: 'fecha', label: 'Fecha', render: i => formatFecha(i.fecha_creacion?.slice(0, 10)) },
+                            { key: 'estado', label: 'Estado', render: i => (
+                                <span className={`badge ${obtenerClaseEstado(i.estado)}`}>{i.estado ?? '—'}</span>
+                            )},
+                            { key: 'obs', label: 'Observaciones', className: 'text-truncate', render: i => i.Observaciones ?? i.observaciones ?? '—' },
+                        ]}
+                    />
+                </div>
+            </div>
+
+            {/* ── Mis solicitudes de vacaciones ── */}
+            <div className="card border-0 shadow-sm mb-4">
+                <div className="card-header bg-transparent border-bottom pb-2 pt-3 px-3 d-flex justify-content-between align-items-center">
+                    <h6 className="fw-semibold mb-0">
+                        <i className="bi bi-calendar-check me-2 text-info" aria-hidden="true"></i>Mis solicitudes de vacaciones
+                    </h6>
+                    <NavLink to="/solicitudes" className="btn btn-outline-info btn-sm">
+                        Ver más <i className="bi bi-arrow-right ms-1" aria-hidden="true"></i>
+                    </NavLink>
+                </div>
+                <div className="card-body p-0">
+                    <TablaResumen
+                        vacia="No hay solicitudes registradas."
+                        filas={vacaciones.slice(0, 5)}
+                        columnas={[
+                            { key: 'id', label: '#', className: 'ps-3', render: v => v.id_incidencia ?? '—' },
+                            { key: 'tipo', label: 'Tipo', render: v => v.tipo ?? '—' },
+                            { key: 'inicio', label: 'Inicio', render: v => formatFecha(v.fecha_inicio?.slice(0, 10)) },
+                            { key: 'fin', label: 'Fin', render: v => formatFecha(v.fecha_fin?.slice(0, 10)) },
+                            { key: 'estado', label: 'Estado', render: v => (
+                                <span className={`badge ${obtenerClaseEstado(v.estado)}`}>{v.estado ?? '—'}</span>
+                            )},
+                        ]}
+                    />
+                </div>
+            </div>
+
+            {/* ══════════════════════════════════════════════
+                SECCIÓN ESTADÍSTICAS GLOBALES (solo admins)
+            ══════════════════════════════════════════════ */}
+            {esAdmin && kpisGlobales && (
+                <>
+                    <hr className="my-4" />
+
+                    <h6 className="fw-semibold text-muted mb-3 text-uppercase" style={{ letterSpacing: '0.05em', fontSize: '0.75rem' }}>
+                        <i className="bi bi-bar-chart-fill me-2" aria-hidden="true"></i>
+                        Estadísticas globales
+                    </h6>
+
+                    {/* KPIs globales */}
+                    <div className="row g-3 mb-4 justify-content-center">
+                        <div className="col-6 col-md-4 col-lg">
+                            <KpiCard icono="bi-people-fill"               titulo="Empleados"   valor={kpisGlobales.empleados}                                          color="primary" />
                         </div>
-                        <div className="card-body p-0">
-                            <table className="table table-sm table-hover mb-0">
-                                <thead className="table-light">
-                                    <tr>
-                                        <th>#</th>
-                                        <th>Título</th>
-                                        <th>Estado</th>
-                                        <th>Comentario</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {incidencias.slice(0, 6).map(i => (
-                                        <tr key={i?.ID}>
-                                            <td className="text-muted small">{i?.ID}</td>
-                                            <td className="small">{i?.Observaciones ?? '—'}</td>
-                                            <td>
-                                                <span className={`badge bg-${
-                                                    i?.estado === 'Cerrada'    ? 'success' :
-                                                    i?.estado === 'En proceso' ? 'warning' :
-                                                    'danger'}`}>
-                                                    {i?.estado ?? '—'}
-                                                </span>
-                                            </td>
-                                            <td className="small">{i?.Comentario ?? '—'}</td>
-                                        </tr>
-                                    ))}
-                                    {incidencias.length === 0 && (
-                                        <tr><td colSpan={4} className="text-center text-muted py-3 small">Sin incidencias</td></tr>
-                                    )}
-                                </tbody>
-                            </table>
+                        <div className="col-6 col-md-4 col-lg">
+                            <KpiCard icono="bi-exclamation-triangle-fill" titulo="Incidencias" valor={incGlobalTotal}   subtitulo={`${incGlobalPendientes} abiertas`}   color="warning" />
+                        </div>
+                        <div className="col-6 col-md-4 col-lg">
+                            <KpiCard icono="bi-box-seam-fill"             titulo="Inventario"  valor={invTotal}         subtitulo={`${invDisponible} disponibles`}      color="info" />
+                        </div>
+                        <div className="col-6 col-md-4 col-lg">
+                            <KpiCard icono="bi-clock-history"             titulo="Fichajes"    valor={kpisGlobales.fichajes}                                           color="secondary" />
+                        </div>
+                        <div className="col-6 col-md-4 col-lg">
+                            <KpiCard icono="bi-umbrella-fill"             titulo="Vacaciones"  valor={vacGlobalTotal}   subtitulo={`${vacGlobalPendientes} pendientes`} color="success" />
                         </div>
                     </div>
-                </div>
 
-                <div className="col-lg-6">
-                    <div className="card border-0 shadow-sm">
-                        <div className="card-header bg-white border-bottom fw-semibold">
-                            <i className="bi bi-clock me-2 text-secondary"></i>
-                            Últimos fichajes
-                        </div>
-                        <div className="card-body p-0">
-                            <table className="table table-sm table-hover mb-0">
-                                <thead className="table-light">
-                                    <tr>
-                                        <th>Usuario</th>
-                                        <th>Entrada</th>
-                                        <th>Salida</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {fichajes.slice(0, 6).map((f, idx) => (
-                                        <tr key={f?.ID ?? idx}>
-                                            <td className="small">{f?.USERNAME ?? f?.username ?? '—'}</td>
-                                            <td className="small text-muted">
-                                                {f?.fecha_entrada
-                                                    ? new Date(f.fecha_entrada).toLocaleString('es-ES', { timeZone: 'UTC' })
-                                                    : '—'}
-                                            </td>
-                                            <td className="small text-muted">
-                                                {f?.fecha_salida
-                                                    ? new Date(f.fecha_salida).toLocaleString('es-ES', { timeZone: 'UTC' })
-                                                    : <span className="badge bg-success">Activo</span>}
-                                            </td>
-                                        </tr>
-                                    ))}
-                                    {fichajes.length === 0 && (
-                                        <tr><td colSpan={3} className="text-center text-muted py-3 small">Sin fichajes</td></tr>
-                                    )}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <div className="col-lg-6">
-                    <div className="card border-0 shadow-sm">
-                        <div className="card-header bg-white border-bottom fw-semibold">
-                            <i className="bi bi-box-seam me-2 text-info"></i>
-                            Inventario reciente
-                        </div>
-                        <div className="card-body p-0">
-                            <table className="table table-sm table-hover mb-0">
-                                <thead className="table-light">
-                                    <tr>
-                                        <th>#</th>
-                                        <th>Nombre</th>
-                                        <th>Estado</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {inventario.slice(0, 6).map(p => (
-                                        <tr key={p?.ID}>
-                                            <td className="text-muted small">{p?.ID}</td>
-                                            <td className="small">{p?.Nombre ?? '—'}</td>
-                                            <td>
-                                                <span className={`badge bg-${
-                                                    p?.Estado === 'Disponible'          ? 'success' :
-                                                    p?.Estado === 'No disponible'       ? 'danger'  :
-                                                    p?.Estado === 'En proceso de envio' ? 'primary' :
-                                                    'warning'}`}>
-                                                    {p?.Estado ?? '—'}
-                                                </span>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                    {inventario.length === 0 && (
-                                        <tr><td colSpan={3} className="text-center text-muted py-3 small">Sin productos</td></tr>
-                                    )}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <div className="col-lg-6">
-                    <div className="card border-0 shadow-sm h-100">
-                        <div className="card-header bg-white border-bottom fw-semibold">
-                            <i className="bi bi-building me-2 text-danger"></i>
-                            Departamentos y contratos
-                        </div>
-                        <div className="card-body">
-                            <div className="row g-3">
-                                <div className="col-6">
-                                    <div className="text-muted small mb-2 fw-semibold">Departamentos</div>
-                                    {departamentos.length === 0
-                                        ? <p className="text-muted small">Sin datos</p>
-                                        : departamentos.slice(0, 6).map(d => (
-                                            <div key={d?.ID} className="d-flex justify-content-between border-bottom py-1 small">
-                                                <span>{d?.Nombre ?? d?.nombre ?? '—'}</span>
-                                                <span className="badge bg-light text-dark">{d?.ID}</span>
-                                            </div>
-                                        ))
-                                    }
+                    {/* Gráficas */}
+                    <div className="row g-3 mb-4">
+                        <div className="col-md-4">
+                            <div className="card border-0 shadow-sm h-100">
+                                <div className="card-body">
+                                    <h6 className="fw-semibold mb-3">
+                                        <i className="bi bi-exclamation-circle me-2 text-warning" aria-hidden="true"></i>
+                                        Incidencias por estado
+                                    </h6>
+                                    <BarraProgreso etiqueta="Abiertas"   valor={incGlobalPendientes} total={incGlobalTotal} color="danger" />
+                                    <BarraProgreso etiqueta="En proceso" valor={incGlobalEnProceso}  total={incGlobalTotal} color="warning" />
+                                    <BarraProgreso etiqueta="Resueltas"  valor={incGlobalResueltas}  total={incGlobalTotal} color="success" />
+                                    <div className="mt-3 pt-2 border-top d-flex justify-content-between align-items-center">
+                                        <span className="text-muted small">Ratio de resolución</span>
+                                        <span className={`fw-bold fs-5 text-${ratioResolucion >= 70 ? 'success' : ratioResolucion >= 40 ? 'warning' : 'danger'}`}>
+                                            {ratioResolucion}%
+                                        </span>
+                                    </div>
                                 </div>
-                                <div className="col-6">
-                                    <div className="text-muted small mb-2 fw-semibold">Contratos activos</div>
-                                    {contratos.length === 0
-                                        ? <p className="text-muted small">Sin datos</p>
-                                        : contratos.slice(0, 6).map(c => (
-                                            <div key={c?.ID} className="d-flex justify-content-between border-bottom py-1 small">
-                                                <span>{c?.Nombre ?? c?.tipo ?? c?.nombre ?? '—'}</span>
-                                                <span className="badge bg-light text-dark">{c?.ID}</span>
-                                            </div>
-                                        ))
-                                    }
+                            </div>
+                        </div>
+
+                        <div className="col-md-4">
+                            <div className="card border-0 shadow-sm h-100">
+                                <div className="card-body">
+                                    <h6 className="fw-semibold mb-3">
+                                        <i className="bi bi-boxes me-2 text-info" aria-hidden="true"></i>
+                                        Inventario por estado
+                                    </h6>
+                                    <BarraProgreso etiqueta="Disponible"          valor={invDisponible}    total={invTotal} color="success" />
+                                    <BarraProgreso etiqueta="No disponible"       valor={invNoDisponible}  total={invTotal} color="danger" />
+                                    <BarraProgreso etiqueta="En proceso de envío" valor={invEnvio}         total={invTotal} color="primary" />
+                                    <BarraProgreso etiqueta="En mantenimiento"    valor={invMantenimiento} total={invTotal} color="warning" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="col-md-4">
+                            <div className="card border-0 shadow-sm h-100">
+                                <div className="card-body">
+                                    <h6 className="fw-semibold mb-3">
+                                        <i className="bi bi-calendar-check me-2 text-success" aria-hidden="true"></i>
+                                        Solicitudes de vacaciones
+                                    </h6>
+                                    <BarraProgreso etiqueta="Pendientes"  valor={vacGlobalPendientes} total={vacGlobalTotal} color="warning" />
+                                    <BarraProgreso etiqueta="Concedidas"  valor={vacGlobalAprobadas}  total={vacGlobalTotal} color="success" />
+                                    <BarraProgreso etiqueta="Rechazadas"  valor={vacGlobalRechazadas} total={vacGlobalTotal} color="danger" />
+                                    <div className="mt-3 pt-2 border-top d-flex justify-content-between text-muted small">
+                                        <span>Total solicitudes</span>
+                                        <span className="fw-semibold text-dark">{vacGlobalTotal}</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                </>
+            )}
 
+            {/* ── Barra inferior ── */}
+            <div className="d-flex justify-content-between align-items-center mt-4 flex-wrap gap-2">
+                {ultimaActualizacion && (
+                    <small className="text-muted">
+                        Última actualización: {ultimaActualizacion.toLocaleTimeString('es-ES')}
+                    </small>
+                )}
+                <button
+                    className="btn btn-outline-primary btn-sm bi bi-arrow-clockwise"
+                    onClick={() => cargarDatos()}
+                    disabled={cargando}
+                    title="Recargar ahora"
+                >
+                    {' '}Actualizar
+                </button>
             </div>
+
         </div>
     );
 }

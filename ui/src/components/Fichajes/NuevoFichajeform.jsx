@@ -27,7 +27,7 @@ export function NuevoFichajeForm({ funcionDeCierreDeFormulario, handleNuevoFicha
         setMensaje(null);
 
         const formData = new FormData(event.currentTarget);
-        const [ok, texto] = await enviarFichaje(user?.token, user?.username, formData.get('tipo'));
+        const [ok, texto] = await enviarFichaje(user?.token, user?.username, formData.get('tipo') || '');
         if (ok) {
             handleNuevoFichaje();
         } else {
