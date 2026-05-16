@@ -24,7 +24,6 @@ import { Productos } from "./routes/Productos.jsx";
 import { Fichajes } from "./routes/Fichajes.jsx";
 import { Incidencias } from "./routes/Incidencia.jsx";
 import { Solicitudes } from "./routes/Solicitudes.jsx";
-import { FAQ } from "./routes/FAQ.jsx";
 import { Contratos } from "./routes/Contratos.jsx";
 import { Departamentos } from "./routes/Departamentos.jsx";
 
@@ -45,7 +44,6 @@ function App() {
         children: [
 
             { path: '/', element: <LoginPage />, action: actionInicioSesion },
-            { path: '/faq', element: <FAQ /> },
             { path: '/error', element: <ErrorPage /> },
             { path: '/dashboard', element: <Dashboard /> },
             { path: '/empleados', element: <Empleados />, action: actionRegistroEmpleado },
