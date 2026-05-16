@@ -23,10 +23,14 @@ async function verificadorDatos(req, res) {
         }
     }
 
-    if (nombre.length > 30 || (apellidos && apellidos?.length > 60) ||
-        telefono.length > 12 || usuario.length > 16 ||
-        ID_contrato.length > 12 || ID_departamento < 0 ||
-        ID_contrato < 0 || (email && email?.length > 90) || (id && id < 0)) {
+    if ((nombre && nombre.length > 30) ||
+        (apellidos && apellidos.length > 60) ||
+        (telefono && telefono.length > 12) ||
+        (usuario && usuario.length > 16) ||
+        (email && email.length > 90) ||
+        (id && id < 0) ||
+        (ID_departamento !== undefined && ID_departamento < 0) ||
+        (ID_contrato !== undefined && ID_contrato < 0)) {
         return res.status(400).send({status: 400, message: 'Datos inválidos.'})
     }
 }

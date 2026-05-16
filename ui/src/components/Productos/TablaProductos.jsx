@@ -20,7 +20,7 @@ export function TablaProductos() {
     const [productoSeleccionado, setProductoSeleccionado] = useState(null);
     const [mostrarFormulario, setMostrarFormulario] = useState(false);
 
-    const [paginaActual, setPaginaActual] = useState(0);
+    const [paginaActual, setPaginaActual] = useState(() => parseInt(sessionStorage.getItem('tabla_productos_pagina') || '0', 10));
     const [hayPaginaSiguiente, setHayPaginaSiguiente] = useState(false);
     const [totalRegistros, setTotalRegistros] = useState(0);
     const [cantidadPorPagina] = useState(10);
@@ -28,6 +28,8 @@ export function TablaProductos() {
     const setFiltro = (campo, valor) => setFiltros(prev => ({ ...prev, [campo]: valor }));
     const [eliminando, setEliminando] = useState(false);
     const [productoAEliminar, setProductoAEliminar] = useState(undefined);
+    const [cargando, setCargando] = useState(true);
+    const [errorCarga, setErrorCarga] = useState(null);
 
     const { user, tengoPermiso } = useUsers();
 
@@ -42,31 +44,38 @@ export function TablaProductos() {
         }
     }
 
+    useEffect(() => {
+        sessionStorage.setItem('tabla_productos_pagina', paginaActual);
+    }, [paginaActual]);
+
     const cargarProductos = () => {
-        try {
-            apiFetch(
-                `${import.meta.env.VITE_BACKEND_PRODUCTO}?pagina=${paginaActual}&cantidad=${cantidadPorPagina}`,
-                {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                        'token': user?.token,
-                    },
+        setCargando(true);
+        setErrorCarga(null);
+        apiFetch(
+            `${import.meta.env.VITE_BACKEND_PRODUCTO}?pagina=${paginaActual}&cantidad=${cantidadPorPagina}`,
+            {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'token': user?.token,
+                },
+            }
+        )
+            .then(res => res.json())
+            .then(data => {
+                if (data) {
+                    const items = data?.data || [];
+                    const resultados = data?.resultados ?? items.length;
+                    setListaProductos(items);
+                    setTotalRegistros(resultados);
+                    setHayPaginaSiguiente(resultados >= cantidadPorPagina);
                 }
-            )
-                .then(res => res.json())
-                .then(data => {
-                    if (data) {
-                        const items = data?.data || [];
-                        const resultados = data?.resultados ?? items.length;
-                        setListaProductos(items);
-                        setTotalRegistros(resultados);
-                        setHayPaginaSiguiente(resultados >= cantidadPorPagina);
-                    }
-                });
-        } catch (e) {
-            console.error(e);
-        }
+            })
+            .catch(e => {
+                console.error(e);
+                setErrorCarga('No se pudieron cargar los productos. Comprueba la conexión con el servidor.');
+            })
+            .finally(() => setCargando(false));
     };
 
     useEffect(() => {
@@ -91,6 +100,12 @@ export function TablaProductos() {
                     fetchInicio={cargarProductos}
                 />
             )}
+            {errorCarga && (
+                <div className="alert alert-danger mx-3 mt-3" role="alert">
+                    <i className="bi bi-exclamation-triangle-fill me-2"></i>{errorCarga}
+                </div>
+            )}
+
             {mostrarFormulario && (
                 <EditarProductoForm
                     producto={productoSeleccionado}
@@ -102,7 +117,13 @@ export function TablaProductos() {
                 />
             )}
 
-            {listaProductos.length > 0 ? (
+            {cargando ? (
+                <div className="tabla-empty-state">
+                    <div className="spinner-border text-primary" role="status">
+                        <span className="visually-hidden">Cargando...</span>
+                    </div>
+                </div>
+            ) : listaProductos.length > 0 ? (
                 <div className="table-responsive m-3 d-flex flex-column justify-content-start">
                     <table className="table table-striped">
                         <thead>

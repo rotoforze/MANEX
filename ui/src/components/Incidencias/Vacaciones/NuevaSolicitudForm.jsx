@@ -27,7 +27,8 @@ export function NuevaSolicitudForm({ funcionDeCierreDeFormulario, handleNuevaSol
         setSeEstaEnviando(true);
         setMensaje(null);
 
-        const formData = new FormData(event.currentTarget);
+        const form = event.currentTarget;
+        const formData = new FormData(form);
         const fechaInicio = formData.get('fecha_inicio');
         const fechaFin = formData.get('fecha_fin');
 
@@ -46,6 +47,7 @@ export function NuevaSolicitudForm({ funcionDeCierreDeFormulario, handleNuevaSol
             estado: 'En revisión',
         });
         if (ok) {
+            form.reset();
             handleNuevaSolicitud();
         } else {
             setMensaje({ tipo: 'danger', texto });

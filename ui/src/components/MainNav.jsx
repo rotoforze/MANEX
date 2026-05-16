@@ -1,158 +1,220 @@
-import React, {useState} from 'react'
-import {NavLink} from 'react-router-dom'
-import {useUsers} from '../context/UserContext.jsx'
-import {Empleados} from "../routes/Empleados.jsx";
+import React, { useState } from 'react'
+import { NavLink } from 'react-router-dom'
+import { useUsers } from '../context/UserContext.jsx'
 import "../../public/styles/Navigation.css";
 
 /**
+ * Menú de navegación.
  *
- * Menu lateral de navegacion.
- *
- * La visibilidad de las opciones depende del nivel de permisos
- * del usuario que haya iniciado sesion.
+ * Escritorio (>1000px): sidebar lateral izquierdo (comportamiento original).
+ * Móvil (≤1000px):
+ *   - dept >= 5: barra inferior colapsable con todos los enlaces.
+ *   - dept < 5:  barra inferior fija con solo iconos.
  *
  * @returns {React.JSX.Element}
  * @author Alex Bernardos Gil
  * @contributor Eneas de la Rosa Menéndez Pedrosa
- * @version 1.1.2 06/05/2026
+ * @version 2.1.0
  * @constructor
  */
 export const MainNav = () => {
-    const {user, tengoPermiso} = useUsers()
+    const { user, tengoPermiso } = useUsers()
     const username = user?.username || 'Usuario'
     const [isMenuOpen, setIsMenuOpen] = useState(false)
+    const dept = user?.departamento ?? 0
 
-    const navLinkClass = ({isActive}) =>
+    const toggleMenu = () => setIsMenuOpen(prev => !prev)
+    const closeMenu = () => setIsMenuOpen(false)
+
+    const links = [
+        { to: '/dashboard', icon: 'bi-house-door', label: 'Inicio', show: true },
+        { to: '/Empleados', icon: 'bi-person', label: 'Empleados', show: tengoPermiso('/empleados', 'POST') || tengoPermiso('/empleados', 'DELETE') },
+        { to: '/productos', icon: 'bi-box', label: 'Productos', show: tengoPermiso('/productos', 'POST') || tengoPermiso('/productos', 'DELETE') },
+        { to: '/contratos', icon: 'bi-file-earmark-text', label: 'Contratos', show: tengoPermiso('/contratos', 'POST') || tengoPermiso('/contratos', 'DELETE') },
+        { to: '/departamentos', icon: 'bi-building', label: 'Departamentos', show: tengoPermiso('/departamentos', 'POST') || tengoPermiso('/departamentos', 'DELETE') },
+        { to: '/fichajes', icon: 'bi-person-add', label: 'Fichajes', show: tengoPermiso('/fichajes', 'POST') || tengoPermiso('/fichajes', 'DELETE') },
+        { to: '/incidencia', icon: 'bi-bookmark', label: 'Incidencia', show: tengoPermiso('/incidencias', 'POST') || tengoPermiso('/incidencias', 'DELETE') },
+        { to: '/solicitudes', icon: 'bi-window-plus', label: 'Solicitudes', show: tengoPermiso('/vacaciones', 'POST') || tengoPermiso('/vacaciones', 'DELETE') },
+    ].filter(l => l.show)
+
+    const navLinkClass = ({ isActive }) =>
         `nav-link d-flex align-items-center ${isActive ? 'active' : 'text-white'}`
 
-    const toggleMenu = () => {
-        setIsMenuOpen(!isMenuOpen)
-    }
-
-    const closeMenu = () => {
-        setIsMenuOpen(false)
-    }
+    const userDropdownMenu = (
+        <ul className="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
+            <li>
+                <NavLink className="dropdown-item" to="/configuration" onClick={closeMenu}>
+                    Configuración
+                </NavLink>
+            </li>
+            <li>
+                <NavLink className="dropdown-item" to="/profile" onClick={closeMenu}>
+                    Perfil
+                </NavLink>
+            </li>
+            <li><hr className="dropdown-divider" /></li>
+            <li>
+                <NavLink className="dropdown-item" to="/logout" onClick={closeMenu}>
+                    Cerrar sesión
+                </NavLink>
+            </li>
+        </ul>
+    )
 
     return (
-        <aside
-            className={`main-nav d-flex flex-column flex-shrink-0 p-3 text-white bg-dark ${isMenuOpen ? 'menu-open' : ''}`}>
-            <div className="d-flex align-items-center justify-content-between mb-3 mobile-menu-header">
-                <NavLink
-                    className="d-flex align-items-center text-white text-decoration-none"
-                    to="/dashboard"
-                    onClick={closeMenu}
-                >
-                    <span className="fs-4 fw-bold">MANEX</span>
-                </NavLink>
-                <button
-                    className="btn btn-link text-white p-0 menu-toggle-btn"
-                    onClick={toggleMenu}
-                    aria-label="Toggle menu"
-                >
-                    <i className={`bi ${isMenuOpen ? 'bi-chevron-up' : 'bi-chevron-down'}`} aria-hidden="true"/>
-                </button>
-            </div>
-
-            <hr/>
-
-            <ul className="nav nav-pills flex-column mb-auto">
-                <li className="nav-item">
-                    <NavLink className={navLinkClass} to="/dashboard" end onClick={closeMenu}>
-                        <i className="bi bi-house-door me-2" aria-hidden="true"/>
-                        Inicio
+        <>
+            {/* ── Sidebar lateral (solo escritorio) ── */}
+            <aside
+                className={`main-nav d-flex flex-column flex-shrink-0 p-3 text-white bg-dark ${isMenuOpen ? 'menu-open' : ''}`}
+            >
+                <div className="d-flex align-items-center justify-content-between mb-3 mobile-menu-header">
+                    <NavLink
+                        className="d-flex align-items-center text-white text-decoration-none"
+                        to="/dashboard"
+                        onClick={closeMenu}
+                    >
+                        <span className="fs-4 fw-bold">MANEX</span>
                     </NavLink>
-                    {
-                        (tengoPermiso('/empleados', 'POST') || tengoPermiso('/empleados', 'DELETE')) &&
-                        (<NavLink className={navLinkClass} to="/Empleados" end onClick={closeMenu}>
-                            <i className="bi bi-person me-2" aria-hidden="true"/>
-                            Empleados
-                        </NavLink>)
-                    }
-                    {
-                        (tengoPermiso('/productos', 'POST') || tengoPermiso('/productos', 'DELETE')) &&
-                        (<NavLink className={navLinkClass} to="/productos" end onClick={closeMenu}>
-                            <i className="bi bi-box me-2" aria-hidden="true"/>
-                            Productos
-                        </NavLink>)
-                    }
-                    {
-                        (tengoPermiso('/contratos', 'POST') || tengoPermiso('/contratos', 'DELETE')) &&
-                        (<NavLink className={navLinkClass} to="/contratos" end onClick={closeMenu}>
-                            <i className="bi bi-file-earmark-text me-2" aria-hidden="true"/>
-                            Contratos
-                        </NavLink>)
-                    }
-                    {
-                        (tengoPermiso('/departamentos', 'POST') || tengoPermiso('/departamentos', 'DELETE')) &&
-                        (<NavLink className={navLinkClass} to="/departamentos" end onClick={closeMenu}>
-                            <i className="bi bi-building me-2" aria-hidden="true"/>
-                            Departamentos
-                        </NavLink>)
-                    }
-                    {
-                        (tengoPermiso('/fichajes', 'POST') || tengoPermiso('/fichajes', 'DELETE')) &&
-                        (<NavLink className={navLinkClass} to="/fichajes" end onClick={closeMenu}>
-                            <i className="bi bi-person-add me-2" aria-hidden="true"/>
-                            Fichajes
-                        </NavLink>)
-                    }
-                    {
-                        (tengoPermiso('/incidencias', 'POST') || tengoPermiso('/incidencias', 'DELETE')) &&
-                        (<NavLink className={navLinkClass} to="/incidencia" end onClick={closeMenu}>
-                            <i className="bi bi-bookmark me-2" aria-hidden="true"/>
-                            Incidencia
-                        </NavLink>)
-                    }
-                    {
-                        (tengoPermiso('/vacaciones', 'POST') || tengoPermiso('/vacaciones', 'DELETE')) &&
-                        (<NavLink className={navLinkClass} to="/solicitudes" end onClick={closeMenu}>
-                            <i className="bi bi-window-plus me-2" aria-hidden="true"/>
-                            Solicitudes
-                        </NavLink>)
-                    }
+                    <button
+                        className="btn btn-link text-white p-0 menu-toggle-btn"
+                        onClick={toggleMenu}
+                        aria-label="Toggle menu"
+                    >
+                        <i className={`bi ${isMenuOpen ? 'bi-chevron-up' : 'bi-chevron-down'}`} aria-hidden="true" />
+                    </button>
+                </div>
 
-                </li>
-            </ul>
+                <hr />
 
-            <hr/>
-
-            <div id="desplegableUsuario" className="dropup">
-                <button
-                    className="btn btn-link d-flex align-items-center text-white text-decoration-none dropdown-toggle p-0"
-                    id="dropdownUser1"
-                    type="button"
-                    data-bs-toggle="dropdown"
-                    aria-expanded="false"
-                >
-          <span className="main-nav-avatar rounded-circle me-2 d-inline-flex align-items-center justify-content-center">
-            {username.charAt(0).toUpperCase()}
-          </span>
-                    <strong>{username}</strong>
-                </button>
-                <ul className="dropdown-menu dropdown-menu-dark text-small shadow " aria-labelledby="dropdownUser1">
-                    <li>
-                        <NavLink className="dropdown-item" to="/configuration" onClick={closeMenu}>
-                            Configuración
-                        </NavLink>
-                    </li>
-
-                    <li>
-                        <NavLink className="dropdown-item" to="/profile" onClick={closeMenu}>
-                            Perfil
-                        </NavLink>
-                    </li>
-
-                    <li>
-                        <hr className="dropdown-divider"/>
-                    </li>
-
-                    <li>
-                        <NavLink className="dropdown-item" to="/logout" onClick={closeMenu}>
-                            Cerrar sesión
-                        </NavLink>
+                <ul className="nav nav-pills flex-column mb-auto">
+                    <li className="nav-item">
+                        {links.map(link => (
+                            <NavLink
+                                key={link.to}
+                                className={navLinkClass}
+                                to={link.to}
+                                end
+                                onClick={closeMenu}
+                            >
+                                <i className={`bi ${link.icon} me-2`} aria-hidden="true" />
+                                {link.label}
+                            </NavLink>
+                        ))}
                     </li>
                 </ul>
-            </div>
-        </aside>
+
+                <hr />
+
+                <div id="desplegableUsuario" className="dropup">
+                    <button
+                        className="btn btn-link d-flex align-items-center text-white text-decoration-none dropdown-toggle p-0"
+                        id="dropdownUser1"
+                        type="button"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
+                    >
+                        <span className="main-nav-avatar rounded-circle me-2 d-inline-flex align-items-center justify-content-center">
+                            {username.charAt(0).toUpperCase()}
+                        </span>
+                        <strong>{username}</strong>
+                    </button>
+                    {userDropdownMenu}
+                </div>
+            </aside>
+
+            {/* ── Barra inferior móvil: colapsable (dept >= 5) ── */}
+            {dept >= 5 && (
+                <nav className="bottom-nav-admin bg-dark text-white">
+                    {isMenuOpen && (
+                        <div className="bottom-nav-panel">
+                            <ul className="nav nav-pills flex-column p-3 mb-0">
+                                {links.map(link => (
+                                    <li key={link.to} className="nav-item">
+                                        <NavLink
+                                            className={({ isActive }) =>
+                                                `nav-link d-flex align-items-center ${isActive ? 'active' : 'text-white'}`
+                                            }
+                                            to={link.to}
+                                            end
+                                            onClick={closeMenu}
+                                        >
+                                            <i className={`bi ${link.icon} me-2`} aria-hidden="true" />
+                                            {link.label}
+                                        </NavLink>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    )}
+                    <div className="bottom-nav-bar d-flex align-items-center justify-content-between px-3">
+                        <NavLink
+                            className="text-white text-decoration-none fw-bold fs-5"
+                            to="/dashboard"
+                            onClick={closeMenu}
+                        >
+                            MANEX
+                        </NavLink>
+                        <button
+                            className="btn btn-link text-white p-1"
+                            onClick={toggleMenu}
+                            aria-label={isMenuOpen ? 'Cerrar menú' : 'Abrir menú'}
+                        >
+                            <i className={`bi ${isMenuOpen ? 'bi-chevron-down' : 'bi-chevron-up'} fs-5`} aria-hidden="true" />
+                        </button>
+                        <div className="dropup">
+                            <button
+                                className="btn btn-link d-flex align-items-center text-white text-decoration-none dropdown-toggle p-0"
+                                type="button"
+                                data-bs-toggle="dropdown"
+                                aria-expanded="false"
+                            >
+                                <span className="main-nav-avatar rounded-circle me-2 d-inline-flex align-items-center justify-content-center">
+                                    {username.charAt(0).toUpperCase()}
+                                </span>
+                                <strong className="d-none d-sm-inline">{username}</strong>
+                            </button>
+                            {userDropdownMenu}
+                        </div>
+                    </div>
+                </nav>
+            )}
+
+            {/* ── Barra inferior móvil: solo iconos (dept < 5) ── */}
+            {dept < 5 && (
+                <nav className="bottom-nav-icons bg-dark text-white">
+                    <div className="d-flex align-items-center justify-content-around h-100 px-2">
+                        {links.map(link => (
+                            <NavLink
+                                key={link.to}
+                                className={({ isActive }) =>
+                                    `bottom-icon-link d-flex flex-column align-items-center ${isActive ? 'active' : ''}`
+                                }
+                                to={link.to}
+                                end
+                                title={link.label}
+                                aria-label={link.label}
+                            >
+                                <i className={`bi ${link.icon} fs-5`} aria-hidden="true" />
+                            </NavLink>
+                        ))}
+                        <div className="dropup">
+                            <button
+                                className="btn btn-link bottom-icon-link d-flex flex-column align-items-center p-0"
+                                type="button"
+                                data-bs-toggle="dropdown"
+                                aria-expanded="false"
+                                title={username}
+                                aria-label="Menú de usuario"
+                            >
+                                <span className="main-nav-avatar-sm rounded-circle d-inline-flex align-items-center justify-content-center">
+                                    {username.charAt(0).toUpperCase()}
+                                </span>
+                            </button>
+                            {userDropdownMenu}
+                        </div>
+                    </div>
+                </nav>
+            )}
+        </>
     )
 }

@@ -18,41 +18,50 @@ import "../../../public/styles/mainPages.css";
  */
 export function TablaEmpleados() {
     const [listaEmpleados, setListaEmpleados] = useState([]);
-    const [paginaActual, setPaginaActual] = useState(0);
+    const [paginaActual, setPaginaActual] = useState(() => parseInt(sessionStorage.getItem('tabla_empleados_pagina') || '0', 10));
     const [paginaMaxima, setPaginaMaxima] = useState(0);
     const [cantidadPorPagina] = useState(10);
     const [totalRegistros, setTotalRegistros] = useState(0);
 
     const [empleadoEditando, setEmpleadoEditando] = useState(null);
     const [empleadoEliminando, setEmpleadoEliminando] = useState(null);
+    const [cargando, setCargando] = useState(true);
+    const [errorCarga, setErrorCarga] = useState(null);
     const [filtros, setFiltros] = useState({ nombre: '', apellidos: '', email: '', telefono: '', departamento: '', contrato: '' });
     const setFiltro = (campo, valor) => setFiltros(prev => ({ ...prev, [campo]: valor }));
 
     const { user, tengoPermiso } = useUsers();
 
+    useEffect(() => {
+        sessionStorage.setItem('tabla_empleados_pagina', paginaActual);
+    }, [paginaActual]);
+
     const cargarEmpleados = () => {
-        try {
-            apiFetch(
-                `${import.meta.env.VITE_BACKEND_EMPLEADO}?pagina=${paginaActual}&cantidad=${cantidadPorPagina}`,
-                {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                        'token': user?.token,
-                    },
+        setCargando(true);
+        setErrorCarga(null);
+        apiFetch(
+            `${import.meta.env.VITE_BACKEND_EMPLEADO}?pagina=${paginaActual}&cantidad=${cantidadPorPagina}`,
+            {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'token': user?.token,
+                },
+            }
+        )
+            .then(res => res.json())
+            .then(data => {
+                if (data) {
+                    setListaEmpleados(data?.data);
+                    setPaginaMaxima((data?.meta?.totalPaginas || 1) - 1);
+                    setTotalRegistros(data?.meta?.resultados || 0);
                 }
-            )
-                .then(res => res.json())
-                .then(data => {
-                    if (data) {
-                        setListaEmpleados(data?.data);
-                        setPaginaMaxima((data?.meta?.totalPaginas || 1) - 1);
-                        setTotalRegistros(data?.meta?.resultados || 0);
-                    }
-                });
-        } catch (e) {
-            console.error(e);
-        }
+            })
+            .catch(e => {
+                console.error(e);
+                setErrorCarga('No se pudieron cargar los empleados. Comprueba la conexión con el servidor.');
+            })
+            .finally(() => setCargando(false));
     };
 
     useEffect(() => {
@@ -99,7 +108,19 @@ export function TablaEmpleados() {
                 />
             )}
 
-            {listaEmpleados?.length > 0 ? (
+            {errorCarga && (
+                <div className="alert alert-danger mx-3 mt-3" role="alert">
+                    <i className="bi bi-exclamation-triangle-fill me-2"></i>{errorCarga}
+                </div>
+            )}
+
+            {cargando ? (
+                <div className="tabla-empty-state">
+                    <div className="spinner-border text-primary" role="status">
+                        <span className="visually-hidden">Cargando...</span>
+                    </div>
+                </div>
+            ) : listaEmpleados?.length > 0 ? (
                 <div className="table-responsive m-3 d-flex flex-column justify-content-start">
                     <table className="table table-striped">
                         <thead>

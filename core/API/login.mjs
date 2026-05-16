@@ -149,7 +149,7 @@ export function login(req, res) {
 
 
     });
-    if (res.headerSent) {
+    if (res.headersSent) {
         return res.status(404).send(
             { status: 404, message: "salida invalida" }
         );;

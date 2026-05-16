@@ -16,19 +16,27 @@ import "../../../public/styles/mainPages.css";
  */
 export function TablaDepartamentos() {
     const [listaDepartamentos, setListaDepartamentos] = useState([]);
-    const [paginaActual, setPaginaActual] = useState(0);
+    const [paginaActual, setPaginaActual] = useState(() => parseInt(sessionStorage.getItem('tabla_departamentos_pagina') || '0', 10));
     const [paginaMaxima, setPaginaMaxima] = useState(0);
     const [totalRegistros, setTotalRegistros] = useState(0);
     const [cantidadPorPagina] = useState(10);
 
     const [departamentoEditando, setDepartamentoEditando] = useState(null);
     const [departamentoEliminando, setDepartamentoEliminando] = useState(null);
+    const [cargando, setCargando] = useState(true);
+    const [errorCarga, setErrorCarga] = useState(null);
     const [filtros, setFiltros] = useState({ nombre: '' });
     const setFiltro = (campo, valor) => setFiltros(prev => ({ ...prev, [campo]: valor }));
 
     const { user, tengoPermiso } = useUsers();
 
+    useEffect(() => {
+        sessionStorage.setItem('tabla_departamentos_pagina', paginaActual);
+    }, [paginaActual]);
+
     const cargarDepartamentos = () => {
+        setCargando(true);
+        setErrorCarga(null);
         apiFetch(
             `${import.meta.env.VITE_BACKEND_DEPARTAMENTOS}?pagina=${paginaActual}&cantidad=${cantidadPorPagina}`,
             {
@@ -48,7 +56,11 @@ export function TablaDepartamentos() {
                     setPaginaMaxima(Math.max(0, Math.ceil(total / cantidadPorPagina) - 1));
                 }
             })
-            .catch(e => console.error(e));
+            .catch(e => {
+                console.error(e);
+                setErrorCarga('No se pudieron cargar los departamentos. Comprueba la conexión con el servidor.');
+            })
+            .finally(() => setCargando(false));
     };
 
     useEffect(() => {
@@ -87,7 +99,19 @@ export function TablaDepartamentos() {
                 />
             )}
 
-            {listaDepartamentos.length > 0 ? (
+            {errorCarga && (
+                <div className="alert alert-danger mx-3 mt-3" role="alert">
+                    <i className="bi bi-exclamation-triangle-fill me-2"></i>{errorCarga}
+                </div>
+            )}
+
+            {cargando ? (
+                <div className="tabla-empty-state">
+                    <div className="spinner-border text-primary" role="status">
+                        <span className="visually-hidden">Cargando...</span>
+                    </div>
+                </div>
+            ) : listaDepartamentos.length > 0 ? (
                 <div className="table-responsive m-3 d-flex flex-column justify-content-start">
                     <table className="table table-striped">
                         <thead>
