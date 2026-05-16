@@ -1,46 +1,34 @@
 import { useState } from "react";
-import { useMensaje } from "../../hooks/useMensaje.js";
 import { useUsers } from "../../context/UserContext.jsx";
-import { enviarContrato } from "../../utils/RegisterNewContrato.js";
+import { enviarDepartamento } from "../../utils/RegisterNewDepartamento.js";
+import { useMensaje } from "../../hooks/useMensaje.js";
 
 /**
- * Formulario de edición de un contrato existente.
- * Envía POST a VITE_BACKEND_CONTRATOS con { salarioAnual, horasAnuales, idAModificar }.
+ * Formulario de edición de un departamento existente.
+ * Envía POST a VITE_BACKEND_DEPARTAMENTOS con { nombre, idAModificar }.
  *
  * @author Eneas de la Rosa Menéndez Pedrosa
  * @version 1.0.0
- * @param {Object}   contrato                   - Fila del contrato tal como llega del listado
+ * @param {Object}   departamento               - Fila del departamento tal como llega del listado
  * @param {Function} funcionDeCierreDeFormulario - Cierra el formulario sin guardar
- * @param {Function} handleContratoActualizado   - Callback tras actualización exitosa
+ * @param {Function} handleDepartamentoActualizado - Callback tras actualización exitosa
  * @returns {React.JSX.Element}
- * @constructor
  */
-export function EditarContratoForm({ contrato, funcionDeCierreDeFormulario, handleContratoActualizado }) {
+export function EditarDepartamentoForm({ departamento, funcionDeCierreDeFormulario, handleDepartamentoActualizado }) {
     const { user } = useUsers();
-
     const [enviando, setEnviando] = useState(false);
     const [mensaje, setMensaje] = useMensaje();
-
-    const [form, setForm] = useState({
-        idAModificar: contrato?.ID ?? '',
-        salarioAnual: contrato?.Salario_anual ?? '',
-        horasAnuales: contrato?.Horas_anuales ?? '',
-    });
-
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setForm(prev => ({ ...prev, [name]: value }));
-    };
+    const [nombre, setNombre] = useState(departamento?.Nombre ?? '');
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setEnviando(true);
         setMensaje(null);
 
-        const [ok, texto] = await enviarContrato(user?.token, form.salarioAnual, form.horasAnuales, form.idAModificar);
+        const [ok, texto] = await enviarDepartamento(user?.token, nombre, departamento?.ID);
         if (ok) {
             setMensaje({ tipo: 'success', texto });
-            setTimeout(() => handleContratoActualizado?.(), 1000);
+            setTimeout(() => handleDepartamentoActualizado?.(), 1000);
         } else {
             setMensaje({ tipo: 'danger', texto });
         }
@@ -51,7 +39,7 @@ export function EditarContratoForm({ contrato, funcionDeCierreDeFormulario, hand
         <div className="superponer">
             <div className="card confirmacion" style={{ width: 'min(95dvw, 480px)' }}>
                 <div className="card-header d-flex justify-content-between align-items-center">
-                    <span className="small text-muted">ID: {contrato?.ID}</span>
+                    <span className="small text-muted">ID: {departamento?.ID}</span>
                     <button
                         type="button"
                         className="btn btn-outline-danger btn-sm bi bi-x"
@@ -61,7 +49,7 @@ export function EditarContratoForm({ contrato, funcionDeCierreDeFormulario, hand
                 </div>
 
                 <div className="card-body p-2">
-                    <h2 className="text-center mb-2">Editar contrato</h2>
+                    <h2 className="text-center mb-2">Editar departamento</h2>
 
                     {mensaje && (
                         <div className={`alert alert-${mensaje.tipo} py-1 px-2 small mb-2`}>
@@ -70,35 +58,18 @@ export function EditarContratoForm({ contrato, funcionDeCierreDeFormulario, hand
                     )}
 
                     <form onSubmit={handleSubmit}>
-                        <div className="mb-2">
-                            <label htmlFor="salarioAnual" className="form-label small mb-1">
-                                Salario anual (€) <span className="text-danger">*</span>
-                            </label>
-                            <input
-                                type="number"
-                                className="form-control form-control-sm"
-                                id="salarioAnual"
-                                name="salarioAnual"
-                                value={form.salarioAnual}
-                                onChange={handleChange}
-                                min="0"
-                                step="0.01"
-                                required
-                            />
-                        </div>
-
                         <div className="mb-3">
-                            <label htmlFor="horasAnuales" className="form-label small mb-1">
-                                Horas anuales <span className="text-danger">*</span>
+                            <label htmlFor="nombre" className="form-label small mb-1">
+                                Nombre <span className="text-danger">*</span>
                             </label>
                             <input
-                                type="number"
+                                type="text"
                                 className="form-control form-control-sm"
-                                id="horasAnuales"
-                                name="horasAnuales"
-                                value={form.horasAnuales}
-                                onChange={handleChange}
-                                min="0"
+                                id="nombre"
+                                name="nombre"
+                                value={nombre}
+                                onChange={e => setNombre(e.target.value)}
+                                maxLength={60}
                                 required
                             />
                         </div>

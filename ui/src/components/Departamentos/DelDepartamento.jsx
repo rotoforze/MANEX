@@ -1,36 +1,35 @@
 import { useState } from "react";
 import { useUsers } from "../../context/UserContext.jsx";
-import { eliminarContrato } from "../../utils/RegisterNewContrato.js";
+import { eliminarDepartamento } from "../../utils/RegisterNewDepartamento.js";
 
 /**
- * Diálogo de confirmación para eliminar un contrato.
+ * Diálogo de confirmación para eliminar un departamento.
  * Requiere escribir 'CONFIRMAR' antes de permitir el borrado.
  *
  * @author Eneas de la Rosa Menéndez Pedrosa
- * @version 1.1.0
- * @param {Object}   contrato                   - Contrato a eliminar (debe tener .ID)
+ * @version 1.0.0
+ * @param {Object}   departamento               - Departamento a eliminar (debe tener .ID y .Nombre)
  * @param {Function} funcionDeCierreDeFormulario - Cierra el diálogo sin eliminar
- * @param {Function} handleContratoEliminado     - Callback tras eliminación exitosa
+ * @param {Function} handleDepartamentoEliminado - Callback tras eliminación exitosa
  * @returns {React.JSX.Element}
- * @constructor
  */
-export function DelContrato({ contrato, funcionDeCierreDeFormulario, handleContratoEliminado }) {
+export function DelDepartamento({ departamento, funcionDeCierreDeFormulario, handleDepartamentoEliminado }) {
     const { user } = useUsers();
     const [confirmar, setConfirmar] = useState(false);
     const [estado, setEstado] = useState(null);
 
     async function handleEliminar() {
         setEstado('Confirmando cambios...');
-        const [ok, texto] = await eliminarContrato(user?.token, contrato?.ID);
+        const [ok, texto] = await eliminarDepartamento(user?.token, departamento?.ID);
         if (ok) {
             let seconds = 4;
             const idSeg = setInterval(() => {
                 seconds--;
-                setEstado(`Contrato eliminado. Se refrescará en ${seconds}s.`);
+                setEstado(`Departamento eliminado. Se refrescará en ${seconds}s.`);
                 if (seconds <= 0) clearInterval(idSeg);
             }, 1000);
-            setEstado(`Contrato eliminado. Se refrescará en ${seconds}s.`);
-            setTimeout(() => handleContratoEliminado?.(), 5000);
+            setEstado(`Departamento eliminado. Se refrescará en ${seconds}s.`);
+            setTimeout(() => handleDepartamentoEliminado?.(), 5000);
         } else {
             setEstado(texto);
         }
@@ -49,14 +48,12 @@ export function DelContrato({ contrato, funcionDeCierreDeFormulario, handleContr
                 </div>
 
                 <div className="card-body">
-                    <h2 className="card-title">Eliminar contrato</h2>
+                    <h2 className="card-title">Eliminar departamento</h2>
                     <p>
-                        ¿Quieres eliminar el contrato <b>#{contrato?.ID}</b> (
-                        {contrato?.Salario_anual?.toLocaleString('es-ES')} € ·{' '}
-                        {contrato?.Horas_anuales} h)?
+                        ¿Quieres eliminar el departamento <b>#{departamento?.ID}</b> — <b>{departamento?.Nombre}</b>?
                     </p>
                     <p className="text-muted small">
-                        Si hay empleados asignados a este contrato, no podrá eliminarse.
+                        Si hay empleados asignados a este departamento, no podrá eliminarse.
                     </p>
 
                     <div>
@@ -67,9 +64,7 @@ export function DelContrato({ contrato, funcionDeCierreDeFormulario, handleContr
                             type="text"
                             className="form-control form-control-sm"
                             placeholder="Escribe 'CONFIRMAR' para poder confirmar."
-                            onChange={(e) =>
-                                setConfirmar(e.target.value.toUpperCase() === 'CONFIRMAR')
-                            }
+                            onChange={e => setConfirmar(e.target.value.toUpperCase() === 'CONFIRMAR')}
                         />
 
                         <div className="gap-3 d-flex justify-content-center mt-3 p-2">
@@ -91,7 +86,7 @@ export function DelContrato({ contrato, funcionDeCierreDeFormulario, handleContr
                 </div>
 
                 {estado && (
-                    <div className="alert alert-danger" role="alert">
+                    <div className="alert alert-danger mb-0" role="alert">
                         <b>{estado}</b>
                     </div>
                 )}

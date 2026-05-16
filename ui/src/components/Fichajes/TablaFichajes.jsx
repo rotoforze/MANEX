@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useUsers } from "../../context/UserContext.jsx";
 import { apiFetch } from "../../utils/apiFetch.jsx";
 import "../../../public/styles/tablaPermisos.css";
+import "../../../public/styles/mainPages.css";
 
 /**
  * Muestra en formato tabla los fichajes con paginación.
