@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useMensaje } from "../../../hooks/useMensaje.js";
 import { useUsers } from "../../../context/UserContext.jsx";
 import { apiFetch } from "../../../utils/apiFetch.jsx";
 import "../../../../public/styles/tablaPermisos.css";
@@ -19,7 +20,7 @@ export function NuevaSolicitudForm({ funcionDeCierreDeFormulario, handleNuevaSol
 
     const { user } = useUsers();
     const [seEstaEnviando, setSeEstaEnviando] = useState(false);
-    const [mensaje, setMensaje] = useState(null);
+    const [mensaje, setMensaje] = useMensaje();
 
     async function handleSubmit(event) {
         event.preventDefault();
@@ -76,9 +77,12 @@ export function NuevaSolicitudForm({ funcionDeCierreDeFormulario, handleNuevaSol
         <div className="superponer">
             <div className="card confirmacion" style={{width: '90dvw', maxWidth: '600px', maxHeight: '90dvh', overflowY: 'auto'}}>
                 <div className="card-header d-flex justify-content-end">
-                    <button className={"bi-x bi btn btn-outline-danger"} onClick={() => {
-                        funcionDeCierreDeFormulario();
-                    }}></button>
+                    <button
+                        type="button"
+                        className="bi-x bi btn btn-outline-danger"
+                        onClick={funcionDeCierreDeFormulario}
+                        aria-label="Cerrar"
+                    />
                 </div>
 
                 <div className="card-body p-2">
@@ -179,7 +183,9 @@ export function NuevaSolicitudForm({ funcionDeCierreDeFormulario, handleNuevaSol
                         </div>
 
                         <div className="d-flex justify-content-end gap-2 mt-2">
-
+                            <button className="btn btn-secondary btn-sm" type="button" onClick={funcionDeCierreDeFormulario} disabled={seEstaEnviando}>
+                                Cancelar
+                            </button>
                             <button className="btn btn-primary btn-sm" type="submit" disabled={seEstaEnviando}>
                                 {seEstaEnviando ? 'Registrando...' : 'Registrar'}
                             </button>

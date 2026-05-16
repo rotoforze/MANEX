@@ -1,71 +1,56 @@
 import { useState } from "react";
+import { useUsers } from "../../context/UserContext.jsx";
 import { apiFetch } from "../../utils/apiFetch.jsx";
 
 /**
- * Diálogo de confirmación para eliminar un empleado.
+ * Diálogo de confirmación para eliminar un contrato.
  * Requiere escribir 'CONFIRMAR' antes de permitir el borrado.
  *
- * @author Alex Bernardos Gil
- * @contributor Eneas de la Rosa Menéndez Pedrosa
- * @version 1.2.0
- * @param {Object}   usuarioAEditar   - Empleado a eliminar (debe tener .USERNAME)
- * @param {Function} setUsuarioAEditar
- * @param {boolean}  eliminando
- * @param {Function} setEliminando
- * @param {Object}   user             - Usuario autenticado (para el token)
- * @param {Function} fetchInicio      - Callback para recargar la tabla tras eliminar
+ * @author Eneas de la Rosa Menéndez Pedrosa
+ * @version 1.1.0
+ * @param {Object}   contrato                   - Contrato a eliminar (debe tener .ID)
+ * @param {Function} funcionDeCierreDeFormulario - Cierra el diálogo sin eliminar
+ * @param {Function} handleContratoEliminado     - Callback tras eliminación exitosa
  * @returns {React.JSX.Element}
  * @constructor
  */
-export function DelEmpleado({
-    usuarioAEditar,
-    setUsuarioAEditar,
-    eliminando,
-    setEliminando,
-    user,
-    fetchInicio,
-}) {
+export function DelContrato({ contrato, funcionDeCierreDeFormulario, handleContratoEliminado }) {
+    const { user } = useUsers();
     const [confirmar, setConfirmar] = useState(false);
-    const [estado, setEstado] = useState(undefined);
-
-    function cerrar() {
-        setUsuarioAEditar(undefined);
-        setEliminando(false);
-        setConfirmar(false);
-        setEstado(undefined);
-    }
+    const [estado, setEstado] = useState(null);
 
     function handleEliminar() {
         setEstado('Confirmando cambios...');
 
         const urlencoded = new URLSearchParams();
-        urlencoded.append('usuario', usuarioAEditar?.USERNAME);
+        urlencoded.append('id', contrato?.ID);
 
-        apiFetch(import.meta.env.VITE_BACKEND_EMPLEADO, {
+        apiFetch(import.meta.env.VITE_BACKEND_CONTRATOS, {
             method: 'DELETE',
             headers: { token: user?.token },
             body: urlencoded,
         })
-            .then((res) => res.json())
-            .then(() => {
-                let seconds = 4;
-                const idSeg = setInterval(() => {
-                    seconds--;
-                    setEstado(`Cambios confirmados. Se refrescará en ${seconds}s.`);
-                    if (seconds <= 0) clearInterval(idSeg);
-                }, 1000);
-                setEstado(`Cambios confirmados. Se refrescará en ${seconds}s.`);
-                setTimeout(() => {
-                    cerrar();
-                    fetchInicio();
-                }, 5000);
+            .then(res => res.json())
+            .then((data) => {
+                if (data?.status === 200) {
+                    let seconds = 4;
+                    const idSeg = setInterval(() => {
+                        seconds--;
+                        setEstado(`Contrato eliminado. Se refrescará en ${seconds}s.`);
+                        if (seconds <= 0) clearInterval(idSeg);
+                    }, 1000);
+                    setEstado(`Contrato eliminado. Se refrescará en ${seconds}s.`);
+                    setTimeout(() => {
+                        handleContratoEliminado?.();
+                    }, 5000);
+                } else {
+                    setEstado(data?.message ?? 'Error al eliminar el contrato.');
+                }
             })
             .catch(() => {
-                setEstado('Error al eliminar el empleado.');
+                setEstado('Error de conexión con el servidor.');
             });
     }
-
-    if (!eliminando) return null;
 
     return (
         <div className="superponer">
@@ -74,16 +59,20 @@ export function DelEmpleado({
                     <button
                         type="button"
                         className="btn btn-outline-danger btn-sm bi bi-x"
-                        onClick={cerrar}
+                        onClick={funcionDeCierreDeFormulario}
                         aria-label="Cerrar"
                     />
                 </div>
 
                 <div className="card-body">
-                    <h2 className="card-title">Eliminar empleado</h2>
+                    <h2 className="card-title">Eliminar contrato</h2>
                     <p>
-                        ¿Quieres eliminar al empleado{' '}
-                        <b>{usuarioAEditar?.Nombre} {usuarioAEditar?.Apellidos}</b>?
+                        ¿Quieres eliminar el contrato <b>#{contrato?.ID}</b> (
+                        {contrato?.Salario_anual?.toLocaleString('es-ES')} € ·{' '}
+                        {contrato?.Horas_anuales} h)?
+                    </p>
+                    <p className="text-muted small">
+                        Si hay empleados asignados a este contrato, no podrá eliminarse.
                     </p>
 
                     <div>
@@ -109,7 +98,7 @@ export function DelEmpleado({
                             </button>
                             <button
                                 className="btn btn-danger btn-sm"
-                                onClick={cerrar}
+                                onClick={funcionDeCierreDeFormulario}
                             >
                                 Cancelar
                             </button>

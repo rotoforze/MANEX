@@ -44,36 +44,26 @@ export function Incidencias() {
 
         </div>
 
-        <div className={"d-flex gap-2 align-items-start justify-content-start top-productos incidencias-actions"}>
-
-          <button className={"btn incidencia-action-btn " + (registroVisible ? 'btn-danger' : 'btn-primary')} onClick={() => {
-            // muestra el componente de registro
-            setRegistroVisible(!registroVisible);
-
-          }}> {registroVisible ? 'Cerrar formulario' : 'Nueva incidencia'}
-          
-          </button>
-
+        <div className="d-flex gap-2 align-items-start justify-content-start top-accion">
           <button
-            className="btn btn-primary incidencia-action-btn"
-            onClick={() => {
-
-              setRefreshKey(prevKey => prevKey + 1);
-
-            }}
+            className={"btn top-accion-btn " + (registroVisible ? 'btn-danger' : 'btn-primary')}
+            onClick={() => setRegistroVisible(!registroVisible)}
           >
-
-            Refrescar panel
-
+            {registroVisible ? 'Cerrar formulario' : 'Nueva incidencia'}
           </button>
-
+          <button
+            className="btn btn-primary top-accion-btn"
+            onClick={() => setRefreshKey(prevKey => prevKey + 1)}
+          >
+            Refrescar panel
+          </button>
         </div>
 
         {
           registroVisible
             ? (
               <NuevaIncidenciaForm
-                funcionDeCierreDeFormulario={setRegistroVisible}
+                funcionDeCierreDeFormulario={() => setRegistroVisible(false)}
                 handleNuevaIncidencia={handleNuevaIncidencia}
                 tipoIncidencia={tipoIncidencia}
               />
@@ -85,7 +75,7 @@ export function Incidencias() {
 
       <hr />
 
-      <div className={"d-flex flex-column gap-2 w-100 p-4 justify-content-center overflow-scroll"}>
+      <div className="d-flex flex-column gap-2 w-100 p-4 justify-content-center">
 
         <TablaIncidencias
           key={refreshKey}

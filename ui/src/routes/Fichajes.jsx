@@ -39,8 +39,7 @@ export function Fichajes() {
 
                 </div>
 
-                <div className="d-flex gap-2 align-items-start justify-content-start top-productos">
-
+                <div className="d-flex gap-2 align-items-start justify-content-start top-accion">
                     <button
                         className={"btn " + (fichajeActivo > 0 ? 'btn-danger' : 'btn-primary')}
                         onClick={fichajeActivo ? undefined : () => setRegistroVisible(!registroVisible)}
@@ -48,10 +47,8 @@ export function Fichajes() {
                         {fichajeActivo > 0 ? 'Finalizar turno' : 'Nuevo fichaje'}
                     </button>
 
-
-
                     <button
-                        className="btn btn-primary"
+                        className="btn btn-primary top-accion-btn"
                         onClick={() => setRefreshKey(prev => prev + 1)}
                     >
                         Refrescar panel
@@ -61,7 +58,7 @@ export function Fichajes() {
 
                 {registroVisible && (
                     <NuevoFichajeForm
-                        funcionDeCierreDeFormulario={setRegistroVisible}
+                        funcionDeCierreDeFormulario={() => setRegistroVisible(false)}
                         handleNuevoFichaje={handleNuevoFichaje}
                     />
                 )}

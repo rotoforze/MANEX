@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useMensaje } from "../../../hooks/useMensaje.js";
 import { useUsers } from "../../../context/UserContext.jsx";
 import { apiFetch } from "../../../utils/apiFetch.jsx";
 import "../../../../public/styles/tablaPermisos.css";
@@ -27,7 +28,7 @@ export function EditarSolicitudForm({ solicitud, funcionDeCierreDeFormulario, ha
 
     const { user } = useUsers();
     const [enviando, setEnviando] = useState(false);
-    const [mensaje, setMensaje] = useState(null);
+    const [mensaje, setMensaje] = useMensaje();
     const [form, setForm] = useState({
         id_incidencia: obtenerValor(solicitud, ['id_incidencia', 'ID_INCIDENCIA', 'ID']),
         tipo: obtenerValor(solicitud, ['tipo', 'Tipo']),
