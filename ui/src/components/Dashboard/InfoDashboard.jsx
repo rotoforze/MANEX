@@ -108,11 +108,14 @@ function TablaResumen({ filas, columnas, vacia }) {
 
 // ── Panel RRHH: Solicitudes de cambio de contraseña ─────────────────────────
 
+const PANEL_POR_PAGINA = 5;
+
 function PanelSolicitudesPassword({ token, base }) {
     const [solicitudes, setSolicitudes]   = useState([]);
     const [cargando, setCargando]         = useState(true);
     const [codigoAprobado, setCodigo]     = useState(null); // { username, code }
     const [procesando, setProcesando]     = useState(null); // id en proceso
+    const [pagina, setPagina]             = useState(0);
 
     async function cargar() {
         setCargando(true);
@@ -120,6 +123,7 @@ function PanelSolicitudesPassword({ token, base }) {
             const res = await apiFetch(`${base}/password-requests`, { headers: { token } });
             const data = await res.json();
             setSolicitudes(data?.solicitudes ?? []);
+            setPagina(0);
         } catch { /* silent */ } finally {
             setCargando(false);
         }
@@ -153,6 +157,9 @@ function PanelSolicitudesPassword({ token, base }) {
 
     if (cargando) return null;
     if (!solicitudes.length && !codigoAprobado) return null;
+
+    const totalPaginas     = Math.ceil(solicitudes.length / PANEL_POR_PAGINA);
+    const solicitudesPagina = solicitudes.slice(pagina * PANEL_POR_PAGINA, (pagina + 1) * PANEL_POR_PAGINA);
 
     return (
         <>
@@ -192,7 +199,7 @@ function PanelSolicitudesPassword({ token, base }) {
                                     </tr>
                                 </thead>
                                 <tbody className="table-group-divider">
-                                    {solicitudes.map(s => (
+                                    {solicitudesPagina.map(s => (
                                         <tr key={s.id}>
                                             <td className="ps-3 fw-semibold">
                                                 <i className="bi bi-person me-2 text-muted"></i>{s.username}
@@ -222,6 +229,27 @@ function PanelSolicitudesPassword({ token, base }) {
                                 </tbody>
                             </table>
                         </div>
+
+                        {/* Paginación del panel */}
+                        {totalPaginas > 1 && (
+                            <div className="d-flex align-items-center justify-content-center gap-2 py-2 border-top">
+                                <button
+                                    className="btn btn-outline-secondary btn-sm bi bi-chevron-left"
+                                    aria-label="Anterior"
+                                    disabled={pagina === 0}
+                                    onClick={() => setPagina(p => p - 1)}
+                                />
+                                <span className="small text-muted">
+                                    {pagina + 1} / {totalPaginas}
+                                </span>
+                                <button
+                                    className="btn btn-outline-secondary btn-sm bi bi-chevron-right"
+                                    aria-label="Siguiente"
+                                    disabled={pagina >= totalPaginas - 1}
+                                    onClick={() => setPagina(p => p + 1)}
+                                />
+                            </div>
+                        )}
                     </div>
                 </div>
             )}
@@ -246,6 +274,7 @@ export function InfoDashboard() {
 
     // ── Estado ──
     const [cargando, setCargando]             = useState(true);
+    const [errorDashboard, setErrorDashboard] = useState(null);
     const [ultimaActualizacion, setUltima]    = useState(null);
 
     // Datos personales
@@ -293,6 +322,7 @@ export function InfoDashboard() {
             setUltima(new Date());
         } catch (e) {
             console.error('Error cargando dashboard:', e);
+            setErrorDashboard('No se pudieron cargar los datos del dashboard. Comprueba tu conexión.');
         } finally {
             setCargando(false);
         }
@@ -376,6 +406,20 @@ export function InfoDashboard() {
 
     return (
         <div className="container-fluid px-4 py-4">
+
+            {errorDashboard && (
+                <div className="alert alert-danger d-flex align-items-center gap-2 mb-4" role="alert">
+                    <i className="bi bi-exclamation-triangle-fill flex-shrink-0"></i>
+                    <span>{errorDashboard}</span>
+                    <button
+                        type="button"
+                        className="btn btn-sm btn-outline-danger ms-auto"
+                        onClick={() => { setErrorDashboard(null); cargarDatos(); }}
+                    >
+                        Reintentar
+                    </button>
+                </div>
+            )}
 
             {/* ══════════════════════════════════════════════
                 SECCIÓN PERSONAL

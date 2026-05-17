@@ -1,8 +1,4 @@
-import mysql from 'mysql2';
-import dotenv from 'dotenv';
-
-//Cargamos las variables del archivo .env a process.env
-dotenv.config();
+import pool from '../db.mjs';
 
 /**
  * Devuelve la información del empleado recibido.
@@ -23,13 +19,7 @@ function getEmpleado(req, res) {
         });
     }
 
-    const pool = mysql.createPool({
-        host: process.env.DB_HOST,
-        database: process.env.DB_NAME,
-        user: process.env.DB_USER,
-        password: process.env.DB_PASS,
-        port: process.env.DB_PORT
-    });
+
 
     pool.getConnection((err, connection) => {
         if (err) {

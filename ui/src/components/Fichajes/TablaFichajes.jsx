@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { useUsers } from "../../context/UserContext.jsx";
 import { apiFetch } from "../../utils/apiFetch.jsx";
+import { useDebounce } from "../../hooks/useDebounce.js";
 import "../../../public/styles/tablaPermisos.css";
 import "../../../public/styles/mainPages.css";
 
@@ -15,22 +17,59 @@ import "../../../public/styles/mainPages.css";
 export function TablaFichajes({setFichajeActivo}) {
 
     const [listaFichajes, setListaFichajes] = useState([]);
+    const [cargando, setCargando] = useState(true);
     const [errorCarga, setErrorCarga] = useState('');
-    const [paginaActual, setPaginaActual] = useState(0);
+    const [paginaActual, setPaginaActual] = useState(() => parseInt(sessionStorage.getItem('tabla_fichajes_pagina') || '0', 10));
     const [paginaMaxima, setPaginaMaxima] = useState(0);
     const [totalRegistros, setTotalRegistros] = useState(0);
     const [cantidadPorPagina] = useState(10);
-    const [filtros, setFiltros] = useState({ usuario: '', nombre: '', apellidos: '', tipo: '' });
+    const [searchParams, setSearchParams] = useSearchParams();
+    const [filtros, setFiltros] = useState({
+        usuario:   '',
+        nombre:    searchParams.get('nombre')    || '',
+        apellidos: searchParams.get('apellidos') || '',
+        tipo:      searchParams.get('tipo')      || '',
+    });
     const setFiltro = (campo, valor) => setFiltros(prev => ({ ...prev, [campo]: valor }));
+    const dNombre    = useDebounce(filtros.nombre);
+    const dApellidos = useDebounce(filtros.apellidos);
 
     const { user } = useUsers();
 
     useEffect(() => {
+        sessionStorage.setItem('tabla_fichajes_pagina', paginaActual);
+    }, [paginaActual]);
+
+    useEffect(() => {
+        const p = {};
+        if (dNombre)        p.nombre    = dNombre;
+        if (dApellidos)     p.apellidos = dApellidos;
+        if (filtros.tipo)   p.tipo      = filtros.tipo;
+        setSearchParams(p, { replace: true });
+    }, [dNombre, dApellidos, filtros.tipo]);
+
+    useEffect(() => {
+        setPaginaActual(0);
+    }, [dNombre, dApellidos, filtros.tipo]);
+
+    const hayFiltros = !!(dNombre || dApellidos || filtros.tipo);
+    const limpiarFiltros = () => {
+        setFiltros({ usuario: '', nombre: '', apellidos: '', tipo: '' });
+        setSearchParams({}, { replace: true });
+    };
+
+    useEffect(() => {
+        setCargando(true);
         const urlFichajes = import.meta.env.VITE_BACKEND_FICHAJES
             || `${import.meta.env.VITE_BACKEND}/fichajes`;
 
+        const params = new URLSearchParams({ pagina: paginaActual, cantidad: cantidadPorPagina, username: user?.username });
+        if (dNombre)        params.set('nombre', dNombre);
+        if (dApellidos)     params.set('apellidos', dApellidos);
+        if (filtros.tipo)   params.set('tipo', filtros.tipo);
+
         apiFetch(
-            `${urlFichajes}?pagina=${paginaActual}&cantidad=${cantidadPorPagina}&username=${user?.username}`,
+            `${urlFichajes}?${params}`,
             {
                 method: 'GET',
                 headers: {
@@ -55,8 +94,9 @@ export function TablaFichajes({setFichajeActivo}) {
                 console.error(e);
                 setErrorCarga(e?.message || 'No se han podido cargar los fichajes.');
                 setListaFichajes([]);
-            });
-    }, [paginaActual, cantidadPorPagina, user?.token]);
+            })
+            .finally(() => setCargando(false));
+    }, [paginaActual, cantidadPorPagina, user?.token, dNombre, dApellidos, filtros.tipo]);
 
     function obtenerValor(fichaje, claves, valorPorDefecto = 'N/A') {
         const valor = claves
@@ -71,6 +111,16 @@ export function TablaFichajes({setFichajeActivo}) {
             : 'N/A';
     }
 
+    if (cargando) {
+        return (
+            <div className="tabla-empty-state">
+                <div className="spinner-border text-primary" role="status">
+                    <span className="visually-hidden">Cargando...</span>
+                </div>
+            </div>
+        );
+    }
+
     if (errorCarga) {
         return (
             <div className="tabla-empty-state">
@@ -80,16 +130,10 @@ export function TablaFichajes({setFichajeActivo}) {
         );
     }
 
-    const fichajesFiltrados = listaFichajes.filter(f => (
-        (!filtros.usuario || String(f?.username ?? '').toLowerCase().includes(filtros.usuario.toLowerCase())) &&
-        (!filtros.nombre || String(f?.nombre ?? '').toLowerCase().includes(filtros.nombre.toLowerCase())) &&
-        (!filtros.apellidos || String(f?.apellidos ?? '').toLowerCase().includes(filtros.apellidos.toLowerCase())) &&
-        (!filtros.tipo || f?.tipo === filtros.tipo)
-    ));
 
     return (
         <>
-            {listaFichajes.length > 0 ? (
+            {listaFichajes.length > 0 || hayFiltros ? (
                 <div className="table-responsive m-3 d-flex flex-column justify-content-start">
                     <table className="table table-striped">
                         <thead>
@@ -102,6 +146,7 @@ export function TablaFichajes({setFichajeActivo}) {
                                 <th scope="col">Entrada</th>
                                 <th scope="col">Salida</th>
                                 <th scope="col">Tipo</th>
+                                <th scope="col"></th>
                             </tr>
                             <tr className="table-light">
                                 <th />
@@ -118,11 +163,17 @@ export function TablaFichajes({setFichajeActivo}) {
                                         <option value="Remoto">Remoto</option>
                                     </select>
                                 </th>
-                                <th />
+                                <th>
+                                    {hayFiltros && (
+                                        <button className="btn btn-outline-secondary btn-sm w-100" onClick={limpiarFiltros} title="Limpiar filtros">
+                                            <i className="bi bi-x-lg me-1" aria-hidden="true" />Limpiar
+                                        </button>
+                                    )}
+                                </th>
                             </tr>
                         </thead>
                         <tbody className="table-group-divider">
-                            {fichajesFiltrados.length > 0 ? fichajesFiltrados.map((fichaje) => {
+                            {listaFichajes.length > 0 ? listaFichajes.map((fichaje) => {
                                 const id = obtenerValor(fichaje, ['id']);
                                 const idEmpleado = obtenerValor(fichaje, ['id_empleado']);
                                 const username = obtenerValor(fichaje, ['username']);
@@ -151,7 +202,7 @@ export function TablaFichajes({setFichajeActivo}) {
                         </tbody>
                     </table>
 
-                    <div className="d-flex align-items-center justify-content-center gap-2 mb-3">
+                    {listaFichajes.length > 0 && <div className="d-flex align-items-center justify-content-center gap-2 mb-3">
                         <button
                             className="btn btn-outline-secondary btn-sm bi bi-chevron-bar-left"
                             aria-label="Primera página"
@@ -179,7 +230,7 @@ export function TablaFichajes({setFichajeActivo}) {
                             disabled={!(paginaActual < paginaMaxima)}
                             onClick={() => setPaginaActual(paginaMaxima)}
                         />
-                    </div>
+                    </div>}
                 </div>
             ) : (
                 <div className="tabla-empty-state">

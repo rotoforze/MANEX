@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { useUsers } from "../../context/UserContext.jsx";
 import { apiFetch } from "../../utils/apiFetch.jsx";
+import { useDebounce } from "../../hooks/useDebounce.js";
 import { EditarProductoForm } from "./EditarProductoForm.jsx";
 import "../../../public/styles/tablaPermisos.css";
 import "../../../public/styles/mainPages.css";
@@ -20,14 +22,23 @@ export function TablaProductos() {
     const [productoSeleccionado, setProductoSeleccionado] = useState(null);
     const [mostrarFormulario, setMostrarFormulario] = useState(false);
 
-    const [paginaActual, setPaginaActual] = useState(0);
-    const [hayPaginaSiguiente, setHayPaginaSiguiente] = useState(false);
+    const [paginaActual, setPaginaActual] = useState(() => parseInt(sessionStorage.getItem('tabla_productos_pagina') || '0', 10));
+    const [paginaMaxima, setPaginaMaxima] = useState(0);
     const [totalRegistros, setTotalRegistros] = useState(0);
     const [cantidadPorPagina] = useState(10);
-    const [filtros, setFiltros] = useState({ nombre: '', descripcion: '', estado: '' });
+    const [searchParams, setSearchParams] = useSearchParams();
+    const [filtros, setFiltros] = useState({
+        nombre:      searchParams.get('nombre')      || '',
+        descripcion: searchParams.get('descripcion') || '',
+        estado:      searchParams.get('estado')      || '',
+    });
     const setFiltro = (campo, valor) => setFiltros(prev => ({ ...prev, [campo]: valor }));
+    const dNombre      = useDebounce(filtros.nombre);
+    const dDescripcion = useDebounce(filtros.descripcion);
     const [eliminando, setEliminando] = useState(false);
     const [productoAEliminar, setProductoAEliminar] = useState(undefined);
+    const [cargando, setCargando] = useState(true);
+    const [errorCarga, setErrorCarga] = useState(null);
 
     const { user, tengoPermiso } = useUsers();
 
@@ -42,42 +53,66 @@ export function TablaProductos() {
         }
     }
 
+    useEffect(() => {
+        sessionStorage.setItem('tabla_productos_pagina', paginaActual);
+    }, [paginaActual]);
+
+    // Sincronizar URL con los filtros actuales (se actualiza tras el debounce en texto)
+    useEffect(() => {
+        const p = {};
+        if (dNombre)        p.nombre      = dNombre;
+        if (dDescripcion)   p.descripcion = dDescripcion;
+        if (filtros.estado) p.estado      = filtros.estado;
+        setSearchParams(p, { replace: true });
+    }, [dNombre, dDescripcion, filtros.estado]);
+
+    useEffect(() => {
+        setPaginaActual(0);
+    }, [dNombre, dDescripcion, filtros.estado]);
+
+    const hayFiltros = !!(dNombre || dDescripcion || filtros.estado);
+    const limpiarFiltros = () => {
+        setFiltros({ nombre: '', descripcion: '', estado: '' });
+        setSearchParams({}, { replace: true });
+    };
+
     const cargarProductos = () => {
-        try {
-            apiFetch(
-                `${import.meta.env.VITE_BACKEND_PRODUCTO}?pagina=${paginaActual}&cantidad=${cantidadPorPagina}`,
-                {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                        'token': user?.token,
-                    },
+        setCargando(true);
+        setErrorCarga(null);
+
+        const params = new URLSearchParams({ pagina: paginaActual, cantidad: cantidadPorPagina });
+        if (dNombre)        params.set('nombre', dNombre);
+        if (dDescripcion)   params.set('descripcion', dDescripcion);
+        if (filtros.estado) params.set('estado', filtros.estado);
+
+        apiFetch(
+            `${import.meta.env.VITE_BACKEND_PRODUCTO}?${params}`,
+            {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'token': user?.token,
+                },
+            }
+        )
+            .then(res => res.json())
+            .then(data => {
+                if (data) {
+                    setListaProductos(data?.data || []);
+                    setPaginaMaxima((data?.meta?.totalPaginas || 1) - 1);
+                    setTotalRegistros(data?.meta?.resultados || 0);
                 }
-            )
-                .then(res => res.json())
-                .then(data => {
-                    if (data) {
-                        const items = data?.data || [];
-                        const resultados = data?.resultados ?? items.length;
-                        setListaProductos(items);
-                        setTotalRegistros(resultados);
-                        setHayPaginaSiguiente(resultados >= cantidadPorPagina);
-                    }
-                });
-        } catch (e) {
-            console.error(e);
-        }
+            })
+            .catch(e => {
+                console.error(e);
+                setErrorCarga('No se pudieron cargar los productos. Comprueba la conexión con el servidor.');
+            })
+            .finally(() => setCargando(false));
     };
 
     useEffect(() => {
         cargarProductos();
-    }, [paginaActual]);
-
-    const productosFiltrados = listaProductos.filter(p => (
-        (!filtros.nombre || String(p?.Nombre ?? '').toLowerCase().includes(filtros.nombre.toLowerCase())) &&
-        (!filtros.descripcion || String(p?.Descripcion ?? '').toLowerCase().includes(filtros.descripcion.toLowerCase())) &&
-        (!filtros.estado || p?.Estado === filtros.estado)
-    ));
+    }, [paginaActual, dNombre, dDescripcion, filtros.estado]);
 
     return (
         <>
@@ -91,6 +126,12 @@ export function TablaProductos() {
                     fetchInicio={cargarProductos}
                 />
             )}
+            {errorCarga && (
+                <div className="alert alert-danger mx-3 mt-3" role="alert">
+                    <i className="bi bi-exclamation-triangle-fill me-2"></i>{errorCarga}
+                </div>
+            )}
+
             {mostrarFormulario && (
                 <EditarProductoForm
                     producto={productoSeleccionado}
@@ -102,7 +143,13 @@ export function TablaProductos() {
                 />
             )}
 
-            {listaProductos.length > 0 ? (
+            {cargando ? (
+                <div className="tabla-empty-state">
+                    <div className="spinner-border text-primary" role="status">
+                        <span className="visually-hidden">Cargando...</span>
+                    </div>
+                </div>
+            ) : listaProductos.length > 0 || hayFiltros ? (
                 <div className="table-responsive m-3 d-flex flex-column justify-content-start">
                     <table className="table table-striped">
                         <thead>
@@ -126,11 +173,17 @@ export function TablaProductos() {
                                         <option value="En mantenimiento">En mantenimiento</option>
                                     </select>
                                 </th>
-                                <th />
+                                <th>
+                                    {hayFiltros && (
+                                        <button className="btn btn-outline-secondary btn-sm w-100" onClick={limpiarFiltros} title="Limpiar filtros">
+                                            <i className="bi bi-x-lg me-1" aria-hidden="true" />Limpiar
+                                        </button>
+                                    )}
+                                </th>
                             </tr>
                         </thead>
                         <tbody className="table-group-divider">
-                            {productosFiltrados.length > 0 ? productosFiltrados.map((producto) => (
+                            {listaProductos.length > 0 ? listaProductos.map((producto) => (
                                 <tr key={producto?.ID} className="h-auto">
                                     <th scope="row">{producto?.ID}</th>
                                     <td>{producto?.Nombre}</td>
@@ -150,16 +203,6 @@ export function TablaProductos() {
                                                 setMostrarFormulario(true);
                                             }}
                                             disabled={!tengoPermiso('/productos', 'POST')}
-<<<<<<< HEAD
-                                        />
-                                        <button className="btn btn-danger btn-sm bi bi-trash-fill"title="Eliminar producto"
-                                                aria-label="Eliminar producto"disabled={!tengoPermiso('/productos', 'DELETE')}
-                                         onClick={() => {           
-                                                setProductoAEliminar(producto);
-                                                setEliminando(true);
-                                        }}
-                                    />
-=======
                                         ><i className="bi bi-pencil-fill" aria-hidden="true" /></button>
                                         <button
                                             className="btn btn-danger btn-sm"
@@ -171,7 +214,6 @@ export function TablaProductos() {
                                                 setEliminando(true);
                                             }}
                                         ><i className="bi bi-trash-fill" aria-hidden="true" /></button>
->>>>>>> main
                                     </td>
                                 </tr>
                             )) : (
@@ -184,7 +226,7 @@ export function TablaProductos() {
                         </tbody>
                     </table>
 
-                    <div className="d-flex align-items-center justify-content-center gap-2 mb-3">
+                    {listaProductos.length > 0 && <div className="d-flex align-items-center justify-content-center gap-2 mb-3">
                         <button
                             className="btn btn-outline-secondary btn-sm bi bi-chevron-bar-left"
                             aria-label="Primera página"
@@ -198,20 +240,21 @@ export function TablaProductos() {
                             onClick={() => { if (paginaActual > 0) setPaginaActual(paginaActual - 1); }}
                         />
                         <span className="small text-muted">
-                            Página {paginaActual + 1} · {totalRegistros} registros
+                            Página {paginaActual + 1} de {paginaMaxima + 1} · {totalRegistros} registros
                         </span>
                         <button
                             className="btn btn-outline-secondary btn-sm bi bi-chevron-right"
                             aria-label="Página siguiente"
-                            disabled={!hayPaginaSiguiente}
-                            onClick={() => { if (hayPaginaSiguiente) setPaginaActual(paginaActual + 1); }}
+                            disabled={!(paginaActual < paginaMaxima)}
+                            onClick={() => { if (paginaActual < paginaMaxima) setPaginaActual(paginaActual + 1); }}
                         />
                         <button
                             className="btn btn-outline-secondary btn-sm bi bi-chevron-bar-right"
                             aria-label="Última página"
-                            disabled
+                            disabled={!(paginaActual < paginaMaxima)}
+                            onClick={() => setPaginaActual(paginaMaxima)}
                         />
-                    </div>
+                    </div>}
                 </div>
             ) : (
                 <div className="tabla-empty-state">

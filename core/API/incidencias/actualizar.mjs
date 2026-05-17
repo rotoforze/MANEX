@@ -29,6 +29,7 @@ async function actualizarIncidencia(req, res) {
 
     try {
 
+        await connection.beginTransaction();
 
         const resultadoEmpleado = await connection.query(
             'UPDATE incidencia SET ID_empleado = ?,fecha_creacion = ?, estado = ?, Observaciones = ?, Comentario = ? WHERE ID = ?',
@@ -36,7 +37,7 @@ async function actualizarIncidencia(req, res) {
 
         await connection.commit();
 
-        return res.status(201).send({status: 201, message: 'Actualizacion registrada correctamente.'});
+        return res.status(200).send({status: 200, message: 'Incidencia actualizada correctamente.'});
 
     } catch (error) {
 

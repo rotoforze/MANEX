@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { useUsers } from "../../../context/UserContext.jsx";
 import { apiFetch } from "../../../utils/apiFetch.jsx";
+import { useDebounce } from "../../../hooks/useDebounce.js";
 import { EditarSolicitudForm } from "./EditarSolicitudForm.jsx";
 import "../../../../public/styles/tablaPermisos.css";
 import "../../../../public/styles/mainPages.css";
@@ -15,27 +17,65 @@ import "../../../../public/styles/mainPages.css";
  */
 export function TablaSolicitudes({ idEmpleado }) {
     const [listaSolicitudes, setListaSolicitudes] = useState([]);
+    const [cargando, setCargando] = useState(true);
     const [errorCarga, setErrorCarga] = useState('');
-    const [paginaActual, setPaginaActual] = useState(0);
+    const [paginaActual, setPaginaActual] = useState(() => parseInt(sessionStorage.getItem('tabla_solicitudes_pagina') || '0', 10));
     const [paginaMaxima, setPaginaMaxima] = useState(0);
     const [totalRegistros, setTotalRegistros] = useState(0);
     const [cantidadPorPagina] = useState(10);
     const [solicitudEditando, setSolicitudEditando] = useState(null);
     const [refreshKey, setRefreshKey] = useState(0);
-    const [filtros, setFiltros] = useState({ tipo: '', estado: '' });
+    const [searchParams, setSearchParams] = useSearchParams();
+    const [filtros, setFiltros] = useState({
+        tipo:      searchParams.get('tipo')      || '',
+        estado:    searchParams.get('estado')    || '',
+        nombre:    searchParams.get('nombre')    || '',
+        apellidos: searchParams.get('apellidos') || '',
+    });
     const setFiltro = (campo, valor) => setFiltros(prev => ({ ...prev, [campo]: valor }));
+    const dNombre    = useDebounce(filtros.nombre);
+    const dApellidos = useDebounce(filtros.apellidos);
 
     const { user } = useUsers();
 
     useEffect(() => {
+        sessionStorage.setItem('tabla_solicitudes_pagina', paginaActual);
+    }, [paginaActual]);
+
+    useEffect(() => {
+        const p = {};
+        if (filtros.tipo)   p.tipo      = filtros.tipo;
+        if (filtros.estado) p.estado    = filtros.estado;
+        if (dNombre)        p.nombre    = dNombre;
+        if (dApellidos)     p.apellidos = dApellidos;
+        setSearchParams(p, { replace: true });
+    }, [filtros.tipo, filtros.estado, dNombre, dApellidos]);
+
+    useEffect(() => {
+        setPaginaActual(0);
+    }, [filtros.tipo, filtros.estado, dNombre, dApellidos]);
+
+    const hayFiltros = !!(filtros.tipo || filtros.estado || dNombre || dApellidos);
+    const limpiarFiltros = () => {
+        setFiltros({ tipo: '', estado: '', nombre: '', apellidos: '' });
+        setSearchParams({}, { replace: true });
+    };
+
+    useEffect(() => {
+        setCargando(true);
         const urlSolicitudes = import.meta.env.VITE_BACKEND_SOLICITUDES
             || import.meta.env.VITE_BACKEND_SOLICITUD
             || `${import.meta.env.VITE_BACKEND}/vacaciones`;
 
-        const filtroEmpleado = idEmpleado ? `&id_empleado=${idEmpleado}` : '';
+        const params = new URLSearchParams({ pagina: paginaActual, cantidad: cantidadPorPagina });
+        if (idEmpleado)   params.set('id_empleado', idEmpleado);
+        if (filtros.tipo) params.set('tipo',        filtros.tipo);
+        if (filtros.estado) params.set('estado',    filtros.estado);
+        if (dNombre)      params.set('nombre',      dNombre);
+        if (dApellidos)   params.set('apellidos',   dApellidos);
 
         apiFetch(
-            `${urlSolicitudes}?pagina=${paginaActual}&cantidad=${cantidadPorPagina}${filtroEmpleado}`,
+            `${urlSolicitudes}?${params}`,
             {
                 method: 'GET',
                 headers: {
@@ -55,8 +95,9 @@ export function TablaSolicitudes({ idEmpleado }) {
                 console.error(e);
                 setErrorCarga('No se han podido cargar las solicitudes.');
                 setListaSolicitudes([]);
-            });
-    }, [paginaActual, cantidadPorPagina, user?.token, refreshKey, idEmpleado]);
+            })
+            .finally(() => setCargando(false));
+    }, [paginaActual, cantidadPorPagina, user?.token, refreshKey, idEmpleado, filtros.tipo, filtros.estado, dNombre, dApellidos]);
 
     function handleSolicitudActualizada() {
         setSolicitudEditando(null);
@@ -96,6 +137,16 @@ export function TablaSolicitudes({ idEmpleado }) {
             : 'N/A';
     }
 
+    if (cargando) {
+        return (
+            <div className="tabla-empty-state">
+                <div className="spinner-border text-primary" role="status">
+                    <span className="visually-hidden">Cargando...</span>
+                </div>
+            </div>
+        );
+    }
+
     if (errorCarga) {
         return (
             <div className="tabla-empty-state">
@@ -105,10 +156,6 @@ export function TablaSolicitudes({ idEmpleado }) {
         );
     }
 
-    const solicitudesFiltradas = listaSolicitudes.filter(s => (
-        (!filtros.tipo || s?.tipo === filtros.tipo) &&
-        (!filtros.estado || s?.estado === filtros.estado)
-    ));
 
     return (
         <>
@@ -120,12 +167,14 @@ export function TablaSolicitudes({ idEmpleado }) {
                 />
             )}
 
-            {listaSolicitudes.length > 0 ? (
+            {listaSolicitudes.length > 0 || hayFiltros ? (
                 <div className="table-responsive m-3 d-flex flex-column justify-content-start">
                     <table className="table table-striped">
                         <thead>
                             <tr>
                                 <th scope="col">#</th>
+                                {!idEmpleado && <th scope="col">Nombre</th>}
+                                {!idEmpleado && <th scope="col">Apellidos</th>}
                                 <th scope="col">Tipo</th>
                                 <th scope="col">Fecha inicio</th>
                                 <th scope="col">Fecha fin</th>
@@ -134,6 +183,8 @@ export function TablaSolicitudes({ idEmpleado }) {
                             </tr>
                             <tr className="table-light">
                                 <th />
+                                {!idEmpleado && <th><input className="form-control form-control-sm" type="text" placeholder="Nombre" value={filtros.nombre} onChange={e => setFiltro('nombre', e.target.value)} /></th>}
+                                {!idEmpleado && <th><input className="form-control form-control-sm" type="text" placeholder="Apellidos" value={filtros.apellidos} onChange={e => setFiltro('apellidos', e.target.value)} /></th>}
                                 <th>
                                     <select className="form-select form-select-sm" value={filtros.tipo} onChange={e => setFiltro('tipo', e.target.value)}>
                                         <option value="">Todos</option>
@@ -152,17 +203,25 @@ export function TablaSolicitudes({ idEmpleado }) {
                                         <option value="En revisión">En revisión</option>
                                     </select>
                                 </th>
-                                <th />
+                                <th>
+                                    {hayFiltros && (
+                                        <button className="btn btn-outline-secondary btn-sm w-100" onClick={limpiarFiltros} title="Limpiar filtros">
+                                            <i className="bi bi-x-lg me-1" aria-hidden="true" />Limpiar
+                                        </button>
+                                    )}
+                                </th>
                             </tr>
                         </thead>
                         <tbody className="table-group-divider">
-                            {solicitudesFiltradas.length > 0 ? solicitudesFiltradas.map((solicitud) => {
+                            {listaSolicitudes.length > 0 ? listaSolicitudes.map((solicitud) => {
                                 const idIncidencia = obtenerValor(solicitud, ['ID_INCIDENCIA']);
                                 const estado = obtenerValor(solicitud, ['estado'], 'Sin estado');
 
                                 return (
                                     <tr key={idIncidencia} className="h-auto">
                                         <th scope="row">{idIncidencia}</th>
+                                        {!idEmpleado && <td>{solicitud?.nombre_empleado ?? '—'}</td>}
+                                        {!idEmpleado && <td>{solicitud?.apellidos_empleado ?? '—'}</td>}
                                         <td>{obtenerValor(solicitud, ['tipo'])}</td>
                                         <td>{formatearFecha(obtenerValor(solicitud, ['fecha_inicio'], null))}</td>
                                         <td>{formatearFecha(obtenerValor(solicitud, ['fecha_fin'], null))}</td>
@@ -188,7 +247,7 @@ export function TablaSolicitudes({ idEmpleado }) {
                                 );
                             }) : (
                                 <tr>
-                                    <td colSpan={6} className="text-center text-muted py-4 small">
+                                    <td colSpan={idEmpleado ? 6 : 8} className="text-center text-muted py-4 small">
                                         Sin resultados con los filtros aplicados.
                                     </td>
                                 </tr>
@@ -196,7 +255,7 @@ export function TablaSolicitudes({ idEmpleado }) {
                         </tbody>
                     </table>
 
-                    <div className="d-flex align-items-center justify-content-center gap-2 mb-3">
+                    {listaSolicitudes.length > 0 && <div className="d-flex align-items-center justify-content-center gap-2 mb-3">
                         <button
                             className="btn btn-outline-secondary btn-sm bi bi-chevron-bar-left"
                             aria-label="Primera página"
@@ -224,7 +283,7 @@ export function TablaSolicitudes({ idEmpleado }) {
                             disabled={!(paginaActual < paginaMaxima)}
                             onClick={() => setPaginaActual(paginaMaxima)}
                         />
-                    </div>
+                    </div>}
                 </div>
             ) : (
                 <div className="tabla-empty-state">
