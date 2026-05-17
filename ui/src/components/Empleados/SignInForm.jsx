@@ -16,7 +16,8 @@ export function SignInForm({ funcionDeCierreDeFormulario, handleNuevoRegistro })
         setSeEstaEnviando(true);
         setMensaje(null);
 
-        const formData = new FormData(event.currentTarget);
+        const form = event.currentTarget;
+        const formData = new FormData(form);
         const password = formData.get('password');
         const confirmPassword = formData.get('confirmPassword');
 
@@ -44,6 +45,7 @@ export function SignInForm({ funcionDeCierreDeFormulario, handleNuevoRegistro })
             const [ok, mensaje] = resultado;
 
             if (ok === true) {
+                form.reset();
                 handleNuevoRegistro();
             } else {
                 setMensaje({ tipo: 'danger', texto: mensaje ?? 'Error al registrar el empleado.' });

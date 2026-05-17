@@ -14,8 +14,9 @@ import "../../../public/styles/mainPages.css";
  */
 export function TablaIncidencias({ tipoIncidencia, idEmpleado }) {
     const [listaIncidencias, setListaIncidencias] = useState([]);
+    const [cargando, setCargando] = useState(true);
     const [errorCarga, setErrorCarga] = useState('');
-    const [paginaActual, setPaginaActual] = useState(0);
+    const [paginaActual, setPaginaActual] = useState(() => parseInt(sessionStorage.getItem('tabla_incidencias_pagina') || '0', 10));
     const [paginaMaxima, setPaginaMaxima] = useState(0);
     const [totalRegistros, setTotalRegistros] = useState(0);
     const [cantidadPorPagina] = useState(10);
@@ -25,6 +26,11 @@ export function TablaIncidencias({ tipoIncidencia, idEmpleado }) {
     const { user } = useUsers();
 
     useEffect(() => {
+        sessionStorage.setItem('tabla_incidencias_pagina', paginaActual);
+    }, [paginaActual]);
+
+    useEffect(() => {
+        setCargando(true);
         const urlIncidencias = import.meta.env.VITE_BACKEND_INCIDENCIAS
             || `${import.meta.env.VITE_BACKEND}/incidencias`;
 
@@ -51,7 +57,8 @@ export function TablaIncidencias({ tipoIncidencia, idEmpleado }) {
                 console.error(e);
                 setErrorCarga('No se han podido cargar las incidencias.');
                 setListaIncidencias([]);
-            });
+            })
+            .finally(() => setCargando(false));
     }, [paginaActual, tipoIncidencia, cantidadPorPagina, user?.token, idEmpleado]);
 
     function obtenerClaseEstado(estado) {
@@ -80,6 +87,16 @@ export function TablaIncidencias({ tipoIncidencia, idEmpleado }) {
         return fecha
             ? new Date(fecha).toLocaleDateString('es-ES', { timeZone: 'UTC' })
             : 'N/A';
+    }
+
+    if (cargando) {
+        return (
+            <div className="tabla-empty-state">
+                <div className="spinner-border text-primary" role="status">
+                    <span className="visually-hidden">Cargando...</span>
+                </div>
+            </div>
+        );
     }
 
     if (errorCarga) {

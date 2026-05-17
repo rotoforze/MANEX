@@ -15,8 +15,9 @@ import "../../../../public/styles/mainPages.css";
  */
 export function TablaSolicitudes({ idEmpleado }) {
     const [listaSolicitudes, setListaSolicitudes] = useState([]);
+    const [cargando, setCargando] = useState(true);
     const [errorCarga, setErrorCarga] = useState('');
-    const [paginaActual, setPaginaActual] = useState(0);
+    const [paginaActual, setPaginaActual] = useState(() => parseInt(sessionStorage.getItem('tabla_solicitudes_pagina') || '0', 10));
     const [paginaMaxima, setPaginaMaxima] = useState(0);
     const [totalRegistros, setTotalRegistros] = useState(0);
     const [cantidadPorPagina] = useState(10);
@@ -28,6 +29,11 @@ export function TablaSolicitudes({ idEmpleado }) {
     const { user } = useUsers();
 
     useEffect(() => {
+        sessionStorage.setItem('tabla_solicitudes_pagina', paginaActual);
+    }, [paginaActual]);
+
+    useEffect(() => {
+        setCargando(true);
         const urlSolicitudes = import.meta.env.VITE_BACKEND_SOLICITUDES
             || import.meta.env.VITE_BACKEND_SOLICITUD
             || `${import.meta.env.VITE_BACKEND}/vacaciones`;
@@ -55,7 +61,8 @@ export function TablaSolicitudes({ idEmpleado }) {
                 console.error(e);
                 setErrorCarga('No se han podido cargar las solicitudes.');
                 setListaSolicitudes([]);
-            });
+            })
+            .finally(() => setCargando(false));
     }, [paginaActual, cantidadPorPagina, user?.token, refreshKey, idEmpleado]);
 
     function handleSolicitudActualizada() {
@@ -94,6 +101,16 @@ export function TablaSolicitudes({ idEmpleado }) {
         return fecha
             ? new Date(fecha).toLocaleDateString('es-ES', { timeZone: 'UTC' })
             : 'N/A';
+    }
+
+    if (cargando) {
+        return (
+            <div className="tabla-empty-state">
+                <div className="spinner-border text-primary" role="status">
+                    <span className="visually-hidden">Cargando...</span>
+                </div>
+            </div>
+        );
     }
 
     if (errorCarga) {

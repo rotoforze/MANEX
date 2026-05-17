@@ -15,8 +15,9 @@ import "../../../public/styles/mainPages.css";
 export function TablaFichajes({setFichajeActivo}) {
 
     const [listaFichajes, setListaFichajes] = useState([]);
+    const [cargando, setCargando] = useState(true);
     const [errorCarga, setErrorCarga] = useState('');
-    const [paginaActual, setPaginaActual] = useState(0);
+    const [paginaActual, setPaginaActual] = useState(() => parseInt(sessionStorage.getItem('tabla_fichajes_pagina') || '0', 10));
     const [paginaMaxima, setPaginaMaxima] = useState(0);
     const [totalRegistros, setTotalRegistros] = useState(0);
     const [cantidadPorPagina] = useState(10);
@@ -26,6 +27,11 @@ export function TablaFichajes({setFichajeActivo}) {
     const { user } = useUsers();
 
     useEffect(() => {
+        sessionStorage.setItem('tabla_fichajes_pagina', paginaActual);
+    }, [paginaActual]);
+
+    useEffect(() => {
+        setCargando(true);
         const urlFichajes = import.meta.env.VITE_BACKEND_FICHAJES
             || `${import.meta.env.VITE_BACKEND}/fichajes`;
 
@@ -55,7 +61,8 @@ export function TablaFichajes({setFichajeActivo}) {
                 console.error(e);
                 setErrorCarga(e?.message || 'No se han podido cargar los fichajes.');
                 setListaFichajes([]);
-            });
+            })
+            .finally(() => setCargando(false));
     }, [paginaActual, cantidadPorPagina, user?.token]);
 
     function obtenerValor(fichaje, claves, valorPorDefecto = 'N/A') {
@@ -69,6 +76,16 @@ export function TablaFichajes({setFichajeActivo}) {
         return fecha
             ? new Date(fecha).toLocaleString('es-ES', { timeZone: 'UTC' })
             : 'N/A';
+    }
+
+    if (cargando) {
+        return (
+            <div className="tabla-empty-state">
+                <div className="spinner-border text-primary" role="status">
+                    <span className="visually-hidden">Cargando...</span>
+                </div>
+            </div>
+        );
     }
 
     if (errorCarga) {

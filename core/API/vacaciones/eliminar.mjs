@@ -30,14 +30,15 @@ async function delVacaciones(req, res) {
 
     try {
 
+        await connection.beginTransaction();
+
         const resultadoIncidencia = await connection.query(
             'DELETE FROM solicitud_vacaciones WHERE id_incidencia = ?',
             [id_incidencia]);
 
-
         await connection.commit();
 
-        return res.status(201).send({status: 201, message: 'Solicitud eliminada correctamente.'});
+        return res.status(200).send({status: 200, message: 'Solicitud eliminada correctamente.'});
 
     } catch (error) {
 
