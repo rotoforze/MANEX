@@ -166,7 +166,7 @@ app.get('/productos', (req, res) => {
         });
     }
 
-    if (req?.query?.id) {
+    if (req?.query?.id || req?.query?.estado) {
         getProducto(req, res);
 
     } else listaProductos(req, res);
@@ -237,8 +237,10 @@ app.get('/incidencias', (req, res) => {
             message: `Parámetros no permitidos: ${parametrosNoValidos.join(', ')}`
         });
     }
+    const tienePaginacion = req?.query?.pagina !== undefined || req?.query?.cantidad !== undefined;
+    const tieneFiltros = req?.query?.id || req?.query?.id_empleado || req?.query?.estado || req?.query?.fecha_inicio;
 
-    if (req?.query?.id) {
+    if (!tienePaginacion && tieneFiltros) {
         getIncidencia(req, res);
 
     } else listaIncidencias(req, res);
