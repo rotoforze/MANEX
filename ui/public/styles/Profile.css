@@ -132,6 +132,25 @@
     font-size: 1.1rem;
 }
 
+.profile-readonly-value {
+    padding: 0.5rem 0;
+    color: #495057;
+    font-size: 0.95rem;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.profile-subsection-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #6c757d;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
 .profile-error {
     background-color: #f8d7da;
     border: 1px solid #f5c6cb;

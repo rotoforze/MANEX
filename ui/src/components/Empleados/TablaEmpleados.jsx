@@ -158,7 +158,7 @@ export function TablaEmpleados() {
                         <span className="visually-hidden">Cargando...</span>
                     </div>
                 </div>
-            ) : listaEmpleados?.length > 0 ? (
+            ) : listaEmpleados?.length > 0 || hayFiltros ? (
                 <div className="table-responsive m-3 d-flex flex-column justify-content-start">
                     <table className="table table-striped">
                         <thead>
@@ -240,7 +240,7 @@ export function TablaEmpleados() {
                         </tbody>
                     </table>
 
-                    <div className="d-flex align-items-center justify-content-center gap-2 mb-3">
+                    {listaEmpleados?.length > 0 && <div className="d-flex align-items-center justify-content-center gap-2 mb-3">
                         <button
                             className="btn btn-outline-secondary btn-sm bi bi-chevron-bar-left"
                             aria-label="Primera página"
@@ -268,7 +268,7 @@ export function TablaEmpleados() {
                             disabled={!(paginaActual < paginaMaxima)}
                             onClick={() => setPaginaActual(paginaMaxima)}
                         />
-                    </div>
+                    </div>}
                 </div>
             ) : (
                 <div className="tabla-empty-state">

@@ -1,8 +1,5 @@
-import mysql from 'mysql2';
-import dotenv from 'dotenv';
+import pool from '../db.mjs';
 import Paginacion from "../paginacion.mjs";
-
-dotenv.config();
 
 /**
  * Devuelve una lista paginada de incidencias con filtros opcionales.
@@ -13,15 +10,7 @@ dotenv.config();
  */
 export function listaIncidencias(req, res) {
 
-    const pool = mysql.createPool({
-        host: process.env.DB_HOST,
-        user: process.env.DB_USER,
-        password: process.env.DB_PASS,
-        database: process.env.DB_NAME,
-        port: process.env.DB_PORT
-    });
-
-    let { cantidad, pagina, id_empleado, estado, observaciones, comentario } = req.query;
+    let { cantidad, pagina, id_empleado, estado, observaciones, comentario, nombre, apellidos } = req.query;
 
     cantidad = cantidad !== undefined ? parseInt(cantidad) : Paginacion.DEFAULT_CANTIDAD_PAGINACION;
     pagina   = pagina   !== undefined ? parseInt(pagina)   : Paginacion.DEFAULT_PAGINA;
@@ -62,6 +51,14 @@ export function listaIncidencias(req, res) {
         condiciones.push('i.Comentario LIKE ?');
         params.push(`%${comentario}%`);
     }
+    if (nombre) {
+        condiciones.push('e.Nombre LIKE ?');
+        params.push(`%${nombre}%`);
+    }
+    if (apellidos) {
+        condiciones.push('e.Apellidos LIKE ?');
+        params.push(`%${apellidos}%`);
+    }
 
     const whereClause = condiciones.length > 0 ? ' WHERE ' + condiciones.join(' AND ') : '';
 
@@ -71,7 +68,7 @@ export function listaIncidencias(req, res) {
         }
 
         connection.query(
-            `SELECT COUNT(*) as total FROM incidencia i${whereClause}`,
+            `SELECT COUNT(*) as total FROM incidencia i LEFT JOIN empleado e ON i.ID_EMPLEADO = e.id${whereClause}`,
             params,
             (errCount, countResult) => {
                 if (errCount) {
@@ -82,7 +79,10 @@ export function listaIncidencias(req, res) {
                 const totalResultados = countResult[0].total;
 
                 connection.query(
-                    `SELECT i.* FROM incidencia i${whereClause} ORDER BY i.estado DESC LIMIT ? OFFSET ?`,
+                    `SELECT i.*, e.Nombre AS nombre_empleado, e.Apellidos AS apellidos_empleado
+                     FROM incidencia i
+                     LEFT JOIN empleado e ON i.ID_EMPLEADO = e.id${whereClause}
+                     ORDER BY i.estado DESC LIMIT ? OFFSET ?`,
                     [...params, cantidad, offset],
                     (error, result) => {
                         connection.release();

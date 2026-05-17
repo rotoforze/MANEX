@@ -69,9 +69,17 @@ async function actualizar(req, res) {
         }
 
         // Actualizar tabla empleado
+        // COALESCE conserva el valor existente si llega null (campos NOT NULL o sin permiso de edición)
+        const idContrato     = ID_contrato     ? parseInt(ID_contrato)     : null;
+        const idDepartamento = ID_departamento ? parseInt(ID_departamento) : null;
+        const fechaNac       = fecha_nacimiento || null;
         await connection.query(
-            'UPDATE empleado SET nombre = ?, apellidos = ?, fecha_nacimiento = ?, telefono = ?, ID_contrato = ?, ID_departamento = ?, USERNAME = ? WHERE id = ?',
-            [nombre, apellidos, fecha_nacimiento, telefono, ID_contrato, ID_departamento, targetUsername, id]);
+            `UPDATE empleado
+             SET nombre = ?, apellidos = ?, fecha_nacimiento = COALESCE(?, fecha_nacimiento),
+                 telefono = ?, ID_contrato = COALESCE(?, ID_contrato),
+                 ID_departamento = COALESCE(?, ID_departamento), USERNAME = ?
+             WHERE id = ?`,
+            [nombre, apellidos, fechaNac, telefono, idContrato, idDepartamento, targetUsername, id]);
 
         if (usernameChanged) {
             await connection.query('SET FOREIGN_KEY_CHECKS = 1');

@@ -1,8 +1,5 @@
-import mysql from 'mysql2';
-import dotenv from 'dotenv';
+import pool from '../db.mjs';
 import Paginacion from "../paginacion.mjs";
-
-dotenv.config();
 
 /**
  * Devuelve una lista paginada de departamentos con filtro opcional por nombre.
@@ -12,14 +9,6 @@ dotenv.config();
  * @param {Response} res
  */
 export function listaDepartamentos(req, res) {
-
-    const pool = mysql.createPool({
-        host: process.env.DB_HOST,
-        user: process.env.DB_USER,
-        password: process.env.DB_PASS,
-        database: process.env.DB_NAME,
-        port: process.env.DB_PORT
-    });
 
     let { cantidad, pagina, nombre } = req.query;
 

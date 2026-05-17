@@ -24,18 +24,6 @@ const pool = mysql.createPool({
  */
 const auth = async (req, res, next) => {
 
-    pool.on('enqueue', function () {
-        console.log('Esperando por la conexión con la bbdd.');
-    });
-
-    pool.on('acquire', function (connection) {
-        console.log('Se ha establecido la conexión %d con la bbdd.', connection.threadId)
-    });
-
-    pool.on('release', function (connection) {
-        console.log('Conexión %d liberada', connection.threadId);
-    });
-
     // rutas que no requieren autenticación
     const rutasPublicas = ['/login', '/', '/permisos', '/recuperar', '/reset'];
     if (rutasPublicas.includes(req.path)) return next();

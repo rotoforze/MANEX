@@ -133,7 +133,7 @@ export function TablaDepartamentos() {
                         <span className="visually-hidden">Cargando...</span>
                     </div>
                 </div>
-            ) : listaDepartamentos.length > 0 ? (
+            ) : listaDepartamentos.length > 0 || hayFiltros ? (
                 <div className="table-responsive m-3 d-flex flex-column justify-content-start">
                     <table className="table table-striped">
                         <thead>
@@ -186,7 +186,7 @@ export function TablaDepartamentos() {
                         </tbody>
                     </table>
 
-                    <div className="d-flex align-items-center justify-content-center gap-2 mb-3">
+                    {listaDepartamentos.length > 0 && <div className="d-flex align-items-center justify-content-center gap-2 mb-3">
                         <button
                             className="btn btn-outline-secondary btn-sm bi bi-chevron-bar-left"
                             aria-label="Primera página"
@@ -214,7 +214,7 @@ export function TablaDepartamentos() {
                             disabled={!(paginaActual < paginaMaxima)}
                             onClick={() => setPaginaActual(paginaMaxima)}
                         />
-                    </div>
+                    </div>}
                 </div>
             ) : (
                 <div className="tabla-empty-state">

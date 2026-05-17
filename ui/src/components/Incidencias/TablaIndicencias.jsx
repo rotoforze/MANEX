@@ -27,10 +27,14 @@ export function TablaIncidencias({ tipoIncidencia, idEmpleado }) {
         estado:        searchParams.get('estado')        || '',
         observaciones: searchParams.get('observaciones') || '',
         comentario:    searchParams.get('comentario')    || '',
+        nombre:        searchParams.get('nombre')        || '',
+        apellidos:     searchParams.get('apellidos')     || '',
     });
     const setFiltro = (campo, valor) => setFiltros(prev => ({ ...prev, [campo]: valor }));
     const dObservaciones = useDebounce(filtros.observaciones);
     const dComentario    = useDebounce(filtros.comentario);
+    const dNombre        = useDebounce(filtros.nombre);
+    const dApellidos     = useDebounce(filtros.apellidos);
 
     const { user } = useUsers();
 
@@ -43,16 +47,18 @@ export function TablaIncidencias({ tipoIncidencia, idEmpleado }) {
         if (filtros.estado)  p.estado        = filtros.estado;
         if (dObservaciones)  p.observaciones  = dObservaciones;
         if (dComentario)     p.comentario     = dComentario;
+        if (dNombre)         p.nombre         = dNombre;
+        if (dApellidos)      p.apellidos      = dApellidos;
         setSearchParams(p, { replace: true });
-    }, [filtros.estado, dObservaciones, dComentario]);
+    }, [filtros.estado, dObservaciones, dComentario, dNombre, dApellidos]);
 
     useEffect(() => {
         setPaginaActual(0);
-    }, [filtros.estado, dObservaciones, dComentario]);
+    }, [filtros.estado, dObservaciones, dComentario, dNombre, dApellidos]);
 
-    const hayFiltros = !!(filtros.estado || dObservaciones || dComentario);
+    const hayFiltros = !!(filtros.estado || dObservaciones || dComentario || dNombre || dApellidos);
     const limpiarFiltros = () => {
-        setFiltros({ estado: '', observaciones: '', comentario: '' });
+        setFiltros({ estado: '', observaciones: '', comentario: '', nombre: '', apellidos: '' });
         setSearchParams({}, { replace: true });
     };
 
@@ -62,10 +68,12 @@ export function TablaIncidencias({ tipoIncidencia, idEmpleado }) {
             || `${import.meta.env.VITE_BACKEND}/incidencias`;
 
         const params = new URLSearchParams({ pagina: paginaActual, cantidad: cantidadPorPagina });
-        if (idEmpleado)    params.set('id_empleado', idEmpleado);
-        if (filtros.estado)    params.set('estado', filtros.estado);
-        if (dObservaciones)    params.set('observaciones', dObservaciones);
-        if (dComentario)       params.set('comentario', dComentario);
+        if (idEmpleado)     params.set('id_empleado',   idEmpleado);
+        if (filtros.estado) params.set('estado',        filtros.estado);
+        if (dObservaciones) params.set('observaciones', dObservaciones);
+        if (dComentario)    params.set('comentario',    dComentario);
+        if (dNombre)        params.set('nombre',        dNombre);
+        if (dApellidos)     params.set('apellidos',     dApellidos);
 
         apiFetch(
             `${urlIncidencias}?${params}`,
@@ -90,7 +98,7 @@ export function TablaIncidencias({ tipoIncidencia, idEmpleado }) {
                 setListaIncidencias([]);
             })
             .finally(() => setCargando(false));
-    }, [paginaActual, cantidadPorPagina, user?.token, idEmpleado, filtros.estado, dObservaciones, dComentario]);
+    }, [paginaActual, cantidadPorPagina, user?.token, idEmpleado, filtros.estado, dObservaciones, dComentario, dNombre, dApellidos]);
 
     function obtenerClaseEstado(estado) {
         switch (estado) {
@@ -142,13 +150,14 @@ export function TablaIncidencias({ tipoIncidencia, idEmpleado }) {
 
     return (
         <>
-            {listaIncidencias.length > 0 ? (
+            {listaIncidencias.length > 0 || hayFiltros ? (
                 <div className="table-responsive m-3 d-flex flex-column justify-content-start">
                     <table className="table table-striped">
                         <thead>
                             <tr>
                                 <th scope="col">#</th>
-                                <th scope="col">Empleado</th>
+                                {!idEmpleado && <th scope="col">Nombre</th>}
+                                {!idEmpleado && <th scope="col">Apellidos</th>}
                                 <th scope="col">Fecha</th>
                                 <th scope="col">Estado</th>
                                 <th scope="col">Observaciones</th>
@@ -157,7 +166,8 @@ export function TablaIncidencias({ tipoIncidencia, idEmpleado }) {
                             </tr>
                             <tr className="table-light">
                                 <th />
-                                <th />
+                                {!idEmpleado && <th><input className="form-control form-control-sm" type="text" placeholder="Nombre" value={filtros.nombre} onChange={e => setFiltro('nombre', e.target.value)} /></th>}
+                                {!idEmpleado && <th><input className="form-control form-control-sm" type="text" placeholder="Apellidos" value={filtros.apellidos} onChange={e => setFiltro('apellidos', e.target.value)} /></th>}
                                 <th />
                                 <th>
                                     <select className="form-select form-select-sm" value={filtros.estado} onChange={e => setFiltro('estado', e.target.value)}>
@@ -186,7 +196,8 @@ export function TablaIncidencias({ tipoIncidencia, idEmpleado }) {
                                 return (
                                     <tr key={id}>
                                         <th scope="row">{id}</th>
-                                        <td>{obtenerValor(incidencia, ['ID_empleado'])}</td>
+                                        {!idEmpleado && <td>{incidencia?.nombre_empleado ?? '—'}</td>}
+                                        {!idEmpleado && <td>{incidencia?.apellidos_empleado ?? '—'}</td>}
                                         <td>{formatearFecha(fecha)}</td>
                                         <td>
                                             <span className={`badge ${obtenerClaseEstado(estado)}`}>
@@ -211,7 +222,7 @@ export function TablaIncidencias({ tipoIncidencia, idEmpleado }) {
                                 );
                             }) : (
                                 <tr>
-                                    <td colSpan={7} className="text-center text-muted py-4 small">
+                                    <td colSpan={idEmpleado ? 5 : 7} className="text-center text-muted py-4 small">
                                         Sin resultados con los filtros aplicados.
                                     </td>
                                 </tr>
@@ -219,7 +230,7 @@ export function TablaIncidencias({ tipoIncidencia, idEmpleado }) {
                         </tbody>
                     </table>
 
-                    <div className="d-flex align-items-center justify-content-center gap-2 mb-3">
+                    {listaIncidencias.length > 0 && <div className="d-flex align-items-center justify-content-center gap-2 mb-3">
                         <button
                             className="btn btn-outline-secondary btn-sm bi bi-chevron-bar-left"
                             aria-label="Primera página"
@@ -247,7 +258,7 @@ export function TablaIncidencias({ tipoIncidencia, idEmpleado }) {
                             disabled={!(paginaActual < paginaMaxima)}
                             onClick={() => setPaginaActual(paginaMaxima)}
                         />
-                    </div>
+                    </div>}
                 </div>
             ) : (
                 <div className="tabla-empty-state">

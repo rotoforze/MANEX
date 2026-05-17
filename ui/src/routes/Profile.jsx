@@ -36,8 +36,8 @@ export const Profile = () => {
             email:           p?.email            || '',
             telefono:        p?.Telefono         || '',
             usuario:         p?.usuario          || '',
-            id_contrato:     p?.id_contrato      ?? '',
-            id_departamento: p?.id_departamento  ?? '',
+            id_contrato:     p?.ID_CONTRATO     ?? p?.id_contrato     ?? '',
+            id_departamento: p?.ID_DEPARTAMENTO ?? p?.id_departamento ?? '',
         };
     }
 
@@ -142,6 +142,8 @@ export const Profile = () => {
         }
     }
 
+    const puedeEditarPersonal = dept >= 5;
+    const puedeEditarEmpresa  = dept >= 7;
     const rolLabel = dept >= 7 ? 'Gerencia / Administración' : dept >= 5 ? 'Recursos Humanos' : 'Empleado';
 
     return (
@@ -260,7 +262,7 @@ export const Profile = () => {
                             </div>
                         )}
 
-                        <form onSubmit={handleGuardarPerfil}>
+                        <form id="profile-form" onSubmit={handleGuardarPerfil}>
 
                             {/* ── Información Personal ── */}
                             <div className="profile-info-section">
@@ -268,40 +270,90 @@ export const Profile = () => {
                                     <i className="bi bi-person-fill"></i>
                                     Información Personal
                                 </h3>
+
+                                {/* Datos identificativos: editable solo para RRHH+ */}
+                                {puedeEditarPersonal ? (
+                                    <div className="profile-form">
+                                        <div className="profile-form-group">
+                                            <label htmlFor="nombre"><i className="bi bi-person"></i> Nombre</label>
+                                            <input
+                                                type="text" id="nombre" className="form-control"
+                                                value={formData.nombre}
+                                                onChange={e => setField('nombre', e.target.value)}
+                                                disabled={!modoEdicion}
+                                                required maxLength={30}
+                                            />
+                                        </div>
+                                        <div className="profile-form-group">
+                                            <label htmlFor="apellidos"><i className="bi bi-person"></i> Apellidos</label>
+                                            <input
+                                                type="text" id="apellidos" className="form-control"
+                                                value={formData.apellidos}
+                                                onChange={e => setField('apellidos', e.target.value)}
+                                                disabled={!modoEdicion}
+                                                maxLength={60}
+                                            />
+                                        </div>
+                                        <div className="profile-form-group">
+                                            <label htmlFor="fechaNacimiento"><i className="bi bi-calendar"></i> Fecha de Nacimiento</label>
+                                            <input
+                                                type="date" id="fechaNacimiento" className="form-control"
+                                                value={formData.fecha_nacimiento}
+                                                onChange={e => setField('fecha_nacimiento', e.target.value)}
+                                                disabled={!modoEdicion}
+                                            />
+                                        </div>
+                                        <div className="profile-form-group">
+                                            <label htmlFor="usuario"><i className="bi bi-person-badge"></i> Usuario</label>
+                                            <input
+                                                type="text" id="usuario" className="form-control"
+                                                value={formData.usuario}
+                                                onChange={e => setField('usuario', e.target.value)}
+                                                disabled={!modoEdicion}
+                                                maxLength={16}
+                                            />
+                                            {modoEdicion && formData.usuario !== profile?.usuario && (
+                                                <div className="form-text text-warning">
+                                                    <i className="bi bi-exclamation-triangle me-1"></i>
+                                                    Cambiar el usuario requiere cerrar sesión y volver a entrar.
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <>
+                                        <div className="profile-form mb-2">
+                                            <div className="profile-form-group">
+                                                <label><i className="bi bi-person"></i> Nombre</label>
+                                                <span className="profile-readonly-value">{profile?.Nombre || '—'}</span>
+                                            </div>
+                                            <div className="profile-form-group">
+                                                <label><i className="bi bi-person"></i> Apellidos</label>
+                                                <span className="profile-readonly-value">{profile?.Apellidos || '—'}</span>
+                                            </div>
+                                            <div className="profile-form-group">
+                                                <label><i className="bi bi-calendar"></i> Fecha de Nacimiento</label>
+                                                <span className="profile-readonly-value">{formData.fecha_nacimiento || '—'}</span>
+                                            </div>
+                                            <div className="profile-form-group">
+                                                <label><i className="bi bi-person-badge"></i> Usuario</label>
+                                                <span className="profile-readonly-value">{formData.usuario || '—'}</span>
+                                            </div>
+                                        </div>
+                                        <p className="text-muted small mb-0">
+                                            <i className="bi bi-lock me-1"></i>
+                                            Datos gestionados por Recursos Humanos.
+                                        </p>
+                                    </>
+                                )}
+
+                                <hr className="my-4" />
+
+                                {/* Datos de contacto: editable por todos */}
+                                <p className="profile-subsection-label">
+                                    <i className="bi bi-envelope"></i> Contacto
+                                </p>
                                 <div className="profile-form">
-
-                                    <div className="profile-form-group">
-                                        <label htmlFor="nombre"><i className="bi bi-person"></i> Nombre</label>
-                                        <input
-                                            type="text" id="nombre" className="form-control"
-                                            value={formData.nombre}
-                                            onChange={e => setField('nombre', e.target.value)}
-                                            disabled={!modoEdicion}
-                                            required maxLength={30}
-                                        />
-                                    </div>
-
-                                    <div className="profile-form-group">
-                                        <label htmlFor="apellidos"><i className="bi bi-person"></i> Apellidos</label>
-                                        <input
-                                            type="text" id="apellidos" className="form-control"
-                                            value={formData.apellidos}
-                                            onChange={e => setField('apellidos', e.target.value)}
-                                            disabled={!modoEdicion}
-                                            maxLength={60}
-                                        />
-                                    </div>
-
-                                    <div className="profile-form-group">
-                                        <label htmlFor="fechaNacimiento"><i className="bi bi-calendar"></i> Fecha de Nacimiento</label>
-                                        <input
-                                            type="date" id="fechaNacimiento" className="form-control"
-                                            value={formData.fecha_nacimiento}
-                                            onChange={e => setField('fecha_nacimiento', e.target.value)}
-                                            disabled={!modoEdicion}
-                                        />
-                                    </div>
-
                                     <div className="profile-form-group">
                                         <label htmlFor="email"><i className="bi bi-envelope"></i> Email</label>
                                         <input
@@ -312,7 +364,6 @@ export const Profile = () => {
                                             maxLength={90}
                                         />
                                     </div>
-
                                     <div className="profile-form-group">
                                         <label htmlFor="telefono"><i className="bi bi-telephone"></i> Teléfono</label>
                                         <input
@@ -323,111 +374,103 @@ export const Profile = () => {
                                             maxLength={12}
                                         />
                                     </div>
-
-                                    {/* Usuario — solo editable para RRHH+ */}
-                                    <div className="profile-form-group">
-                                        <label htmlFor="usuario">
-                                            <i className="bi bi-person-badge"></i> Usuario
-                                            {dept < 5 && (
-                                                <span className="text-muted small ms-2">(solo RRHH)</span>
-                                            )}
-                                        </label>
-                                        <input
-                                            type="text" id="usuario" className="form-control"
-                                            value={formData.usuario}
-                                            onChange={e => setField('usuario', e.target.value)}
-                                            disabled={!modoEdicion || dept < 5}
-                                            maxLength={16}
-                                        />
-                                        {modoEdicion && dept >= 5 && formData.usuario !== profile?.usuario && (
-                                            <div className="form-text text-warning">
-                                                <i className="bi bi-exclamation-triangle me-1"></i>
-                                                Cambiar el usuario requiere cerrar sesión y volver a entrar.
-                                            </div>
-                                        )}
-                                    </div>
-
                                 </div>
                             </div>
 
-                            {/* ── Datos de empresa — solo editable para Gerencia+ ── */}
+                            {/* ── Datos de empresa ── */}
                             <div className="profile-info-section">
                                 <h3 className="profile-info-title">
                                     <i className="bi bi-file-earmark-text"></i>
                                     Datos de empresa
-                                    {dept < 7 && (
+                                    {!puedeEditarEmpresa && (
                                         <span className="badge text-bg-secondary ms-2 fw-normal" style={{ fontSize: '0.7rem' }}>
                                             Solo gerencia
                                         </span>
                                     )}
                                 </h3>
-                                <div className="profile-form">
 
-                                    <div className="profile-form-group">
-                                        <label htmlFor="id_contrato"><i className="bi bi-hash"></i> ID Contrato</label>
-                                        <input
-                                            type="number" id="id_contrato" className="form-control"
-                                            value={formData.id_contrato}
-                                            onChange={e => setField('id_contrato', e.target.value)}
-                                            disabled={!modoEdicion || dept < 7}
-                                            min={1}
-                                        />
+                                {puedeEditarEmpresa ? (
+                                    <div className="profile-form">
+                                        <div className="profile-form-group">
+                                            <label htmlFor="id_contrato"><i className="bi bi-hash"></i> ID Contrato</label>
+                                            <input
+                                                type="number" id="id_contrato" className="form-control"
+                                                value={formData.id_contrato}
+                                                onChange={e => setField('id_contrato', e.target.value)}
+                                                disabled={!modoEdicion}
+                                                min={1}
+                                            />
+                                        </div>
+                                        <div className="profile-form-group">
+                                            <label htmlFor="id_departamento"><i className="bi bi-building"></i> ID Departamento</label>
+                                            <input
+                                                type="number" id="id_departamento" className="form-control"
+                                                value={formData.id_departamento}
+                                                onChange={e => setField('id_departamento', e.target.value)}
+                                                disabled={!modoEdicion}
+                                                min={1}
+                                            />
+                                        </div>
                                     </div>
-
-                                    <div className="profile-form-group">
-                                        <label htmlFor="id_departamento"><i className="bi bi-building"></i> ID Departamento</label>
-                                        <input
-                                            type="number" id="id_departamento" className="form-control"
-                                            value={formData.id_departamento}
-                                            onChange={e => setField('id_departamento', e.target.value)}
-                                            disabled={!modoEdicion || dept < 7}
-                                            min={1}
-                                        />
-                                    </div>
-
-                                </div>
-                            </div>
-
-                            {/* ── Acciones ── */}
-                            <div className="profile-actions">
-                                {!modoEdicion ? (
-                                    <>
-                                        <button
-                                            type="button"
-                                            className="btn btn-outline-primary"
-                                            onClick={() => setModoEdicion(true)}
-                                        >
-                                            <i className="bi bi-pencil-square"></i> Editar Perfil
-                                        </button>
-                                        <button
-                                            type="button"
-                                            className="btn btn-outline-secondary"
-                                            onClick={abrirModal}
-                                        >
-                                            <i className="bi bi-key"></i> Cambiar Contraseña
-                                        </button>
-                                    </>
                                 ) : (
                                     <>
-                                        <button type="submit" className="btn btn-primary" disabled={guardando}>
-                                            {guardando
-                                                ? <><span className="spinner-border spinner-border-sm me-2" role="status"></span>Guardando...</>
-                                                : <><i className="bi bi-check-lg me-1"></i>Guardar cambios</>
-                                            }
-                                        </button>
-                                        <button
-                                            type="button"
-                                            className="btn btn-outline-secondary"
-                                            onClick={cancelarEdicion}
-                                            disabled={guardando}
-                                        >
-                                            <i className="bi bi-x-lg me-1"></i>Cancelar
-                                        </button>
+                                        <div className="profile-form mb-2">
+                                            <div className="profile-form-group">
+                                                <label><i className="bi bi-hash"></i> ID Contrato</label>
+                                                <span className="profile-readonly-value">{formData.id_contrato || '—'}</span>
+                                            </div>
+                                            <div className="profile-form-group">
+                                                <label><i className="bi bi-building"></i> ID Departamento</label>
+                                                <span className="profile-readonly-value">{formData.id_departamento || '—'}</span>
+                                            </div>
+                                        </div>
+                                        <p className="text-muted small mb-0">
+                                            <i className="bi bi-lock me-1"></i>
+                                            Datos gestionados por Gerencia.
+                                        </p>
                                     </>
                                 )}
                             </div>
 
                         </form>
+
+                            {/* ── Acciones ── */}
+                            <div className="profile-actions">
+                                <button
+                                    type="button"
+                                    className={`btn btn-outline-primary${modoEdicion ? ' d-none' : ''}`}
+                                    onClick={() => { setModoEdicion(true); setMensajePerfil(null); }}
+                                >
+                                    <i className="bi bi-pencil-square"></i>{' '}
+                                    {puedeEditarPersonal ? 'Editar perfil' : 'Editar datos de contacto'}
+                                </button>
+                                <button
+                                    type="button"
+                                    className={`btn btn-outline-secondary${modoEdicion ? ' d-none' : ''}`}
+                                    onClick={abrirModal}
+                                >
+                                    <i className="bi bi-key"></i> Cambiar Contraseña
+                                </button>
+                                <button
+                                    type="button"
+                                    className={`btn btn-primary${!modoEdicion ? ' d-none' : ''}`}
+                                    onClick={handleGuardarPerfil}
+                                    disabled={guardando}
+                                >
+                                    {guardando
+                                        ? <><span className="spinner-border spinner-border-sm me-2" role="status"></span>Guardando...</>
+                                        : <><i className="bi bi-check-lg me-1"></i>Guardar cambios</>
+                                    }
+                                </button>
+                                <button
+                                    type="button"
+                                    className={`btn btn-outline-secondary${!modoEdicion ? ' d-none' : ''}`}
+                                    onClick={cancelarEdicion}
+                                    disabled={guardando}
+                                >
+                                    <i className="bi bi-x-lg me-1"></i>Cancelar
+                                </button>
+                            </div>
                     </>
                 ) : (
                     <div className="profile-error">
