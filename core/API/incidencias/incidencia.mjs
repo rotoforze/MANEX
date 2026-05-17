@@ -14,13 +14,18 @@ dotenv.config();
  */
 function getIncidencia(req, res) {
 
-    const id_empleado = req.query.id;
+    const { id, id_empleado, estado, fecha_inicio, fecha_fin } = req.query;
 
-    if (isNaN(id_empleado) || !id_empleado || id_empleado < 0) {
-        return res.status(400).send({
-            status: 400,
-            message: "Parámetros inválidos o nulos"
-        });
+    if (id && (isNaN(id) || id < 0)) {
+        return res.status(400).send({ status: 400, message: "El parámetro 'id' no es válido" });
+    }
+
+    if (id_empleado && (isNaN(id_empleado) || id_empleado < 0)) {
+        return res.status(400).send({ status: 400, message: "El parámetro 'id_empleado' no es válido" });
+    }
+
+    if ((fecha_inicio && !fecha_fin) || (!fecha_inicio && fecha_fin)) {
+        return res.status(400).send({ status: 400, message: "Debes indicar tanto 'fecha_inicio' como 'fecha_fin'" });
     }
 
     const pool = mysql.createPool({
@@ -39,36 +44,65 @@ function getIncidencia(req, res) {
             });
         }
 
-        connection.query(
-            `SELECT *
-             FROM incidencia
-             WHERE ID_empleado = ?
-             ORDER BY estado`,
-            [id_empleado],
-            (error, result) => {
 
-                connection.release();
+        let query = `SELECT * FROM incidencia`;
 
-                if (error) {
-                    return res.status(500).send({
-                        status: 500,
-                        message: "Error en la consulta"
-                    });
-                }
+        const condiciones = [];
+        const params = [];
 
-                if (result.length > 0) {
-                    return res.status(200).send({
-                        status: 200,
-                        usuario: result
-                    });
-                }
+        // Filtro por ID de incidencia
+        if (id) {
+            condiciones.push(`ID = ?`);
+            params.push(id);
+        }
 
-                return res.status(404).send({
-                    status: 404,
-                    message: "No se ha encontrado la incidencia."
+        // Filtro por ID de empleado
+        if (id_empleado) {
+            condiciones.push(`ID_empleado = ?`);
+            params.push(id_empleado);
+        }
+
+        // Filtro por estado
+        if (estado) {
+            condiciones.push(`estado = ?`);
+            params.push(estado);
+        }
+
+        // Filtro por rango de fechas
+        if (fecha_inicio && fecha_fin) {
+            condiciones.push(`fecha_creacion BETWEEN ? AND ?`);
+            params.push(fecha_inicio, fecha_fin);
+        }
+
+        if (condiciones.length > 0) {
+            query += ` WHERE ` + condiciones.join(' AND ');
+        }
+
+        query += ` ORDER BY estado DESC`;
+
+        connection.query(query, params, (error, result) => {
+            connection.release();
+
+            if (error) {
+                return res.status(500).send({
+                    status: 500,
+                    message: "Error en la consulta"
                 });
-
             }
+
+            if (result.length > 0) {
+                return res.status(200).send({
+                    status: 200,
+                    usuario: result
+                });
+            }
+
+            return res.status(404).send({
+                status: 404,
+                message: "No se ha encontrado la incidencia."
+            });
+
+        }
         );
     });
 }

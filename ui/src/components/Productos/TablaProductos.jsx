@@ -171,6 +171,16 @@ export function TablaProductos() {
                                                 setMostrarFormulario(true);
                                             }}
                                             disabled={!tengoPermiso('/productos', 'POST')}
+<<<<<<< HEAD
+                                        />
+                                        <button className="btn btn-danger btn-sm bi bi-trash-fill"title="Eliminar producto"
+                                                aria-label="Eliminar producto"disabled={!tengoPermiso('/productos', 'DELETE')}
+                                         onClick={() => {           
+                                                setProductoAEliminar(producto);
+                                                setEliminando(true);
+                                        }}
+                                    />
+=======
                                         ><i className="bi bi-pencil-fill" aria-hidden="true" /></button>
                                         <button
                                             className="btn btn-danger btn-sm"
@@ -182,6 +192,7 @@ export function TablaProductos() {
                                                 setEliminando(true);
                                             }}
                                         ><i className="bi bi-trash-fill" aria-hidden="true" /></button>
+>>>>>>> main
                                     </td>
                                 </tr>
                             )) : (
