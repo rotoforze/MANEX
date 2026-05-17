@@ -142,6 +142,27 @@ export const Profile = () => {
         }
     }
 
+    useEffect(() => {
+        try {
+            const res = await apiFetch(`${base}/password`, {
+                method: 'POST',
+                headers: { token: user.token, 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: new URLSearchParams({ password_actual: passActual, password_nuevo: passNuevo, confirmar: passConfirm }).toString(),
+            });
+            const data = await res.json();
+            if (res.ok) {
+                setMensajePass({ tipo: 'success', texto: data.message });
+                setTimeout(cerrarModal, 1800);
+            } else {
+                setMensajePass({ tipo: 'danger', texto: data.message ?? 'No se pudo cambiar la contraseña.' });
+            }
+        } catch {
+            setMensajePass({ tipo: 'danger', texto: 'Error de conexión.' });
+        } finally {
+            setEnviando(false);
+        }
+    }
+
     const rolLabel = dept >= 7 ? 'Gerencia / Administración' : dept >= 5 ? 'Recursos Humanos' : 'Empleado';
 
     return (
