@@ -2,13 +2,12 @@ import mysql from 'mysql2';
 import dotenv from 'dotenv';
 import Paginacion from "../paginacion.mjs";
 
-//Cargamos las variables del archivo .env a process.env
 dotenv.config();
 
 /**
- * Devuelve una lista paginada de empleados
+ * Devuelve una lista paginada de incidencias con filtros opcionales.
  * @author Covadonga Blanco Álvarez
- * @version 1.0.1
+ * @version 1.1.0
  * @param {Request} req
  * @param {Response} res
  */
@@ -22,19 +21,13 @@ export function listaIncidencias(req, res) {
         port: process.env.DB_PORT
     });
 
-    let {cantidad, pagina, id_empleado} = req.query;
-
-    // valores por defecto
+    let { cantidad, pagina, id_empleado, estado, observaciones, comentario } = req.query;
 
     cantidad = cantidad !== undefined ? parseInt(cantidad) : Paginacion.DEFAULT_CANTIDAD_PAGINACION;
-    pagina = pagina !== undefined ? parseInt(pagina) : Paginacion.DEFAULT_PAGINA;
-
+    pagina   = pagina   !== undefined ? parseInt(pagina)   : Paginacion.DEFAULT_PAGINA;
 
     if (isNaN(cantidad) || isNaN(pagina)) {
-        return res.status(400).send({
-            status: 400,
-            message: "Parámetros inválidos"
-        });
+        return res.status(400).send({ status: 400, message: "Parámetros inválidos" });
     }
 
     if (cantidad < Paginacion.MIN_PAGINACION || cantidad > Paginacion.MAX_PAGINACION_EMPLEADOS) {
@@ -45,36 +38,51 @@ export function listaIncidencias(req, res) {
     }
 
     if (pagina < Paginacion.MIN_PAGINACION) {
-        return res.status(400).send({
-            status: 400,
-            message: "La página no puede ser negativa"
-        });
+        return res.status(400).send({ status: 400, message: "La página no puede ser negativa" });
     }
 
     const offset = pagina * cantidad;
 
+    const condiciones = [];
+    const params = [];
+
+    if (id_empleado) {
+        condiciones.push('i.ID_EMPLEADO = ?');
+        params.push(id_empleado);
+    }
+    if (estado) {
+        condiciones.push('i.estado = ?');
+        params.push(estado);
+    }
+    if (observaciones) {
+        condiciones.push('i.Observaciones LIKE ?');
+        params.push(`%${observaciones}%`);
+    }
+    if (comentario) {
+        condiciones.push('i.Comentario LIKE ?');
+        params.push(`%${comentario}%`);
+    }
+
+    const whereClause = condiciones.length > 0 ? ' WHERE ' + condiciones.join(' AND ') : '';
+
     pool.getConnection((err, connection) => {
         if (err) {
-            return res.status(500).send({
-                status: 500,
-                message: "Error de base de datos"
-            });
+            return res.status(500).send({ status: 500, message: "Error de base de datos" });
         }
-        const whereClause = id_empleado ? 'WHERE i.ID_EMPLEADO = ?' : '';
-        const params = id_empleado ? [id_empleado] : [];
 
         connection.query(
-            `SELECT COUNT(*) as total FROM incidencia i ${whereClause}`,
+            `SELECT COUNT(*) as total FROM incidencia i${whereClause}`,
             params,
             (errCount, countResult) => {
                 if (errCount) {
                     connection.release();
                     return res.status(500).send({ status: 500, message: "Error en la consulta" });
                 }
+
                 const totalResultados = countResult[0].total;
 
                 connection.query(
-                    `SELECT i.* FROM incidencia i ${whereClause} ORDER BY i.estado DESC LIMIT ? OFFSET ?`,
+                    `SELECT i.* FROM incidencia i${whereClause} ORDER BY i.estado DESC LIMIT ? OFFSET ?`,
                     [...params, cantidad, offset],
                     (error, result) => {
                         connection.release();
@@ -88,8 +96,8 @@ export function listaIncidencias(req, res) {
                             meta: {
                                 pagina,
                                 cantidad,
-                                totalPaginas: Math.ceil(totalResultados / cantidad),
-                                resultados: result.length
+                                totalPaginas: Math.ceil(totalResultados / cantidad) || 1,
+                                resultados: totalResultados
                             },
                             data: result
                         });

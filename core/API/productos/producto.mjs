@@ -14,13 +14,10 @@ dotenv.config();
  */
 function getProducto(req, res) {
 
-    const idProducto = req.body.id;
+    const { id, estado } = req.query;
 
-    if (isNaN(idProducto) || !idProducto || idProducto < 0) {
-        return res.status(400).send({
-            status: 400,
-            message: "Parámetros inválidos o nulos"
-        });
+    if (id && (isNaN(id) || id < 0)) {
+        return res.status(400).send({ status: 400, message: "El parámetro 'id' no es válido" });
     }
 
     const pool = mysql.createPool({
@@ -39,12 +36,24 @@ function getProducto(req, res) {
             });
         }
 
+        const condiciones = [];
+        const params = [];
+
+        if (id) {
+            condiciones.push(`ID = ?`);
+            params.push(id);
+        }
+
+        if (estado) {
+            condiciones.push(`estado = ?`);
+            params.push(estado);
+        }
+
+        const whereClause = condiciones.length > 0 ? ` WHERE ` + condiciones.join(' AND ') : '';
+
         connection.query(
-            `SELECT *
-             FROM inventario
-             WHERE ID = ?
-             ORDER BY nombre LIMIT 1`,
-            [idProducto],
+            `SELECT * FROM inventario${whereClause} ORDER BY nombre`,
+            params,
             (error, result) => {
 
                 connection.release();

@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { useUsers } from "../../context/UserContext.jsx";
 import { apiFetch } from "../../utils/apiFetch.jsx";
+import { useDebounce } from "../../hooks/useDebounce.js";
 import { EditarEmpleadoForm } from "./EditarEmpleadoForm.jsx";
 import { DelEmpleado } from "./DelEmpleado.jsx";
 import "../../../public/styles/tablaPermisos.css";
@@ -27,8 +29,22 @@ export function TablaEmpleados() {
     const [empleadoEliminando, setEmpleadoEliminando] = useState(null);
     const [cargando, setCargando] = useState(true);
     const [errorCarga, setErrorCarga] = useState(null);
-    const [filtros, setFiltros] = useState({ nombre: '', apellidos: '', email: '', telefono: '', departamento: '', contrato: '' });
+    const [searchParams, setSearchParams] = useSearchParams();
+    const [filtros, setFiltros] = useState({
+        nombre:       searchParams.get('nombre')       || '',
+        apellidos:    searchParams.get('apellidos')    || '',
+        email:        searchParams.get('email')        || '',
+        telefono:     searchParams.get('telefono')     || '',
+        departamento: searchParams.get('departamento') || '',
+        contrato:     searchParams.get('contrato')     || '',
+    });
     const setFiltro = (campo, valor) => setFiltros(prev => ({ ...prev, [campo]: valor }));
+    const dNombre       = useDebounce(filtros.nombre);
+    const dApellidos    = useDebounce(filtros.apellidos);
+    const dEmail        = useDebounce(filtros.email);
+    const dTelefono     = useDebounce(filtros.telefono);
+    const dDepartamento = useDebounce(filtros.departamento);
+    const dContrato     = useDebounce(filtros.contrato);
 
     const { user, tengoPermiso } = useUsers();
 
@@ -36,11 +52,41 @@ export function TablaEmpleados() {
         sessionStorage.setItem('tabla_empleados_pagina', paginaActual);
     }, [paginaActual]);
 
+    useEffect(() => {
+        const p = {};
+        if (dNombre)       p.nombre       = dNombre;
+        if (dApellidos)    p.apellidos    = dApellidos;
+        if (dEmail)        p.email        = dEmail;
+        if (dTelefono)     p.telefono     = dTelefono;
+        if (dDepartamento) p.departamento = dDepartamento;
+        if (dContrato)     p.contrato     = dContrato;
+        setSearchParams(p, { replace: true });
+    }, [dNombre, dApellidos, dEmail, dTelefono, dDepartamento, dContrato]);
+
+    useEffect(() => {
+        setPaginaActual(0);
+    }, [dNombre, dApellidos, dEmail, dTelefono, dDepartamento, dContrato]);
+
+    const hayFiltros = !!(dNombre || dApellidos || dEmail || dTelefono || dDepartamento || dContrato);
+    const limpiarFiltros = () => {
+        setFiltros({ nombre: '', apellidos: '', email: '', telefono: '', departamento: '', contrato: '' });
+        setSearchParams({}, { replace: true });
+    };
+
     const cargarEmpleados = () => {
         setCargando(true);
         setErrorCarga(null);
+
+        const params = new URLSearchParams({ pagina: paginaActual, cantidad: cantidadPorPagina });
+        if (dNombre)       params.set('nombre',       dNombre);
+        if (dApellidos)    params.set('apellidos',    dApellidos);
+        if (dEmail)        params.set('email',        dEmail);
+        if (dTelefono)     params.set('telefono',     dTelefono);
+        if (dDepartamento) params.set('departamento', dDepartamento);
+        if (dContrato)     params.set('contrato',     dContrato);
+
         apiFetch(
-            `${import.meta.env.VITE_BACKEND_EMPLEADO}?pagina=${paginaActual}&cantidad=${cantidadPorPagina}`,
+            `${import.meta.env.VITE_BACKEND_EMPLEADO}?${params}`,
             {
                 method: 'GET',
                 headers: {
@@ -66,7 +112,7 @@ export function TablaEmpleados() {
 
     useEffect(() => {
         cargarEmpleados();
-    }, [paginaActual]);
+    }, [paginaActual, dNombre, dApellidos, dEmail, dTelefono, dDepartamento, dContrato]);
 
     const handleEmpleadoActualizado = () => {
         setEmpleadoEditando(null);
@@ -78,14 +124,6 @@ export function TablaEmpleados() {
         cargarEmpleados();
     };
 
-    const empleadosFiltrados = listaEmpleados.filter(e => (
-        (!filtros.nombre || String(e?.Nombre ?? '').toLowerCase().includes(filtros.nombre.toLowerCase())) &&
-        (!filtros.apellidos || String(e?.Apellidos ?? '').toLowerCase().includes(filtros.apellidos.toLowerCase())) &&
-        (!filtros.email || String(e?.email ?? '').toLowerCase().includes(filtros.email.toLowerCase())) &&
-        (!filtros.telefono || String(e?.telefono ?? '').toLowerCase().includes(filtros.telefono.toLowerCase())) &&
-        (!filtros.departamento || String(e?.ID_DEPARTAMENTO ?? '').toLowerCase().includes(filtros.departamento.toLowerCase())) &&
-        (!filtros.contrato || String(e?.ID_CONTRATO ?? '').toLowerCase().includes(filtros.contrato.toLowerCase()))
-    ));
 
     return (
         <>
@@ -146,11 +184,17 @@ export function TablaEmpleados() {
                                 <th />
                                 <th><input className="form-control form-control-sm" type="text" placeholder="Dpto." value={filtros.departamento} onChange={e => setFiltro('departamento', e.target.value)} /></th>
                                 <th><input className="form-control form-control-sm" type="text" placeholder="Contrato" value={filtros.contrato} onChange={e => setFiltro('contrato', e.target.value)} /></th>
-                                <th />
+                                <th>
+                                    {hayFiltros && (
+                                        <button className="btn btn-outline-secondary btn-sm w-100" onClick={limpiarFiltros} title="Limpiar filtros">
+                                            <i className="bi bi-x-lg me-1" aria-hidden="true" />Limpiar
+                                        </button>
+                                    )}
+                                </th>
                             </tr>
                         </thead>
                         <tbody className="table-group-divider">
-                            {empleadosFiltrados.length > 0 ? empleadosFiltrados.map((empleado) => (
+                            {listaEmpleados.length > 0 ? listaEmpleados.map((empleado) => (
                                 <tr key={empleado?.ID} className="h-auto">
                                     <th scope="row">{empleado?.ID}</th>
                                     <td>{empleado?.Nombre}</td>

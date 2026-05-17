@@ -179,7 +179,8 @@ export const Profile = () => {
                                         className="form-control"
                                         value={passActual}
                                         onChange={e => setPassActual(e.target.value)}
-                                        required autoFocus
+                                        required
+                                        autoFocus
                                     />
                                 </div>
                                 <div>
@@ -229,7 +230,6 @@ export const Profile = () => {
                 </div>
             </div>
         )}
-
         <NavbarConfigProfileLogout>
             <div className="profile-container">
 
