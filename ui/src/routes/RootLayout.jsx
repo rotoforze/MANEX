@@ -18,15 +18,17 @@ export const RootLayout = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
+    const PUBLIC_ROUTES = ['/', '/login'];
+
     useEffect(() => {
         if (isInitialLoading || location.pathname === '/error') return;
 
         if (user?.username && user?.authenticated && existeCookie()) {
-            if (location.pathname === '/') {
+            if (PUBLIC_ROUTES.includes(location.pathname)) {
                 navigate('/dashboard');
             }
         } else {
-            if (location.pathname !== '/') navigate('/');
+            if (!PUBLIC_ROUTES.includes(location.pathname)) navigate('/login');
         }
     }, [user, isInitialLoading, location.pathname])
     if (isInitialLoading) return <Loading/>;
