@@ -17,6 +17,7 @@ async function registrarSolicitudVacaciones(req, res) {
 
     await verificadorDatos(req, res)
     if (res.headersSent) return;
+    console.log(req.body);
 
     const {fecha_inicio, fecha_fin, tipo, estado, id_incidencia, id_empleado, observaciones, comentario} = req.body;
 
@@ -46,12 +47,10 @@ async function registrarSolicitudVacaciones(req, res) {
                 return res.status(400).send({status: 400, message: 'Falta el empleado de la solicitud.'});
             }
 
-            const fechaCreacion = new Date().toISOString().slice(0, 10);
             const [resultadoIncidencia] = await connection.query(
-                'INSERT INTO incidencia (ID_empleado,fecha_creacion,estado,Comentario,Observaciones) VALUES (?, ?, ?, ?, ?)',
+                'INSERT INTO incidencia (ID_empleado,fecha_creacion,estado,Comentario,Observaciones) VALUES (?, CURRENT_TIMESTAMP, ?, ?, ?)',
                 [
                     id_empleado,
-                    fechaCreacion,
                     'Abierta',
                     comentario || '',
                     observaciones || '',
