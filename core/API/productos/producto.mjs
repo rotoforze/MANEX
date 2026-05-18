@@ -1,3 +1,4 @@
+import pool from '../db.mjs';
 import mysql from 'mysql2';
 import dotenv from 'dotenv';
 
@@ -20,13 +21,7 @@ function getProducto(req, res) {
         return res.status(400).send({ status: 400, message: "El parámetro 'id' no es válido" });
     }
 
-    const pool = mysql.createPool({
-        host: process.env.DB_HOST,
-        database: process.env.DB_NAME,
-        user: process.env.DB_USER,
-        password: process.env.DB_PASS,
-        port: process.env.DB_PORT
-    });
+
 
     pool.getConnection((err, connection) => {
         if (err) {

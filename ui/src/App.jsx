@@ -6,6 +6,7 @@ import 'bootstrap/dist/js/bootstrap.bundle.min';
 import { RootLayout } from './routes/RootLayout';
 import { ErrorPage } from './routes/ErrorPage';
 import LoginPage from './routes/LoginPage';
+import { Landing } from './routes/Landing';
 import { Dashboard } from './routes/Dashboard';
 import { inciarSesion as actionInicioSesion } from './utils/AuthUser';
 import { registrarUsuario as actionRegistroEmpleado } from "./utils/RegisterNewUser.js";
@@ -43,7 +44,8 @@ function App() {
 
         children: [
 
-            { path: '/', element: <LoginPage />, action: actionInicioSesion },
+            { path: '/', element: <Landing /> },
+            { path: '/login', element: <LoginPage />, action: actionInicioSesion },
             { path: '/error', element: <ErrorPage /> },
             { path: '/dashboard', element: <Dashboard /> },
             { path: '/empleados', element: <Empleados />, action: actionRegistroEmpleado },

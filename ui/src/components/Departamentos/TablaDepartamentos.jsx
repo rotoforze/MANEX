@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { useUsers } from "../../context/UserContext.jsx";
 import { apiFetch } from "../../utils/apiFetch.jsx";
+import { useDebounce } from "../../hooks/useDebounce.js";
 import { EditarDepartamentoForm } from "./EditarDepartamentoForm.jsx";
 import { DelDepartamento } from "./DelDepartamento.jsx";
 import "../../../public/styles/tablaPermisos.css";
@@ -25,8 +27,12 @@ export function TablaDepartamentos() {
     const [departamentoEliminando, setDepartamentoEliminando] = useState(null);
     const [cargando, setCargando] = useState(true);
     const [errorCarga, setErrorCarga] = useState(null);
-    const [filtros, setFiltros] = useState({ nombre: '' });
+    const [searchParams, setSearchParams] = useSearchParams();
+    const [filtros, setFiltros] = useState({
+        nombre: searchParams.get('nombre') || '',
+    });
     const setFiltro = (campo, valor) => setFiltros(prev => ({ ...prev, [campo]: valor }));
+    const dNombre = useDebounce(filtros.nombre);
 
     const { user, tengoPermiso } = useUsers();
 
@@ -34,11 +40,31 @@ export function TablaDepartamentos() {
         sessionStorage.setItem('tabla_departamentos_pagina', paginaActual);
     }, [paginaActual]);
 
+    useEffect(() => {
+        const p = {};
+        if (dNombre) p.nombre = dNombre;
+        setSearchParams(p, { replace: true });
+    }, [dNombre]);
+
+    useEffect(() => {
+        setPaginaActual(0);
+    }, [dNombre]);
+
+    const hayFiltros = !!dNombre;
+    const limpiarFiltros = () => {
+        setFiltros({ nombre: '' });
+        setSearchParams({}, { replace: true });
+    };
+
     const cargarDepartamentos = () => {
         setCargando(true);
         setErrorCarga(null);
+
+        const params = new URLSearchParams({ pagina: paginaActual, cantidad: cantidadPorPagina });
+        if (dNombre) params.set('nombre', dNombre);
+
         apiFetch(
-            `${import.meta.env.VITE_BACKEND_DEPARTAMENTOS}?pagina=${paginaActual}&cantidad=${cantidadPorPagina}`,
+            `${import.meta.env.VITE_BACKEND_DEPARTAMENTOS}?${params}`,
             {
                 method: 'GET',
                 headers: {
@@ -51,9 +77,8 @@ export function TablaDepartamentos() {
             .then(data => {
                 if (data) {
                     setListaDepartamentos(data?.data || []);
-                    const total = data?.resultados || 0;
-                    setTotalRegistros(total);
-                    setPaginaMaxima(Math.max(0, Math.ceil(total / cantidadPorPagina) - 1));
+                    setPaginaMaxima((data?.meta?.totalPaginas || 1) - 1);
+                    setTotalRegistros(data?.meta?.resultados || 0);
                 }
             })
             .catch(e => {
@@ -65,7 +90,7 @@ export function TablaDepartamentos() {
 
     useEffect(() => {
         cargarDepartamentos();
-    }, [paginaActual]);
+    }, [paginaActual, dNombre]);
 
     const handleDepartamentoActualizado = () => {
         setDepartamentoEditando(null);
@@ -77,9 +102,6 @@ export function TablaDepartamentos() {
         cargarDepartamentos();
     };
 
-    const departamentosFiltrados = listaDepartamentos.filter(d => (
-        (!filtros.nombre || String(d?.Nombre ?? '').toLowerCase().includes(filtros.nombre.toLowerCase()))
-    ));
 
     return (
         <>
@@ -111,7 +133,7 @@ export function TablaDepartamentos() {
                         <span className="visually-hidden">Cargando...</span>
                     </div>
                 </div>
-            ) : listaDepartamentos.length > 0 ? (
+            ) : listaDepartamentos.length > 0 || hayFiltros ? (
                 <div className="table-responsive m-3 d-flex flex-column justify-content-start">
                     <table className="table table-striped">
                         <thead>
@@ -123,11 +145,17 @@ export function TablaDepartamentos() {
                             <tr className="table-light">
                                 <th />
                                 <th><input className="form-control form-control-sm" type="text" placeholder="Nombre" value={filtros.nombre} onChange={e => setFiltro('nombre', e.target.value)} /></th>
-                                <th />
+                                <th>
+                                    {hayFiltros && (
+                                        <button className="btn btn-outline-secondary btn-sm w-100" onClick={limpiarFiltros} title="Limpiar filtros">
+                                            <i className="bi bi-x-lg me-1" aria-hidden="true" />Limpiar
+                                        </button>
+                                    )}
+                                </th>
                             </tr>
                         </thead>
                         <tbody className="table-group-divider">
-                            {departamentosFiltrados.length > 0 ? departamentosFiltrados.map(departamento => (
+                            {listaDepartamentos.length > 0 ? listaDepartamentos.map(departamento => (
                                 <tr key={departamento?.ID} className="h-auto">
                                     <th scope="row">{departamento?.ID}</th>
                                     <td>{departamento?.Nombre}</td>
@@ -158,7 +186,7 @@ export function TablaDepartamentos() {
                         </tbody>
                     </table>
 
-                    <div className="d-flex align-items-center justify-content-center gap-2 mb-3">
+                    {listaDepartamentos.length > 0 && <div className="d-flex align-items-center justify-content-center gap-2 mb-3">
                         <button
                             className="btn btn-outline-secondary btn-sm bi bi-chevron-bar-left"
                             aria-label="Primera página"
@@ -186,7 +214,7 @@ export function TablaDepartamentos() {
                             disabled={!(paginaActual < paginaMaxima)}
                             onClick={() => setPaginaActual(paginaMaxima)}
                         />
-                    </div>
+                    </div>}
                 </div>
             ) : (
                 <div className="tabla-empty-state">

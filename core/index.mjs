@@ -166,7 +166,7 @@ app.get('/productos', (req, res) => {
         });
     }
 
-    if (req?.query?.id || req?.query?.estado) {
+    if (req?.query?.id) {
         getProducto(req, res);
 
     } else listaProductos(req, res);
