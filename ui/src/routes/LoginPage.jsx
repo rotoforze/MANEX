@@ -53,7 +53,7 @@ const LoginPage = () => {
     // ── Efectos login ──
     useEffect(() => {
         if (actionData?.status === 404) return;
-        if (actionData) navigate('/Dashboard');
+        if (actionData) navigate('/dashboard');
     }, [actionData, navigate]);
 
     useEffect(() => {

@@ -317,7 +317,9 @@ form div {
         font-size: 0.9rem;
         padding: 0.25rem 0 !important;
     }
-
+    .dashboard {
+        height: 90dvh !important;
+    }
     .main-nav-avatar {
         width: 28px;
         height: 28px;

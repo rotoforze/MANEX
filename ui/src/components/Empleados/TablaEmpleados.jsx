@@ -213,14 +213,14 @@ export function TablaEmpleados() {
                                     </td>
                                     <td>{empleado?.ID_DEPARTAMENTO}</td>
                                     <td>{empleado?.ID_CONTRATO}</td>
-                                    <td className="h-auto acciones-tabla">
+                                    <td className="h-auto w-auto p-1">
                                         <button
                                             className="btn btn-primary btn-sm"
                                             title="Editar empleado"
                                             aria-label="Editar empleado"
                                             onClick={() => setEmpleadoEditando(empleado)}
                                             disabled={!tengoPermiso('/empleados', 'POST')}
-                                        ><i className="bi bi-pencil-fill" aria-hidden="true" /></button>
+                                        ><i className="bi bi-pencil-fill" aria-hidden="true" /></button>&nbsp;
                                         <button
                                             className="btn btn-danger btn-sm"
                                             title="Eliminar empleado"

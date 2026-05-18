@@ -193,7 +193,7 @@ export function TablaProductos() {
                                             {producto?.Estado ?? '—'}
                                         </span>
                                     </td>
-                                    <td className="h-auto acciones-tabla">
+                                    <td className="h-auto w-auto p-1">
                                         <button
                                             className="btn btn-primary btn-sm"
                                             title="Editar producto"
@@ -203,7 +203,7 @@ export function TablaProductos() {
                                                 setMostrarFormulario(true);
                                             }}
                                             disabled={!tengoPermiso('/productos', 'POST')}
-                                        ><i className="bi bi-pencil-fill" aria-hidden="true" /></button>
+                                        ><i className="bi bi-pencil-fill" aria-hidden="true" /></button>&nbsp;
                                         <button
                                             className="btn btn-danger btn-sm"
                                             title="Eliminar producto"
