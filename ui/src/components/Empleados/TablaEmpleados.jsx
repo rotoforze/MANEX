@@ -4,6 +4,7 @@ import { useUsers } from "../../context/UserContext.jsx";
 import { apiFetch } from "../../utils/apiFetch.jsx";
 import { useDebounce } from "../../hooks/useDebounce.js";
 import { EditarEmpleadoForm } from "./EditarEmpleadoForm.jsx";
+import { VerEmpleado } from "./VerEmpleado.jsx";
 import { DelEmpleado } from "./DelEmpleado.jsx";
 import "../../../public/styles/tablaPermisos.css";
 import "../../../public/styles/mainPages.css";
@@ -27,24 +28,25 @@ export function TablaEmpleados() {
 
     const [empleadoEditando, setEmpleadoEditando] = useState(null);
     const [empleadoEliminando, setEmpleadoEliminando] = useState(null);
+    const [empleadoViendo, setEmpleadoViendo] = useState(null);
     const [cargando, setCargando] = useState(true);
     const [errorCarga, setErrorCarga] = useState(null);
     const [searchParams, setSearchParams] = useSearchParams();
     const [filtros, setFiltros] = useState({
-        nombre:       searchParams.get('nombre')       || '',
-        apellidos:    searchParams.get('apellidos')    || '',
-        email:        searchParams.get('email')        || '',
-        telefono:     searchParams.get('telefono')     || '',
+        nombre: searchParams.get('nombre') || '',
+        apellidos: searchParams.get('apellidos') || '',
+        email: searchParams.get('email') || '',
+        telefono: searchParams.get('telefono') || '',
         departamento: searchParams.get('departamento') || '',
-        contrato:     searchParams.get('contrato')     || '',
+        contrato: searchParams.get('contrato') || '',
     });
     const setFiltro = (campo, valor) => setFiltros(prev => ({ ...prev, [campo]: valor }));
-    const dNombre       = useDebounce(filtros.nombre);
-    const dApellidos    = useDebounce(filtros.apellidos);
-    const dEmail        = useDebounce(filtros.email);
-    const dTelefono     = useDebounce(filtros.telefono);
+    const dNombre = useDebounce(filtros.nombre);
+    const dApellidos = useDebounce(filtros.apellidos);
+    const dEmail = useDebounce(filtros.email);
+    const dTelefono = useDebounce(filtros.telefono);
     const dDepartamento = useDebounce(filtros.departamento);
-    const dContrato     = useDebounce(filtros.contrato);
+    const dContrato = useDebounce(filtros.contrato);
 
     const { user, tengoPermiso } = useUsers();
 
@@ -54,12 +56,12 @@ export function TablaEmpleados() {
 
     useEffect(() => {
         const p = {};
-        if (dNombre)       p.nombre       = dNombre;
-        if (dApellidos)    p.apellidos    = dApellidos;
-        if (dEmail)        p.email        = dEmail;
-        if (dTelefono)     p.telefono     = dTelefono;
+        if (dNombre) p.nombre = dNombre;
+        if (dApellidos) p.apellidos = dApellidos;
+        if (dEmail) p.email = dEmail;
+        if (dTelefono) p.telefono = dTelefono;
         if (dDepartamento) p.departamento = dDepartamento;
-        if (dContrato)     p.contrato     = dContrato;
+        if (dContrato) p.contrato = dContrato;
         setSearchParams(p, { replace: true });
     }, [dNombre, dApellidos, dEmail, dTelefono, dDepartamento, dContrato]);
 
@@ -78,12 +80,12 @@ export function TablaEmpleados() {
         setErrorCarga(null);
 
         const params = new URLSearchParams({ pagina: paginaActual, cantidad: cantidadPorPagina });
-        if (dNombre)       params.set('nombre',       dNombre);
-        if (dApellidos)    params.set('apellidos',    dApellidos);
-        if (dEmail)        params.set('email',        dEmail);
-        if (dTelefono)     params.set('telefono',     dTelefono);
+        if (dNombre) params.set('nombre', dNombre);
+        if (dApellidos) params.set('apellidos', dApellidos);
+        if (dEmail) params.set('email', dEmail);
+        if (dTelefono) params.set('telefono', dTelefono);
         if (dDepartamento) params.set('departamento', dDepartamento);
-        if (dContrato)     params.set('contrato',     dContrato);
+        if (dContrato) params.set('contrato', dContrato);
 
         apiFetch(
             `${import.meta.env.VITE_BACKEND_EMPLEADO}?${params}`,
@@ -127,6 +129,12 @@ export function TablaEmpleados() {
 
     return (
         <>
+            {empleadoViendo && (
+                <VerEmpleado
+                    empleado={empleadoViendo}
+                    onClose={() => setEmpleadoViendo(null)}
+                />
+            )}
             {empleadoEditando && (
                 <EditarEmpleadoForm
                     empleado={empleadoEditando}
@@ -214,6 +222,14 @@ export function TablaEmpleados() {
                                     <td>{empleado?.ID_DEPARTAMENTO}</td>
                                     <td>{empleado?.ID_CONTRATO}</td>
                                     <td className="h-auto acciones-tabla">
+                                        <button
+                                            className="btn btn-info btn-sm"
+                                            title="Ver empleado"
+                                            aria-label="Ver empleado"
+                                            onClick={() => setEmpleadoViendo(empleado)}
+                                        >
+                                            <i className="bi bi-eye-fill" aria-hidden="true" />
+                                        </button>
                                         <button
                                             className="btn btn-primary btn-sm"
                                             title="Editar empleado"
