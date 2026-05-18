@@ -3,14 +3,17 @@ import { useSearchParams } from "react-router-dom";
 import { useUsers } from "../../context/UserContext.jsx";
 import { apiFetch } from "../../utils/apiFetch.jsx";
 import { useDebounce } from "../../hooks/useDebounce.js";
+import { EditarIncidenciaForm } from "./EditarIncidenciaForm.jsx";
+import { DelIncidencia } from "./DelIncidencia.jsx";
 import "../../../public/styles/tablaPermisos.css";
 import "../../../public/styles/mainPages.css";
 
 /**
  * Muestra en formato tabla las incidencias con paginación.
+ * Permite editar y eliminar cada incidencia.
  *
  * @author Eneas de la Rosa Menendez Pedrosa
- * @version 1.1.0
+ * @version 1.2.0
  * @returns {React.JSX.Element}
  * @constructor
  */
@@ -18,6 +21,12 @@ export function TablaIncidencias({ tipoIncidencia, idEmpleado }) {
     const [listaIncidencias, setListaIncidencias] = useState([]);
     const [cargando, setCargando] = useState(true);
     const [errorCarga, setErrorCarga] = useState('');
+
+    const [incidenciaSeleccionada, setIncidenciaSeleccionada] = useState(null);
+    const [mostrarFormulario, setMostrarFormulario] = useState(false);
+    const [eliminando, setEliminando] = useState(false);
+    const [incidenciaAEliminar, setIncidenciaAEliminar] = useState(undefined);
+
     const [paginaActual, setPaginaActual] = useState(() => parseInt(sessionStorage.getItem('tabla_incidencias_pagina') || '0', 10));
     const [paginaMaxima, setPaginaMaxima] = useState(0);
     const [totalRegistros, setTotalRegistros] = useState(0);
@@ -36,7 +45,7 @@ export function TablaIncidencias({ tipoIncidencia, idEmpleado }) {
     const dNombre        = useDebounce(filtros.nombre);
     const dApellidos     = useDebounce(filtros.apellidos);
 
-    const { user } = useUsers();
+    const { user, tengoPermiso } = useUsers();
 
     useEffect(() => {
         sessionStorage.setItem('tabla_incidencias_pagina', paginaActual);
@@ -62,7 +71,7 @@ export function TablaIncidencias({ tipoIncidencia, idEmpleado }) {
         setSearchParams({}, { replace: true });
     };
 
-    useEffect(() => {
+    const cargarIncidencias = () => {
         setCargando(true);
         const urlIncidencias = import.meta.env.VITE_BACKEND_INCIDENCIAS
             || `${import.meta.env.VITE_BACKEND}/incidencias`;
@@ -98,6 +107,10 @@ export function TablaIncidencias({ tipoIncidencia, idEmpleado }) {
                 setListaIncidencias([]);
             })
             .finally(() => setCargando(false));
+    };
+
+    useEffect(() => {
+        cargarIncidencias();
     }, [paginaActual, cantidadPorPagina, user?.token, idEmpleado, filtros.estado, dObservaciones, dComentario, dNombre, dApellidos]);
 
     function obtenerClaseEstado(estado) {
@@ -128,6 +141,9 @@ export function TablaIncidencias({ tipoIncidencia, idEmpleado }) {
             : 'N/A';
     }
 
+    // Número de columnas según si se muestra o no el empleado
+    const numColumnas = idEmpleado ? 5 : 7;
+
     if (cargando) {
         return (
             <div className="tabla-empty-state">
@@ -147,9 +163,30 @@ export function TablaIncidencias({ tipoIncidencia, idEmpleado }) {
         );
     }
 
-
     return (
         <>
+            {eliminando && (
+                <DelIncidencia
+                    incidenciaAEliminar={incidenciaAEliminar}
+                    setIncidenciaAEliminar={setIncidenciaAEliminar}
+                    eliminando={eliminando}
+                    setEliminando={setEliminando}
+                    user={user}
+                    fetchInicio={cargarIncidencias}
+                />
+            )}
+
+            {mostrarFormulario && (
+                <EditarIncidenciaForm
+                    incidencia={incidenciaSeleccionada}
+                    funcionDeCierreDeFormulario={() => setMostrarFormulario(false)}
+                    handleIncidenciaActualizada={() => {
+                        setMostrarFormulario(false);
+                        cargarIncidencias();
+                    }}
+                />
+            )}
+
             {listaIncidencias.length > 0 || hayFiltros ? (
                 <div className="table-responsive m-3 d-flex flex-column justify-content-start">
                     <table className="table table-striped">
@@ -189,9 +226,9 @@ export function TablaIncidencias({ tipoIncidencia, idEmpleado }) {
                         </thead>
                         <tbody className="table-group-divider">
                             {listaIncidencias.length > 0 ? listaIncidencias.map((incidencia) => {
-                                const id = obtenerValor(incidencia, ['ID']);
+                                const id     = obtenerValor(incidencia, ['ID']);
                                 const estado = obtenerValor(incidencia, ['estado'], 'Sin estado');
-                                const fecha = obtenerValor(incidencia, ['fecha_creacion'], null);
+                                const fecha  = obtenerValor(incidencia, ['fecha_creacion'], null);
 
                                 return (
                                     <tr key={id}>
@@ -211,18 +248,28 @@ export function TablaIncidencias({ tipoIncidencia, idEmpleado }) {
                                                 className="btn btn-primary btn-sm"
                                                 title="Editar incidencia"
                                                 aria-label="Editar incidencia"
+                                                disabled={!tengoPermiso('/incidencias', 'POST')}
+                                                onClick={() => {
+                                                    setIncidenciaSeleccionada(incidencia);
+                                                    setMostrarFormulario(true);
+                                                }}
                                             ><i className="bi bi-pencil-fill" aria-hidden="true" /></button>
                                             <button
                                                 className="btn btn-danger btn-sm"
                                                 title="Eliminar incidencia"
                                                 aria-label="Eliminar incidencia"
+                                                disabled={!tengoPermiso('/incidencias', 'DELETE')}
+                                                onClick={() => {
+                                                    setIncidenciaAEliminar(incidencia);
+                                                    setEliminando(true);
+                                                }}
                                             ><i className="bi bi-trash-fill" aria-hidden="true" /></button>
                                         </td>
                                     </tr>
                                 );
                             }) : (
                                 <tr>
-                                    <td colSpan={idEmpleado ? 5 : 7} className="text-center text-muted py-4 small">
+                                    <td colSpan={numColumnas} className="text-center text-muted py-4 small">
                                         Sin resultados con los filtros aplicados.
                                     </td>
                                 </tr>
@@ -230,35 +277,37 @@ export function TablaIncidencias({ tipoIncidencia, idEmpleado }) {
                         </tbody>
                     </table>
 
-                    {listaIncidencias.length > 0 && <div className="d-flex align-items-center justify-content-center gap-2 mb-3">
-                        <button
-                            className="btn btn-outline-secondary btn-sm bi bi-chevron-bar-left"
-                            aria-label="Primera página"
-                            disabled={paginaActual === 0}
-                            onClick={() => setPaginaActual(0)}
-                        />
-                        <button
-                            className="btn btn-outline-secondary btn-sm bi bi-chevron-left"
-                            aria-label="Página anterior"
-                            disabled={paginaActual === 0}
-                            onClick={() => { if (paginaActual > 0) setPaginaActual(paginaActual - 1); }}
-                        />
-                        <span className="small text-muted">
-                            Página {paginaActual + 1} de {paginaMaxima + 1} · {totalRegistros} registros
-                        </span>
-                        <button
-                            className="btn btn-outline-secondary btn-sm bi bi-chevron-right"
-                            aria-label="Página siguiente"
-                            disabled={!(paginaActual < paginaMaxima)}
-                            onClick={() => { if (paginaActual < paginaMaxima) setPaginaActual(paginaActual + 1); }}
-                        />
-                        <button
-                            className="btn btn-outline-secondary btn-sm bi bi-chevron-bar-right"
-                            aria-label="Última página"
-                            disabled={!(paginaActual < paginaMaxima)}
-                            onClick={() => setPaginaActual(paginaMaxima)}
-                        />
-                    </div>}
+                    {listaIncidencias.length > 0 && (
+                        <div className="d-flex align-items-center justify-content-center gap-2 mb-3">
+                            <button
+                                className="btn btn-outline-secondary btn-sm bi bi-chevron-bar-left"
+                                aria-label="Primera página"
+                                disabled={paginaActual === 0}
+                                onClick={() => setPaginaActual(0)}
+                            />
+                            <button
+                                className="btn btn-outline-secondary btn-sm bi bi-chevron-left"
+                                aria-label="Página anterior"
+                                disabled={paginaActual === 0}
+                                onClick={() => { if (paginaActual > 0) setPaginaActual(paginaActual - 1); }}
+                            />
+                            <span className="small text-muted">
+                                Página {paginaActual + 1} de {paginaMaxima + 1} · {totalRegistros} registros
+                            </span>
+                            <button
+                                className="btn btn-outline-secondary btn-sm bi bi-chevron-right"
+                                aria-label="Página siguiente"
+                                disabled={!(paginaActual < paginaMaxima)}
+                                onClick={() => { if (paginaActual < paginaMaxima) setPaginaActual(paginaActual + 1); }}
+                            />
+                            <button
+                                className="btn btn-outline-secondary btn-sm bi bi-chevron-bar-right"
+                                aria-label="Última página"
+                                disabled={!(paginaActual < paginaMaxima)}
+                                onClick={() => setPaginaActual(paginaMaxima)}
+                            />
+                        </div>
+                    )}
                 </div>
             ) : (
                 <div className="tabla-empty-state">

@@ -137,10 +137,14 @@
     "/password-requests": {
         "protected": false,
         "GET": [
-            "5", "7", "8"
+            "5",
+            "7",
+            "8"
         ],
         "POST": [
-            "5", "7", "8"
+            "5",
+            "7",
+            "8"
         ]
     },
     "/recuperar": {
@@ -155,5 +159,13 @@
             "*"
         ]
     },
-    "/prueba": null
+    "/prueba": null,
+    "/empleado-perfil": {
+        "protected": false,
+        "GET": [
+            ">1"
+        ],
+        "POST": [],
+        "DELETE": []
+    }
 }

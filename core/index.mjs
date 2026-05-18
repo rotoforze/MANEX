@@ -45,6 +45,7 @@ import delVacaciones from "./API/vacaciones/eliminar.mjs";
 import getSolicitud from "./API/vacaciones/solicitudVacaciones.mjs";
 import delProducto from "./API/productos/eliminar.mjs";
 import nuevoProducto from "./API/productos/nuevo.mjs";
+import getPerfilEmpleado from "./API/empleados/perfilEmpleado.mjs";
 
 const app = express();
 
@@ -153,7 +154,7 @@ app.get('/fichajes', (req, res) => {
     } else listaFichajes(req, res);
 });
 
-
+app.get('/empleado-perfil', (req, res) => getPerfilEmpleado(req, res));
 app.get('/productos', (req, res) => {
     const parametrosRecibidos = Object.keys(req.query);
 
