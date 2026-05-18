@@ -115,14 +115,6 @@ function TablaResumen({filas, columnas, vacia}) {
 
 const PANEL_POR_PAGINA = 5;
 
-<<<<<<< HEAD
-function PanelSolicitudesPassword({ token, base }) {
-    const [solicitudes, setSolicitudes]   = useState([]);
-    const [cargando, setCargando]         = useState(true);
-    const [codigoAprobado, setCodigo]     = useState(null); // { username, code }
-    const [procesando, setProcesando]     = useState(null); // id en proceso
-    const [pagina, setPagina]             = useState(0);
-=======
 function PanelSolicitudesPassword({token, base}) {
     const [solicitudes, setSolicitudes] = useState([]);
     const [cargando, setCargando] = useState(true);
@@ -130,7 +122,6 @@ function PanelSolicitudesPassword({token, base}) {
     const [procesando, setProcesando] = useState(null); // id en proceso
     const [pagina, setPagina] = useState(0);
     const [copiado, setCopiado] = useState(null);
->>>>>>> main
 
     async function cargar() {
         setCargando(true);
@@ -139,12 +130,8 @@ function PanelSolicitudesPassword({token, base}) {
             const data = await res.json();
             setSolicitudes(data?.solicitudes ?? []);
             setPagina(0);
-<<<<<<< HEAD
-        } catch { /* silent */ } finally {
-=======
         } catch { /* silent */
         } finally {
->>>>>>> main
             setCargando(false);
         }
     }
@@ -187,11 +174,7 @@ function PanelSolicitudesPassword({token, base}) {
     if (cargando) return null;
     if (!solicitudes.length && !codigoAprobado) return null;
 
-<<<<<<< HEAD
-    const totalPaginas     = Math.ceil(solicitudes.length / PANEL_POR_PAGINA);
-=======
     const totalPaginas = Math.ceil(solicitudes.length / PANEL_POR_PAGINA);
->>>>>>> main
     const solicitudesPagina = solicitudes.slice(pagina * PANEL_POR_PAGINA, (pagina + 1) * PANEL_POR_PAGINA);
 
     return (
@@ -252,35 +235,6 @@ function PanelSolicitudesPassword({token, base}) {
                                 </tr>
                                 </thead>
                                 <tbody className="table-group-divider">
-<<<<<<< HEAD
-                                    {solicitudesPagina.map(s => (
-                                        <tr key={s.id}>
-                                            <td className="ps-3 fw-semibold">
-                                                <i className="bi bi-person me-2 text-muted"></i>{s.username}
-                                            </td>
-                                            <td className="text-muted small align-middle">{formatFechaSol(s.fecha_solicitud)}</td>
-                                            <td className="text-end pe-3">
-                                                <button
-                                                    className="btn btn-sm btn-success me-2"
-                                                    onClick={() => gestionar(s.id, 'aprobar')}
-                                                    disabled={procesando === s.id}
-                                                >
-                                                    {procesando === s.id
-                                                        ? <span className="spinner-border spinner-border-sm" role="status"></span>
-                                                        : <><i className="bi bi-check-lg me-1"></i>Aprobar</>
-                                                    }
-                                                </button>
-                                                <button
-                                                    className="btn btn-sm btn-outline-danger"
-                                                    onClick={() => gestionar(s.id, 'rechazar')}
-                                                    disabled={procesando === s.id}
-                                                >
-                                                    <i className="bi bi-x-lg me-1"></i>Rechazar
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    ))}
-=======
                                 {solicitudesPagina.map(s => (
                                     <tr key={s.id}>
                                         <td className="ps-3 fw-semibold">
@@ -309,7 +263,6 @@ function PanelSolicitudesPassword({token, base}) {
                                         </td>
                                     </tr>
                                 ))}
->>>>>>> main
                                 </tbody>
                             </table>
                         </div>
@@ -357,15 +310,9 @@ export function InfoDashboard() {
     const base = import.meta.env.VITE_BACKEND_DASHBOARD || `${import.meta.env.VITE_BACKEND}/dashboard`;
 
     // ── Estado ──
-<<<<<<< HEAD
-    const [cargando, setCargando]             = useState(true);
-    const [errorDashboard, setErrorDashboard] = useState(null);
-    const [ultimaActualizacion, setUltima]    = useState(null);
-=======
     const [cargando, setCargando] = useState(true);
     const [errorDashboard, setErrorDashboard] = useState(null);
     const [ultimaActualizacion, setUltima] = useState(null);
->>>>>>> main
 
     // Datos personales
     const [perfil, setPerfil] = useState(null);

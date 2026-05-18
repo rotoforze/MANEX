@@ -24,6 +24,7 @@ export function EditarIncidenciaForm({ incidencia, funcionDeCierreDeFormulario, 
         fecha ? new Date(fecha).toISOString().split('T')[0] : '';
 
     const [form, setForm] = useState({
+        
         id:  incidencia?.ID               ?? '',
         id_empleado:    incidencia?.ID_empleado
                         ?? incidencia?.id_empleado   ?? '',
@@ -82,6 +83,7 @@ export function EditarIncidenciaForm({ incidencia, funcionDeCierreDeFormulario, 
                 className="card confirmacion"
                 style={{ width: 'min(95dvw, 700px)', overflowY: 'auto' }}
             >
+                {/* Cabecera */}
                 <div className="card-header d-flex justify-content-end align-items-center">
                     <button
                         type="button"
@@ -116,8 +118,9 @@ export function EditarIncidenciaForm({ incidencia, funcionDeCierreDeFormulario, 
                                 required
                             >
                                 <option value="Abierta">Abierta</option>
+                                
                                 <option value="Cerrada">Cerrada</option>
-                            
+                                
                             </select>
                         </div>
 
@@ -153,7 +156,7 @@ export function EditarIncidenciaForm({ incidencia, funcionDeCierreDeFormulario, 
                             />
                         </div>
 
-                        {/* Fecha creacion*/}
+                        {/* Fecha creacion */}
                         <div className="mb-3">
                             <label htmlFor="fecha_creacion" className="form-label small mb-1">
                                 Fecha de creacion

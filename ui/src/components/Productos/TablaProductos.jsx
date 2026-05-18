@@ -1,18 +1,9 @@
-<<<<<<< HEAD
-import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
-import { useUsers } from "../../context/UserContext.jsx";
-import { apiFetch } from "../../utils/apiFetch.jsx";
-import { useDebounce } from "../../hooks/useDebounce.js";
-import { EditarProductoForm } from "./EditarProductoForm.jsx";
-=======
 import {useEffect, useState} from "react";
 import {useSearchParams} from "react-router-dom";
 import {useUsers} from "../../context/UserContext.jsx";
 import {apiFetch} from "../../utils/apiFetch.jsx";
 import {useDebounce} from "../../hooks/useDebounce.js";
 import {EditarProductoForm} from "./EditarProductoForm.jsx";
->>>>>>> main
 import "../../../public/styles/tablaPermisos.css";
 import "../../../public/styles/mainPages.css";
 import {DelProducto} from "./DelProducto.jsx";
@@ -37,21 +28,12 @@ export function TablaProductos() {
     const [cantidadPorPagina] = useState(10);
     const [searchParams, setSearchParams] = useSearchParams();
     const [filtros, setFiltros] = useState({
-<<<<<<< HEAD
-        nombre:      searchParams.get('nombre')      || '',
-        descripcion: searchParams.get('descripcion') || '',
-        estado:      searchParams.get('estado')      || '',
-    });
-    const setFiltro = (campo, valor) => setFiltros(prev => ({ ...prev, [campo]: valor }));
-    const dNombre      = useDebounce(filtros.nombre);
-=======
         nombre: searchParams.get('nombre') || '',
         descripcion: searchParams.get('descripcion') || '',
         estado: searchParams.get('estado') || '',
     });
     const setFiltro = (campo, valor) => setFiltros(prev => ({...prev, [campo]: valor}));
     const dNombre = useDebounce(filtros.nombre);
->>>>>>> main
     const dDescripcion = useDebounce(filtros.descripcion);
     const [eliminando, setEliminando] = useState(false);
     const [productoAEliminar, setProductoAEliminar] = useState(undefined);
@@ -83,17 +65,10 @@ export function TablaProductos() {
     // Sincronizar URL con los filtros actuales (se actualiza tras el debounce en texto)
     useEffect(() => {
         const p = {};
-<<<<<<< HEAD
-        if (dNombre)        p.nombre      = dNombre;
-        if (dDescripcion)   p.descripcion = dDescripcion;
-        if (filtros.estado) p.estado      = filtros.estado;
-        setSearchParams(p, { replace: true });
-=======
         if (dNombre) p.nombre = dNombre;
         if (dDescripcion) p.descripcion = dDescripcion;
         if (filtros.estado) p.estado = filtros.estado;
         setSearchParams(p, {replace: true});
->>>>>>> main
     }, [dNombre, dDescripcion, filtros.estado]);
 
     useEffect(() => {
@@ -102,28 +77,17 @@ export function TablaProductos() {
 
     const hayFiltros = !!(dNombre || dDescripcion || filtros.estado);
     const limpiarFiltros = () => {
-<<<<<<< HEAD
-        setFiltros({ nombre: '', descripcion: '', estado: '' });
-        setSearchParams({}, { replace: true });
-=======
         setFiltros({nombre: '', descripcion: '', estado: ''});
         setSearchParams({}, {replace: true});
->>>>>>> main
     };
 
     const cargarProductos = () => {
         setCargando(true);
         setErrorCarga(null);
 
-<<<<<<< HEAD
-        const params = new URLSearchParams({ pagina: paginaActual, cantidad: cantidadPorPagina });
-        if (dNombre)        params.set('nombre', dNombre);
-        if (dDescripcion)   params.set('descripcion', dDescripcion);
-=======
         const params = new URLSearchParams({pagina: paginaActual, cantidad: cantidadPorPagina});
         if (dNombre) params.set('nombre', dNombre);
         if (dDescripcion) params.set('descripcion', dDescripcion);
->>>>>>> main
         if (filtros.estado) params.set('estado', filtros.estado);
 
         apiFetch(
@@ -191,16 +155,10 @@ export function TablaProductos() {
                     </div>
                 </div>
             ) : listaProductos.length > 0 || hayFiltros ? (
-<<<<<<< HEAD
-                <div className="table-responsive m-3 d-flex flex-column justify-content-start">
-                    <table className="table table-striped">
-                        <thead>
-=======
                 <div className="table-responsive contenedor-tabla m-3 d-flex flex-column justify-content-start">
                     <div className={"table-responsive"}>
                         <table className="table table-striped">
                             <thead>
->>>>>>> main
                             <tr>
                                 <th scope="col">#</th>
                                 <th scope="col">Nombre</th>
@@ -228,25 +186,15 @@ export function TablaProductos() {
                                 </th>
                                 <th>
                                     {hayFiltros && (
-<<<<<<< HEAD
-                                        <button className="btn btn-outline-secondary btn-sm w-100" onClick={limpiarFiltros} title="Limpiar filtros">
-                                            <i className="bi bi-x-lg me-1" aria-hidden="true" />Limpiar
-=======
                                         <button className="btn btn-outline-secondary btn-sm w-100"
                                                 onClick={limpiarFiltros} title="Limpiar filtros">
                                             <i className="bi bi-x-lg me-1" aria-hidden="true"/>Limpiar
->>>>>>> main
                                         </button>
                                     )}
                                 </th>
                             </tr>
-<<<<<<< HEAD
-                        </thead>
-                        <tbody className="table-group-divider">
-=======
                             </thead>
                             <tbody className="table-group-divider">
->>>>>>> main
                             {listaProductos.length > 0 ? listaProductos.map((producto) => (
                                 <tr key={producto?.ID} className="h-auto">
                                     <th scope="row">{producto?.ID}</th>
@@ -288,40 +236,6 @@ export function TablaProductos() {
                                     </td>
                                 </tr>
                             )}
-<<<<<<< HEAD
-                        </tbody>
-                    </table>
-
-                    {listaProductos.length > 0 && <div className="d-flex align-items-center justify-content-center gap-2 mb-3">
-                        <button
-                            className="btn btn-outline-secondary btn-sm bi bi-chevron-bar-left"
-                            aria-label="Primera página"
-                            disabled={paginaActual === 0}
-                            onClick={() => setPaginaActual(0)}
-                        />
-                        <button
-                            className="btn btn-outline-secondary btn-sm bi bi-chevron-left"
-                            aria-label="Página anterior"
-                            disabled={paginaActual === 0}
-                            onClick={() => { if (paginaActual > 0) setPaginaActual(paginaActual - 1); }}
-                        />
-                        <span className="small text-muted">
-                            Página {paginaActual + 1} de {paginaMaxima + 1} · {totalRegistros} registros
-                        </span>
-                        <button
-                            className="btn btn-outline-secondary btn-sm bi bi-chevron-right"
-                            aria-label="Página siguiente"
-                            disabled={!(paginaActual < paginaMaxima)}
-                            onClick={() => { if (paginaActual < paginaMaxima) setPaginaActual(paginaActual + 1); }}
-                        />
-                        <button
-                            className="btn btn-outline-secondary btn-sm bi bi-chevron-bar-right"
-                            aria-label="Última página"
-                            disabled={!(paginaActual < paginaMaxima)}
-                            onClick={() => setPaginaActual(paginaMaxima)}
-                        />
-                    </div>}
-=======
                             </tbody>
                         </table>
                     </div>
@@ -359,7 +273,6 @@ export function TablaProductos() {
                                 onClick={() => setPaginaActual(paginaMaxima)}
                             />
                         </div>}
->>>>>>> main
                 </div>
             ) : (
                 <div className="tabla-empty-state">
