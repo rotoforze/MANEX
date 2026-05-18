@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Form, useActionData, useNavigate, useNavigation } from 'react-router-dom'
+import {Form, Link, useActionData, useNavigate, useNavigation} from 'react-router-dom'
 import { useUsers } from "../context/UserContext.jsx";
 import { Loading } from "../components/Loading.jsx";
 import '../../public/styles/mainPages.css'
@@ -208,7 +208,7 @@ const LoginPage = () => {
 
                                 <div className="mt-4 text-center">
                                     <button
-                                        className="btn btn-link p-0 small text-muted"
+                                        className="btn link-primary p-0 small text-light"
                                         type="button"
                                         onClick={irARecuperar}
                                     >
@@ -394,6 +394,9 @@ const LoginPage = () => {
                             </>
                         )}
 
+                    </div>
+                    <div className="card-footer d-flex justify-content-center w-100 bg-transparent border-0">
+                        <Link to="/" className="navbar-brand w-auto text-secondary link-primary bi bi-arrow-left-short"> Página de información</Link>
                     </div>
                 </section>
             )}
