@@ -173,14 +173,14 @@ export function TablaSolicitudes({idEmpleado}) {
                         <table className="table table-striped">
                             <thead>
                             <tr>
-                                <th scope="col">#</th>
-                                {!idEmpleado && <th scope="col">Nombre</th>}
-                                {!idEmpleado && <th scope="col">Apellidos</th>}
-                                <th scope="col">Tipo</th>
-                                <th scope="col">Fecha inicio</th>
-                                <th scope="col">Fecha fin</th>
-                                <th scope="col">Estado</th>
-                                <th scope="col">Acciones</th>
+                                <th scope="col" className="text-nowrap">#</th>
+                                {!idEmpleado && <th scope="col" className="text-nowrap">Nombre</th>}
+                                {!idEmpleado && <th scope="col" className="text-nowrap">Apellidos</th>}
+                                <th scope="col" className="text-nowrap">Tipo</th>
+                                <th scope="col" className="text-nowrap">Fecha inicio</th>
+                                <th scope="col" className="text-nowrap">Fecha fin</th>
+                                <th scope="col" className="text-nowrap">Estado</th>
+                                <th scope="col" className="text-nowrap">Acciones</th>
                             </tr>
                             <tr>
                                 <th/>
@@ -248,8 +248,7 @@ export function TablaSolicitudes({idEmpleado}) {
                                                 title="Editar solicitud"
                                                 aria-label="Editar solicitud"
                                                 onClick={() => setSolicitudEditando(solicitud)}
-                                            ><i className="bi bi-pencil-fill" aria-hidden="true"/></button>
-                                            &nbsp;
+                                            ><i className="bi bi-pencil-fill" aria-hidden="true" /></button>&nbsp;
                                             <button
                                                 className="btn btn-danger btn-sm"
                                                 title="Eliminar solicitud"

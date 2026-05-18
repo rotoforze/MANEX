@@ -177,9 +177,8 @@ form div {
     width: 85dvw;
     flex-grow: 1;
     height: 100dvh;
-    margin: auto 0px;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
     overflow-y: auto;
     overflow-x: hidden;

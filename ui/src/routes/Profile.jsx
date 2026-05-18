@@ -57,6 +57,7 @@ export const Profile = () => {
     const { user } = useUsers();
     const base = import.meta.env.VITE_BACKEND;
     const dept = user?.departamento ?? 0;
+    const maxFechaNacimiento = new Date(Date.now() - 16 * 365.25 * 24 * 3600000).toISOString().split('T')[0];
 
     const { theme, toggle: toggleTheme } = useTheme();
 
@@ -350,6 +351,8 @@ export const Profile = () => {
                                                     value={formData.fecha_nacimiento}
                                                     onChange={e => setField('fecha_nacimiento', e.target.value)}
                                                     disabled={!modoEdicion}
+                                                    min="1900-01-01"
+                                                    max={maxFechaNacimiento}
                                                 />
                                             </div>
                                         </div>

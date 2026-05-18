@@ -21,6 +21,7 @@ export function NuevaSolicitudForm({ funcionDeCierreDeFormulario, handleNuevaSol
     const { user } = useUsers();
     const [seEstaEnviando, setSeEstaEnviando] = useState(false);
     const [mensaje, setMensaje] = useMensaje();
+    const hoy = new Date().toISOString().split('T')[0];
 
     async function handleSubmit(event) {
         event.preventDefault();
@@ -122,6 +123,7 @@ export function NuevaSolicitudForm({ funcionDeCierreDeFormulario, handleNuevaSol
                                     className="form-control form-control-sm"
                                     id="fecha_inicio"
                                     name="fecha_inicio"
+                                    min={hoy}
                                     required
                                 />
                             </div>
@@ -136,6 +138,7 @@ export function NuevaSolicitudForm({ funcionDeCierreDeFormulario, handleNuevaSol
                                     className="form-control form-control-sm"
                                     id="fecha_fin"
                                     name="fecha_fin"
+                                    min={hoy}
                                     required
                                 />
                             </div>
