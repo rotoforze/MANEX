@@ -91,34 +91,40 @@ export const authUser = async (usuario, password, wantsToKeepSession, sessionTok
  * Crea la cookie con nombre 'token' y valor del parámetro recibido.
  *
  * @param {String} token
+ * @param {Boolean} tiempoLargo
  * @author Alex Bernardos Gil
- * @version 1.0
- * @returns {Promise<boolean>}
+ * @version 2.0
+ * @returns {boolean}
  */
-async function createTokenCookie(token, tiempoLargo) {
+function createTokenCookie(token, tiempoLargo) {
     if (!token) return false;
-    // borra si existe la cookie del token para restablecer el tiempo de uso
-    await deleteTokenCookie();
-    const tiempo = tiempoLargo ? 24 * 60 * 60 * 1000 : 60 * 60 * 1000;
-    const fechaExpiracion = Date.now() + tiempo;
+    deleteTokenCookie();
 
-    return !!await cookieStore.set({
-        name: 'token',
-        value: token,
-        expires: fechaExpiracion,
-        path: '/',
-        sameSite: 'lax'
-    });
+    const tiempo = tiempoLargo ? 24 * 60 * 60 * 1000 : 60 * 60 * 1000;
+    const fechaExpiracion = new Date(Date.now() + tiempo);
+
+    document.cookie = [
+        `token=${encodeURIComponent(token)}`,
+        `expires=${fechaExpiracion.toUTCString()}`,
+        `path=/`,
+        `SameSite=Lax`
+    ].join('; ');
+
+    return document.cookie.split(';').some(c => c.trim().startsWith('token='));
 }
 
 /**
- *
  * Elimina la cookie con nombre 'token'.
  *
  * @author Alex Bernardos Gil
- * @version 1.0
- * @returns {Promise<boolean>}
+ * @version 2.0
+ * @returns {boolean}
  */
-export async function deleteTokenCookie() {
-    return !!await cookieStore.delete('token');
+export function deleteTokenCookie() {
+    const existed = document.cookie.split(';').some(c => c.trim().startsWith('token='));
+
+    // Overwrite with an already-expired date to delete it
+    document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; SameSite=Lax';
+
+    return existed;
 }

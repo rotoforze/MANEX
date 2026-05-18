@@ -152,7 +152,7 @@ export function TablaIncidencias({ tipoIncidencia, idEmpleado }) {
         <>
             {listaIncidencias.length > 0 || hayFiltros ? (
                 <div className="table-responsive m-3 d-flex flex-column justify-content-start">
-                    <table className="table table-striped">
+                    <table className="table table-striped  align-middle">
                         <thead>
                             <tr>
                                 <th scope="col">#</th>
@@ -164,7 +164,11 @@ export function TablaIncidencias({ tipoIncidencia, idEmpleado }) {
                                 <th scope="col">Comentario</th>
                                 <th scope="col">Acciones</th>
                             </tr>
+<<<<<<< HEAD
                             <tr className="table-light">
+=======
+                            <tr>
+>>>>>>> 0c5e882a66dd9c7ba78ea925cc0e82f99c53f40d
                                 <th />
                                 {!idEmpleado && <th><input className="form-control form-control-sm" type="text" placeholder="Nombre" value={filtros.nombre} onChange={e => setFiltro('nombre', e.target.value)} /></th>}
                                 {!idEmpleado && <th><input className="form-control form-control-sm" type="text" placeholder="Apellidos" value={filtros.apellidos} onChange={e => setFiltro('apellidos', e.target.value)} /></th>}
@@ -206,12 +210,12 @@ export function TablaIncidencias({ tipoIncidencia, idEmpleado }) {
                                         </td>
                                         <td>{obtenerValor(incidencia, ['Observaciones'])}</td>
                                         <td>{obtenerValor(incidencia, ['Comentario'])}</td>
-                                        <td className="acciones-tabla">
+                                        <td className="h-auto m-auto w-auto p-1">
                                             <button
                                                 className="btn btn-primary btn-sm"
                                                 title="Editar incidencia"
                                                 aria-label="Editar incidencia"
-                                            ><i className="bi bi-pencil-fill" aria-hidden="true" /></button>
+                                            ><i className="bi bi-pencil-fill" aria-hidden="true" /></button>&nbsp;
                                             <button
                                                 className="btn btn-danger btn-sm"
                                                 title="Eliminar incidencia"

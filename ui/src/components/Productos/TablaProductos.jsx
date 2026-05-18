@@ -160,7 +160,7 @@ export function TablaProductos() {
                                 <th scope="col">Estado</th>
                                 <th scope="col">Acciones</th>
                             </tr>
-                            <tr className="table-light">
+                            <tr>
                                 <th />
                                 <th><input className="form-control form-control-sm" type="text" placeholder="Nombre" value={filtros.nombre} onChange={e => setFiltro('nombre', e.target.value)} /></th>
                                 <th><input className="form-control form-control-sm" type="text" placeholder="Descripción" value={filtros.descripcion} onChange={e => setFiltro('descripcion', e.target.value)} /></th>
@@ -193,7 +193,7 @@ export function TablaProductos() {
                                             {producto?.Estado ?? '—'}
                                         </span>
                                     </td>
-                                    <td className="h-auto acciones-tabla">
+                                    <td className="h-auto w-auto p-1">
                                         <button
                                             className="btn btn-primary btn-sm"
                                             title="Editar producto"
@@ -203,7 +203,11 @@ export function TablaProductos() {
                                                 setMostrarFormulario(true);
                                             }}
                                             disabled={!tengoPermiso('/productos', 'POST')}
+<<<<<<< HEAD
                                         ><i className="bi bi-pencil-fill" aria-hidden="true" /></button>
+=======
+                                        ><i className="bi bi-pencil-fill" aria-hidden="true" /></button>&nbsp;
+>>>>>>> 0c5e882a66dd9c7ba78ea925cc0e82f99c53f40d
                                         <button
                                             className="btn btn-danger btn-sm"
                                             title="Eliminar producto"

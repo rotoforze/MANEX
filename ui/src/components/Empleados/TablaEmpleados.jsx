@@ -4,6 +4,7 @@ import { useUsers } from "../../context/UserContext.jsx";
 import { apiFetch } from "../../utils/apiFetch.jsx";
 import { useDebounce } from "../../hooks/useDebounce.js";
 import { EditarEmpleadoForm } from "./EditarEmpleadoForm.jsx";
+import { VerEmpleado } from "./VerEmpleado.jsx";
 import { DelEmpleado } from "./DelEmpleado.jsx";
 import "../../../public/styles/tablaPermisos.css";
 import "../../../public/styles/mainPages.css";
@@ -27,10 +28,12 @@ export function TablaEmpleados() {
 
     const [empleadoEditando, setEmpleadoEditando] = useState(null);
     const [empleadoEliminando, setEmpleadoEliminando] = useState(null);
+    const [empleadoViendo, setEmpleadoViendo] = useState(null);
     const [cargando, setCargando] = useState(true);
     const [errorCarga, setErrorCarga] = useState(null);
     const [searchParams, setSearchParams] = useSearchParams();
     const [filtros, setFiltros] = useState({
+<<<<<<< HEAD
         nombre:       searchParams.get('nombre')       || '',
         apellidos:    searchParams.get('apellidos')    || '',
         email:        searchParams.get('email')        || '',
@@ -45,6 +48,22 @@ export function TablaEmpleados() {
     const dTelefono     = useDebounce(filtros.telefono);
     const dDepartamento = useDebounce(filtros.departamento);
     const dContrato     = useDebounce(filtros.contrato);
+=======
+        nombre: searchParams.get('nombre') || '',
+        apellidos: searchParams.get('apellidos') || '',
+        email: searchParams.get('email') || '',
+        telefono: searchParams.get('telefono') || '',
+        departamento: searchParams.get('departamento') || '',
+        contrato: searchParams.get('contrato') || '',
+    });
+    const setFiltro = (campo, valor) => setFiltros(prev => ({ ...prev, [campo]: valor }));
+    const dNombre = useDebounce(filtros.nombre);
+    const dApellidos = useDebounce(filtros.apellidos);
+    const dEmail = useDebounce(filtros.email);
+    const dTelefono = useDebounce(filtros.telefono);
+    const dDepartamento = useDebounce(filtros.departamento);
+    const dContrato = useDebounce(filtros.contrato);
+>>>>>>> 0c5e882a66dd9c7ba78ea925cc0e82f99c53f40d
 
     const { user, tengoPermiso } = useUsers();
 
@@ -54,12 +73,21 @@ export function TablaEmpleados() {
 
     useEffect(() => {
         const p = {};
+<<<<<<< HEAD
         if (dNombre)       p.nombre       = dNombre;
         if (dApellidos)    p.apellidos    = dApellidos;
         if (dEmail)        p.email        = dEmail;
         if (dTelefono)     p.telefono     = dTelefono;
         if (dDepartamento) p.departamento = dDepartamento;
         if (dContrato)     p.contrato     = dContrato;
+=======
+        if (dNombre) p.nombre = dNombre;
+        if (dApellidos) p.apellidos = dApellidos;
+        if (dEmail) p.email = dEmail;
+        if (dTelefono) p.telefono = dTelefono;
+        if (dDepartamento) p.departamento = dDepartamento;
+        if (dContrato) p.contrato = dContrato;
+>>>>>>> 0c5e882a66dd9c7ba78ea925cc0e82f99c53f40d
         setSearchParams(p, { replace: true });
     }, [dNombre, dApellidos, dEmail, dTelefono, dDepartamento, dContrato]);
 
@@ -78,12 +106,21 @@ export function TablaEmpleados() {
         setErrorCarga(null);
 
         const params = new URLSearchParams({ pagina: paginaActual, cantidad: cantidadPorPagina });
+<<<<<<< HEAD
         if (dNombre)       params.set('nombre',       dNombre);
         if (dApellidos)    params.set('apellidos',    dApellidos);
         if (dEmail)        params.set('email',        dEmail);
         if (dTelefono)     params.set('telefono',     dTelefono);
         if (dDepartamento) params.set('departamento', dDepartamento);
         if (dContrato)     params.set('contrato',     dContrato);
+=======
+        if (dNombre) params.set('nombre', dNombre);
+        if (dApellidos) params.set('apellidos', dApellidos);
+        if (dEmail) params.set('email', dEmail);
+        if (dTelefono) params.set('telefono', dTelefono);
+        if (dDepartamento) params.set('departamento', dDepartamento);
+        if (dContrato) params.set('contrato', dContrato);
+>>>>>>> 0c5e882a66dd9c7ba78ea925cc0e82f99c53f40d
 
         apiFetch(
             `${import.meta.env.VITE_BACKEND_EMPLEADO}?${params}`,
@@ -127,6 +164,12 @@ export function TablaEmpleados() {
 
     return (
         <>
+            {empleadoViendo && (
+                <VerEmpleado
+                    empleado={empleadoViendo}
+                    onClose={() => setEmpleadoViendo(null)}
+                />
+            )}
             {empleadoEditando && (
                 <EditarEmpleadoForm
                     empleado={empleadoEditando}
@@ -174,7 +217,7 @@ export function TablaEmpleados() {
                                 <th scope="col">Contrato</th>
                                 <th scope="col">Acciones</th>
                             </tr>
-                            <tr className="table-light">
+                            <tr>
                                 <th />
                                 <th><input className="form-control form-control-sm" type="text" placeholder="Nombre" value={filtros.nombre} onChange={e => setFiltro('nombre', e.target.value)} /></th>
                                 <th><input className="form-control form-control-sm" type="text" placeholder="Apellidos" value={filtros.apellidos} onChange={e => setFiltro('apellidos', e.target.value)} /></th>
@@ -195,39 +238,55 @@ export function TablaEmpleados() {
                         </thead>
                         <tbody className="table-group-divider">
                             {listaEmpleados.length > 0 ? listaEmpleados.map((empleado) => (
+<<<<<<< HEAD
                                 <tr key={empleado?.ID} className="h-auto">
+=======
+                                <tr key={empleado?.ID}>
+>>>>>>> 0c5e882a66dd9c7ba78ea925cc0e82f99c53f40d
                                     <th scope="row">{empleado?.ID}</th>
-                                    <td>{empleado?.Nombre}</td>
-                                    <td>{empleado?.Apellidos}</td>
+                                    <td className="text-nowrap">{empleado?.Nombre}</td>
+                                    <td className="text-nowrap">{empleado?.Apellidos}</td>
                                     <td>{empleado?.email}</td>
-                                    <td>{empleado?.telefono}</td>
-                                    <td>
+                                    <td className="text-nowrap">{empleado?.telefono}</td>
+                                    <td className="text-nowrap">
                                         {empleado?.fecha_nacimiento
                                             ? new Date(empleado.fecha_nacimiento).toLocaleDateString('es-ES', { timeZone: 'UTC' })
                                             : 'N/A'}
                                     </td>
-                                    <td>
+                                    <td className="text-nowrap">
                                         {empleado?.fecha_alta
                                             ? new Date(empleado.fecha_alta).toLocaleDateString('es-ES', { timeZone: 'UTC' })
                                             : 'N/A'}
                                     </td>
                                     <td>{empleado?.ID_DEPARTAMENTO}</td>
                                     <td>{empleado?.ID_CONTRATO}</td>
-                                    <td className="h-auto acciones-tabla">
+                                    <td className="acciones-tabla">
+                                        <button
+                                            className="btn btn-info btn-sm"
+                                            title="Ver empleado"
+                                            aria-label="Ver empleado"
+                                            onClick={() => setEmpleadoViendo(empleado)}
+                                        >
+                                            <i className="bi bi-eye-fill" aria-hidden="true" />
+                                        </button>
                                         <button
                                             className="btn btn-primary btn-sm"
                                             title="Editar empleado"
                                             aria-label="Editar empleado"
                                             onClick={() => setEmpleadoEditando(empleado)}
                                             disabled={!tengoPermiso('/empleados', 'POST')}
-                                        ><i className="bi bi-pencil-fill" aria-hidden="true" /></button>
+                                        >
+                                            <i className="bi bi-pencil-fill" aria-hidden="true" />
+                                        </button>
                                         <button
                                             className="btn btn-danger btn-sm"
                                             title="Eliminar empleado"
                                             aria-label="Eliminar empleado"
                                             onClick={() => setEmpleadoEliminando(empleado)}
                                             disabled={!tengoPermiso('/empleados', 'DELETE')}
-                                        ><i className="bi bi-trash-fill" aria-hidden="true" /></button>
+                                        >
+                                            <i className="bi bi-trash-fill" aria-hidden="true" />
+                                        </button>
                                     </td>
                                 </tr>
                             )) : (

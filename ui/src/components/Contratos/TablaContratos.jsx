@@ -123,7 +123,7 @@ export function TablaContratos() {
                                 <th scope="col">Horas anuales</th>
                                 <th scope="col">Acciones</th>
                             </tr>
-                            <tr className="table-light">
+                            <tr>
                                 <th />
                                 <th><input className="form-control form-control-sm" type="text" placeholder="Salario" value={filtros.salario} onChange={e => setFiltro('salario', e.target.value)} /></th>
                                 <th><input className="form-control form-control-sm" type="text" placeholder="Horas" value={filtros.horas} onChange={e => setFiltro('horas', e.target.value)} /></th>
@@ -136,14 +136,14 @@ export function TablaContratos() {
                                     <th scope="row">{contrato?.ID}</th>
                                     <td>{contrato?.Salario_anual?.toLocaleString('es-ES')} €</td>
                                     <td>{contrato?.Horas_anuales} h</td>
-                                    <td className="h-auto acciones-tabla">
+                                    <td className="h-auto w-auto p-1">
                                         <button
                                             className="btn btn-primary btn-sm"
                                             title="Editar contrato"
                                             aria-label="Editar contrato"
                                             onClick={() => setContratoEditando(contrato)}
                                             disabled={!tengoPermiso('/contratos', 'POST')}
-                                        ><i className="bi bi-pencil-fill" aria-hidden="true" /></button>
+                                        ><i className="bi bi-pencil-fill" aria-hidden="true" /></button>&nbsp;
                                         <button
                                             className="btn btn-danger btn-sm"
                                             title="Eliminar contrato"
