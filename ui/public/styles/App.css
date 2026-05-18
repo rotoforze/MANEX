@@ -337,3 +337,12 @@ form div {
         width: 100% !important;
     }
 }
+@supports (-webkit-touch-callout: none) {
+    /* iOS específico */
+    .app-shell {
+        height: -webkit-fill-available;
+    }
+    .app-content {
+        height: -webkit-fill-available;
+    }
+}

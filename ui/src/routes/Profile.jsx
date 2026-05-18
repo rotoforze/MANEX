@@ -497,7 +497,7 @@ export const Profile = () => {
                                 >
                                     <i className={`bi ${theme === 'dark' ? 'bi-sun' : 'bi-moon-stars'}`}></i>
                                     {' '}{theme === 'dark' ? 'Modo claro' : 'Modo oscuro'}
-                                </button>
+                                </button><br/><br/><br/>
 
                                 <button
                                     type="button"

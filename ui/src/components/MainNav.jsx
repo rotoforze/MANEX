@@ -1,6 +1,6 @@
-import React, { useState } from 'react'
-import { NavLink } from 'react-router-dom'
-import { useUsers } from '../context/UserContext.jsx'
+import React, {useState} from 'react'
+import {NavLink} from 'react-router-dom'
+import {useUsers} from '../context/UserContext.jsx'
 import "../../public/styles/Navigation.css";
 
 /**
@@ -18,7 +18,7 @@ import "../../public/styles/Navigation.css";
  * @constructor
  */
 export const MainNav = () => {
-    const { user, tengoPermiso } = useUsers()
+    const {user, tengoPermiso} = useUsers()
     const username = user?.username || 'Usuario'
     const [isMenuOpen, setIsMenuOpen] = useState(false)
     const dept = user?.departamento ?? 0
@@ -27,32 +27,72 @@ export const MainNav = () => {
     const closeMenu = () => setIsMenuOpen(false)
 
     const links = [
-        { to: '/dashboard', icon: 'bi-house-door', label: 'Inicio', show: true },
-        { to: '/empleados', icon: 'bi-person', label: 'Empleados', show: tengoPermiso('/empleados', 'POST') || tengoPermiso('/empleados', 'DELETE') },
-        { to: '/productos', icon: 'bi-box', label: 'Productos', show: tengoPermiso('/productos', 'POST') || tengoPermiso('/productos', 'DELETE') },
-        { to: '/contratos', icon: 'bi-file-earmark-text', label: 'Contratos', show: tengoPermiso('/contratos', 'POST') || tengoPermiso('/contratos', 'DELETE') },
-        { to: '/departamentos', icon: 'bi-building', label: 'Departamentos', show: tengoPermiso('/departamentos', 'POST') || tengoPermiso('/departamentos', 'DELETE') },
-        { to: '/fichajes', icon: 'bi-stopwatch', label: 'Fichajes', show: tengoPermiso('/fichajes', 'POST') || tengoPermiso('/fichajes', 'DELETE') },
-        { to: '/incidencia', icon: 'bi-question-octagon', label: 'Incidencias', show: tengoPermiso('/incidencias', 'POST') || tengoPermiso('/incidencias', 'DELETE') },
-        { to: '/solicitudes', icon: 'bi-umbrella', label: 'Días libres/Vacaciones', show: tengoPermiso('/vacaciones', 'POST') || tengoPermiso('/vacaciones', 'DELETE') },
+        {to: '/dashboard', icon: 'bi-house-door', label: 'Inicio', show: true},
+        {
+            to: '/empleados',
+            icon: 'bi-person',
+            label: 'Empleados',
+            show: tengoPermiso('/empleados', 'POST') || tengoPermiso('/empleados', 'DELETE')
+        },
+        {
+            to: '/productos',
+            icon: 'bi-box',
+            label: 'Productos',
+            show: tengoPermiso('/productos', 'POST') || tengoPermiso('/productos', 'DELETE')
+        },
+        {
+            to: '/contratos',
+            icon: 'bi-file-earmark-text',
+            label: 'Contratos',
+            show: tengoPermiso('/contratos', 'POST') || tengoPermiso('/contratos', 'DELETE')
+        },
+        {
+            to: '/departamentos',
+            icon: 'bi-building',
+            label: 'Departamentos',
+            show: tengoPermiso('/departamentos', 'POST') || tengoPermiso('/departamentos', 'DELETE')
+        },
+        {
+            to: '/fichajes',
+            icon: 'bi-stopwatch',
+            label: 'Fichajes',
+            show: tengoPermiso('/fichajes', 'POST') || tengoPermiso('/fichajes', 'DELETE')
+        },
+        {
+            to: '/incidencia',
+            icon: 'bi-question-octagon',
+            label: 'Incidencias',
+            show: tengoPermiso('/incidencias', 'POST') || tengoPermiso('/incidencias', 'DELETE')
+        },
+        {
+            to: '/solicitudes',
+            icon: 'bi-umbrella',
+            label: 'Días libres/Vacaciones',
+            show: tengoPermiso('/vacaciones', 'POST') || tengoPermiso('/vacaciones', 'DELETE')
+        },
     ].filter(l => l.show)
 
-    const navLinkClass = ({ isActive }) =>
+    const navLinkClass = ({isActive}) =>
         `nav-link d-flex align-items-center ${isActive ? 'active' : 'text-white'}`
 
     const userDropdownMenu = (
         <ul className="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
-            <li>
-                <NavLink className="dropdown-item" to="/configuration" onClick={closeMenu}>
-                    Configuración
-                </NavLink>
-            </li>
+            {
+                tengoPermiso('/permisos', 'POST') && tengoPermiso('/permisos', 'DELETE') &&
+                (<li>
+                    <NavLink className="dropdown-item" to="/configuration" onClick={closeMenu}>
+                        Configuración
+                    </NavLink>
+                </li>)
+            }
             <li>
                 <NavLink className="dropdown-item" to="/profile" onClick={closeMenu}>
                     Perfil
                 </NavLink>
             </li>
-            <li><hr className="dropdown-divider" /></li>
+            <li>
+                <hr className="dropdown-divider"/>
+            </li>
             <li>
                 <NavLink className="dropdown-item" to="/logout" onClick={closeMenu}>
                     Cerrar sesión
@@ -80,11 +120,11 @@ export const MainNav = () => {
                         onClick={toggleMenu}
                         aria-label="Toggle menu"
                     >
-                        <i className={`bi ${isMenuOpen ? 'bi-chevron-up' : 'bi-chevron-down'}`} aria-hidden="true" />
+                        <i className={`bi ${isMenuOpen ? 'bi-chevron-up' : 'bi-chevron-down'}`} aria-hidden="true"/>
                     </button>
                 </div>
 
-                <hr />
+                <hr/>
 
                 <ul className="nav nav-pills flex-column mb-auto">
 
@@ -97,14 +137,14 @@ export const MainNav = () => {
                                 end
                                 onClick={closeMenu}
                             >
-                                <i className={`bi ${link.icon} me-2`} aria-hidden="true" />
+                                <i className={`bi ${link.icon} me-2`} aria-hidden="true"/>
                                 {link.label}
                             </NavLink>
                         ))}
                     </li>
                 </ul>
 
-                <hr />
+                <hr/>
 
                 <div id="desplegableUsuario" className="dropup">
                     <button
@@ -114,7 +154,8 @@ export const MainNav = () => {
                         data-bs-toggle="dropdown"
                         aria-expanded="false"
                     >
-                        <span className="main-nav-avatar rounded-circle me-2 d-inline-flex align-items-center justify-content-center">
+                        <span
+                            className="main-nav-avatar rounded-circle me-2 d-inline-flex align-items-center justify-content-center">
                             {username.charAt(0).toUpperCase()}
                         </span>
                         <strong>{username}</strong>
@@ -132,14 +173,14 @@ export const MainNav = () => {
                                 {links.map(link => (
                                     <li key={link.to} className="nav-item">
                                         <NavLink
-                                            className={({ isActive }) =>
+                                            className={({isActive}) =>
                                                 `nav-link d-flex align-items-center ${isActive ? 'active' : 'text-white'}`
                                             }
                                             to={link.to}
                                             end
                                             onClick={closeMenu}
                                         >
-                                            <i className={`bi ${link.icon} me-2`} aria-hidden="true" />
+                                            <i className={`bi ${link.icon} me-2`} aria-hidden="true"/>
                                             {link.label}
                                         </NavLink>
                                     </li>
@@ -160,7 +201,8 @@ export const MainNav = () => {
                             onClick={toggleMenu}
                             aria-label={isMenuOpen ? 'Cerrar menú' : 'Abrir menú'}
                         >
-                            <i className={`bi ${isMenuOpen ? 'bi-chevron-down' : 'bi-chevron-up'} fs-5`} aria-hidden="true" />
+                            <i className={`bi ${isMenuOpen ? 'bi-chevron-down' : 'bi-chevron-up'} fs-5`}
+                               aria-hidden="true"/>
                         </button>
                         <div className="dropup">
                             <button
@@ -169,7 +211,8 @@ export const MainNav = () => {
                                 data-bs-toggle="dropdown"
                                 aria-expanded="false"
                             >
-                                <span className="main-nav-avatar rounded-circle me-2 d-inline-flex align-items-center justify-content-center">
+                                <span
+                                    className="main-nav-avatar rounded-circle me-2 d-inline-flex align-items-center justify-content-center">
                                     {username.charAt(0).toUpperCase()}
                                 </span>
                                 <strong className="d-none d-sm-inline">{username}</strong>
@@ -187,7 +230,7 @@ export const MainNav = () => {
                         {links.map(link => (
                             <NavLink
                                 key={link.to}
-                                className={({ isActive }) =>
+                                className={({isActive}) =>
                                     `bottom-icon-link d-flex flex-column align-items-center ${isActive ? 'active' : ''}`
                                 }
                                 to={link.to}
@@ -195,7 +238,7 @@ export const MainNav = () => {
                                 title={link.label}
                                 aria-label={link.label}
                             >
-                                <i className={`bi ${link.icon} fs-5`} aria-hidden="true" />
+                                <i className={`bi ${link.icon} fs-5`} aria-hidden="true"/>
                             </NavLink>
                         ))}
                         <div className="dropup">
@@ -207,7 +250,8 @@ export const MainNav = () => {
                                 title={username}
                                 aria-label="Menú de usuario"
                             >
-                                <span className="main-nav-avatar-sm rounded-circle d-inline-flex align-items-center justify-content-center">
+                                <span
+                                    className="main-nav-avatar-sm rounded-circle d-inline-flex align-items-center justify-content-center">
                                     {username.charAt(0).toUpperCase()}
                                 </span>
                             </button>

@@ -18,6 +18,15 @@ export const RootLayout = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
+    useEffect(() => {
+        window.scrollTo(0, 0);
+        // Forzar reflow del viewport en iOS
+        document.documentElement.style.height = '';
+        requestAnimationFrame(() => {
+            document.documentElement.style.height = '100%';
+        });
+    }, [location.pathname]);
+
     const PUBLIC_ROUTES = ['/', '/login'];
     useEffect(() => {
         if (isInitialLoading || location.pathname === '/error') return;
