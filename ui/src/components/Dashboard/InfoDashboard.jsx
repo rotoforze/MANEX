@@ -607,40 +607,42 @@ export function InfoDashboard() {
                 <PanelSolicitudesPassword token={user?.token} base={import.meta.env.VITE_BACKEND}/>
             )}
 
-            {/* ── Fichajes recientes ── */}
-            <div className="card border-0 shadow-sm mb-4">
-                <div
-                    className="card-header bg-transparent border-bottom pb-2 pt-3 px-3 d-flex justify-content-between align-items-center">
-                    <h6 className="fw-semibold mb-0">
-                        <i className="bi bi-person-check me-2 text-primary" aria-hidden="true"></i>Fichajes recientes
-                    </h6>
-                    <NavLink to="/fichajes" className="btn btn-outline-primary btn-sm">
-                        Ver más <i className="bi bi-arrow-right ms-1" aria-hidden="true"></i>
-                    </NavLink>
+            {/* ── Fichajes recientes (solo para quien puede ver fichajes de todos) ── */}
+            {user?.departamento >= 5 && (
+                <div className="card border-0 shadow-sm mb-4">
+                    <div
+                        className="card-header bg-transparent border-bottom pb-2 pt-3 px-3 d-flex justify-content-between align-items-center">
+                        <h6 className="fw-semibold mb-0">
+                            <i className="bi bi-person-check me-2 text-primary" aria-hidden="true"></i>Fichajes recientes
+                        </h6>
+                        <NavLink to="/fichajes" className="btn btn-outline-primary btn-sm">
+                            Ver más <i className="bi bi-arrow-right ms-1" aria-hidden="true"></i>
+                        </NavLink>
+                    </div>
+                    <div className="card-body p-0">
+                        <TablaResumen
+                            vacia="No hay fichajes registrados."
+                            filas={fichajes.slice(0, 7)}
+                            columnas={[
+                                {
+                                    key: 'fecha',
+                                    label: 'Fecha',
+                                    className: 'ps-3',
+                                    render: f => formatFecha(f.fecha_entrada)
+                                },
+                                {key: 'entrada', label: 'Entrada', render: f => formatHora(f.fecha_entrada)},
+                                {key: 'salida', label: 'Salida', render: f => formatHora(f.fecha_salida)},
+                                {key: 'tipo', label: 'Tipo', render: f => f.tipo ?? '—'},
+                                {
+                                    key: 'duracion', label: 'Duración', render: f => f.fecha_salida
+                                        ? calcularDuracion(f.fecha_entrada, f.fecha_salida)
+                                        : <span className="badge text-bg-success">En curso</span>
+                                },
+                            ]}
+                        />
+                    </div>
                 </div>
-                <div className="card-body p-0">
-                    <TablaResumen
-                        vacia="No hay fichajes registrados."
-                        filas={fichajes.slice(0, 7)}
-                        columnas={[
-                            {
-                                key: 'fecha',
-                                label: 'Fecha',
-                                className: 'ps-3',
-                                render: f => formatFecha(f.fecha_entrada)
-                            },
-                            {key: 'entrada', label: 'Entrada', render: f => formatHora(f.fecha_entrada)},
-                            {key: 'salida', label: 'Salida', render: f => formatHora(f.fecha_salida)},
-                            {key: 'tipo', label: 'Tipo', render: f => f.tipo ?? '—'},
-                            {
-                                key: 'duracion', label: 'Duración', render: f => f.fecha_salida
-                                    ? calcularDuracion(f.fecha_entrada, f.fecha_salida)
-                                    : <span className="badge text-bg-success">En curso</span>
-                            },
-                        ]}
-                    />
-                </div>
-            </div>
+            )}
 
             {/* ── Mis incidencias ── */}
             <div className="card border-0 shadow-sm mb-4">
@@ -655,8 +657,8 @@ export function InfoDashboard() {
                 </div>
                 <div className="card-body p-0">
                     <TablaResumen
-                        vacia="No hay incidencias registradas."
-                        filas={incidencias.slice(0, 5)}
+                        vacia="No tienes incidencias abiertas."
+                        filas={incidencias.filter(i => !['Resuelta', 'Cerrada', 'Rechazada', 'Rechazado'].includes(i.estado)).slice(0, 5)}
                         columnas={[
                             {key: 'id', label: '#', className: 'ps-3', render: i => i.ID ?? i.id ?? '—'},
                             {key: 'fecha', label: 'Fecha', render: i => formatFecha(i.fecha_creacion?.slice(0, 10))},

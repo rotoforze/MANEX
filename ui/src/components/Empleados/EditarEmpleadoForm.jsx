@@ -20,6 +20,7 @@ import { useMensaje } from "../../hooks/useMensaje.js";
 export function EditarEmpleadoForm({ empleado, funcionDeCierreDeFormulario, handleEmpleadoActualizado }) {
 
     const { user } = useUsers();
+    const maxFechaNacimiento = new Date(Date.now() - 16 * 365.25 * 24 * 3600000).toISOString().split('T')[0];
 
     const [enviando, setEnviando]           = useState(false);
     const [mensaje, setMensaje]             = useMensaje();
@@ -157,6 +158,8 @@ export function EditarEmpleadoForm({ empleado, funcionDeCierreDeFormulario, hand
                                     name="fecha_nacimiento"
                                     value={form.fecha_nacimiento}
                                     onChange={handleChange}
+                                    min="1900-01-01"
+                                    max={maxFechaNacimiento}
                                     required
                                 />
                             </div>

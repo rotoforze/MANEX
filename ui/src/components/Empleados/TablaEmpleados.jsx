@@ -203,25 +203,25 @@ export function TablaEmpleados() {
                         </thead>
                         <tbody className="table-group-divider">
                             {listaEmpleados.length > 0 ? listaEmpleados.map((empleado) => (
-                                <tr key={empleado?.ID} className="h-auto">
+                                <tr key={empleado?.ID}>
                                     <th scope="row">{empleado?.ID}</th>
-                                    <td>{empleado?.Nombre}</td>
-                                    <td>{empleado?.Apellidos}</td>
+                                    <td className="text-nowrap">{empleado?.Nombre}</td>
+                                    <td className="text-nowrap">{empleado?.Apellidos}</td>
                                     <td>{empleado?.email}</td>
-                                    <td>{empleado?.telefono}</td>
-                                    <td>
+                                    <td className="text-nowrap">{empleado?.telefono}</td>
+                                    <td className="text-nowrap">
                                         {empleado?.fecha_nacimiento
                                             ? new Date(empleado.fecha_nacimiento).toLocaleDateString('es-ES', { timeZone: 'UTC' })
                                             : 'N/A'}
                                     </td>
-                                    <td>
+                                    <td className="text-nowrap">
                                         {empleado?.fecha_alta
                                             ? new Date(empleado.fecha_alta).toLocaleDateString('es-ES', { timeZone: 'UTC' })
                                             : 'N/A'}
                                     </td>
                                     <td>{empleado?.ID_DEPARTAMENTO}</td>
                                     <td>{empleado?.ID_CONTRATO}</td>
-                                    <td className="h-auto w-auto p-1">
+                                    <td className="acciones-tabla">
                                         <button
                                             className="btn btn-info btn-sm"
                                             title="Ver empleado"
@@ -236,14 +236,18 @@ export function TablaEmpleados() {
                                             aria-label="Editar empleado"
                                             onClick={() => setEmpleadoEditando(empleado)}
                                             disabled={!tengoPermiso('/empleados', 'POST')}
-                                        ><i className="bi bi-pencil-fill" aria-hidden="true" /></button>&nbsp;
+                                        >
+                                            <i className="bi bi-pencil-fill" aria-hidden="true" />
+                                        </button>
                                         <button
                                             className="btn btn-danger btn-sm"
                                             title="Eliminar empleado"
                                             aria-label="Eliminar empleado"
                                             onClick={() => setEmpleadoEliminando(empleado)}
                                             disabled={!tengoPermiso('/empleados', 'DELETE')}
-                                        ><i className="bi bi-trash-fill" aria-hidden="true" /></button>
+                                        >
+                                            <i className="bi bi-trash-fill" aria-hidden="true" />
+                                        </button>
                                     </td>
                                 </tr>
                             )) : (
