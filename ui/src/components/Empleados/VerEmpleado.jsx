@@ -5,9 +5,13 @@ import { apiFetch } from "../../utils/apiFetch.jsx";
 /**Vista de perfil completo de un empleado.
  *
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
  * @author Covadonga Blanco Alvarez
 >>>>>>> main
+=======
+ * @author Covadonga Blanco Alvarez
+>>>>>>> e6ea361054ad13a9e53f3c907b851a82b43e76cd
  * @version 5.2
  * @param {Object}   empleado - Fila del empleado tal como llega del listado
  * @param {Function} onClose  - Cierra la ventana

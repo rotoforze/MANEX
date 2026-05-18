@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useUsers } from "../../context/UserContext.jsx";
@@ -7,6 +8,8 @@ import { useDebounce } from "../../hooks/useDebounce.js";
 import { EditarDepartamentoForm } from "./EditarDepartamentoForm.jsx";
 import { DelDepartamento } from "./DelDepartamento.jsx";
 =======
+=======
+>>>>>>> e6ea361054ad13a9e53f3c907b851a82b43e76cd
 import {useEffect, useState} from "react";
 import {useSearchParams} from "react-router-dom";
 import {useUsers} from "../../context/UserContext.jsx";
@@ -14,7 +17,10 @@ import {apiFetch} from "../../utils/apiFetch.jsx";
 import {useDebounce} from "../../hooks/useDebounce.js";
 import {EditarDepartamentoForm} from "./EditarDepartamentoForm.jsx";
 import {DelDepartamento} from "./DelDepartamento.jsx";
+<<<<<<< HEAD
 >>>>>>> main
+=======
+>>>>>>> e6ea361054ad13a9e53f3c907b851a82b43e76cd
 import "../../../public/styles/tablaPermisos.css";
 import "../../../public/styles/mainPages.css";
 
@@ -41,6 +47,7 @@ export function TablaDepartamentos() {
     const [filtros, setFiltros] = useState({
         nombre: searchParams.get('nombre') || '',
     });
+<<<<<<< HEAD
 <<<<<<< HEAD
     const setFiltro = (campo, valor) => setFiltros(prev => ({ ...prev, [campo]: valor }));
 =======
@@ -69,6 +76,12 @@ export function TablaDepartamentos() {
         setFiltros({nombre: ''});
         setSearchParams({}, {replace: true});
     };
+=======
+    const setFiltro = (campo, valor) => setFiltros(prev => ({...prev, [campo]: valor}));
+    const dNombre = useDebounce(filtros.nombre);
+
+    const {user, tengoPermiso} = useUsers();
+>>>>>>> e6ea361054ad13a9e53f3c907b851a82b43e76cd
 
     useEffect(() => {
         sessionStorage.setItem('tabla_departamentos_pagina', paginaActual);
@@ -77,7 +90,7 @@ export function TablaDepartamentos() {
     useEffect(() => {
         const p = {};
         if (dNombre) p.nombre = dNombre;
-        setSearchParams(p, { replace: true });
+        setSearchParams(p, {replace: true});
     }, [dNombre]);
 
     useEffect(() => {
@@ -86,8 +99,8 @@ export function TablaDepartamentos() {
 
     const hayFiltros = !!dNombre;
     const limpiarFiltros = () => {
-        setFiltros({ nombre: '' });
-        setSearchParams({}, { replace: true });
+        setFiltros({nombre: ''});
+        setSearchParams({}, {replace: true});
     };
 
     const cargarDepartamentos = () => {
@@ -95,10 +108,14 @@ export function TablaDepartamentos() {
         setErrorCarga(null);
 
 <<<<<<< HEAD
+<<<<<<< HEAD
         const params = new URLSearchParams({ pagina: paginaActual, cantidad: cantidadPorPagina });
 =======
         const params = new URLSearchParams({pagina: paginaActual, cantidad: cantidadPorPagina});
 >>>>>>> main
+=======
+        const params = new URLSearchParams({pagina: paginaActual, cantidad: cantidadPorPagina});
+>>>>>>> e6ea361054ad13a9e53f3c907b851a82b43e76cd
         if (dNombre) params.set('nombre', dNombre);
 
         apiFetch(
@@ -182,6 +199,7 @@ export function TablaDepartamentos() {
                                 <th scope="col">Acciones</th>
                             </tr>
 <<<<<<< HEAD
+<<<<<<< HEAD
                             <tr className="table-light">
                                 <th />
                                 <th><input className="form-control form-control-sm" type="text" placeholder="Nombre" value={filtros.nombre} onChange={e => setFiltro('nombre', e.target.value)} /></th>
@@ -197,15 +215,28 @@ export function TablaDepartamentos() {
                                 </th>
                                 <th>
                                     {hayFiltros && (
+=======
+                            <tr>
+                                <th/>
+                                <th><input className="form-control form-control-sm" type="text" placeholder="Nombre"
+                                           value={filtros.nombre} onChange={e => setFiltro('nombre', e.target.value)}/>
+                                </th>
+                                <th>
+                                    {hayFiltros && (
+>>>>>>> e6ea361054ad13a9e53f3c907b851a82b43e76cd
                                         <button className="btn btn-outline-secondary btn-sm w-100"
                                                 onClick={limpiarFiltros}
                                                 title="Limpiar filtros">
                                             <i className="bi bi-x-lg me-1" aria-hidden="true"/>Limpiar
+<<<<<<< HEAD
 >>>>>>> main
+=======
+>>>>>>> e6ea361054ad13a9e53f3c907b851a82b43e76cd
                                         </button>
                                     )}
                                 </th>
                             </tr>
+<<<<<<< HEAD
 <<<<<<< HEAD
                         </thead>
                         <tbody className="table-group-divider">
@@ -216,12 +247,20 @@ export function TablaDepartamentos() {
                             </thead>
                             <tbody className="table-group-divider">
                             {listaDepartamentos.length > 0 ? listaDepartamentos.map(departamento => (
+=======
+                            </thead>
+                            <tbody className="table-group-divider">
+                            {listaDepartamentos.length > 0 ? listaDepartamentos.map(departamento => (
+>>>>>>> e6ea361054ad13a9e53f3c907b851a82b43e76cd
                                 <tr key={departamento?.ID} className={`h-auto `}>
                                     <th scope="row">
                                         <i className={`${departamento?.ID == 8 ? 'bi bi-shield badge text-bg-danger' : ''}`}>{departamento?.ID == 8 ? '!' : ''}</i>
                                         &nbsp;{departamento?.ID}
                                     </th>
+<<<<<<< HEAD
 >>>>>>> main
+=======
+>>>>>>> e6ea361054ad13a9e53f3c907b851a82b43e76cd
                                     <td>{departamento?.Nombre}</td>
                                     <td className={`h-auto w-auto p-1`}>
                                         <button
@@ -248,6 +287,7 @@ export function TablaDepartamentos() {
                                     </td>
                                 </tr>
                             )}
+<<<<<<< HEAD
 <<<<<<< HEAD
                         </tbody>
                     </table>
@@ -304,6 +344,30 @@ export function TablaDepartamentos() {
                             <span className="small text-muted">
                             Página {paginaActual + 1} de {paginaMaxima + 1} · {totalRegistros} registros
                         </span>
+=======
+                            </tbody>
+                        </table>
+                    </div>
+                    {listaDepartamentos.length > 0 &&
+                        <div className="d-flex align-items-center justify-content-center gap-2 mb-3">
+                            <button
+                                className="btn btn-outline-secondary btn-sm bi bi-chevron-bar-left"
+                                aria-label="Primera página"
+                                disabled={paginaActual === 0}
+                                onClick={() => setPaginaActual(0)}
+                            />
+                            <button
+                                className="btn btn-outline-secondary btn-sm bi bi-chevron-left"
+                                aria-label="Página anterior"
+                                disabled={paginaActual === 0}
+                                onClick={() => {
+                                    if (paginaActual > 0) setPaginaActual(paginaActual - 1);
+                                }}
+                            />
+                            <span className="small text-muted">
+                            Página {paginaActual + 1} de {paginaMaxima + 1} · {totalRegistros} registros
+                        </span>
+>>>>>>> e6ea361054ad13a9e53f3c907b851a82b43e76cd
                             <button
                                 className="btn btn-outline-secondary btn-sm bi bi-chevron-right"
                                 aria-label="Página siguiente"
@@ -319,7 +383,10 @@ export function TablaDepartamentos() {
                                 onClick={() => setPaginaActual(paginaMaxima)}
                             />
                         </div>}
+<<<<<<< HEAD
 >>>>>>> main
+=======
+>>>>>>> e6ea361054ad13a9e53f3c907b851a82b43e76cd
                 </div>
             ) : (
                 <div className="tabla-empty-state">

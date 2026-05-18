@@ -73,6 +73,7 @@ export function TablaEmpleados() {
     const limpiarFiltros = () => {
         setFiltros({nombre: '', apellidos: '', email: '', telefono: '', departamento: '', contrato: ''});
         setSearchParams({}, {replace: true});
+<<<<<<< HEAD
     };
 
     useEffect(() => {
@@ -98,6 +99,8 @@ export function TablaEmpleados() {
     limpiarFiltros = () => {
         setFiltros({ nombre: '', apellidos: '', email: '', telefono: '', departamento: '', contrato: '' });
         setSearchParams({}, { replace: true });
+=======
+>>>>>>> e6ea361054ad13a9e53f3c907b851a82b43e76cd
     };
 
     const cargarEmpleados = () => {
@@ -271,6 +274,7 @@ export function TablaEmpleados() {
                                         >
                                             <i className="bi bi-eye-fill" aria-hidden="true"/>
                                         </button>
+<<<<<<< HEAD
                                         <button
                                             className="btn btn-info btn-sm"
                                             title="Ver empleado"
@@ -279,6 +283,8 @@ export function TablaEmpleados() {
                                         >
                                             <i className="bi bi-eye-fill" aria-hidden="true" />
                                         </button>
+=======
+>>>>>>> e6ea361054ad13a9e53f3c907b851a82b43e76cd
                                         <button
                                             className="btn btn-info btn-sm"
                                             title="Ver empleado"
