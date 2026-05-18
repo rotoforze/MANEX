@@ -6,6 +6,7 @@ import { enviarUsuario } from "../../utils/RegisterNewUser.js";
 export function SignInForm({ funcionDeCierreDeFormulario, handleNuevoRegistro }) {
 
     const { user } = useUsers();
+    const maxFechaNacimiento = new Date(Date.now() - 16 * 365.25 * 24 * 3600000).toISOString().split('T')[0];
     const [seEstaEnviando, setSeEstaEnviando] = useState(false);
     const [mensaje, setMensaje] = useMensaje();
     const [passwordShown, setPasswordShown] = useState(false);
@@ -118,6 +119,8 @@ export function SignInForm({ funcionDeCierreDeFormulario, handleNuevoRegistro })
                                     className="form-control form-control-sm"
                                     id="fecha_nacimiento"
                                     name="fecha_nacimiento"
+                                    min="1900-01-01"
+                                    max={maxFechaNacimiento}
                                     required
                                 />
                             </div>

@@ -94,7 +94,6 @@ export function login(req, res) {
 
                             var hasToken = crearToken(pool, usuario, newToken, !!keepSession);
 
-                            console.log(newToken, hasToken, !!keepSession)
                             if (!hasToken) {
                                 newToken = '';
                             }
@@ -173,7 +172,6 @@ async function crearToken(pool, usuario = '', token = '', timepoLargo = false) {
                 [usuario, token, nuevaFechaExpiracion],
                 (error, result) => {
                     connection.release();
-                    console.log(result)
                     if (error) {
                         console.error("Error en la consulta:", error);
                     }

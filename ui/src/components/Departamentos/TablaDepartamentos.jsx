@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useUsers } from "../../context/UserContext.jsx";
@@ -5,6 +6,15 @@ import { apiFetch } from "../../utils/apiFetch.jsx";
 import { useDebounce } from "../../hooks/useDebounce.js";
 import { EditarDepartamentoForm } from "./EditarDepartamentoForm.jsx";
 import { DelDepartamento } from "./DelDepartamento.jsx";
+=======
+import {useEffect, useState} from "react";
+import {useSearchParams} from "react-router-dom";
+import {useUsers} from "../../context/UserContext.jsx";
+import {apiFetch} from "../../utils/apiFetch.jsx";
+import {useDebounce} from "../../hooks/useDebounce.js";
+import {EditarDepartamentoForm} from "./EditarDepartamentoForm.jsx";
+import {DelDepartamento} from "./DelDepartamento.jsx";
+>>>>>>> main
 import "../../../public/styles/tablaPermisos.css";
 import "../../../public/styles/mainPages.css";
 
@@ -31,10 +41,34 @@ export function TablaDepartamentos() {
     const [filtros, setFiltros] = useState({
         nombre: searchParams.get('nombre') || '',
     });
+<<<<<<< HEAD
     const setFiltro = (campo, valor) => setFiltros(prev => ({ ...prev, [campo]: valor }));
+=======
+    const setFiltro = (campo, valor) => setFiltros(prev => ({...prev, [campo]: valor}));
+>>>>>>> main
     const dNombre = useDebounce(filtros.nombre);
 
-    const { user, tengoPermiso } = useUsers();
+    const {user, tengoPermiso} = useUsers();
+
+    useEffect(() => {
+        sessionStorage.setItem('tabla_departamentos_pagina', paginaActual);
+    }, [paginaActual]);
+
+    useEffect(() => {
+        const p = {};
+        if (dNombre) p.nombre = dNombre;
+        setSearchParams(p, {replace: true});
+    }, [dNombre]);
+
+    useEffect(() => {
+        setPaginaActual(0);
+    }, [dNombre]);
+
+    const hayFiltros = !!dNombre;
+    const limpiarFiltros = () => {
+        setFiltros({nombre: ''});
+        setSearchParams({}, {replace: true});
+    };
 
     useEffect(() => {
         sessionStorage.setItem('tabla_departamentos_pagina', paginaActual);
@@ -60,7 +94,11 @@ export function TablaDepartamentos() {
         setCargando(true);
         setErrorCarga(null);
 
+<<<<<<< HEAD
         const params = new URLSearchParams({ pagina: paginaActual, cantidad: cantidadPorPagina });
+=======
+        const params = new URLSearchParams({pagina: paginaActual, cantidad: cantidadPorPagina});
+>>>>>>> main
         if (dNombre) params.set('nombre', dNombre);
 
         apiFetch(
@@ -135,13 +173,15 @@ export function TablaDepartamentos() {
                 </div>
             ) : listaDepartamentos.length > 0 || hayFiltros ? (
                 <div className="table-responsive m-3 d-flex flex-column justify-content-start">
-                    <table className="table table-striped">
-                        <thead>
+                    <div className={"table-responsive"}>
+                        <table className="table table-striped">
+                            <thead>
                             <tr>
                                 <th scope="col">#</th>
                                 <th scope="col">Nombre</th>
                                 <th scope="col">Acciones</th>
                             </tr>
+<<<<<<< HEAD
                             <tr className="table-light">
                                 <th />
                                 <th><input className="form-control form-control-sm" type="text" placeholder="Nombre" value={filtros.nombre} onChange={e => setFiltro('nombre', e.target.value)} /></th>
@@ -149,31 +189,56 @@ export function TablaDepartamentos() {
                                     {hayFiltros && (
                                         <button className="btn btn-outline-secondary btn-sm w-100" onClick={limpiarFiltros} title="Limpiar filtros">
                                             <i className="bi bi-x-lg me-1" aria-hidden="true" />Limpiar
+=======
+                            <tr>
+                                <th/>
+                                <th><input className="form-control form-control-sm" type="text" placeholder="Nombre"
+                                           value={filtros.nombre} onChange={e => setFiltro('nombre', e.target.value)}/>
+                                </th>
+                                <th>
+                                    {hayFiltros && (
+                                        <button className="btn btn-outline-secondary btn-sm w-100"
+                                                onClick={limpiarFiltros}
+                                                title="Limpiar filtros">
+                                            <i className="bi bi-x-lg me-1" aria-hidden="true"/>Limpiar
+>>>>>>> main
                                         </button>
                                     )}
                                 </th>
                             </tr>
+<<<<<<< HEAD
                         </thead>
                         <tbody className="table-group-divider">
                             {listaDepartamentos.length > 0 ? listaDepartamentos.map(departamento => (
                                 <tr key={departamento?.ID} className="h-auto">
                                     <th scope="row">{departamento?.ID}</th>
+=======
+                            </thead>
+                            <tbody className="table-group-divider">
+                            {listaDepartamentos.length > 0 ? listaDepartamentos.map(departamento => (
+                                <tr key={departamento?.ID} className={`h-auto `}>
+                                    <th scope="row">
+                                        <i className={`${departamento?.ID == 8 ? 'bi bi-shield badge text-bg-danger' : ''}`}>{departamento?.ID == 8 ? '!' : ''}</i>
+                                        &nbsp;{departamento?.ID}
+                                    </th>
+>>>>>>> main
                                     <td>{departamento?.Nombre}</td>
-                                    <td className="h-auto acciones-tabla">
+                                    <td className={`h-auto w-auto p-1`}>
                                         <button
-                                            className="btn btn-primary btn-sm"
+                                            className={`btn btn-primary btn-sm`}
                                             title="Editar departamento"
                                             aria-label="Editar departamento"
                                             onClick={() => setDepartamentoEditando(departamento)}
-                                            disabled={!tengoPermiso('/departamentos', 'POST')}
-                                        ><i className="bi bi-pencil-fill" aria-hidden="true" /></button>
+                                            disabled={departamento?.ID == 8 || !tengoPermiso('/departamentos', 'POST')}
+                                        ><i className="bi bi-pencil-fill" aria-hidden="true"/></button>
+                                        &nbsp;
                                         <button
                                             className="btn btn-danger btn-sm"
                                             title="Eliminar departamento"
                                             aria-label="Eliminar departamento"
                                             onClick={() => setDepartamentoEliminando(departamento)}
-                                            disabled={!tengoPermiso('/departamentos', 'DELETE')}
-                                        ><i className="bi bi-trash-fill" aria-hidden="true" /></button>
+                                            disabled={departamento?.ID == 8 || !tengoPermiso('/departamentos', 'DELETE')}
+                                        ><i className="bi bi-trash-fill" aria-hidden="true"/></button>
                                     </td>
                                 </tr>
                             )) : (
@@ -183,6 +248,7 @@ export function TablaDepartamentos() {
                                     </td>
                                 </tr>
                             )}
+<<<<<<< HEAD
                         </tbody>
                     </table>
 
@@ -215,10 +281,49 @@ export function TablaDepartamentos() {
                             onClick={() => setPaginaActual(paginaMaxima)}
                         />
                     </div>}
+=======
+                            </tbody>
+                        </table>
+                    </div>
+                    {listaDepartamentos.length > 0 &&
+                        <div className="d-flex align-items-center justify-content-center gap-2 mb-3">
+                            <button
+                                className="btn btn-outline-secondary btn-sm bi bi-chevron-bar-left"
+                                aria-label="Primera página"
+                                disabled={paginaActual === 0}
+                                onClick={() => setPaginaActual(0)}
+                            />
+                            <button
+                                className="btn btn-outline-secondary btn-sm bi bi-chevron-left"
+                                aria-label="Página anterior"
+                                disabled={paginaActual === 0}
+                                onClick={() => {
+                                    if (paginaActual > 0) setPaginaActual(paginaActual - 1);
+                                }}
+                            />
+                            <span className="small text-muted">
+                            Página {paginaActual + 1} de {paginaMaxima + 1} · {totalRegistros} registros
+                        </span>
+                            <button
+                                className="btn btn-outline-secondary btn-sm bi bi-chevron-right"
+                                aria-label="Página siguiente"
+                                disabled={!(paginaActual < paginaMaxima)}
+                                onClick={() => {
+                                    if (paginaActual < paginaMaxima) setPaginaActual(paginaActual + 1);
+                                }}
+                            />
+                            <button
+                                className="btn btn-outline-secondary btn-sm bi bi-chevron-bar-right"
+                                aria-label="Última página"
+                                disabled={!(paginaActual < paginaMaxima)}
+                                onClick={() => setPaginaActual(paginaMaxima)}
+                            />
+                        </div>}
+>>>>>>> main
                 </div>
             ) : (
                 <div className="tabla-empty-state">
-                    <i className="bi bi-building tabla-empty-icon" aria-hidden="true" />
+                    <i className="bi bi-building tabla-empty-icon" aria-hidden="true"/>
                     <p className="text-muted mb-0">No hay departamentos registrados.</p>
                 </div>
             )}

@@ -131,7 +131,7 @@ export function TablePermisos() {
                                     </th>
                                     <td className={"h-auto"}>
                                         <input type="checkbox"
-                                               className="form-check-input form-check bg-dark justificar-centro"
+                                               className="form-check-input form-check justificar-centro"
                                                disabled={permisoProtected || !permisoParaEditarOBorrar}
                                                defaultChecked={!!permisoGet} onChange={(e) => {
 
@@ -156,7 +156,7 @@ export function TablePermisos() {
                                     </td>
                                     <td className={"h-auto"}>
                                         <input type="checkbox"
-                                               className="form-check-input form-check bg-dark justificar-centro"
+                                               className="form-check-input form-check justificar-centro"
                                                disabled={permisoProtected || !permisoParaEditarOBorrar}
                                                defaultChecked={!!permisoPost} onChange={(e) => {
 
@@ -181,7 +181,7 @@ export function TablePermisos() {
                                     </td>
                                     <td className={"h-auto"}>
                                         <input type="checkbox"
-                                               className="form-check-input form-check bg-dark justificar-centro"
+                                               className="form-check-input form-check justificar-centro"
                                                disabled={permisoProtected || !permisoParaEditarOBorrar}
                                                defaultChecked={!!permisoDelete} onChange={(e) => {
                                             if (e.target.checked) {

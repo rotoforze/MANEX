@@ -6,7 +6,7 @@
     top: 0;
     left: 0;
     z-index: 2000;
-    background-color: rgb(248 249 250 / 0.53);
+    background-color: rgba(0, 0, 0, 0.45);
     display: flex;
     height: 100dvh;
     width: 100dvw;

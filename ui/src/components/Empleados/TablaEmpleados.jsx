@@ -48,7 +48,32 @@ export function TablaEmpleados() {
     const dDepartamento = useDebounce(filtros.departamento);
     const dContrato = useDebounce(filtros.contrato);
 
-    const { user, tengoPermiso } = useUsers();
+    const {user, tengoPermiso} = useUsers();
+
+    useEffect(() => {
+        sessionStorage.setItem('tabla_empleados_pagina', paginaActual);
+    }, [paginaActual]);
+
+    useEffect(() => {
+        const p = {};
+        if (dNombre) p.nombre = dNombre;
+        if (dApellidos) p.apellidos = dApellidos;
+        if (dEmail) p.email = dEmail;
+        if (dTelefono) p.telefono = dTelefono;
+        if (dDepartamento) p.departamento = dDepartamento;
+        if (dContrato) p.contrato = dContrato;
+        setSearchParams(p, { replace: true });
+    }, [dNombre, dApellidos, dEmail, dTelefono, dDepartamento, dContrato]);
+
+    useEffect(() => {
+        setPaginaActual(0);
+    }, [dNombre, dApellidos, dEmail, dTelefono, dDepartamento, dContrato]);
+
+    const hayFiltros = !!(dNombre || dApellidos || dEmail || dTelefono || dDepartamento || dContrato);
+    const limpiarFiltros = () => {
+        setFiltros({nombre: '', apellidos: '', email: '', telefono: '', departamento: '', contrato: ''});
+        setSearchParams({}, {replace: true});
+    };
 
     useEffect(() => {
         sessionStorage.setItem('tabla_empleados_pagina', paginaActual);
@@ -148,7 +173,9 @@ export function TablaEmpleados() {
                     usuarioAEditar={empleadoEliminando}
                     setUsuarioAEditar={setEmpleadoEliminando}
                     eliminando={!!empleadoEliminando}
-                    setEliminando={(v) => { if (!v) setEmpleadoEliminando(null); }}
+                    setEliminando={(v) => {
+                        if (!v) setEmpleadoEliminando(null);
+                    }}
                     user={user}
                     fetchInicio={handleEmpleadoEliminado}
                 />
@@ -168,8 +195,9 @@ export function TablaEmpleados() {
                 </div>
             ) : listaEmpleados?.length > 0 || hayFiltros ? (
                 <div className="table-responsive m-3 d-flex flex-column justify-content-start">
-                    <table className="table table-striped">
-                        <thead>
+                    <div className={"table-responsive"}>
+                        <table className="table table-striped">
+                            <thead>
                             <tr>
                                 <th scope="col">#</th>
                                 <th scope="col">Nombre</th>
@@ -182,6 +210,7 @@ export function TablaEmpleados() {
                                 <th scope="col">Contrato</th>
                                 <th scope="col">Acciones</th>
                             </tr>
+<<<<<<< HEAD
                             <tr className="table-light">
                                 <th />
                                 <th><input className="form-control form-control-sm" type="text" placeholder="Nombre" value={filtros.nombre} onChange={e => setFiltro('nombre', e.target.value)} /></th>
@@ -196,32 +225,84 @@ export function TablaEmpleados() {
                                     {hayFiltros && (
                                         <button className="btn btn-outline-secondary btn-sm w-100" onClick={limpiarFiltros} title="Limpiar filtros">
                                             <i className="bi bi-x-lg me-1" aria-hidden="true" />Limpiar
+=======
+                            <tr>
+                                <th/>
+                                <th><input className="form-control form-control-sm" type="text" placeholder="Nombre"
+                                           value={filtros.nombre} onChange={e => setFiltro('nombre', e.target.value)}/>
+                                </th>
+                                <th><input className="form-control form-control-sm" type="text" placeholder="Apellidos"
+                                           value={filtros.apellidos}
+                                           onChange={e => setFiltro('apellidos', e.target.value)}/></th>
+                                <th><input className="form-control form-control-sm" type="text" placeholder="Email"
+                                           value={filtros.email} onChange={e => setFiltro('email', e.target.value)}/>
+                                </th>
+                                <th><input className="form-control form-control-sm" type="text" placeholder="Teléfono"
+                                           value={filtros.telefono}
+                                           onChange={e => setFiltro('telefono', e.target.value)}/></th>
+                                <th/>
+                                <th/>
+                                <th><input className="form-control form-control-sm" type="text" placeholder="Dpto."
+                                           value={filtros.departamento}
+                                           onChange={e => setFiltro('departamento', e.target.value)}/></th>
+                                <th><input className="form-control form-control-sm" type="text" placeholder="Contrato"
+                                           value={filtros.contrato}
+                                           onChange={e => setFiltro('contrato', e.target.value)}/></th>
+                                <th>
+                                    {hayFiltros && (
+                                        <button className="btn btn-outline-secondary btn-sm w-100"
+                                                onClick={limpiarFiltros} title="Limpiar filtros">
+                                            <i className="bi bi-x-lg me-1" aria-hidden="true"/>Limpiar
+>>>>>>> main
                                         </button>
                                     )}
                                 </th>
                             </tr>
+<<<<<<< HEAD
                         </thead>
                         <tbody className="table-group-divider">
                             {listaEmpleados.length > 0 ? listaEmpleados.map((empleado) => (
                                 <tr key={empleado?.ID} className="h-auto">
+=======
+                            </thead>
+                            <tbody className="table-group-divider">
+                            {listaEmpleados.length > 0 ? listaEmpleados.map((empleado) => (
+                                <tr key={empleado?.ID}>
+>>>>>>> main
                                     <th scope="row">{empleado?.ID}</th>
-                                    <td>{empleado?.Nombre}</td>
-                                    <td>{empleado?.Apellidos}</td>
+                                    <td className="text-nowrap">{empleado?.Nombre}</td>
+                                    <td className="text-nowrap">{empleado?.Apellidos}</td>
                                     <td>{empleado?.email}</td>
-                                    <td>{empleado?.telefono}</td>
-                                    <td>
+                                    <td className="text-nowrap">{empleado?.telefono}</td>
+                                    <td className="text-nowrap">
                                         {empleado?.fecha_nacimiento
-                                            ? new Date(empleado.fecha_nacimiento).toLocaleDateString('es-ES', { timeZone: 'UTC' })
+                                            ? new Date(empleado.fecha_nacimiento).toLocaleDateString('es-ES', {timeZone: 'UTC'})
                                             : 'N/A'}
                                     </td>
-                                    <td>
+                                    <td className="text-nowrap">
                                         {empleado?.fecha_alta
-                                            ? new Date(empleado.fecha_alta).toLocaleDateString('es-ES', { timeZone: 'UTC' })
+                                            ? new Date(empleado.fecha_alta).toLocaleDateString('es-ES', {timeZone: 'UTC'})
                                             : 'N/A'}
                                     </td>
                                     <td>{empleado?.ID_DEPARTAMENTO}</td>
                                     <td>{empleado?.ID_CONTRATO}</td>
-                                    <td className="h-auto acciones-tabla">
+                                    <td className="acciones-tabla">
+                                        <button
+                                            className="btn btn-info btn-sm"
+                                            title="Ver empleado"
+                                            aria-label="Ver empleado"
+                                            onClick={() => setEmpleadoViendo(empleado)}
+                                        >
+                                            <i className="bi bi-eye-fill" aria-hidden="true"/>
+                                        </button>
+                                        <button
+                                            className="btn btn-info btn-sm"
+                                            title="Ver empleado"
+                                            aria-label="Ver empleado"
+                                            onClick={() => setEmpleadoViendo(empleado)}
+                                        >
+                                            <i className="bi bi-eye-fill" aria-hidden="true" />
+                                        </button>
                                         <button
                                             className="btn btn-info btn-sm"
                                             title="Ver empleado"
@@ -236,14 +317,15 @@ export function TablaEmpleados() {
                                             aria-label="Editar empleado"
                                             onClick={() => setEmpleadoEditando(empleado)}
                                             disabled={!tengoPermiso('/empleados', 'POST')}
-                                        ><i className="bi bi-pencil-fill" aria-hidden="true" /></button>
+                                        ><i className="bi bi-pencil-fill" aria-hidden="true"/></button>
+                                        &nbsp;
                                         <button
                                             className="btn btn-danger btn-sm"
                                             title="Eliminar empleado"
                                             aria-label="Eliminar empleado"
                                             onClick={() => setEmpleadoEliminando(empleado)}
                                             disabled={!tengoPermiso('/empleados', 'DELETE')}
-                                        ><i className="bi bi-trash-fill" aria-hidden="true" /></button>
+                                        ><i className="bi bi-trash-fill" aria-hidden="true"/></button>
                                     </td>
                                 </tr>
                             )) : (
@@ -253,6 +335,7 @@ export function TablaEmpleados() {
                                     </td>
                                 </tr>
                             )}
+<<<<<<< HEAD
                         </tbody>
                     </table>
 
@@ -285,10 +368,49 @@ export function TablaEmpleados() {
                             onClick={() => setPaginaActual(paginaMaxima)}
                         />
                     </div>}
+=======
+                            </tbody>
+                        </table>
+                    </div>
+                    {listaEmpleados?.length > 0 &&
+                        <div className="d-flex align-items-center justify-content-center gap-2 mb-3">
+                            <button
+                                className="btn btn-outline-secondary btn-sm bi bi-chevron-bar-left"
+                                aria-label="Primera página"
+                                disabled={paginaActual === 0}
+                                onClick={() => setPaginaActual(0)}
+                            />
+                            <button
+                                className="btn btn-outline-secondary btn-sm bi bi-chevron-left"
+                                aria-label="Página anterior"
+                                disabled={paginaActual === 0}
+                                onClick={() => {
+                                    if (paginaActual > 0) setPaginaActual(paginaActual - 1);
+                                }}
+                            />
+                            <span className="small text-muted">
+                            Página {paginaActual + 1} de {paginaMaxima + 1} · {totalRegistros} registros
+                        </span>
+                            <button
+                                className="btn btn-outline-secondary btn-sm bi bi-chevron-right"
+                                aria-label="Página siguiente"
+                                disabled={!(paginaActual < paginaMaxima)}
+                                onClick={() => {
+                                    if (paginaActual < paginaMaxima) setPaginaActual(paginaActual + 1);
+                                }}
+                            />
+                            <button
+                                className="btn btn-outline-secondary btn-sm bi bi-chevron-bar-right"
+                                aria-label="Última página"
+                                disabled={!(paginaActual < paginaMaxima)}
+                                onClick={() => setPaginaActual(paginaMaxima)}
+                            />
+                        </div>}
+>>>>>>> main
                 </div>
             ) : (
                 <div className="tabla-empty-state">
-                    <i className="bi bi-people tabla-empty-icon" aria-hidden="true" />
+                    <i className="bi bi-people tabla-empty-icon" aria-hidden="true"/>
                     <p className="text-muted mb-0">No hay empleados registrados.</p>
                 </div>
             )}

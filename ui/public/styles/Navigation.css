@@ -42,7 +42,11 @@
     }
 
     .bottom-nav-panel {
+<<<<<<< HEAD
         background-color: #212529;
+=======
+        background-color: var(--bs-dark-bg-subtle, #212529);
+>>>>>>> main
         border-top: 1px solid rgba(255, 255, 255, 0.1);
         max-height: 60vh;
         overflow-y: auto;

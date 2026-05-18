@@ -79,7 +79,7 @@ export function Incidencias() {
 
       <hr />
 
-      <div className="d-flex flex-column gap-2 w-100 p-4 justify-content-center overflow-auto">
+      <div className="d-flex flex-column gap-2 w-100 p-4 justify-content-center">
 
         <TablaIncidencias
           key={refreshKey}
