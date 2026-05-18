@@ -172,14 +172,14 @@ export function TablaSolicitudes({ idEmpleado }) {
                     <table className="table table-striped">
                         <thead>
                             <tr>
-                                <th scope="col">#</th>
-                                {!idEmpleado && <th scope="col">Nombre</th>}
-                                {!idEmpleado && <th scope="col">Apellidos</th>}
-                                <th scope="col">Tipo</th>
-                                <th scope="col">Fecha inicio</th>
-                                <th scope="col">Fecha fin</th>
-                                <th scope="col">Estado</th>
-                                <th scope="col">Acciones</th>
+                                <th scope="col" className="text-nowrap">#</th>
+                                {!idEmpleado && <th scope="col" className="text-nowrap">Nombre</th>}
+                                {!idEmpleado && <th scope="col" className="text-nowrap">Apellidos</th>}
+                                <th scope="col" className="text-nowrap">Tipo</th>
+                                <th scope="col" className="text-nowrap">Fecha inicio</th>
+                                <th scope="col" className="text-nowrap">Fecha fin</th>
+                                <th scope="col" className="text-nowrap">Estado</th>
+                                <th scope="col" className="text-nowrap">Acciones</th>
                             </tr>
                             <tr>
                                 <th />
@@ -218,25 +218,25 @@ export function TablaSolicitudes({ idEmpleado }) {
                                 const estado = obtenerValor(solicitud, ['estado'], 'Sin estado');
 
                                 return (
-                                    <tr key={idIncidencia} className="h-auto">
+                                    <tr key={idIncidencia}>
                                         <th scope="row">{idIncidencia}</th>
-                                        {!idEmpleado && <td>{solicitud?.nombre_empleado ?? '—'}</td>}
-                                        {!idEmpleado && <td>{solicitud?.apellidos_empleado ?? '—'}</td>}
-                                        <td>{obtenerValor(solicitud, ['tipo'])}</td>
-                                        <td>{formatearFecha(obtenerValor(solicitud, ['fecha_inicio'], null))}</td>
-                                        <td>{formatearFecha(obtenerValor(solicitud, ['fecha_fin'], null))}</td>
-                                        <td>
+                                        {!idEmpleado && <td className="text-nowrap">{solicitud?.nombre_empleado ?? '—'}</td>}
+                                        {!idEmpleado && <td className="text-nowrap">{solicitud?.apellidos_empleado ?? '—'}</td>}
+                                        <td className="text-nowrap">{obtenerValor(solicitud, ['tipo'])}</td>
+                                        <td className="text-nowrap">{formatearFecha(obtenerValor(solicitud, ['fecha_inicio'], null))}</td>
+                                        <td className="text-nowrap">{formatearFecha(obtenerValor(solicitud, ['fecha_fin'], null))}</td>
+                                        <td className="text-nowrap">
                                             <span className={`badge ${obtenerClaseEstado(estado)}`}>
                                                 {estado}
                                             </span>
                                         </td>
-                                        <td className="h-auto w-100 p-1">
+                                        <td className="acciones-tabla">
                                             <button
                                                 className="btn btn-primary btn-sm"
                                                 title="Editar solicitud"
                                                 aria-label="Editar solicitud"
                                                 onClick={() => setSolicitudEditando(solicitud)}
-                                            ><i className="bi bi-pencil-fill" aria-hidden="true" /></button>&nbsp;
+                                            ><i className="bi bi-pencil-fill" aria-hidden="true" /></button>
                                             <button
                                                 className="btn btn-danger btn-sm"
                                                 title="Eliminar solicitud"

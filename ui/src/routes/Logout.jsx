@@ -18,7 +18,7 @@ export const Logout = () => {
     // para cerrar sesión basta con borrar la cookie y reiniciar la página.
     useEffect(() => {
         if (user?.token) deleteTokenCookie();
-        window.location.replace('/login');
+        window.location.replace('/');
     }, [])
 
     return (
