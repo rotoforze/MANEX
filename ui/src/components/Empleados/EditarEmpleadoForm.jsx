@@ -250,7 +250,7 @@ export function EditarEmpleadoForm({ empleado, funcionDeCierreDeFormulario, hand
 
                         <div className="mb-2">
                             <label htmlFor="contrasenia" className="form-label small mb-1">
-                                Nueva contraseña <span className="text-danger">*</span>
+                                Nueva contraseña
                             </label>
                             <div className="input-group input-group-sm">
                                 <input
@@ -260,8 +260,7 @@ export function EditarEmpleadoForm({ empleado, funcionDeCierreDeFormulario, hand
                                     name="contrasenia"
                                     value={form.contrasenia}
                                     onChange={handleChange}
-                                    placeholder="Introduce la contraseña para confirmar los cambios"
-                                    required
+                                    placeholder="Nueva contraseña"
                                 />
                                 <button
                                     type="button"
@@ -272,7 +271,7 @@ export function EditarEmpleadoForm({ empleado, funcionDeCierreDeFormulario, hand
                                 </button>
                             </div>
                             <div className="form-text small text-muted">
-                                Requerida para aplicar cualquier cambio. Se actualizará en la cuenta del empleado.
+                                Si cambias la contraseña el usuario podría perder el acceso, es recomendable que el usuario la cambie desde el formulario de Inicio de sesión.
                             </div>
                         </div>
 

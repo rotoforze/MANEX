@@ -36,7 +36,7 @@ export function TablaSolicitudes({idEmpleado}) {
     const dNombre = useDebounce(filtros.nombre);
     const dApellidos = useDebounce(filtros.apellidos);
 
-    const {user} = useUsers();
+    const {user, tengoPermiso} = useUsers();
 
     useEffect(() => {
         sessionStorage.setItem('tabla_solicitudes_pagina', paginaActual);
@@ -60,6 +60,8 @@ export function TablaSolicitudes({idEmpleado}) {
         setFiltros({tipo: '', estado: '', nombre: '', apellidos: ''});
         setSearchParams({}, {replace: true});
     };
+
+    const estadosNoModificables = ['Concedido', 'Rechazado'];
 
     useEffect(() => {
         setCargando(true);
@@ -176,10 +178,11 @@ export function TablaSolicitudes({idEmpleado}) {
                                 <th scope="col" className="text-nowrap">#</th>
                                 {!idEmpleado && <th scope="col" className="text-nowrap">Nombre</th>}
                                 {!idEmpleado && <th scope="col" className="text-nowrap">Apellidos</th>}
-                                <th scope="col" className="text-nowrap">Tipo</th>
+                                <th scope="col" className="col-3 text-nowrap">Tipo</th>
+                                <th scope="col" className="col-3 text-nowrap">Descripción</th>
                                 <th scope="col" className="text-nowrap">Fecha inicio</th>
                                 <th scope="col" className="text-nowrap">Fecha fin</th>
-                                <th scope="col" className="text-nowrap">Estado</th>
+                                <th scope="col" className="text-nowrap col-3">Estado</th>
                                 <th scope="col" className="text-nowrap">Acciones</th>
                             </tr>
                             <tr>
@@ -203,6 +206,7 @@ export function TablaSolicitudes({idEmpleado}) {
                                         <option value="Permiso familiar">Permiso familiar</option>
                                     </select>
                                 </th>
+                                <th/>
                                 <th/>
                                 <th/>
                                 <th>
@@ -235,6 +239,7 @@ export function TablaSolicitudes({idEmpleado}) {
                                         {!idEmpleado && <td>{solicitud?.nombre_empleado ?? '—'}</td>}
                                         {!idEmpleado && <td>{solicitud?.apellidos_empleado ?? '—'}</td>}
                                         <td>{obtenerValor(solicitud, ['tipo'])}</td>
+                                        <td>{obtenerValor(solicitud, ['comentario'])}</td>
                                         <td>{formatearFecha(obtenerValor(solicitud, ['fecha_inicio'], null))}</td>
                                         <td>{formatearFecha(obtenerValor(solicitud, ['fecha_fin'], null))}</td>
                                         <td>
@@ -246,13 +251,13 @@ export function TablaSolicitudes({idEmpleado}) {
                                             <button
                                                 className="btn btn-primary btn-sm"
                                                 title="Editar solicitud"
-                                                aria-label="Editar solicitud"
+                                                aria-label="Editar solicitud" disabled={!tengoPermiso('/vacaciones', 'POST') || estadosNoModificables.includes(estado)}
                                                 onClick={() => setSolicitudEditando(solicitud)}
                                             ><i className="bi bi-pencil-fill" aria-hidden="true" /></button>&nbsp;
                                             <button
                                                 className="btn btn-danger btn-sm"
                                                 title="Eliminar solicitud"
-                                                aria-label="Eliminar solicitud"
+                                                aria-label="Eliminar solicitud" disabled={!tengoPermiso('/vacaciones', 'DELETE') || estadosNoModificables.includes(estado)}
                                             ><i className="bi bi-trash-fill" aria-hidden="true"/></button>
                                         </td>
                                     </tr>

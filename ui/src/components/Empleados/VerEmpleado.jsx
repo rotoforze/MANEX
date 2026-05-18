@@ -4,14 +4,7 @@ import { apiFetch } from "../../utils/apiFetch.jsx";
 
 /**Vista de perfil completo de un empleado.
  *
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
  * @author Covadonga Blanco Alvarez
->>>>>>> main
-=======
- * @author Covadonga Blanco Alvarez
->>>>>>> e6ea361054ad13a9e53f3c907b851a82b43e76cd
  * @version 5.2
  * @param {Object}   empleado - Fila del empleado tal como llega del listado
  * @param {Function} onClose  - Cierra la ventana
@@ -95,7 +88,7 @@ export function VerEmpleado({ empleado, onClose }) {
 
     const EmptyState = ({ icono, texto }) => (
         <div className="text-center py-5">
-            <i className={`bi ${icono} text-muted`} style={{ fontSize: '2rem' }} />
+            <i className={`bi ${icono} text-muted`} />
             <p className="text-muted mt-2 small mb-0">{texto}</p>
         </div>
     );
@@ -113,19 +106,15 @@ export function VerEmpleado({ empleado, onClose }) {
     return (
         <div className="superponer">
             <div
-                className="card confirmacion"
-                style={{ width: 'min(95dvw, 1100px)', maxHeight: '90dvh', display: 'flex', flexDirection: 'column' }}
-            >
+                className="card confirmacion">
                 <div className="card-header d-flex justify-content-between align-items-center">
                     <div className="d-flex align-items-center gap-2">
                         <div
-                            className="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center fw-bold flex-shrink-0"
-                            style={{ width: 38, height: 38, fontSize: '0.85rem' }}
-                        >
+                            className="rounded-circle bg-primary text-white d-flex align-items-center p-2 justify-content-center fw-bold flex-shrink-0">
                             {(empleado?.Nombre?.[0] ?? '?').toUpperCase()}
                             {(empleado?.Apellidos?.[0] ?? '').toUpperCase()}
                         </div>
-                        <div className="fw-semibold" style={{ fontSize: '0.95rem' }}>
+                        <div className="fw-semibold">
                             {empleado?.Nombre} {empleado?.Apellidos}
                         </div>
                     </div>
@@ -137,22 +126,14 @@ export function VerEmpleado({ empleado, onClose }) {
                     />
                 </div>
 
-                <div className="border-bottom px-3 pt-2" style={{ background: 'var(--bs-light, #f8f9fa)' }}>
-                    <ul className="nav nav-tabs border-0" style={{ flexWrap: 'nowrap', overflowX: 'auto', scrollbarWidth: 'none' }}>
+                <div className="border-bottom px-3 pt-2">
+                    <ul className="nav nav-tabs border-0">
                         {secciones.map(s => (
                             <li key={s.id} className="nav-item">
                                 <button
                                     className={`nav-link border-0 small d-flex align-items-center gap-1 ${seccionActiva === s.id ? 'active fw-semibold' : 'text-muted'}`}
-                                    onClick={() => setSeccionActiva(s.id)}
-                                    style={{
-                                        whiteSpace: 'nowrap',
-                                        background: 'transparent',
-                                        borderBottom: seccionActiva === s.id
-                                            ? '2px solid var(--bs-primary)'
-                                            : '2px solid transparent',
-                                    }}
-                                >
-                                    <i className={`bi ${s.icon}`} aria-hidden="true" style={{ fontSize: '0.75rem' }} />
+                                    onClick={() => setSeccionActiva(s.id)}>
+                                    <i className={`bi ${s.icon}`} aria-hidden="true"/>
                                     {s.label}
                                 </button>
                             </li>
@@ -160,7 +141,7 @@ export function VerEmpleado({ empleado, onClose }) {
                     </ul>
                 </div>
 
-                <div className="card-body p-3" style={{ overflowY: 'auto', flex: 1 }}>
+                <div className="card-body p-3">
 
                     {cargando && <Spinner />}
 
@@ -189,11 +170,11 @@ export function VerEmpleado({ empleado, onClose }) {
                                             { label: 'Departamento',     value: perfil?.nombre_departamento ?? '-' },
                                         ].map(({ label, value }) => (
                                             <div key={label} className="col-sm-6 col-md-4">
-                                                <div className="border rounded p-2" style={{ background: 'var(--bs-light, #f8f9fa)' }}>
-                                                    <div className="text-muted" style={{ fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                                                <div className="border rounded p-2">
+                                                    <div className="text-muted" >
                                                         {label}
                                                     </div>
-                                                    <div className="fw-medium" style={{ fontSize: '0.85rem' }}>
+                                                    <div className="fw-medium">
                                                         {value ?? <span className="text-muted">-</span>}
                                                     </div>
                                                 </div>
@@ -213,11 +194,9 @@ export function VerEmpleado({ empleado, onClose }) {
 
 
                                         <div
-                                            className="rounded-circle bg-primary bg-opacity-10 d-flex align-items-center justify-content-center"
-                                            style={{ width: 140, height: 140 }}
-                                        >
+                                            className="rounded-circle p-5 bg-primary bg-opacity-10 d-flex align-items-center justify-content-center">
                                             <div className="text-center">
-                                                <div className="fw-bold text-primary" style={{ fontSize: '2.4rem', lineHeight: 1 }}>
+                                                <div className="fw-bold fs-1 text-primary">
                                                     {horasMes?.trabajadas_h ?? 0}
                                                 </div>
                                                 <div className="text-muted small">horas</div>
@@ -227,12 +206,12 @@ export function VerEmpleado({ empleado, onClose }) {
 
                                         {/* Diferencia de horas contrato y trabajadas */}
                                         {diferencia && (
-                                            <span className={`badge bg-${diferencia.color} px-3 py-2`} style={{ fontSize: '0.8rem' }}>
+                                            <span className={`badge bg-${diferencia.color} px-3 py-2`}>
                                                 {diferencia.texto}
                                             </span>
                                         )}
 
-                                        <div className="text-muted" style={{ fontSize: '0.75rem' }}>
+                                        <div className="text-muted">
                                             {horasMes?.trabajadas_min ?? 0} minutos sobre la ultima hora completa
                                         </div>
                                     </div>

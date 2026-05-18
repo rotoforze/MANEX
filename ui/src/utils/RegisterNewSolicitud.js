@@ -3,18 +3,19 @@ import { apiFetch } from "./apiFetch.jsx";
 export async function registrarSolicitud({ request }) {
     const formData = await request.formData();
     const postData = Object.fromEntries(formData);
+
     return enviarSolicitud(postData?.token, {
         id_empleado: postData?.id_empleado || '',
         id_incidencia: postData?.id_incidencia || '',
         tipo: postData?.tipo,
         fecha_inicio: postData?.fecha_inicio,
         fecha_fin: postData?.fecha_fin,
-        observaciones: postData?.observaciones || '',
+        comentario: postData?.comentario || '',
         estado: postData?.estado || 'En revisión',
     });
 }
 
-export async function enviarSolicitud(token, { id_empleado, id_incidencia, tipo, fecha_inicio, fecha_fin, observaciones, estado }) {
+export async function enviarSolicitud(token, { id_empleado, id_incidencia, tipo, fecha_inicio, fecha_fin, comentario, estado }) {
     const url = import.meta.env.VITE_BACKEND_SOLICITUDES
         || import.meta.env.VITE_BACKEND_SOLICITUD
         || `${import.meta.env.VITE_BACKEND}/vacaciones`;
@@ -25,7 +26,7 @@ export async function enviarSolicitud(token, { id_empleado, id_incidencia, tipo,
     params.append('tipo', tipo);
     params.append('fecha_inicio', fecha_inicio);
     params.append('fecha_fin', fecha_fin);
-    if (observaciones) params.append('observaciones', observaciones);
+    if (comentario) params.append('comentario', comentario);
     params.append('estado', estado);
 
     try {

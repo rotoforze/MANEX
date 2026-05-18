@@ -48,13 +48,13 @@ async function registrarSolicitudVacaciones(req, res) {
 
             const fechaCreacion = new Date().toISOString().slice(0, 10);
             const [resultadoIncidencia] = await connection.query(
-                'INSERT INTO incidencia (ID_empleado,fecha_creacion,estado,Observaciones,Comentario) VALUES (?, ?, ?, ?, ?)',
+                'INSERT INTO incidencia (ID_empleado,fecha_creacion,estado,Comentario,Observaciones) VALUES (?, ?, ?, ?, ?)',
                 [
                     id_empleado,
                     fechaCreacion,
                     'Abierta',
-                    observaciones || 'Solicitud de vacaciones',
-                    comentario || tipo || 'Vacaciones'
+                    comentario || '',
+                    observaciones || '',
                 ]
             );
 

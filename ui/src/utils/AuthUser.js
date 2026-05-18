@@ -55,10 +55,13 @@ export const authUser = async (usuario, password, wantsToKeepSession, sessionTok
 
         if (!response.ok) {
             console.error('Error en la red o servidor');
+            await deleteTokenCookie();
             return response;
         }
 
         const respuesta = await response.json();
+
+        if (respuesta.status === 404) return "El token ha caducado. Vuelva a iniciar sesión."
 
         if (respuesta.status === 201) {
             // Lógica Login correcto
@@ -74,11 +77,10 @@ export const authUser = async (usuario, password, wantsToKeepSession, sessionTok
                 username: respuesta.auth.username,
                 department: respuesta.auth.department
             };
-        } else {
-            console.log('ERROR: ' + respuesta.message);
-            await deleteTokenCookie();
-            return respuesta.message;
         }
+
+            await deleteTokenCookie();
+            return "Ha ocurrido un error con la sesión.";
 
     } catch (error) {
         console.error('ERROR AL INICIAR SESIÓN: ', error);

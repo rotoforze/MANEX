@@ -12,11 +12,11 @@ import { useMensaje } from "../../hooks/useMensaje.js";
  * @param {Function} funcionDeCierreDeFormulario - Cierra el formulario sin guardar
  * @param {Function} handleIncidenciaActualizada - Callback tras actualizacion exitosa
  */
-export function EditarIncidenciaForm({ incidencia, funcionDeCierreDeFormulario, handleIncidenciaActualizada }) {
+export function EditarIncidenciaForm({incidencia, funcionDeCierreDeFormulario, handleIncidenciaActualizada}) {
 
-    const { user } = useUsers();
+    const {user, tengoPermiso} = useUsers();
     const [enviando, setEnviando] = useState(false);
-    const [mensaje,  setMensaje]  = useMensaje();
+    const [mensaje, setMensaje] = useMensaje();
 
     const BASE = import.meta.env.VITE_BACKEND;
 
@@ -67,11 +67,11 @@ export function EditarIncidenciaForm({ incidencia, funcionDeCierreDeFormulario, 
                     handleIncidenciaActualizada?.();
                 }, 1000);
             } else {
-                setMensaje({ tipo: 'danger', texto: data?.message ?? 'Error al actualizar la incidencia.' });
+                setMensaje({tipo: 'danger', texto: data?.message ?? 'Error al actualizar la incidencia.'});
             }
         } catch (err) {
             console.error(err);
-            setMensaje({ tipo: 'danger', texto: 'Error de conexion con el servidor.' });
+            setMensaje({tipo: 'danger', texto: 'Error de conexion con el servidor.'});
         } finally {
             setEnviando(false);
         }
@@ -80,10 +80,7 @@ export function EditarIncidenciaForm({ incidencia, funcionDeCierreDeFormulario, 
     return (
         <div className="superponer">
             <div
-                className="card confirmacion"
-                style={{ width: 'min(95dvw, 700px)', overflowY: 'auto' }}
-            >
-                {/* Cabecera */}
+                className="card confirmacion">
                 <div className="card-header d-flex justify-content-end align-items-center">
                     <button
                         type="button"
@@ -94,7 +91,7 @@ export function EditarIncidenciaForm({ incidencia, funcionDeCierreDeFormulario, 
                 </div>
 
                 <div className="card-body p-3">
-                    <h2 className="text-center mb-3" style={{ fontSize: '1.2rem' }}>Editar incidencia</h2>
+                    <h2 className="text-center mb-3" style={{fontSize: '1.2rem'}}>Editar incidencia</h2>
 
                     {mensaje && (
                         <div className={`alert alert-${mensaje.tipo} py-1 px-2 small mb-2`}>
@@ -105,7 +102,9 @@ export function EditarIncidenciaForm({ incidencia, funcionDeCierreDeFormulario, 
                     <form onSubmit={handleSubmit}>
 
                         {/* Estado */}
-                        <div className="mb-2">
+                        {
+                            tengoPermiso('/incidencias', 'POST') && tengoPermiso('/incidencias', 'DELETE') &&
+                        (<div className="mb-2">
                             <label htmlFor="estado" className="form-label small mb-1">
                                 Estado <span className="text-danger">*</span>
                             </label>
@@ -113,48 +112,51 @@ export function EditarIncidenciaForm({ incidencia, funcionDeCierreDeFormulario, 
                                 className="form-select form-select-sm"
                                 id="estado"
                                 name="estado"
-                                value={form.estado}
+                                defaultValue={form.estado}
                                 onChange={handleChange}
                                 required
                             >
                                 <option value="Abierta">Abierta</option>
-                                
                                 <option value="Cerrada">Cerrada</option>
-                                
+
                             </select>
-                        </div>
+                        </div>)
+                        }
 
                         {/* Observaciones */}
                         <div className="mb-2">
-                            <label htmlFor="observaciones" className="form-label small mb-1">
-                                Observaciones
+                            <label htmlFor="comentarios" className="form-label small mb-1">
+                                Descripción
                             </label>
                             <textarea
                                 className="form-control form-control-sm"
-                                id="observaciones"
-                                name="observaciones"
-                                value={form.observaciones}
+                                id="comentarios"
+                                name="comentarios"
+                                defaultValue={form.comentario}
                                 onChange={handleChange}
-                                rows={3}
+                                rows={3} disabled={tengoPermiso('/incidencias', 'POST') && tengoPermiso('/incidencias', 'DELETE')}
                                 placeholder="Descripcion de la incidencia..."
                             />
                         </div>
 
                         {/* Comentario */}
-                        <div className="mb-2">
-                            <label htmlFor="comentario" className="form-label small mb-1">
-                                Comentario
-                            </label>
-                            <textarea
-                                className="form-control form-control-sm"
-                                id="comentario"
-                                name="comentario"
-                                value={form.comentario}
-                                onChange={handleChange}
-                                rows={3}
-                                placeholder="Comentario interno..."
-                            />
-                        </div>
+                        {
+                            tengoPermiso('/incidencias', 'POST') && tengoPermiso('/incidencias', 'DELETE') &&
+                            (<div className="mb-2">
+                                <label htmlFor="observaciones" className="form-label small mb-1">
+                                    Observaciones
+                                </label>
+                                <textarea
+                                    className="form-control form-control-sm"
+                                    id="observaciones"
+                                    name="observaciones"
+                                    defaultValue={form.observaciones}
+                                    onChange={handleChange}
+                                    rows={3}
+                                    placeholder="Comentario interno..."
+                                />
+                            </div>)
+                        }
 
                         {/* Fecha creacion*/}
                         <div className="mb-3">
@@ -163,10 +165,10 @@ export function EditarIncidenciaForm({ incidencia, funcionDeCierreDeFormulario, 
                             </label>
                             <input
                                 type="date"
-                                className="form-control form-control-sm bg-light"
+                                className="form-control form-control-sm"
                                 id="fecha_creacion"
                                 name="fecha_creacion"
-                                value={form.fecha_creacion}
+                                defaultValue={form.fecha_creacion}
                                 readOnly
                                 disabled
                             />

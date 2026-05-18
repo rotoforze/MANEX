@@ -28,13 +28,13 @@ export const MainNav = () => {
 
     const links = [
         { to: '/dashboard', icon: 'bi-house-door', label: 'Inicio', show: true },
-        { to: '/Empleados', icon: 'bi-person', label: 'Empleados', show: tengoPermiso('/empleados', 'POST') || tengoPermiso('/empleados', 'DELETE') },
+        { to: '/empleados', icon: 'bi-person', label: 'Empleados', show: tengoPermiso('/empleados', 'POST') || tengoPermiso('/empleados', 'DELETE') },
         { to: '/productos', icon: 'bi-box', label: 'Productos', show: tengoPermiso('/productos', 'POST') || tengoPermiso('/productos', 'DELETE') },
         { to: '/contratos', icon: 'bi-file-earmark-text', label: 'Contratos', show: tengoPermiso('/contratos', 'POST') || tengoPermiso('/contratos', 'DELETE') },
         { to: '/departamentos', icon: 'bi-building', label: 'Departamentos', show: tengoPermiso('/departamentos', 'POST') || tengoPermiso('/departamentos', 'DELETE') },
-        { to: '/fichajes', icon: 'bi-person-add', label: 'Fichajes', show: tengoPermiso('/fichajes', 'POST') || tengoPermiso('/fichajes', 'DELETE') },
-        { to: '/incidencia', icon: 'bi-bookmark', label: 'Incidencia', show: tengoPermiso('/incidencias', 'POST') || tengoPermiso('/incidencias', 'DELETE') },
-        { to: '/solicitudes', icon: 'bi-window-plus', label: 'Solicitudes', show: tengoPermiso('/vacaciones', 'POST') || tengoPermiso('/vacaciones', 'DELETE') },
+        { to: '/fichajes', icon: 'bi-stopwatch', label: 'Fichajes', show: tengoPermiso('/fichajes', 'POST') || tengoPermiso('/fichajes', 'DELETE') },
+        { to: '/incidencia', icon: 'bi-question-octagon', label: 'Incidencias', show: tengoPermiso('/incidencias', 'POST') || tengoPermiso('/incidencias', 'DELETE') },
+        { to: '/solicitudes', icon: 'bi-umbrella', label: 'Días libres/Vacaciones', show: tengoPermiso('/vacaciones', 'POST') || tengoPermiso('/vacaciones', 'DELETE') },
     ].filter(l => l.show)
 
     const navLinkClass = ({ isActive }) =>

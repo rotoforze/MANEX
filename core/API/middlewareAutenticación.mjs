@@ -1,5 +1,5 @@
 import mysql from 'mysql2/promise';
-import { obtenerPermisos } from "./permisions.mjs";
+import {obtenerPermisos} from "./permisions.mjs";
 
 const pool = mysql.createPool({
     host: process.env.DB_HOST,
@@ -34,7 +34,7 @@ const auth = async (req, res, next) => {
         });
     }
     // comprobamos si el token es valido (si existe en la bbdd)
-    const { nivel: nivelAcceso, username: authUsername } = await getNivelAcceso(req?.headers?.token, pool);
+    const {nivel: nivelAcceso, username: authUsername} = await getNivelAcceso(req?.headers?.token, pool);
 
     if (nivelAcceso == -1) {
         return res.status(444).json({
@@ -65,10 +65,10 @@ const auth = async (req, res, next) => {
         }
 
         if (!permisoAprobado) {
-            return res.status(403).json({ message: 'No tienes permiso para esta acción' });
+            return res.status(403).json({message: 'No tienes permiso para esta acción'});
         }
     } else {
-        return res.status(403).json({ message: 'No tienes permiso para esta acción' });
+        return res.status(403).json({message: 'No tienes permiso para esta acción'});
     }
 
     req.nivelAcceso = nivelAcceso;
@@ -85,17 +85,26 @@ const auth = async (req, res, next) => {
  * @param token
  * @returns {number}
  */
-export async function getNivelAcceso(token, pool = pool) {
+export async function getNivelAcceso(token, pool = mysql.createPool({
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASS,
+    database: process.env.DB_NAME,
+    port: process.env.DB_PORT,
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0,
+})) {
     try {
         const [rows] = await pool.query(
             'SELECT e.ID_DEPARTAMENTO, a.USERNAME FROM auth_token a JOIN EMPLEADO e ON a.USERNAME = e.USERNAME WHERE a.token = ? AND a.EXPIRES_AT > NOW();',
             [token]
         );
         if (rows.length > 0) {
-            return { nivel: rows[0].ID_DEPARTAMENTO, username: rows[0].USERNAME };
+            return {nivel: rows[0].ID_DEPARTAMENTO, username: rows[0].USERNAME};
         }
 
-        return { nivel: -1, username: null };
+        return {nivel: -1, username: null};
     } catch (err) {
         console.error("Error en DB:", err);
         throw err;

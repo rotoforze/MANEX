@@ -26,7 +26,7 @@ function formatearFechaInput(fecha) {
 
 export function EditarSolicitudForm({ solicitud, funcionDeCierreDeFormulario, handleSolicitudActualizada }) {
 
-    const { user } = useUsers();
+    const { user, tengoPermiso } = useUsers();
     const [enviando, setEnviando] = useState(false);
     const [mensaje, setMensaje] = useMensaje();
     const [form, setForm] = useState({
@@ -103,8 +103,9 @@ export function EditarSolicitudForm({ solicitud, funcionDeCierreDeFormulario, ha
                                     readOnly
                                 />
                             </div>
-
-                            <div className="col-md-6 mb-2">
+                            {
+                                tengoPermiso('/vacaciones', 'POST') && tengoPermiso('/vacaciones', 'DELETE') &&
+                                (<div className="col-md-6 mb-2">
                                 <label htmlFor="estado-editar" className="form-label mb-1" style={{fontSize: '0.85rem'}}>
                                     Estado <span className="text-danger">*</span>
                                 </label>
@@ -122,7 +123,8 @@ export function EditarSolicitudForm({ solicitud, funcionDeCierreDeFormulario, ha
                                         </option>
                                     ))}
                                 </select>
-                            </div>
+                            </div>)
+                            }
 
                             <div className="col-md-6 mb-2">
                                 <label htmlFor="fecha-inicio-editar" className="form-label mb-1" style={{fontSize: '0.85rem'}}>

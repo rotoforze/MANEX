@@ -73,7 +73,6 @@ export function TablaEmpleados() {
     const limpiarFiltros = () => {
         setFiltros({nombre: '', apellidos: '', email: '', telefono: '', departamento: '', contrato: ''});
         setSearchParams({}, {replace: true});
-<<<<<<< HEAD
     };
 
     useEffect(() => {
@@ -99,8 +98,6 @@ export function TablaEmpleados() {
     limpiarFiltros = () => {
         setFiltros({ nombre: '', apellidos: '', email: '', telefono: '', departamento: '', contrato: '' });
         setSearchParams({}, { replace: true });
-=======
->>>>>>> e6ea361054ad13a9e53f3c907b851a82b43e76cd
     };
 
     const cargarEmpleados = () => {
@@ -199,19 +196,19 @@ export function TablaEmpleados() {
             ) : listaEmpleados?.length > 0 || hayFiltros ? (
                 <div className="table-responsive m-3 d-flex flex-column justify-content-start">
                     <div className={"table-responsive"}>
-                        <table className="table table-striped">
+                        <table className="table table-striped table-hover">
                             <thead>
                             <tr>
-                                <th scope="col">#</th>
-                                <th scope="col">Nombre</th>
-                                <th scope="col">Apellido</th>
-                                <th scope="col">Email</th>
-                                <th scope="col">Teléfono</th>
-                                <th scope="col">F. nacimiento</th>
-                                <th scope="col">F. alta</th>
-                                <th scope="col">Dpto.</th>
-                                <th scope="col">Contrato</th>
-                                <th scope="col">Acciones</th>
+                                <th scope="col" className={"col-0"}>#</th>
+                                <th scope="col" className={"col-2"}>Nombre</th>
+                                <th scope="col" className={"col-2"}>Apellido</th>
+                                <th scope="col" className={"col-2"}>Email</th>
+                                <th scope="col" className={"col-1"}>Teléfono</th>
+                                <th scope="col" className={"col-1"}>F. nacimiento</th>
+                                <th scope="col" className={"col-1"}>F. alta</th>
+                                <th scope="col" className={"col-0"}>Dpto.</th>
+                                <th scope="col" className={"col-0"}>Contrato</th>
+                                <th scope="col" className={"col-2"}>Acciones</th>
                             </tr>
                             <tr>
                                 <th/>
@@ -265,7 +262,7 @@ export function TablaEmpleados() {
                                     </td>
                                     <td>{empleado?.ID_DEPARTAMENTO}</td>
                                     <td>{empleado?.ID_CONTRATO}</td>
-                                    <td className="acciones-tabla">
+                                    <td className="h-auto w-100 p-1">
                                         <button
                                             className="btn btn-info btn-sm"
                                             title="Ver empleado"
@@ -274,7 +271,6 @@ export function TablaEmpleados() {
                                         >
                                             <i className="bi bi-eye-fill" aria-hidden="true"/>
                                         </button>
-<<<<<<< HEAD
                                         <button
                                             className="btn btn-info btn-sm"
                                             title="Ver empleado"
@@ -283,8 +279,6 @@ export function TablaEmpleados() {
                                         >
                                             <i className="bi bi-eye-fill" aria-hidden="true" />
                                         </button>
-=======
->>>>>>> e6ea361054ad13a9e53f3c907b851a82b43e76cd
                                         <button
                                             className="btn btn-info btn-sm"
                                             title="Ver empleado"
@@ -293,6 +287,7 @@ export function TablaEmpleados() {
                                         >
                                             <i className="bi bi-eye-fill" aria-hidden="true" />
                                         </button>
+                                        &nbsp;
                                         <button
                                             className="btn btn-primary btn-sm"
                                             title="Editar empleado"

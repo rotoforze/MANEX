@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useMensaje } from "../../hooks/useMensaje.js";
 import { useUsers } from "../../context/UserContext.jsx";
 import { enviarUsuario } from "../../utils/RegisterNewUser.js";
+import "../../../public/styles/SignInPage.css";
 
 export function SignInForm({ funcionDeCierreDeFormulario, handleNuevoRegistro }) {
 
@@ -61,7 +62,7 @@ export function SignInForm({ funcionDeCierreDeFormulario, handleNuevoRegistro })
 
     return (
         <div className="superponer">
-            <div className="card confirmacion" style={{ width: 'min(95dvw, 1200px)', overflowY: 'auto' }}>
+            <div className="card confirmacion">
                 <div className="card-header d-flex justify-content-end">
                     <button
                         type="button"
@@ -201,7 +202,7 @@ export function SignInForm({ funcionDeCierreDeFormulario, handleNuevoRegistro })
 
                         <div className="mb-2">
                             <label htmlFor="password" className="form-label small mb-1">
-                                Contraseña <span className="text-danger">*</span>
+                                Nueva contraseña
                             </label>
                             <div className="input-group input-group-sm">
                                 <input
@@ -223,7 +224,7 @@ export function SignInForm({ funcionDeCierreDeFormulario, handleNuevoRegistro })
 
                         <div className="mb-2">
                             <label htmlFor="confirmPassword" className="form-label small mb-1">
-                                Confirmar contraseña <span className="text-danger">*</span>
+                                Confirmar nueva contraseña
                             </label>
                             <div className="input-group input-group-sm">
                                 <input
