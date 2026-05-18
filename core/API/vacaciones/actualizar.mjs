@@ -25,7 +25,6 @@ async function actualizarSolicitudVacaciones(req, res) {
         return res.status(400).send({ status: 400, message: `Estado no valido. Valores permitidos: ${estadosValidos.join(', ')}` });
     }
 
-
     const estadoIncidencia = (estado === 'Concedido' || estado === 'Rechazado')
         ? 'Cerrada'
         : 'Abierta';
@@ -46,7 +45,6 @@ async function actualizarSolicitudVacaciones(req, res) {
     try {
         await connection.beginTransaction();
 
-        
         const [resultado] = await connection.query(
             `UPDATE solicitud_vacaciones
              SET fecha_inicio = ?,
@@ -68,7 +66,6 @@ async function actualizarSolicitudVacaciones(req, res) {
             return res.status(404).send({ status: 404, message: 'No se encontro ninguna solicitud con ese ID.' });
         }
 
-        
         await connection.query(
             `UPDATE incidencia
              SET estado = ?

@@ -1,5 +1,4 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
+
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useUsers } from "../../context/UserContext.jsx";
@@ -7,9 +6,7 @@ import { apiFetch } from "../../utils/apiFetch.jsx";
 import { useDebounce } from "../../hooks/useDebounce.js";
 import { EditarDepartamentoForm } from "./EditarDepartamentoForm.jsx";
 import { DelDepartamento } from "./DelDepartamento.jsx";
-=======
-=======
->>>>>>> e6ea361054ad13a9e53f3c907b851a82b43e76cd
+
 import {useEffect, useState} from "react";
 import {useSearchParams} from "react-router-dom";
 import {useUsers} from "../../context/UserContext.jsx";
@@ -17,10 +14,7 @@ import {apiFetch} from "../../utils/apiFetch.jsx";
 import {useDebounce} from "../../hooks/useDebounce.js";
 import {EditarDepartamentoForm} from "./EditarDepartamentoForm.jsx";
 import {DelDepartamento} from "./DelDepartamento.jsx";
-<<<<<<< HEAD
->>>>>>> main
-=======
->>>>>>> e6ea361054ad13a9e53f3c907b851a82b43e76cd
+
 import "../../../public/styles/tablaPermisos.css";
 import "../../../public/styles/mainPages.css";
 

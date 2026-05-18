@@ -2,10 +2,6 @@ import mysql from "mysql2/promise";
 
 /**
  * Actualiza una incidencia en la BBDD.
- * Si la incidencia tiene una solicitud_vacaciones asociada,
- * sincroniza su estado automaticamente:
- *   incidencia Cerrada -> solicitud_vacaciones Concedido
- *   incidencia Abierta -> solicitud_vacaciones En revision
  *
  * @author Covadonga Blanco Alvarez
  * @version 1.2.0
@@ -24,10 +20,12 @@ async function actualizarIncidencia(req, res) {
         return res.status(400).send({ status: 400, message: 'El estado es obligatorio.' });
     }
 
+
     const estadosValidos = ['Abierta', 'Cerrada'];
     if (!estadosValidos.includes(estado)) {
         return res.status(400).send({ status: 400, message: `Estado no valido. Valores permitidos: ${estadosValidos.join(', ')}` });
     }
+
 
     const estadoSolicitud = estado === 'Cerrada' ? 'Concedido' : 'En revisión';
 
@@ -47,6 +45,7 @@ async function actualizarIncidencia(req, res) {
     try {
         await connection.beginTransaction();
 
+        // Actualizar la incidencia
         const [resultado] = await connection.query(
             `UPDATE incidencia
              SET estado         = ?,
@@ -70,6 +69,7 @@ async function actualizarIncidencia(req, res) {
             return res.status(404).send({ status: 404, message: 'No se encontro ninguna incidencia con ese ID.' });
         }
 
+        // Si tiene solicitud_vacaciones asociada, sincronizar su estado
         await connection.query(
             `UPDATE solicitud_vacaciones
              SET estado = ?

@@ -24,7 +24,7 @@ export function EditarIncidenciaForm({ incidencia, funcionDeCierreDeFormulario, 
         fecha ? new Date(fecha).toISOString().split('T')[0] : '';
 
     const [form, setForm] = useState({
-        
+       
         id:  incidencia?.ID               ?? '',
         id_empleado:    incidencia?.ID_empleado
                         ?? incidencia?.id_empleado   ?? '',
@@ -156,7 +156,7 @@ export function EditarIncidenciaForm({ incidencia, funcionDeCierreDeFormulario, 
                             />
                         </div>
 
-                        {/* Fecha creacion */}
+                        {/* Fecha creacion*/}
                         <div className="mb-3">
                             <label htmlFor="fecha_creacion" className="form-label small mb-1">
                                 Fecha de creacion
