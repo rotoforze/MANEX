@@ -123,7 +123,7 @@ export function TablaContratos() {
                                 <th scope="col">Horas anuales</th>
                                 <th scope="col">Acciones</th>
                             </tr>
-                            <tr className="table-light">
+                            <tr>
                                 <th />
                                 <th><input className="form-control form-control-sm" type="text" placeholder="Salario" value={filtros.salario} onChange={e => setFiltro('salario', e.target.value)} /></th>
                                 <th><input className="form-control form-control-sm" type="text" placeholder="Horas" value={filtros.horas} onChange={e => setFiltro('horas', e.target.value)} /></th>

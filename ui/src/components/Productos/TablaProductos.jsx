@@ -160,7 +160,7 @@ export function TablaProductos() {
                                 <th scope="col">Estado</th>
                                 <th scope="col">Acciones</th>
                             </tr>
-                            <tr className="table-light">
+                            <tr>
                                 <th />
                                 <th><input className="form-control form-control-sm" type="text" placeholder="Nombre" value={filtros.nombre} onChange={e => setFiltro('nombre', e.target.value)} /></th>
                                 <th><input className="form-control form-control-sm" type="text" placeholder="Descripción" value={filtros.descripcion} onChange={e => setFiltro('descripcion', e.target.value)} /></th>
