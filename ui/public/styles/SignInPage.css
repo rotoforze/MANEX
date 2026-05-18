@@ -18,8 +18,7 @@
 }
 
 .signin-form input {
-    width: 10dvw !important;
-    ;
+    width: 10dvw !important;;
 }
 
 .signin-container .card-body {
@@ -29,12 +28,12 @@
 @media (max-width: 1000px) {
     .signin-form {
         max-width: 90dvw !important;
-        max-height: fit-content !important;
+        max-height: 90dvh !important;
         align-self: flex-start;
         left: unset;
         top: unset;
         padding: 0px !important;
-        overflow: scroll;
+        overflow-y: scroll;
     }
 
     .signin-form .card-body {
@@ -59,6 +58,15 @@
 
     .signin-form .row {
         width: fit-content !important;
+    }
+    .superponer {
+        height: 100dvh !important;
+        width: 100dvw !important;
+        display: block;
+        overflow-y: scroll !important;
+    }
+    .superponer .confirmacion {
+        padding: 25px;
     }
 }
 

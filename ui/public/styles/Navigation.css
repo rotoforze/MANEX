@@ -10,6 +10,9 @@
    Móvil (≤ 1000px): ocultar sidebar, mostrar barra inferior
    ============================================================ */
 @media (max-width: 1000px) {
+    body {
+        overflow: hidden;
+    }
     .main-nav {
         display: none !important;
     }
@@ -42,7 +45,6 @@
     }
 
     .bottom-nav-panel {
-        background-color: var(--bs-dark-bg-subtle, #212529);
         border-top: 1px solid rgba(255, 255, 255, 0.1);
         max-height: 60vh;
         overflow-y: auto;

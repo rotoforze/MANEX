@@ -42,7 +42,6 @@ const LoginPage = () => {
     function irARecuperar() {
         setVista('recuperar');
         setRecUsername('');
-        setCodigoGenerado('');
         setCodigoInput('');
         setPassNuevo('');
         setPassConfirm('');
@@ -52,16 +51,16 @@ const LoginPage = () => {
 
     function volverAlLogin() {
         setVista('login');
-        setRecMensaje(null);
     }
 
     // ── Efectos login ──
     useEffect(() => {
         if (actionData?.error == 404) {
-            deleteTokenCookie()
+            setRecMensaje({tipo: 'danger', texto: actionData?.message});
+            deleteTokenCookie();
             return;
         }
-        if (actionData) navigate('/dashboard');
+        if (actionData?.success) navigate('/dashboard');
     }, [actionData, navigate]);
 
     useEffect(() => {
@@ -81,11 +80,13 @@ const LoginPage = () => {
 
     useEffect(() => {
         if (!actionData) return;
+        console.log(actionData);
         if (actionData?.error == 404) {
-            deleteTokenCookie()
+            setRecMensaje({tipo: 'danger', texto: actionData?.message});
+            deleteTokenCookie();
             return;
         }
-        if (actionData.success) {
+        if (actionData?.success) {
             changeUserInformation(actionData.username, actionData.id, actionData.token, actionData.department, true);
         }
     }, [actionData]);
@@ -209,7 +210,7 @@ const LoginPage = () => {
                                                 id="keepSession" name="keepSession"
                                                 defaultChecked={!!user.token}
                                             />
-                                            <label className="form-check-label" htmlFor="keepSession">
+                                            <label className="form-check-label form-control-sm" htmlFor="keepSession">
                                                 Mantener la sesión iniciada
                                             </label>
                                         </div>
@@ -223,7 +224,7 @@ const LoginPage = () => {
 
                                 <div className="mt-4 text-center">
                                     <button
-                                        className="btn link-primary p-0 small text-light"
+                                        className="btn link-primary p-0 small text-secondary"
                                         type="button"
                                         onClick={irARecuperar}
                                     >
