@@ -1,12 +1,3 @@
-<<<<<<< HEAD
-import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
-import { useUsers } from "../../context/UserContext.jsx";
-import { apiFetch } from "../../utils/apiFetch.jsx";
-import { useDebounce } from "../../hooks/useDebounce.js";
-import { EditarDepartamentoForm } from "./EditarDepartamentoForm.jsx";
-import { DelDepartamento } from "./DelDepartamento.jsx";
-=======
 import {useEffect, useState} from "react";
 import {useSearchParams} from "react-router-dom";
 import {useUsers} from "../../context/UserContext.jsx";
@@ -14,7 +5,6 @@ import {apiFetch} from "../../utils/apiFetch.jsx";
 import {useDebounce} from "../../hooks/useDebounce.js";
 import {EditarDepartamentoForm} from "./EditarDepartamentoForm.jsx";
 import {DelDepartamento} from "./DelDepartamento.jsx";
->>>>>>> 0c5e882a66dd9c7ba78ea925cc0e82f99c53f40d
 import "../../../public/styles/tablaPermisos.css";
 import "../../../public/styles/mainPages.css";
 
@@ -41,11 +31,7 @@ export function TablaDepartamentos() {
     const [filtros, setFiltros] = useState({
         nombre: searchParams.get('nombre') || '',
     });
-<<<<<<< HEAD
-    const setFiltro = (campo, valor) => setFiltros(prev => ({ ...prev, [campo]: valor }));
-=======
     const setFiltro = (campo, valor) => setFiltros(prev => ({...prev, [campo]: valor}));
->>>>>>> 0c5e882a66dd9c7ba78ea925cc0e82f99c53f40d
     const dNombre = useDebounce(filtros.nombre);
 
     const {user, tengoPermiso} = useUsers();
@@ -57,11 +43,7 @@ export function TablaDepartamentos() {
     useEffect(() => {
         const p = {};
         if (dNombre) p.nombre = dNombre;
-<<<<<<< HEAD
-        setSearchParams(p, { replace: true });
-=======
         setSearchParams(p, {replace: true});
->>>>>>> 0c5e882a66dd9c7ba78ea925cc0e82f99c53f40d
     }, [dNombre]);
 
     useEffect(() => {
@@ -70,24 +52,15 @@ export function TablaDepartamentos() {
 
     const hayFiltros = !!dNombre;
     const limpiarFiltros = () => {
-<<<<<<< HEAD
-        setFiltros({ nombre: '' });
-        setSearchParams({}, { replace: true });
-=======
         setFiltros({nombre: ''});
         setSearchParams({}, {replace: true});
->>>>>>> 0c5e882a66dd9c7ba78ea925cc0e82f99c53f40d
     };
 
     const cargarDepartamentos = () => {
         setCargando(true);
         setErrorCarga(null);
 
-<<<<<<< HEAD
-        const params = new URLSearchParams({ pagina: paginaActual, cantidad: cantidadPorPagina });
-=======
         const params = new URLSearchParams({pagina: paginaActual, cantidad: cantidadPorPagina});
->>>>>>> 0c5e882a66dd9c7ba78ea925cc0e82f99c53f40d
         if (dNombre) params.set('nombre', dNombre);
 
         apiFetch(
@@ -164,86 +137,6 @@ export function TablaDepartamentos() {
                 <div className="table-responsive m-3 d-flex flex-column justify-content-start">
                     <table className="table table-striped">
                         <thead>
-<<<<<<< HEAD
-                            <tr>
-                                <th scope="col">#</th>
-                                <th scope="col">Nombre</th>
-                                <th scope="col">Acciones</th>
-                            </tr>
-                            <tr className="table-light">
-                                <th />
-                                <th><input className="form-control form-control-sm" type="text" placeholder="Nombre" value={filtros.nombre} onChange={e => setFiltro('nombre', e.target.value)} /></th>
-                                <th>
-                                    {hayFiltros && (
-                                        <button className="btn btn-outline-secondary btn-sm w-100" onClick={limpiarFiltros} title="Limpiar filtros">
-                                            <i className="bi bi-x-lg me-1" aria-hidden="true" />Limpiar
-                                        </button>
-                                    )}
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody className="table-group-divider">
-                            {listaDepartamentos.length > 0 ? listaDepartamentos.map(departamento => (
-                                <tr key={departamento?.ID} className="h-auto">
-                                    <th scope="row">{departamento?.ID}</th>
-                                    <td>{departamento?.Nombre}</td>
-                                    <td className="h-auto acciones-tabla">
-                                        <button
-                                            className="btn btn-primary btn-sm"
-                                            title="Editar departamento"
-                                            aria-label="Editar departamento"
-                                            onClick={() => setDepartamentoEditando(departamento)}
-                                            disabled={!tengoPermiso('/departamentos', 'POST')}
-                                        ><i className="bi bi-pencil-fill" aria-hidden="true" /></button>
-                                        <button
-                                            className="btn btn-danger btn-sm"
-                                            title="Eliminar departamento"
-                                            aria-label="Eliminar departamento"
-                                            onClick={() => setDepartamentoEliminando(departamento)}
-                                            disabled={!tengoPermiso('/departamentos', 'DELETE')}
-                                        ><i className="bi bi-trash-fill" aria-hidden="true" /></button>
-                                    </td>
-                                </tr>
-                            )) : (
-                                <tr>
-                                    <td colSpan={3} className="text-center text-muted py-4 small">
-                                        Sin resultados con los filtros aplicados.
-                                    </td>
-                                </tr>
-                            )}
-                        </tbody>
-                    </table>
-
-                    {listaDepartamentos.length > 0 && <div className="d-flex align-items-center justify-content-center gap-2 mb-3">
-                        <button
-                            className="btn btn-outline-secondary btn-sm bi bi-chevron-bar-left"
-                            aria-label="Primera página"
-                            disabled={paginaActual === 0}
-                            onClick={() => setPaginaActual(0)}
-                        />
-                        <button
-                            className="btn btn-outline-secondary btn-sm bi bi-chevron-left"
-                            aria-label="Página anterior"
-                            disabled={paginaActual === 0}
-                            onClick={() => { if (paginaActual > 0) setPaginaActual(paginaActual - 1); }}
-                        />
-                        <span className="small text-muted">
-                            Página {paginaActual + 1} de {paginaMaxima + 1} · {totalRegistros} registros
-                        </span>
-                        <button
-                            className="btn btn-outline-secondary btn-sm bi bi-chevron-right"
-                            aria-label="Página siguiente"
-                            disabled={!(paginaActual < paginaMaxima)}
-                            onClick={() => { if (paginaActual < paginaMaxima) setPaginaActual(paginaActual + 1); }}
-                        />
-                        <button
-                            className="btn btn-outline-secondary btn-sm bi bi-chevron-bar-right"
-                            aria-label="Última página"
-                            disabled={!(paginaActual < paginaMaxima)}
-                            onClick={() => setPaginaActual(paginaMaxima)}
-                        />
-                    </div>}
-=======
                         <tr>
                             <th scope="col">#</th>
                             <th scope="col">Nombre</th>
@@ -332,7 +225,6 @@ export function TablaDepartamentos() {
                                 onClick={() => setPaginaActual(paginaMaxima)}
                             />
                         </div>}
->>>>>>> 0c5e882a66dd9c7ba78ea925cc0e82f99c53f40d
                 </div>
             ) : (
                 <div className="tabla-empty-state">

@@ -135,15 +135,9 @@
 
 .profile-readonly-value {
     padding: 0.5rem 0;
-<<<<<<< HEAD
-    color: #495057;
-    font-size: 0.95rem;
-    border-bottom: 1px solid #dee2e6;
-=======
     color: var(--bs-body-color);
     font-size: 0.95rem;
     border-bottom: 1px solid var(--bs-border-color);
->>>>>>> 0c5e882a66dd9c7ba78ea925cc0e82f99c53f40d
 }
 
 .profile-subsection-label {
@@ -151,11 +145,7 @@
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.06em;
-<<<<<<< HEAD
-    color: #6c757d;
-=======
     color: var(--bs-secondary-color);
->>>>>>> 0c5e882a66dd9c7ba78ea925cc0e82f99c53f40d
     margin-bottom: 1rem;
     display: flex;
     align-items: center;

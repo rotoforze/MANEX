@@ -203,11 +203,7 @@ export function TablaProductos() {
                                                 setMostrarFormulario(true);
                                             }}
                                             disabled={!tengoPermiso('/productos', 'POST')}
-<<<<<<< HEAD
-                                        ><i className="bi bi-pencil-fill" aria-hidden="true" /></button>
-=======
                                         ><i className="bi bi-pencil-fill" aria-hidden="true" /></button>&nbsp;
->>>>>>> 0c5e882a66dd9c7ba78ea925cc0e82f99c53f40d
                                         <button
                                             className="btn btn-danger btn-sm"
                                             title="Eliminar producto"

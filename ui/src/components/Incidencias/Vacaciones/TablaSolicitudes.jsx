@@ -172,16 +172,6 @@ export function TablaSolicitudes({ idEmpleado }) {
                     <table className="table table-striped">
                         <thead>
                             <tr>
-<<<<<<< HEAD
-                                <th scope="col">#</th>
-                                {!idEmpleado && <th scope="col">Nombre</th>}
-                                {!idEmpleado && <th scope="col">Apellidos</th>}
-                                <th scope="col">Tipo</th>
-                                <th scope="col">Fecha inicio</th>
-                                <th scope="col">Fecha fin</th>
-                                <th scope="col">Estado</th>
-                                <th scope="col">Acciones</th>
-=======
                                 <th scope="col" className="text-nowrap">#</th>
                                 {!idEmpleado && <th scope="col" className="text-nowrap">Nombre</th>}
                                 {!idEmpleado && <th scope="col" className="text-nowrap">Apellidos</th>}
@@ -190,7 +180,6 @@ export function TablaSolicitudes({ idEmpleado }) {
                                 <th scope="col" className="text-nowrap">Fecha fin</th>
                                 <th scope="col" className="text-nowrap">Estado</th>
                                 <th scope="col" className="text-nowrap">Acciones</th>
->>>>>>> 0c5e882a66dd9c7ba78ea925cc0e82f99c53f40d
                             </tr>
                             <tr>
                                 <th />
@@ -231,21 +220,12 @@ export function TablaSolicitudes({ idEmpleado }) {
                                 return (
                                     <tr key={idIncidencia}>
                                         <th scope="row">{idIncidencia}</th>
-<<<<<<< HEAD
-                                        {!idEmpleado && <td>{solicitud?.nombre_empleado ?? '—'}</td>}
-                                        {!idEmpleado && <td>{solicitud?.apellidos_empleado ?? '—'}</td>}
-                                        <td>{obtenerValor(solicitud, ['tipo'])}</td>
-                                        <td>{formatearFecha(obtenerValor(solicitud, ['fecha_inicio'], null))}</td>
-                                        <td>{formatearFecha(obtenerValor(solicitud, ['fecha_fin'], null))}</td>
-                                        <td>
-=======
                                         {!idEmpleado && <td className="text-nowrap">{solicitud?.nombre_empleado ?? '—'}</td>}
                                         {!idEmpleado && <td className="text-nowrap">{solicitud?.apellidos_empleado ?? '—'}</td>}
                                         <td className="text-nowrap">{obtenerValor(solicitud, ['tipo'])}</td>
                                         <td className="text-nowrap">{formatearFecha(obtenerValor(solicitud, ['fecha_inicio'], null))}</td>
                                         <td className="text-nowrap">{formatearFecha(obtenerValor(solicitud, ['fecha_fin'], null))}</td>
                                         <td className="text-nowrap">
->>>>>>> 0c5e882a66dd9c7ba78ea925cc0e82f99c53f40d
                                             <span className={`badge ${obtenerClaseEstado(estado)}`}>
                                                 {estado}
                                             </span>

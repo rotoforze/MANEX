@@ -33,22 +33,6 @@ export function TablaEmpleados() {
     const [errorCarga, setErrorCarga] = useState(null);
     const [searchParams, setSearchParams] = useSearchParams();
     const [filtros, setFiltros] = useState({
-<<<<<<< HEAD
-        nombre:       searchParams.get('nombre')       || '',
-        apellidos:    searchParams.get('apellidos')    || '',
-        email:        searchParams.get('email')        || '',
-        telefono:     searchParams.get('telefono')     || '',
-        departamento: searchParams.get('departamento') || '',
-        contrato:     searchParams.get('contrato')     || '',
-    });
-    const setFiltro = (campo, valor) => setFiltros(prev => ({ ...prev, [campo]: valor }));
-    const dNombre       = useDebounce(filtros.nombre);
-    const dApellidos    = useDebounce(filtros.apellidos);
-    const dEmail        = useDebounce(filtros.email);
-    const dTelefono     = useDebounce(filtros.telefono);
-    const dDepartamento = useDebounce(filtros.departamento);
-    const dContrato     = useDebounce(filtros.contrato);
-=======
         nombre: searchParams.get('nombre') || '',
         apellidos: searchParams.get('apellidos') || '',
         email: searchParams.get('email') || '',
@@ -63,7 +47,6 @@ export function TablaEmpleados() {
     const dTelefono = useDebounce(filtros.telefono);
     const dDepartamento = useDebounce(filtros.departamento);
     const dContrato = useDebounce(filtros.contrato);
->>>>>>> 0c5e882a66dd9c7ba78ea925cc0e82f99c53f40d
 
     const { user, tengoPermiso } = useUsers();
 
@@ -73,21 +56,12 @@ export function TablaEmpleados() {
 
     useEffect(() => {
         const p = {};
-<<<<<<< HEAD
-        if (dNombre)       p.nombre       = dNombre;
-        if (dApellidos)    p.apellidos    = dApellidos;
-        if (dEmail)        p.email        = dEmail;
-        if (dTelefono)     p.telefono     = dTelefono;
-        if (dDepartamento) p.departamento = dDepartamento;
-        if (dContrato)     p.contrato     = dContrato;
-=======
         if (dNombre) p.nombre = dNombre;
         if (dApellidos) p.apellidos = dApellidos;
         if (dEmail) p.email = dEmail;
         if (dTelefono) p.telefono = dTelefono;
         if (dDepartamento) p.departamento = dDepartamento;
         if (dContrato) p.contrato = dContrato;
->>>>>>> 0c5e882a66dd9c7ba78ea925cc0e82f99c53f40d
         setSearchParams(p, { replace: true });
     }, [dNombre, dApellidos, dEmail, dTelefono, dDepartamento, dContrato]);
 
@@ -106,21 +80,12 @@ export function TablaEmpleados() {
         setErrorCarga(null);
 
         const params = new URLSearchParams({ pagina: paginaActual, cantidad: cantidadPorPagina });
-<<<<<<< HEAD
-        if (dNombre)       params.set('nombre',       dNombre);
-        if (dApellidos)    params.set('apellidos',    dApellidos);
-        if (dEmail)        params.set('email',        dEmail);
-        if (dTelefono)     params.set('telefono',     dTelefono);
-        if (dDepartamento) params.set('departamento', dDepartamento);
-        if (dContrato)     params.set('contrato',     dContrato);
-=======
         if (dNombre) params.set('nombre', dNombre);
         if (dApellidos) params.set('apellidos', dApellidos);
         if (dEmail) params.set('email', dEmail);
         if (dTelefono) params.set('telefono', dTelefono);
         if (dDepartamento) params.set('departamento', dDepartamento);
         if (dContrato) params.set('contrato', dContrato);
->>>>>>> 0c5e882a66dd9c7ba78ea925cc0e82f99c53f40d
 
         apiFetch(
             `${import.meta.env.VITE_BACKEND_EMPLEADO}?${params}`,
@@ -238,11 +203,7 @@ export function TablaEmpleados() {
                         </thead>
                         <tbody className="table-group-divider">
                             {listaEmpleados.length > 0 ? listaEmpleados.map((empleado) => (
-<<<<<<< HEAD
-                                <tr key={empleado?.ID} className="h-auto">
-=======
                                 <tr key={empleado?.ID}>
->>>>>>> 0c5e882a66dd9c7ba78ea925cc0e82f99c53f40d
                                     <th scope="row">{empleado?.ID}</th>
                                     <td className="text-nowrap">{empleado?.Nombre}</td>
                                     <td className="text-nowrap">{empleado?.Apellidos}</td>

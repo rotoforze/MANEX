@@ -164,11 +164,7 @@ export function TablaIncidencias({ tipoIncidencia, idEmpleado }) {
                                 <th scope="col">Comentario</th>
                                 <th scope="col">Acciones</th>
                             </tr>
-<<<<<<< HEAD
-                            <tr className="table-light">
-=======
                             <tr>
->>>>>>> 0c5e882a66dd9c7ba78ea925cc0e82f99c53f40d
                                 <th />
                                 {!idEmpleado && <th><input className="form-control form-control-sm" type="text" placeholder="Nombre" value={filtros.nombre} onChange={e => setFiltro('nombre', e.target.value)} /></th>}
                                 {!idEmpleado && <th><input className="form-control form-control-sm" type="text" placeholder="Apellidos" value={filtros.apellidos} onChange={e => setFiltro('apellidos', e.target.value)} /></th>}
