@@ -1,11 +1,11 @@
-import {useEffect, useState} from "react";
-import {useSearchParams} from "react-router-dom";
-import {useUsers} from "../../context/UserContext.jsx";
-import {apiFetch} from "../../utils/apiFetch.jsx";
-import {useDebounce} from "../../hooks/useDebounce.js";
-import {EditarEmpleadoForm} from "./EditarEmpleadoForm.jsx";
-import {VerEmpleado} from "./VerEmpleado.jsx";
-import {DelEmpleado} from "./DelEmpleado.jsx";
+import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
+import { useUsers } from "../../context/UserContext.jsx";
+import { apiFetch } from "../../utils/apiFetch.jsx";
+import { useDebounce } from "../../hooks/useDebounce.js";
+import { EditarEmpleadoForm } from "./EditarEmpleadoForm.jsx";
+import { VerEmpleado } from "./VerEmpleado.jsx";
+import { DelEmpleado } from "./DelEmpleado.jsx";
 import "../../../public/styles/tablaPermisos.css";
 import "../../../public/styles/mainPages.css";
 
@@ -40,7 +40,7 @@ export function TablaEmpleados() {
         departamento: searchParams.get('departamento') || '',
         contrato: searchParams.get('contrato') || '',
     });
-    const setFiltro = (campo, valor) => setFiltros(prev => ({...prev, [campo]: valor}));
+    const setFiltro = (campo, valor) => setFiltros(prev => ({ ...prev, [campo]: valor }));
     const dNombre = useDebounce(filtros.nombre);
     const dApellidos = useDebounce(filtros.apellidos);
     const dEmail = useDebounce(filtros.email);
@@ -62,7 +62,7 @@ export function TablaEmpleados() {
         if (dTelefono) p.telefono = dTelefono;
         if (dDepartamento) p.departamento = dDepartamento;
         if (dContrato) p.contrato = dContrato;
-        setSearchParams(p, {replace: true});
+        setSearchParams(p, { replace: true });
     }, [dNombre, dApellidos, dEmail, dTelefono, dDepartamento, dContrato]);
 
     useEffect(() => {
@@ -79,7 +79,7 @@ export function TablaEmpleados() {
         setCargando(true);
         setErrorCarga(null);
 
-        const params = new URLSearchParams({pagina: paginaActual, cantidad: cantidadPorPagina});
+        const params = new URLSearchParams({ pagina: paginaActual, cantidad: cantidadPorPagina });
         if (dNombre) params.set('nombre', dNombre);
         if (dApellidos) params.set('apellidos', dApellidos);
         if (dEmail) params.set('email', dEmail);
@@ -245,6 +245,14 @@ export function TablaEmpleados() {
                                             onClick={() => setEmpleadoViendo(empleado)}
                                         >
                                             <i className="bi bi-eye-fill" aria-hidden="true"/>
+                                        </button>
+                                        <button
+                                            className="btn btn-info btn-sm"
+                                            title="Ver empleado"
+                                            aria-label="Ver empleado"
+                                            onClick={() => setEmpleadoViendo(empleado)}
+                                        >
+                                            <i className="bi bi-eye-fill" aria-hidden="true" />
                                         </button>
                                         <button
                                             className="btn btn-primary btn-sm"

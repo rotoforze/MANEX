@@ -2,129 +2,60 @@ import React, { useState, useEffect } from 'react';
 import { useUsers } from "../../context/UserContext.jsx";
 import { apiFetch } from "../../utils/apiFetch.jsx";
 
-/**
- *@author Covadonga Blanco Alvarez
- * @version 1.0
- * @param {Object}   empleado -
- * @param {Function} onClose  
+/**Vista de perfil completo de un empleado.
+ *
+ * @author Covadonga Blanco Alvarez
+ * @version 5.2
+ * @param {Object}   empleado - Fila del empleado tal como llega del listado
+ * @param {Function} onClose  - Cierra la ventana
  */
 export function VerEmpleado({ empleado, onClose }) {
     const { user } = useUsers();
 
     const [seccionActiva, setSeccionActiva] = useState('personal');
-
-    const [fichajes,    setFichajes]    = useState([]);
-    const [incidencias, setIncidencias] = useState([]);
-    const [solicitudes, setSolicitudes] = useState([]);
-    const [nombreDpto,  setNombreDpto]  = useState(null);
-
-    const [cargandoFichajes,    setCargandoFichajes]    = useState(false);
-    const [cargandoIncidencias, setCargandoIncidencias] = useState(false);
-    const [cargandoSolicitudes, setCargandoSolicitudes] = useState(false);
-    const [cargandoDpto,        setCargandoDpto]        = useState(false);
-
-    const [errorFichajes,    setErrorFichajes]    = useState(null);
-    const [errorIncidencias, setErrorIncidencias] = useState(null);
-    const [errorSolicitudes, setErrorSolicitudes] = useState(null);
-
-    const headers = {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'token': user?.token,
-    };
+    const [perfil,        setPerfil]        = useState(null);
+    const [horasMes,      setHorasMes]      = useState(null);
+    const [fichajes,      setFichajes]      = useState([]);
+    const [incidencias,   setIncidencias]   = useState([]);
+    const [solicitudes,   setSolicitudes]   = useState([]);
+    const [cargando,      setCargando]      = useState(true);
+    const [error,         setError]         = useState(null);
 
     const BASE = import.meta.env.VITE_BACKEND;
 
-    // Departamento 
     useEffect(() => {
-        if (!empleado?.ID_DEPARTAMENTO) return;
-        setCargandoDpto(true);
+        if (!empleado?.ID) return;
+        setCargando(true);
+        setError(null);
+
         apiFetch(
-            import.meta.env.VITE_BACKEND_DEPARTAMENTOS,
-            { method: 'GET', headers }
+            `${BASE}/empleado-perfil?id=${empleado.ID}`,
+            {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'token': user?.token,
+                },
+            }
         )
             .then(r => r.json())
             .then(d => {
-                const lista = d?.data ?? d?.usuario ?? [];
-                const dpto  = lista.find(dep =>
-                    String(dep?.ID ?? dep?.id) === String(empleado.ID_DEPARTAMENTO)
-                );
-                setNombreDpto(dpto?.Nombre ?? dpto?.nombre ?? dpto?.NOMBRE ?? null);
+                if (d?.status !== 200) throw new Error(d?.message ?? 'Error al cargar el perfil.');
+                setPerfil(d.data.empleado);
+                setHorasMes(d.data.horas_mes);
+                setFichajes(d.data.fichajes      ?? []);
+                setIncidencias(d.data.incidencias  ?? []);
+                setSolicitudes(d.data.solicitudes  ?? []);
             })
-            .catch(() => setNombreDpto(null))
-            .finally(() => setCargandoDpto(false));
-    }, [empleado?.ID_DEPARTAMENTO]);
-
-    // Fichajes 
-    useEffect(() => {
-        if (!empleado?.USERNAME) return;
-        setCargandoFichajes(true);
-        setErrorFichajes(null);
-        apiFetch(
-            `${BASE}/fichajes?username=${encodeURIComponent(empleado.USERNAME)}`,
-            { method: 'GET', headers }
-        )
-            .then(r => r.json())
-            .then(d => setFichajes(!d?.usuario ? [] : d.usuario))
-            .catch(() => setErrorFichajes('No se pudieron cargar los fichajes.'))
-            .finally(() => setCargandoFichajes(false));
-    }, [empleado?.USERNAME]);
-
-    // Incidencias 
-     useEffect(() => {
-            if (!empleado?.ID) return;
-            setCargandoIncidencias(true);
-            setErrorIncidencias(null);
-            apiFetch(
-                `${BASE}/incidencias?id_empleado=${empleado.ID}`,
-                { method: 'GET', headers }
-            )
-                .then(r => r.json())
-                .then(d => setIncidencias(!d?.usuario ? [] : d.usuario))
-                .catch(() => setErrorIncidencias('No se pudieron cargar las incidencias.'))
-                .finally(() => setCargandoIncidencias(false));
-        }, [empleado?.ID]);
-
-    // Vacaciones 
-    useEffect(() => {
-        if (!empleado?.ID) return;
-        setCargandoSolicitudes(true);
-        setErrorSolicitudes(null);
-        apiFetch(
-            `${BASE}/vacaciones?id_empleado=${empleado.ID}`,
-            { method: 'GET', headers }
-        )
-            .then(r => r.json())
-            .then(d => setSolicitudes(!d?.usuario ? [] : d.usuario))
-            .catch(() => setErrorSolicitudes('No se pudieron cargar las solicitudes.'))
-            .finally(() => setCargandoSolicitudes(false));
+            .catch(e => setError(e.message ?? 'No se pudo cargar el perfil del empleado.'))
+            .finally(() => setCargando(false));
     }, [empleado?.ID]);
-
-    // Horas este mes 
-    const horasMes = React.useMemo(() => {
-        const ahora   = new Date();
-        const mes     = ahora.getMonth();
-        const ano     = ahora.getFullYear();
-        const del_mes = fichajes.filter(f => {
-            if (!f.fecha_entrada || !f.fecha_salida) return false;
-            const d = new Date(f.fecha_entrada);
-            return d.getMonth() === mes && d.getFullYear() === ano;
-        });
-        const totalMs = del_mes.reduce(
-            (acc, f) => acc + (new Date(f.fecha_salida) - new Date(f.fecha_entrada)),
-            0
-        );
-        return {
-            horas:    Math.floor(totalMs / 3600000),
-            minutos:  Math.floor((totalMs % 3600000) / 60000),
-            cantidad: del_mes.length,
-        };
-    }, [fichajes]);
 
     const fmt = (fecha) =>
         fecha ? new Date(fecha).toLocaleDateString('es-ES', { timeZone: 'UTC' }) : 'N/A';
 
     const fmtDT = (fecha) =>
-        fecha ? new Date(fecha).toLocaleString('es-ES', { timeZone: 'UTC', hour12: false }) : '—';
+        fecha ? new Date(fecha).toLocaleString('es-ES', { timeZone: 'UTC', hour12: false }) : '-';
 
     const estadoBadge = (estado) => ({
         pendiente:  'warning',
@@ -135,6 +66,17 @@ export function VerEmpleado({ empleado, onClose }) {
         en_proceso: 'info',
         cerrada:    'secondary',
     }[estado?.toLowerCase()] ?? 'secondary');
+
+    const textoDiferencia = (horas_mes) => {
+        if (!horas_mes) return null;
+        const diff = horas_mes.diferencia_min;
+        const absH = Math.floor(Math.abs(diff) / 60);
+        const absM = Math.abs(diff) % 60;
+        const tiempo = absH > 0 ? `${absH}h ${absM}m` : `${absM}m`;
+        if (diff > 0) return { texto: `${tiempo} de exceso sobre las horas del contrato`, color: 'success' };
+        if (diff < 0) return { texto: `Faltan ${tiempo} para completar las horas del contrato`, color: 'warning' };
+        return { texto: 'Horas completadas exactamente', color: 'success' };
+    };
 
     const Spinner = () => (
         <div className="text-center py-4">
@@ -151,12 +93,6 @@ export function VerEmpleado({ empleado, onClose }) {
         </div>
     );
 
-    const ErrorState = ({ texto }) => (
-        <p className="text-muted text-center small py-4 mb-0">
-            <i className="bi bi-wifi-off me-1" />{texto}
-        </p>
-    );
-
     const secciones = [
         { id: 'personal',    label: 'Datos personales', icon: 'bi-person-fill' },
         { id: 'horas',       label: 'Horas este mes',   icon: 'bi-clock-fill' },
@@ -165,13 +101,14 @@ export function VerEmpleado({ empleado, onClose }) {
         { id: 'incidencias', label: 'Incidencias',       icon: 'bi-exclamation-triangle-fill' },
     ];
 
+    const diferencia = textoDiferencia(horasMes);
+
     return (
         <div className="superponer">
             <div
                 className="card confirmacion"
                 style={{ width: 'min(95dvw, 1100px)', maxHeight: '90dvh', display: 'flex', flexDirection: 'column' }}
             >
-
                 <div className="card-header d-flex justify-content-between align-items-center">
                     <div className="d-flex align-items-center gap-2">
                         <div
@@ -218,206 +155,211 @@ export function VerEmpleado({ empleado, onClose }) {
 
                 <div className="card-body p-3" style={{ overflowY: 'auto', flex: 1 }}>
 
-                    {/* Datos Personales */}
-                    {seccionActiva === 'personal' && (
-                        <div>
-                            <h5 className="mb-3 small fw-semibold text-uppercase text-muted">
-                                <i className="bi bi-person-fill me-1" />Información personal
-                            </h5>
-                            <div className="row g-2">
-                                {[
-                                    { label: 'Nombre',           value: empleado?.Nombre },
-                                    { label: 'Apellidos',        value: empleado?.Apellidos },
-                                    { label: 'Email',            value: empleado?.email },
-                                    { label: 'Teléfono',         value: empleado?.telefono },
-                                    { label: 'Fecha nacimiento', value: fmt(empleado?.fecha_nacimiento) },
-                                    { label: 'Fecha de alta',    value: fmt(empleado?.fecha_alta) },
-                                    {
-                                        label: 'Rol',
-                                        value: cargandoDpto
-                                            ? <span className="text-muted fst-italic" style={{ fontSize: '0.8rem' }}>Cargando...</span>
-                                            : (nombreDpto ?? '—'),
-                                    },
-                                ].map(({ label, value }) => (
-                                    <div key={label} className="col-sm-6 col-md-4">
-                                        <div className="border rounded p-2" style={{ background: 'var(--bs-light, #f8f9fa)' }}>
-                                            <div className="text-muted" style={{ fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-                                                {label}
-                                            </div>
-                                            <div className="fw-medium" style={{ fontSize: '0.85rem' }}>
-                                                {value ?? <span className="text-muted">—</span>}
-                                            </div>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
+                    {cargando && <Spinner />}
+
+                    {!cargando && error && (
+                        <p className="text-muted text-center small py-4 mb-0">
+                            <i className="bi bi-wifi-off me-1" />{error}
+                        </p>
                     )}
 
-                    {/* Horas del mes*/}
-                    {seccionActiva === 'horas' && (
-                        <div>
-                            <h5 className="mb-3 small fw-semibold text-uppercase text-muted">
-                                <i className="bi bi-clock-fill me-1" />Horas trabajadas este mes
-                            </h5>
-                            {cargandoFichajes ? <Spinner /> : (
-                                <div className="d-flex flex-column align-items-center justify-content-center py-4 gap-3">
-                                    <div
-                                        className="rounded-circle bg-primary bg-opacity-10 d-flex align-items-center justify-content-center"
-                                        style={{ width: 140, height: 140 }}
-                                    >
-                                        <div className="text-center">
-                                            <div className="fw-bold text-primary" style={{ fontSize: '2.4rem', lineHeight: 1 }}>
-                                                {horasMes.horas}
+                    {!cargando && !error && (
+                        <>
+                            {/* Datos Personales */}
+                            {seccionActiva === 'personal' && (
+                                <div>
+                                    <h5 className="mb-3 small fw-semibold text-uppercase text-muted">
+                                        <i className="bi bi-person-fill me-1" />Informacion personal
+                                    </h5>
+                                    <div className="row g-2">
+                                        {[
+                                            { label: 'Nombre',           value: perfil?.Nombre },
+                                            { label: 'Apellidos',        value: perfil?.Apellidos },
+                                            { label: 'Email',            value: perfil?.email ?? perfil?.EMAIL },
+                                            { label: 'Telefono',         value: perfil?.telefono },
+                                            { label: 'Fecha nacimiento', value: fmt(perfil?.fecha_nacimiento) },
+                                            { label: 'Fecha de alta',    value: fmt(perfil?.fecha_alta) },
+                                            { label: 'Departamento',     value: perfil?.nombre_departamento ?? '-' },
+                                        ].map(({ label, value }) => (
+                                            <div key={label} className="col-sm-6 col-md-4">
+                                                <div className="border rounded p-2" style={{ background: 'var(--bs-light, #f8f9fa)' }}>
+                                                    <div className="text-muted" style={{ fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                                                        {label}
+                                                    </div>
+                                                    <div className="fw-medium" style={{ fontSize: '0.85rem' }}>
+                                                        {value ?? <span className="text-muted">-</span>}
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <div className="text-muted small">horas</div>
-                                        </div>
-                                    </div>
-                                    <div className="text-muted small">{horasMes.minutos} minutos adicionales</div>
-                                    <div className="text-muted small">
-                                        Calculado a partir de {horasMes.cantidad} fichaje{horasMes.cantidad !== 1 ? 's' : ''} completado{horasMes.cantidad !== 1 ? 's' : ''} este mes
+                                        ))}
                                     </div>
                                 </div>
                             )}
-                        </div>
-                    )}
 
-                    {/*Fichajes */}
-                    {seccionActiva === 'fichajes' && (
-                        <div>
-                            <h5 className="mb-3 small fw-semibold text-uppercase text-muted">
-                                <i className="bi bi-calendar2-check-fill me-1" />Últimos fichajes
-                            </h5>
-                            {cargandoFichajes ? <Spinner /> :
-                             errorFichajes    ? <ErrorState texto={errorFichajes} /> :
-                             fichajes.length === 0
-                                ? <EmptyState icono="bi-calendar-x" texto="No hay fichajes registrados." />
-                                : (
-                                    <div className="table-responsive">
-                                        <table className="table table-sm table-striped table-hover">
-                                            <thead>
-                                                <tr>
-                                                    <th className="small">Entrada</th>
-                                                    <th className="small">Salida</th>
-                                                    <th className="small">Tipo</th>
-                                                    <th className="small">Duración</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {fichajes.slice(0, 20).map(f => {
-                                                    const durMs = f.fecha_salida
-                                                        ? new Date(f.fecha_salida) - new Date(f.fecha_entrada)
-                                                        : null;
-                                                    return (
-                                                        <tr key={f.id}>
-                                                            <td className="small">{fmtDT(f.fecha_entrada)}</td>
-                                                            <td className="small">{fmtDT(f.fecha_salida)}</td>
-                                                            <td className="small">
-                                                                <span className="badge bg-secondary">{f.tipo ?? '—'}</span>
-                                                            </td>
-                                                            <td className="small">
-                                                                {durMs !== null
-                                                                    ? `${Math.floor(durMs / 3600000)}h ${Math.floor((durMs % 3600000) / 60000)}m`
-                                                                    : <span className="text-warning small">En curso</span>}
-                                                            </td>
-                                                        </tr>
-                                                    );
-                                                })}
-                                            </tbody>
-                                        </table>
-                                        {fichajes.length > 20 && (
-                                            <p className="text-muted text-center small">
-                                                Mostrando los 20 más recientes de {fichajes.length} totales.
-                                            </p>
+                            {/* Horas de este mes*/}
+                            {seccionActiva === 'horas' && (
+                                <div>
+                                    <h5 className="mb-3 small fw-semibold text-uppercase text-muted">
+                                        <i className="bi bi-clock-fill me-1" />Horas trabajadas este mes
+                                    </h5>
+                                    <div className="d-flex flex-column align-items-center justify-content-center py-3 gap-3">
+
+
+                                        <div
+                                            className="rounded-circle bg-primary bg-opacity-10 d-flex align-items-center justify-content-center"
+                                            style={{ width: 140, height: 140 }}
+                                        >
+                                            <div className="text-center">
+                                                <div className="fw-bold text-primary" style={{ fontSize: '2.4rem', lineHeight: 1 }}>
+                                                    {horasMes?.trabajadas_h ?? 0}
+                                                </div>
+                                                <div className="text-muted small">horas</div>
+                                            </div>
+                                        </div>
+
+
+                                        {/* Diferencia de horas contrato y trabajadas */}
+                                        {diferencia && (
+                                            <span className={`badge bg-${diferencia.color} px-3 py-2`} style={{ fontSize: '0.8rem' }}>
+                                                {diferencia.texto}
+                                            </span>
                                         )}
-                                    </div>
-                                )
-                            }
-                        </div>
-                    )}
 
-                    {/* Solicitudes */}
-                    {seccionActiva === 'solicitudes' && (
-                        <div>
-                            <h5 className="mb-3 small fw-semibold text-uppercase text-muted">
-                                <i className="bi bi-file-earmark-text-fill me-1" />Solicitudes de vacaciones
-                            </h5>
-                            {cargandoSolicitudes ? <Spinner /> :
-                             errorSolicitudes     ? <ErrorState texto={errorSolicitudes} /> :
-                             solicitudes.length === 0
-                                ? <EmptyState icono="bi-file-earmark-x" texto="No hay solicitudes de vacaciones." />
-                                : (
-                                    <div className="table-responsive">
-                                        <table className="table table-sm table-striped table-hover">
-                                            <thead>
-                                                <tr>
-                                                    <th className="small">Fecha inicio</th>
-                                                    <th className="small">Fecha fin</th>
-                                                    <th className="small">Estado</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {solicitudes.map(s => (
-                                                    <tr key={s.ID ?? s.id}>
-                                                        <td className="small">{fmt(s.fecha_inicio)}</td>
-                                                        <td className="small">{fmt(s.fecha_fin)}</td>
-                                                        <td className="small">
-                                                            <span className={`badge bg-${estadoBadge(s.estado)}`}>
-                                                                {s.estado ?? '—'}
-                                                            </span>
-                                                        </td>
-                                                    </tr>
-                                                ))}
-                                            </tbody>
-                                        </table>
+                                        <div className="text-muted" style={{ fontSize: '0.75rem' }}>
+                                            {horasMes?.trabajadas_min ?? 0} minutos sobre la ultima hora completa
+                                        </div>
                                     </div>
-                                )
-                            }
-                        </div>
-                    )}
+                                </div>
+                            )}
 
-                    {/* Incidencias*/}
-                    {seccionActiva === 'incidencias' && (
-                        <div>
-                            <h5 className="mb-3 small fw-semibold text-uppercase text-muted">
-                                <i className="bi bi-exclamation-triangle-fill me-1" />Incidencias
-                            </h5>
-                            {cargandoIncidencias ? <Spinner /> :
-                             errorIncidencias     ? <ErrorState texto={errorIncidencias} /> :
-                             incidencias.length === 0
-                                ? <EmptyState icono="bi-shield-check" texto="No hay incidencias registradas." />
-                                : (
-                                    <div className="table-responsive">
-                                        <table className="table table-sm table-striped table-hover">
-                                            <thead>
-                                                <tr>
-                                                    <th className="small">Estado</th>
-                                                    <th className="small">Fecha creación</th>
-                                                    <th className="small">Observaciones</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {incidencias.map(inc => (
-                                                    <tr key={inc.ID ?? inc.id}>
-                                                        <td className="small">
-                                                            <span className={`badge bg-${estadoBadge(inc.estado)}`}>
-                                                                {inc.estado ?? '—'}
-                                                            </span>
-                                                        </td>
-                                                        <td className="small">{fmtDT(inc.fecha_creacion)}</td>
-                                                        <td className="small text-muted">
-                                                            {inc.Observaciones ?? inc.observaciones ?? inc.descripcion ?? '—'}
-                                                        </td>
-                                                    </tr>
-                                                ))}
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                )
-                            }
-                        </div>
-                    )}
+                            {/* Fichajes*/}
+                            {seccionActiva === 'fichajes' && (
+                                <div>
+                                    <h5 className="mb-3 small fw-semibold text-uppercase text-muted">
+                                        <i className="bi bi-calendar2-check-fill me-1" />Ultimos fichajes
+                                    </h5>
+                                    {fichajes.length === 0
+                                        ? <EmptyState icono="bi-calendar-x" texto="No hay fichajes registrados." />
+                                        : (
+                                            <div className="table-responsive">
+                                                <table className="table table-sm table-striped table-hover">
+                                                    <thead className="table-light">
+                                                        <tr>
+                                                            <th className="small">Entrada</th>
+                                                            <th className="small">Salida</th>
+                                                            <th className="small">Tipo</th>
+                                                            <th className="small">Duracion</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {fichajes.map(f => {
+                                                            const durMs = f.fecha_salida
+                                                                ? new Date(f.fecha_salida) - new Date(f.fecha_entrada)
+                                                                : null;
+                                                            return (
+                                                                <tr key={f.id}>
+                                                                    <td className="small">{fmtDT(f.fecha_entrada)}</td>
+                                                                    <td className="small">{fmtDT(f.fecha_salida)}</td>
+                                                                    <td className="small">
+                                                                        <span className="badge bg-secondary">{f.tipo ?? '-'}</span>
+                                                                    </td>
+                                                                    <td className="small">
+                                                                        {durMs !== null
+                                                                            ? `${Math.floor(durMs / 3600000)}h ${Math.floor((durMs % 3600000) / 60000)}m`
+                                                                            : <span className="text-warning small">En curso</span>}
+                                                                    </td>
+                                                                </tr>
+                                                            );
+                                                        })}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        )
+                                    }
+                                </div>
+                            )}
 
+                            {/* Solicitudes */}
+                            {seccionActiva === 'solicitudes' && (
+                                <div>
+                                    <h5 className="mb-3 small fw-semibold text-uppercase text-muted">
+                                        <i className="bi bi-file-earmark-text-fill me-1" />Solicitudes de vacaciones
+                                    </h5>
+                                    {solicitudes.length === 0
+                                        ? <EmptyState icono="bi-file-earmark-x" texto="No hay solicitudes de vacaciones." />
+                                        : (
+                                            <div className="table-responsive">
+                                                <table className="table table-sm table-striped table-hover">
+                                                    <thead className="table-light">
+                                                        <tr>
+                                                            <th className="small">Fecha inicio</th>
+                                                            <th className="small">Fecha fin</th>
+                                                            <th className="small">Tipo</th>
+                                                            <th className="small">Estado</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {solicitudes.map(s => (
+                                                            <tr key={s.ID_INCIDENCIA}>
+                                                                <td className="small">{fmt(s.fecha_inicio)}</td>
+                                                                <td className="small">{fmt(s.fecha_fin)}</td>
+                                                                <td className="small text-muted">{s.tipo ?? '-'}</td>
+                                                                <td className="small">
+                                                                    <span className={`badge bg-${estadoBadge(s.estado)}`}>
+                                                                        {s.estado ?? '-'}
+                                                                    </span>
+                                                                </td>
+                                                            </tr>
+                                                        ))}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        )
+                                    }
+                                </div>
+                            )}
+
+                            {/* Incidencias */}
+                            {seccionActiva === 'incidencias' && (
+                                <div>
+                                    <h5 className="mb-3 small fw-semibold text-uppercase text-muted">
+                                        <i className="bi bi-exclamation-triangle-fill me-1" />Incidencias
+                                    </h5>
+                                    {incidencias.length === 0
+                                        ? <EmptyState icono="bi-shield-check" texto="No hay incidencias registradas." />
+                                        : (
+                                            <div className="table-responsive">
+                                                <table className="table table-sm table-striped table-hover">
+                                                    <thead className="table-light">
+                                                        <tr>
+                                                            <th className="small">Estado</th>
+                                                            <th className="small">Fecha creacion</th>
+                                                            <th className="small">Observaciones</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {incidencias.map(inc => (
+                                                            <tr key={inc.ID}>
+                                                                <td className="small">
+                                                                    <span className={`badge bg-${estadoBadge(inc.estado)}`}>
+                                                                        {inc.estado ?? '-'}
+                                                                    </span>
+                                                                </td>
+                                                                <td className="small">{fmtDT(inc.fecha_creacion)}</td>
+                                                                <td className="small text-muted">
+                                                                    {inc.Observaciones ?? '-'}
+                                                                </td>
+                                                            </tr>
+                                                        ))}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        )
+                                    }
+                                </div>
+                            )}
+                        </>
+                    )}
                 </div>
 
                 <div className="card-footer d-flex justify-content-end">
