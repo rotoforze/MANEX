@@ -762,8 +762,6 @@ export function InfoDashboard() {
                                     </h6>
                                     <BarraProgreso etiqueta="Abiertas" valor={incGlobalPendientes}
                                                    total={incGlobalTotal} color="danger"/>
-                                    <BarraProgreso etiqueta="En proceso" valor={incGlobalEnProceso}
-                                                   total={incGlobalTotal} color="warning"/>
                                     <BarraProgreso etiqueta="Resueltas" valor={incGlobalResueltas}
                                                    total={incGlobalTotal} color="success"/>
                                     <div
