@@ -1,6 +1,7 @@
 import verificadorDatos from "./verificadorDatos.mjs";
 import mysql from "mysql2/promise";
 import {hashContrasenia} from "./hashDeContrasenias.mjs";
+import {getNivelAcceso} from "../middlewareAutenticación.mjs";
 
 /**
  * Actualiza el empleado en la BBDD.
@@ -21,6 +22,9 @@ async function actualizar(req, res) {
 
     await verificadorDatos(req, res);
     if (res.headersSent) return;
+
+    const deptSuperior = getNivelAcceso(req?.headers?.token);
+    if (deptSuperior < ID_departamento) return res.status(500).send({status: 500, message: 'No se pueden crear usuarios con un nivel de acceso superior.'});
 
     const config = {
         host: process.env.DB_HOST,

@@ -129,13 +129,13 @@
         ]
     },
     "/password": {
-        "protected": false,
+        "protected": true,
         "POST": [
             ">1"
         ]
     },
     "/password-requests": {
-        "protected": false,
+        "protected": true,
         "GET": [
             "5",
             "7",
@@ -159,7 +159,6 @@
             "*"
         ]
     },
-    "/prueba": null,
     "/empleado-perfil": {
         "protected": false,
         "GET": [

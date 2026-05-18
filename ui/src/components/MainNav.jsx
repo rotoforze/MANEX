@@ -87,6 +87,7 @@ export const MainNav = () => {
                 <hr />
 
                 <ul className="nav nav-pills flex-column mb-auto">
+
                     <li className="nav-item">
                         {links.map(link => (
                             <NavLink

@@ -1,12 +1,12 @@
-import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
-import { useUsers } from "../../context/UserContext.jsx";
-import { apiFetch } from "../../utils/apiFetch.jsx";
-import { useDebounce } from "../../hooks/useDebounce.js";
-import { EditarProductoForm } from "./EditarProductoForm.jsx";
+import {useEffect, useState} from "react";
+import {useSearchParams} from "react-router-dom";
+import {useUsers} from "../../context/UserContext.jsx";
+import {apiFetch} from "../../utils/apiFetch.jsx";
+import {useDebounce} from "../../hooks/useDebounce.js";
+import {EditarProductoForm} from "./EditarProductoForm.jsx";
 import "../../../public/styles/tablaPermisos.css";
 import "../../../public/styles/mainPages.css";
-import { DelProducto } from "./DelProducto.jsx";
+import {DelProducto} from "./DelProducto.jsx";
 
 /**
  * Muestra en formato tabla los productos recibidos.
@@ -28,28 +28,33 @@ export function TablaProductos() {
     const [cantidadPorPagina] = useState(10);
     const [searchParams, setSearchParams] = useSearchParams();
     const [filtros, setFiltros] = useState({
-        nombre:      searchParams.get('nombre')      || '',
+        nombre: searchParams.get('nombre') || '',
         descripcion: searchParams.get('descripcion') || '',
-        estado:      searchParams.get('estado')      || '',
+        estado: searchParams.get('estado') || '',
     });
-    const setFiltro = (campo, valor) => setFiltros(prev => ({ ...prev, [campo]: valor }));
-    const dNombre      = useDebounce(filtros.nombre);
+    const setFiltro = (campo, valor) => setFiltros(prev => ({...prev, [campo]: valor}));
+    const dNombre = useDebounce(filtros.nombre);
     const dDescripcion = useDebounce(filtros.descripcion);
     const [eliminando, setEliminando] = useState(false);
     const [productoAEliminar, setProductoAEliminar] = useState(undefined);
     const [cargando, setCargando] = useState(true);
     const [errorCarga, setErrorCarga] = useState(null);
 
-    const { user, tengoPermiso } = useUsers();
+    const {user, tengoPermiso} = useUsers();
 
     function obtenerClaseEstado(estado) {
         switch (estado) {
-            case 'Disponible': return 'text-bg-success';
-            case 'No disponible': return 'text-bg-danger';
+            case 'Disponible':
+                return 'text-bg-success';
+            case 'No disponible':
+                return 'text-bg-danger';
             case 'En proceso de envio':
-            case 'En proceso de envío': return 'text-bg-primary';
-            case 'En mantenimiento': return 'text-bg-warning';
-            default: return 'text-bg-secondary';
+            case 'En proceso de envío':
+                return 'text-bg-primary';
+            case 'En mantenimiento':
+                return 'text-bg-warning';
+            default:
+                return 'text-bg-secondary';
         }
     }
 
@@ -60,10 +65,10 @@ export function TablaProductos() {
     // Sincronizar URL con los filtros actuales (se actualiza tras el debounce en texto)
     useEffect(() => {
         const p = {};
-        if (dNombre)        p.nombre      = dNombre;
-        if (dDescripcion)   p.descripcion = dDescripcion;
-        if (filtros.estado) p.estado      = filtros.estado;
-        setSearchParams(p, { replace: true });
+        if (dNombre) p.nombre = dNombre;
+        if (dDescripcion) p.descripcion = dDescripcion;
+        if (filtros.estado) p.estado = filtros.estado;
+        setSearchParams(p, {replace: true});
     }, [dNombre, dDescripcion, filtros.estado]);
 
     useEffect(() => {
@@ -72,17 +77,17 @@ export function TablaProductos() {
 
     const hayFiltros = !!(dNombre || dDescripcion || filtros.estado);
     const limpiarFiltros = () => {
-        setFiltros({ nombre: '', descripcion: '', estado: '' });
-        setSearchParams({}, { replace: true });
+        setFiltros({nombre: '', descripcion: '', estado: ''});
+        setSearchParams({}, {replace: true});
     };
 
     const cargarProductos = () => {
         setCargando(true);
         setErrorCarga(null);
 
-        const params = new URLSearchParams({ pagina: paginaActual, cantidad: cantidadPorPagina });
-        if (dNombre)        params.set('nombre', dNombre);
-        if (dDescripcion)   params.set('descripcion', dDescripcion);
+        const params = new URLSearchParams({pagina: paginaActual, cantidad: cantidadPorPagina});
+        if (dNombre) params.set('nombre', dNombre);
+        if (dDescripcion) params.set('descripcion', dDescripcion);
         if (filtros.estado) params.set('estado', filtros.estado);
 
         apiFetch(
@@ -150,9 +155,10 @@ export function TablaProductos() {
                     </div>
                 </div>
             ) : listaProductos.length > 0 || hayFiltros ? (
-                <div className="table-responsive m-3 d-flex flex-column justify-content-start">
-                    <table className="table table-striped">
-                        <thead>
+                <div className="table-responsive contenedor-tabla m-3 d-flex flex-column justify-content-start">
+                    <div className={"table-responsive"}>
+                        <table className="table table-striped">
+                            <thead>
                             <tr>
                                 <th scope="col">#</th>
                                 <th scope="col">Nombre</th>
@@ -160,12 +166,17 @@ export function TablaProductos() {
                                 <th scope="col">Estado</th>
                                 <th scope="col">Acciones</th>
                             </tr>
-                            <tr className="table-light">
-                                <th />
-                                <th><input className="form-control form-control-sm" type="text" placeholder="Nombre" value={filtros.nombre} onChange={e => setFiltro('nombre', e.target.value)} /></th>
-                                <th><input className="form-control form-control-sm" type="text" placeholder="Descripción" value={filtros.descripcion} onChange={e => setFiltro('descripcion', e.target.value)} /></th>
+                            <tr>
+                                <th/>
+                                <th><input className="form-control form-control-sm" type="text" placeholder="Nombre"
+                                           value={filtros.nombre} onChange={e => setFiltro('nombre', e.target.value)}/>
+                                </th>
+                                <th><input className="form-control form-control-sm" type="text"
+                                           placeholder="Descripción" value={filtros.descripcion}
+                                           onChange={e => setFiltro('descripcion', e.target.value)}/></th>
                                 <th>
-                                    <select className="form-select form-select-sm" value={filtros.estado} onChange={e => setFiltro('estado', e.target.value)}>
+                                    <select className="form-select form-select-sm" value={filtros.estado}
+                                            onChange={e => setFiltro('estado', e.target.value)}>
                                         <option value="">Todos</option>
                                         <option value="Disponible">Disponible</option>
                                         <option value="No disponible">No disponible</option>
@@ -175,14 +186,15 @@ export function TablaProductos() {
                                 </th>
                                 <th>
                                     {hayFiltros && (
-                                        <button className="btn btn-outline-secondary btn-sm w-100" onClick={limpiarFiltros} title="Limpiar filtros">
-                                            <i className="bi bi-x-lg me-1" aria-hidden="true" />Limpiar
+                                        <button className="btn btn-outline-secondary btn-sm w-100"
+                                                onClick={limpiarFiltros} title="Limpiar filtros">
+                                            <i className="bi bi-x-lg me-1" aria-hidden="true"/>Limpiar
                                         </button>
                                     )}
                                 </th>
                             </tr>
-                        </thead>
-                        <tbody className="table-group-divider">
+                            </thead>
+                            <tbody className="table-group-divider">
                             {listaProductos.length > 0 ? listaProductos.map((producto) => (
                                 <tr key={producto?.ID} className="h-auto">
                                     <th scope="row">{producto?.ID}</th>
@@ -193,7 +205,7 @@ export function TablaProductos() {
                                             {producto?.Estado ?? '—'}
                                         </span>
                                     </td>
-                                    <td className="h-auto acciones-tabla">
+                                    <td className="h-auto w-auto p-1">
                                         <button
                                             className="btn btn-primary btn-sm"
                                             title="Editar producto"
@@ -203,7 +215,8 @@ export function TablaProductos() {
                                                 setMostrarFormulario(true);
                                             }}
                                             disabled={!tengoPermiso('/productos', 'POST')}
-                                        ><i className="bi bi-pencil-fill" aria-hidden="true" /></button>
+                                        ><i className="bi bi-pencil-fill" aria-hidden="true"/></button>
+                                        &nbsp;
                                         <button
                                             className="btn btn-danger btn-sm"
                                             title="Eliminar producto"
@@ -213,7 +226,7 @@ export function TablaProductos() {
                                                 setProductoAEliminar(producto);
                                                 setEliminando(true);
                                             }}
-                                        ><i className="bi bi-trash-fill" aria-hidden="true" /></button>
+                                        ><i className="bi bi-trash-fill" aria-hidden="true"/></button>
                                     </td>
                                 </tr>
                             )) : (
@@ -223,42 +236,47 @@ export function TablaProductos() {
                                     </td>
                                 </tr>
                             )}
-                        </tbody>
-                    </table>
-
-                    {listaProductos.length > 0 && <div className="d-flex align-items-center justify-content-center gap-2 mb-3">
-                        <button
-                            className="btn btn-outline-secondary btn-sm bi bi-chevron-bar-left"
-                            aria-label="Primera página"
-                            disabled={paginaActual === 0}
-                            onClick={() => setPaginaActual(0)}
-                        />
-                        <button
-                            className="btn btn-outline-secondary btn-sm bi bi-chevron-left"
-                            aria-label="Página anterior"
-                            disabled={paginaActual === 0}
-                            onClick={() => { if (paginaActual > 0) setPaginaActual(paginaActual - 1); }}
-                        />
-                        <span className="small text-muted">
+                            </tbody>
+                        </table>
+                    </div>
+                    {listaProductos.length > 0 &&
+                        <div className="d-flex align-items-center justify-content-center gap-2 mb-3">
+                            <button
+                                className="btn btn-outline-secondary btn-sm bi bi-chevron-bar-left"
+                                aria-label="Primera página"
+                                disabled={paginaActual === 0}
+                                onClick={() => setPaginaActual(0)}
+                            />
+                            <button
+                                className="btn btn-outline-secondary btn-sm bi bi-chevron-left"
+                                aria-label="Página anterior"
+                                disabled={paginaActual === 0}
+                                onClick={() => {
+                                    if (paginaActual > 0) setPaginaActual(paginaActual - 1);
+                                }}
+                            />
+                            <span className="small text-muted">
                             Página {paginaActual + 1} de {paginaMaxima + 1} · {totalRegistros} registros
                         </span>
-                        <button
-                            className="btn btn-outline-secondary btn-sm bi bi-chevron-right"
-                            aria-label="Página siguiente"
-                            disabled={!(paginaActual < paginaMaxima)}
-                            onClick={() => { if (paginaActual < paginaMaxima) setPaginaActual(paginaActual + 1); }}
-                        />
-                        <button
-                            className="btn btn-outline-secondary btn-sm bi bi-chevron-bar-right"
-                            aria-label="Última página"
-                            disabled={!(paginaActual < paginaMaxima)}
-                            onClick={() => setPaginaActual(paginaMaxima)}
-                        />
-                    </div>}
+                            <button
+                                className="btn btn-outline-secondary btn-sm bi bi-chevron-right"
+                                aria-label="Página siguiente"
+                                disabled={!(paginaActual < paginaMaxima)}
+                                onClick={() => {
+                                    if (paginaActual < paginaMaxima) setPaginaActual(paginaActual + 1);
+                                }}
+                            />
+                            <button
+                                className="btn btn-outline-secondary btn-sm bi bi-chevron-bar-right"
+                                aria-label="Última página"
+                                disabled={!(paginaActual < paginaMaxima)}
+                                onClick={() => setPaginaActual(paginaMaxima)}
+                            />
+                        </div>}
                 </div>
             ) : (
                 <div className="tabla-empty-state">
-                    <i className="bi bi-box tabla-empty-icon" aria-hidden="true" />
+                    <i className="bi bi-box tabla-empty-icon" aria-hidden="true"/>
                     <p className="text-muted mb-0">No hay productos registrados.</p>
                 </div>
             )}

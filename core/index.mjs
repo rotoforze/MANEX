@@ -353,4 +353,4 @@ app.post('/reset', aplicarReset);
 app.get('/password-requests', listarSolicitudes);
 app.post('/password-requests', gestionarSolicitud);
 
-app.listen(80, () => console.log('Escuchando llamadas en http://localhost:80'));
+app.listen(2341, () => console.log('Escuchando llamadas en http://localhost:2341'));
