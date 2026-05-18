@@ -1,5 +1,13 @@
 import mysql from "mysql2/promise";
 
+/**
+ * Actualiza una incidencia en la BBDD.
+ *
+ * @author Covadonga Blanco Alvarez
+ * @version 1.1.0
+ * @param req
+ * @param res
+ */
 async function actualizarIncidencia(req, res) {
     const { id, id_empleado, fecha_creacion, estado, observaciones, comentario } = req.body;
 
@@ -48,6 +56,7 @@ async function actualizarIncidencia(req, res) {
             return res.status(404).send({ status: 404, message: 'No se encontro ninguna incidencia con ese ID.' });
         }
 
+        await connection.commit();
         return res.status(200).send({ status: 200, message: 'Incidencia actualizada correctamente.' });
 
     } catch (error) {

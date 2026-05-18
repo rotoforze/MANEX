@@ -446,6 +446,26 @@ export function InfoDashboard() {
 
     return (
         <div className="container-fluid px-4 py-4 dashboard">
+<<<<<<< HEAD
+
+            {errorDashboard && (
+                <div className="alert alert-danger d-flex align-items-center gap-2 mb-4" role="alert">
+                    <i className="bi bi-exclamation-triangle-fill flex-shrink-0"></i>
+                    <span>{errorDashboard}</span>
+                    <button
+                        type="button"
+                        className="btn btn-sm btn-outline-danger ms-auto"
+                        onClick={() => {
+                            setErrorDashboard(null);
+                            cargarDatos();
+                        }}
+                    >
+                        Reintentar
+                    </button>
+                </div>
+            )}
+=======
+>>>>>>> e6ea361054ad13a9e53f3c907b851a82b43e76cd
 
             {errorDashboard && (
                 <div className="alert alert-danger d-flex align-items-center gap-2 mb-4" role="alert">

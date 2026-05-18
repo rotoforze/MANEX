@@ -1,7 +1,7 @@
-import React, {useState} from 'react';
-import {useUsers} from "../../context/UserContext.jsx";
-import {apiFetch} from "../../utils/apiFetch.jsx";
-import {useMensaje} from "../../hooks/useMensaje.js";
+import React, { useState } from 'react';
+import { useUsers } from "../../context/UserContext.jsx";
+import { apiFetch } from "../../utils/apiFetch.jsx";
+import { useMensaje } from "../../hooks/useMensaje.js";
 
 /**
  * Formulario de edición de una incidencia existente.
@@ -24,20 +24,21 @@ export function EditarIncidenciaForm({incidencia, funcionDeCierreDeFormulario, h
         fecha ? new Date(fecha).toISOString().split('T')[0] : '';
 
     const [form, setForm] = useState({
-        id: incidencia?.ID ?? '',
-        id_empleado: incidencia?.ID_empleado
-            ?? incidencia?.id_empleado ?? '',
+       
+        id:  incidencia?.ID               ?? '',
+        id_empleado:    incidencia?.ID_empleado
+                        ?? incidencia?.id_empleado   ?? '',
         fecha_creacion: fechaISO(incidencia?.fecha_creacion),
-        estado: incidencia?.estado ?? 'Abierta',
-        observaciones: incidencia?.Observaciones
-            ?? incidencia?.observaciones ?? '',
-        comentario: incidencia?.Comentario
-            ?? incidencia?.comentario ?? '',
+        estado:         incidencia?.estado            ?? 'Abierta',
+        observaciones:  incidencia?.Observaciones
+                        ?? incidencia?.observaciones  ?? '',
+        comentario:     incidencia?.Comentario
+                        ?? incidencia?.comentario     ?? '',
     });
 
     const handleChange = (e) => {
-        const {name, value} = e.target;
-        setForm(prev => ({...prev, [name]: value}));
+        const { name, value } = e.target;
+        setForm(prev => ({ ...prev, [name]: value }));
     };
 
     const handleSubmit = async (e) => {
@@ -61,7 +62,7 @@ export function EditarIncidenciaForm({incidencia, funcionDeCierreDeFormulario, h
             const data = await response.json();
 
             if (response.ok) {
-                setMensaje({tipo: 'success', texto: 'Incidencia actualizada correctamente.'});
+                setMensaje({ tipo: 'success', texto: 'Incidencia actualizada correctamente.' });
                 setTimeout(() => {
                     handleIncidenciaActualizada?.();
                 }, 1000);
@@ -79,9 +80,7 @@ export function EditarIncidenciaForm({incidencia, funcionDeCierreDeFormulario, h
     return (
         <div className="superponer">
             <div
-                className="card confirmacion"
-                style={{width: 'min(95dvw, 700px)', overflowY: 'auto'}}
-            >
+                className="card confirmacion">
                 <div className="card-header d-flex justify-content-end align-items-center">
                     <button
                         type="button"

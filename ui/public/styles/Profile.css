@@ -135,9 +135,21 @@
 
 .profile-readonly-value {
     padding: 0.5rem 0;
+<<<<<<< HEAD
+<<<<<<< HEAD
+    color: #495057;
+    font-size: 0.95rem;
+    border-bottom: 1px solid #dee2e6;
+=======
     color: var(--bs-body-color);
     font-size: 0.95rem;
     border-bottom: 1px solid var(--bs-border-color);
+>>>>>>> main
+=======
+    color: var(--bs-body-color);
+    font-size: 0.95rem;
+    border-bottom: 1px solid var(--bs-border-color);
+>>>>>>> e6ea361054ad13a9e53f3c907b851a82b43e76cd
 }
 
 .profile-subsection-label {
@@ -145,7 +157,15 @@
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.06em;
+<<<<<<< HEAD
+<<<<<<< HEAD
+    color: #6c757d;
+=======
     color: var(--bs-secondary-color);
+>>>>>>> main
+=======
+    color: var(--bs-secondary-color);
+>>>>>>> e6ea361054ad13a9e53f3c907b851a82b43e76cd
     margin-bottom: 1rem;
     display: flex;
     align-items: center;
