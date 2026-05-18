@@ -1,12 +1,16 @@
 import verificadorDatos from "./verificadorDatos.mjs";
 import mysql from "mysql2/promise";
 import {hashContrasenia} from "./hashDeContrasenias.mjs";
+import {getNivelAcceso} from "../middlewareAutenticación.mjs";
 
 /**
- * Actualiza el usuario en la BBDD.
+ * Actualiza el empleado en la BBDD.
+ * - La contraseña solo se actualiza si se proporciona.
+ * - El username se actualiza en usuario, empleado y auth_token si cambia.
  *
  * @author Alex Bernardos Gil
- * @version 1.0.0
+ * @contributor Eneas de la Rosa Menéndez Pedrosa
+ * @version 2.0.0
  * @param req
  * @param res
  */
@@ -17,8 +21,11 @@ async function actualizar(req, res) {
         usuario, email, contrasenia, id } = req.body;
 
     await verificadorDatos(req, res);
+    if (res.headersSent) return;
 
-    // comenzamos la transaccion
+    const deptSuperior = getNivelAcceso(req?.headers?.token);
+    if (deptSuperior < ID_departamento) return res.status(500).send({status: 500, message: 'No se pueden crear usuarios con un nivel de acceso superior.'});
+
     const config = {
         host: process.env.DB_HOST,
         user: process.env.DB_USER,
@@ -32,30 +39,73 @@ async function actualizar(req, res) {
     await connection.beginTransaction();
 
     try {
+        // Obtener username actual por ID de empleado
+        const [empRows] = await connection.query('SELECT USERNAME FROM empleado WHERE id = ?', [id]);
+        if (!empRows.length) {
+            await connection.rollback();
+            return res.status(404).send({status: 404, message: 'Empleado no encontrado.'});
+        }
+        const currentUsername = empRows[0].USERNAME;
+        const targetUsername   = usuario || currentUsername;
+        const usernameChanged  = targetUsername !== currentUsername;
 
-        // hash de la contraseña
-        const contraseniaHasheada = await hashContrasenia(contrasenia);
+        // Actualizar tabla usuario (password opcional, username opcional)
+        if (usernameChanged) {
+            await connection.query('SET FOREIGN_KEY_CHECKS = 0');
+        }
 
-        // el usuario NO SE PUEDE CAMBIAR
-        const resultadoUsuario = await connection.query(
-            'UPDATE usuario SET password = ?, email = ? WHERE username = ?',
-            [contraseniaHasheada, email, usuario]);
+        if (contrasenia) {
+            const hash = await hashContrasenia(contrasenia);
+            await connection.query(
+                'UPDATE usuario SET username = ?, password = ?, email = ? WHERE username = ?',
+                [targetUsername, hash, email, currentUsername]);
+        } else {
+            await connection.query(
+                'UPDATE usuario SET username = ?, email = ? WHERE username = ?',
+                [targetUsername, email, currentUsername]);
+        }
 
-        const resultadoEmpleado = await connection.query(
-            'UPDATE empleado SET nombre = ?, apellidos = ?, fecha_nacimiento = ?, telefono = ?, ID_contrato = ?, ID_departamento = ? WHERE id = ?',
-            [nombre, apellidos, fecha_nacimiento, telefono, ID_contrato, ID_departamento, id]);
+        // Si el username cambió, actualizar auth_token
+        if (usernameChanged) {
+            await connection.query(
+                'UPDATE auth_token SET USERNAME = ? WHERE USERNAME = ?',
+                [targetUsername, currentUsername]);
+        }
+
+        // Actualizar tabla empleado
+        // COALESCE conserva el valor existente si llega null (campos NOT NULL o sin permiso de edición)
+        const idContrato     = ID_contrato     ? parseInt(ID_contrato)     : null;
+        const idDepartamento = ID_departamento ? parseInt(ID_departamento) : null;
+        const fechaNac       = fecha_nacimiento || null;
+        await connection.query(
+            `UPDATE empleado
+             SET nombre = ?, apellidos = ?, fecha_nacimiento = COALESCE(?, fecha_nacimiento),
+                 telefono = ?, ID_contrato = COALESCE(?, ID_contrato),
+                 ID_departamento = COALESCE(?, ID_departamento), USERNAME = ?
+             WHERE id = ?`,
+            [nombre, apellidos, fechaNac, telefono, idContrato, idDepartamento, targetUsername, id]);
+
+        if (usernameChanged) {
+            await connection.query('SET FOREIGN_KEY_CHECKS = 1');
+        }
 
         await connection.commit();
 
-        return res.status(201).send({status: 201, message: 'Empleado registrado correctamente.'});
+        return res.status(200).send({
+            status: 200,
+            message: 'Empleado actualizado correctamente.',
+            usernameChanged,
+            newUsername: usernameChanged ? targetUsername : undefined,
+        });
 
     } catch (error) {
 
         await connection.rollback();
+        await connection.query('SET FOREIGN_KEY_CHECKS = 1').catch(() => {});
 
-        console.error('Error al registrar el empleado:', error);
+        console.error('Error al actualizar el empleado:', error);
 
-        return res.status(500).send({status: 500, message: 'Error al registrar el empleado.'});
+        return res.status(500).send({status: 500, message: 'Error al actualizar el empleado.'});
 
     } finally {
         await connection.end();

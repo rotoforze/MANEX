@@ -1,45 +1,25 @@
-import mysql from 'mysql2';
-import dotenv from 'dotenv';
+import pool from '../db.mjs';
 import Paginacion from "../paginacion.mjs";
 
-//Cargamos las variables del archivo .env a process.env
-dotenv.config();
-
 /**
- * Devuelve una lista paginada de empleados
+ * Devuelve una lista paginada de solicitudes de vacaciones con filtros opcionales.
  * @author Covadonga Blanco Álvarez
- * @version 1.0.1
+ * @version 1.1.0
  * @param {Request} req
  * @param {Response} res
  */
 export function listaSolicitudesVacaciones(req, res) {
 
-    const pool = mysql.createPool({
-        host: process.env.DB_HOST,
-        user: process.env.DB_USER,
-        password: process.env.DB_PASS,
-        database: process.env.DB_NAME,
-        port: process.env.DB_PORT
-    });
-
-    let {cantidad, pagina, id_empleado} = req.query;
-
-    // valores por defecto
+    let { cantidad, pagina, id_empleado, tipo, estado, nombre, apellidos } = req.query;
 
     cantidad = cantidad !== undefined ? parseInt(cantidad) : Paginacion.DEFAULT_CANTIDAD_PAGINACION;
-    pagina = pagina !== undefined ? parseInt(pagina) : Paginacion.DEFAULT_PAGINA;
-
+    pagina   = pagina   !== undefined ? parseInt(pagina)   : Paginacion.DEFAULT_PAGINA;
 
     if (isNaN(cantidad) || isNaN(pagina)) {
-        pool.end();
-        return res.status(400).send({
-            status: 400,
-            message: "Parámetros inválidos"
-        });
+        return res.status(400).send({ status: 400, message: "Parámetros inválidos" });
     }
 
     if (cantidad < Paginacion.MIN_PAGINACION || cantidad > Paginacion.MAX_PAGINACION_EMPLEADOS) {
-        pool.end();
         return res.status(400).send({
             status: 400,
             message: `cantidad debe estar entre ${Paginacion.MIN_PAGINACION} y ${Paginacion.MAX_PAGINACION_EMPLEADOS}`
@@ -47,46 +27,61 @@ export function listaSolicitudesVacaciones(req, res) {
     }
 
     if (pagina < Paginacion.MIN_PAGINACION) {
-        pool.end();
-        return res.status(400).send({
-            status: 400,
-            message: "La página no puede ser negativa"
-        });
+        return res.status(400).send({ status: 400, message: "La página no puede ser negativa" });
     }
 
     const offset = pagina * cantidad;
 
+    const condiciones = [];
+    const params = [];
+
+    if (id_empleado) {
+        condiciones.push('i.ID_EMPLEADO = ?');
+        params.push(id_empleado);
+    }
+    if (tipo) {
+        condiciones.push('sv.tipo = ?');
+        params.push(tipo);
+    }
+    if (estado) {
+        condiciones.push('sv.estado = ?');
+        params.push(estado);
+    }
+    if (nombre) {
+        condiciones.push('e.Nombre LIKE ?');
+        params.push(`%${nombre}%`);
+    }
+    if (apellidos) {
+        condiciones.push('e.Apellidos LIKE ?');
+        params.push(`%${apellidos}%`);
+    }
+
+    const whereClause = condiciones.length > 0 ? ' WHERE ' + condiciones.join(' AND ') : '';
+    const joins = 'JOIN incidencia i ON sv.ID_INCIDENCIA = i.ID LEFT JOIN empleado e ON i.ID_EMPLEADO = e.id';
+
     pool.getConnection((err, connection) => {
         if (err) {
-            pool.end();
-            return res.status(500).send({
-                status: 500,
-                message: "Error de base de datos"
-            });
+            return res.status(500).send({ status: 500, message: "Error de base de datos" });
         }
 
-        const joinClause = id_empleado ? 'JOIN incidencia i ON sv.ID_INCIDENCIA = i.ID' : '';
-        const whereClause = id_empleado ? 'WHERE i.ID_EMPLEADO = ?' : '';
-        const params = id_empleado ? [id_empleado] : [];
-
         connection.query(
-            `SELECT COUNT(*) as total FROM solicitud_vacaciones sv ${joinClause} ${whereClause}`,
+            `SELECT COUNT(*) as total FROM solicitud_vacaciones sv ${joins}${whereClause}`,
             params,
             (errCount, countResult) => {
                 if (errCount) {
                     connection.release();
-                    pool.end();
                     return res.status(500).send({ status: 500, message: "Error en la consulta" });
                 }
 
                 const totalResultados = countResult[0].total;
 
                 connection.query(
-                    `SELECT sv.* FROM solicitud_vacaciones sv ${joinClause} ${whereClause} ORDER BY sv.id_incidencia DESC LIMIT ? OFFSET ?`,
+                    `SELECT sv.*, e.Nombre AS nombre_empleado, e.Apellidos AS apellidos_empleado
+                     FROM solicitud_vacaciones sv ${joins}${whereClause}
+                     ORDER BY sv.id_incidencia DESC LIMIT ? OFFSET ?`,
                     [...params, cantidad, offset],
                     (error, result) => {
                         connection.release();
-                        pool.end();
 
                         if (error) {
                             return res.status(500).send({ status: 500, message: "Error en la consulta" });
@@ -97,7 +92,7 @@ export function listaSolicitudesVacaciones(req, res) {
                             meta: {
                                 pagina,
                                 cantidad,
-                                totalPaginas: Math.ceil(totalResultados / cantidad),
+                                totalPaginas: Math.ceil(totalResultados / cantidad) || 1,
                                 resultados: totalResultados
                             },
                             data: result

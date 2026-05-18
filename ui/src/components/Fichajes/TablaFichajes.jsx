@@ -1,6 +1,8 @@
-import { useEffect, useState } from "react";
-import { useUsers } from "../../context/UserContext.jsx";
-import { apiFetch } from "../../utils/apiFetch.jsx";
+import {useEffect, useState} from "react";
+import {useSearchParams} from "react-router-dom";
+import {useUsers} from "../../context/UserContext.jsx";
+import {apiFetch} from "../../utils/apiFetch.jsx";
+import {useDebounce} from "../../hooks/useDebounce.js";
 import "../../../public/styles/tablaPermisos.css";
 import "../../../public/styles/mainPages.css";
 
@@ -15,22 +17,63 @@ import "../../../public/styles/mainPages.css";
 export function TablaFichajes({setFichajeActivo}) {
 
     const [listaFichajes, setListaFichajes] = useState([]);
+    const [cargando, setCargando] = useState(true);
     const [errorCarga, setErrorCarga] = useState('');
-    const [paginaActual, setPaginaActual] = useState(0);
+    const [paginaActual, setPaginaActual] = useState(() => parseInt(sessionStorage.getItem('tabla_fichajes_pagina') || '0', 10));
     const [paginaMaxima, setPaginaMaxima] = useState(0);
     const [totalRegistros, setTotalRegistros] = useState(0);
     const [cantidadPorPagina] = useState(10);
-    const [filtros, setFiltros] = useState({ usuario: '', nombre: '', apellidos: '', tipo: '' });
-    const setFiltro = (campo, valor) => setFiltros(prev => ({ ...prev, [campo]: valor }));
+    const [searchParams, setSearchParams] = useSearchParams();
+    const [filtros, setFiltros] = useState({
+        usuario: '',
+        nombre: searchParams.get('nombre') || '',
+        apellidos: searchParams.get('apellidos') || '',
+        tipo: searchParams.get('tipo') || '',
+    });
+    const setFiltro = (campo, valor) => setFiltros(prev => ({...prev, [campo]: valor}));
+    const dNombre = useDebounce(filtros.nombre);
+    const dApellidos = useDebounce(filtros.apellidos);
 
-    const { user } = useUsers();
+    const {user} = useUsers();
 
     useEffect(() => {
+        sessionStorage.setItem('tabla_fichajes_pagina', paginaActual);
+    }, [paginaActual]);
+
+    useEffect(() => {
+        const p = {};
+        if (dNombre) p.nombre = dNombre;
+        if (dApellidos) p.apellidos = dApellidos;
+        if (filtros.tipo) p.tipo = filtros.tipo;
+        setSearchParams(p, {replace: true});
+    }, [dNombre, dApellidos, filtros.tipo]);
+
+    useEffect(() => {
+        setPaginaActual(0);
+    }, [dNombre, dApellidos, filtros.tipo]);
+
+    const hayFiltros = !!(dNombre || dApellidos || filtros.tipo);
+    const limpiarFiltros = () => {
+        setFiltros({usuario: '', nombre: '', apellidos: '', tipo: ''});
+        setSearchParams({}, {replace: true});
+    };
+
+    useEffect(() => {
+        setCargando(true);
         const urlFichajes = import.meta.env.VITE_BACKEND_FICHAJES
             || `${import.meta.env.VITE_BACKEND}/fichajes`;
 
+        const params = new URLSearchParams({
+            pagina: paginaActual,
+            cantidad: cantidadPorPagina,
+            username: user?.username
+        });
+        if (dNombre) params.set('nombre', dNombre);
+        if (dApellidos) params.set('apellidos', dApellidos);
+        if (filtros.tipo) params.set('tipo', filtros.tipo);
+
         apiFetch(
-            `${urlFichajes}?pagina=${paginaActual}&cantidad=${cantidadPorPagina}&username=${user?.username}`,
+            `${urlFichajes}?${params}`,
             {
                 method: 'GET',
                 headers: {
@@ -55,8 +98,9 @@ export function TablaFichajes({setFichajeActivo}) {
                 console.error(e);
                 setErrorCarga(e?.message || 'No se han podido cargar los fichajes.');
                 setListaFichajes([]);
-            });
-    }, [paginaActual, cantidadPorPagina, user?.token]);
+            })
+            .finally(() => setCargando(false));
+    }, [paginaActual, cantidadPorPagina, user?.token, dNombre, dApellidos, filtros.tipo]);
 
     function obtenerValor(fichaje, claves, valorPorDefecto = 'N/A') {
         const valor = claves
@@ -67,32 +111,37 @@ export function TablaFichajes({setFichajeActivo}) {
 
     function formatearFecha(fecha) {
         return fecha
-            ? new Date(fecha).toLocaleString('es-ES', { timeZone: 'UTC' })
+            ? new Date(fecha).toLocaleString('es-ES', {timeZone: 'UTC'})
             : 'N/A';
+    }
+
+    if (cargando) {
+        return (
+            <div className="tabla-empty-state">
+                <div className="spinner-border text-primary" role="status">
+                    <span className="visually-hidden">Cargando...</span>
+                </div>
+            </div>
+        );
     }
 
     if (errorCarga) {
         return (
             <div className="tabla-empty-state">
-                <i className="bi bi-exclamation-circle tabla-empty-icon text-danger" aria-hidden="true" />
+                <i className="bi bi-exclamation-circle tabla-empty-icon text-danger" aria-hidden="true"/>
                 <p className="text-danger mb-0">{errorCarga}</p>
             </div>
         );
     }
 
-    const fichajesFiltrados = listaFichajes.filter(f => (
-        (!filtros.usuario || String(f?.username ?? '').toLowerCase().includes(filtros.usuario.toLowerCase())) &&
-        (!filtros.nombre || String(f?.nombre ?? '').toLowerCase().includes(filtros.nombre.toLowerCase())) &&
-        (!filtros.apellidos || String(f?.apellidos ?? '').toLowerCase().includes(filtros.apellidos.toLowerCase())) &&
-        (!filtros.tipo || f?.tipo === filtros.tipo)
-    ));
 
     return (
         <>
-            {listaFichajes.length > 0 ? (
-                <div className="table-responsive m-3 d-flex flex-column justify-content-start">
-                    <table className="table table-striped">
-                        <thead>
+            {listaFichajes.length > 0 || hayFiltros ? (
+                <div className="contenedor-tabla m-3 d-flex flex-column justify-content-start">
+                    <div className={"table-responsive"}>
+                        <table className="table table-striped">
+                            <thead>
                             <tr>
                                 <th scope="col">#</th>
                                 <th scope="col">Empleado</th>
@@ -102,27 +151,42 @@ export function TablaFichajes({setFichajeActivo}) {
                                 <th scope="col">Entrada</th>
                                 <th scope="col">Salida</th>
                                 <th scope="col">Tipo</th>
+                                <th scope="col"></th>
                             </tr>
-                            <tr className="table-light">
-                                <th />
-                                <th />
-                                <th><input className="form-control form-control-sm" type="text" placeholder="Usuario" value={filtros.usuario} onChange={e => setFiltro('usuario', e.target.value)} /></th>
-                                <th><input className="form-control form-control-sm" type="text" placeholder="Nombre" value={filtros.nombre} onChange={e => setFiltro('nombre', e.target.value)} /></th>
-                                <th><input className="form-control form-control-sm" type="text" placeholder="Apellidos" value={filtros.apellidos} onChange={e => setFiltro('apellidos', e.target.value)} /></th>
-                                <th />
-                                <th />
+                            <tr>
+                                <th/>
+                                <th/>
+                                <th><input className="form-control form-control-sm" type="text" placeholder="Usuario"
+                                           value={filtros.usuario}
+                                           onChange={e => setFiltro('usuario', e.target.value)}/></th>
+                                <th><input className="form-control form-control-sm" type="text" placeholder="Nombre"
+                                           value={filtros.nombre} onChange={e => setFiltro('nombre', e.target.value)}/>
+                                </th>
+                                <th><input className="form-control form-control-sm" type="text" placeholder="Apellidos"
+                                           value={filtros.apellidos}
+                                           onChange={e => setFiltro('apellidos', e.target.value)}/></th>
+                                <th/>
+                                <th/>
                                 <th>
-                                    <select className="form-select form-select-sm" value={filtros.tipo} onChange={e => setFiltro('tipo', e.target.value)}>
+                                    <select className="form-select form-select-sm" value={filtros.tipo}
+                                            onChange={e => setFiltro('tipo', e.target.value)}>
                                         <option value="">Todos</option>
                                         <option value="Presencial">Presencial</option>
                                         <option value="Remoto">Remoto</option>
                                     </select>
                                 </th>
-                                <th />
+                                <th>
+                                    {hayFiltros && (
+                                        <button className="btn btn-outline-secondary btn-sm w-100"
+                                                onClick={limpiarFiltros} title="Limpiar filtros">
+                                            <i className="bi bi-x-lg me-1" aria-hidden="true"/>Limpiar
+                                        </button>
+                                    )}
+                                </th>
                             </tr>
-                        </thead>
-                        <tbody className="table-group-divider">
-                            {fichajesFiltrados.length > 0 ? fichajesFiltrados.map((fichaje) => {
+                            </thead>
+                            <tbody className="table-group-divider">
+                            {listaFichajes.length > 0 ? listaFichajes.map((fichaje) => {
                                 const id = obtenerValor(fichaje, ['id']);
                                 const idEmpleado = obtenerValor(fichaje, ['id_empleado']);
                                 const username = obtenerValor(fichaje, ['username']);
@@ -148,42 +212,47 @@ export function TablaFichajes({setFichajeActivo}) {
                                     </td>
                                 </tr>
                             )}
-                        </tbody>
-                    </table>
-
-                    <div className="d-flex align-items-center justify-content-center gap-2 mb-3">
-                        <button
-                            className="btn btn-outline-secondary btn-sm bi bi-chevron-bar-left"
-                            aria-label="Primera página"
-                            disabled={paginaActual === 0}
-                            onClick={() => setPaginaActual(0)}
-                        />
-                        <button
-                            className="btn btn-outline-secondary btn-sm bi bi-chevron-left"
-                            aria-label="Página anterior"
-                            disabled={paginaActual === 0}
-                            onClick={() => { if (paginaActual > 0) setPaginaActual(paginaActual - 1); }}
-                        />
-                        <span className="small text-muted">
+                            </tbody>
+                        </table>
+                    </div>
+                    {listaFichajes.length > 0 &&
+                        <div className="d-flex align-items-center justify-content-center gap-2 mb-3">
+                            <button
+                                className="btn btn-outline-secondary btn-sm bi bi-chevron-bar-left"
+                                aria-label="Primera página"
+                                disabled={paginaActual === 0}
+                                onClick={() => setPaginaActual(0)}
+                            />
+                            <button
+                                className="btn btn-outline-secondary btn-sm bi bi-chevron-left"
+                                aria-label="Página anterior"
+                                disabled={paginaActual === 0}
+                                onClick={() => {
+                                    if (paginaActual > 0) setPaginaActual(paginaActual - 1);
+                                }}
+                            />
+                            <span className="small text-muted">
                             Página {paginaActual + 1} de {paginaMaxima + 1} · {totalRegistros} registros
                         </span>
-                        <button
-                            className="btn btn-outline-secondary btn-sm bi bi-chevron-right"
-                            aria-label="Página siguiente"
-                            disabled={!(paginaActual < paginaMaxima)}
-                            onClick={() => { if (paginaActual < paginaMaxima) setPaginaActual(paginaActual + 1); }}
-                        />
-                        <button
-                            className="btn btn-outline-secondary btn-sm bi bi-chevron-bar-right"
-                            aria-label="Última página"
-                            disabled={!(paginaActual < paginaMaxima)}
-                            onClick={() => setPaginaActual(paginaMaxima)}
-                        />
-                    </div>
+                            <button
+                                className="btn btn-outline-secondary btn-sm bi bi-chevron-right"
+                                aria-label="Página siguiente"
+                                disabled={!(paginaActual < paginaMaxima)}
+                                onClick={() => {
+                                    if (paginaActual < paginaMaxima) setPaginaActual(paginaActual + 1);
+                                }}
+                            />
+                            <button
+                                className="btn btn-outline-secondary btn-sm bi bi-chevron-bar-right"
+                                aria-label="Última página"
+                                disabled={!(paginaActual < paginaMaxima)}
+                                onClick={() => setPaginaActual(paginaMaxima)}
+                            />
+                        </div>}
                 </div>
             ) : (
                 <div className="tabla-empty-state">
-                    <i className="bi bi-person-check tabla-empty-icon" aria-hidden="true" />
+                    <i className="bi bi-person-check tabla-empty-icon" aria-hidden="true"/>
                     <p className="text-muted mb-0">No hay fichajes registrados.</p>
                 </div>
             )}

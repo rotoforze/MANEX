@@ -65,7 +65,7 @@ async function actualizarFichaje(req, res) {
 
         await connection.commit();
 
-        return res.status(201).send({status: 201, message: 'Fichaje registrado.'});
+        return res.status(200).send({status: 200, message: 'Fichaje actualizado correctamente.'});
 
     } catch (error) {
 

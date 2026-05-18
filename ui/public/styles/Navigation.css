@@ -1,9 +1,107 @@
-.main-nav {
-    min-height: 12dvh;
+/* ============================================================
+   Desktop: ocultar barras móviles
+   ============================================================ */
+.bottom-nav-admin,
+.bottom-nav-icons {
+    display: none;
 }
 
-@media (max-width: 768px) {
+/* ============================================================
+   Móvil (≤ 1000px): ocultar sidebar, mostrar barra inferior
+   ============================================================ */
+@media (max-width: 1000px) {
     .main-nav {
-        min-height: 12dvh;
+        display: none !important;
     }
+
+    /* Ajustes de layout para barra inferior fija */
+    .app-shell {
+        overflow: visible !important;
+        height: auto !important;
+    }
+
+    .app-content {
+        width: 100dvw !important;
+        height: 100dvh !important;
+        padding-bottom: 56px !important;
+    }
+
+    /* ── Barra colapsable (dept >= 5) ── */
+    .bottom-nav-admin {
+        display: block;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.45);
+    }
+
+    .bottom-nav-bar {
+        height: 56px;
+    }
+
+    .bottom-nav-panel {
+        background-color: var(--bs-dark-bg-subtle, #212529);
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        max-height: 60vh;
+        overflow-y: auto;
+        animation: slideUp 0.18s ease-out;
+    }
+
+    @keyframes slideUp {
+        from { opacity: 0; transform: translateY(6px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Barra de iconos (dept < 5) ── */
+    .bottom-nav-icons {
+        display: block;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 56px;
+        z-index: 1000;
+        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.45);
+    }
+
+    .bottom-icon-link {
+        padding: 6px 14px;
+        text-decoration: none;
+        color: rgba(255, 255, 255, 0.65);
+        border-top: 2px solid transparent;
+        transition: color 0.15s;
+    }
+
+    .bottom-icon-link:hover {
+        color: #fff;
+    }
+
+    .bottom-icon-link.active {
+        color: #fff;
+        border-top-color: #0d6efd;
+    }
+}
+
+/* ============================================================
+   Avatares (usados en ambas vistas)
+   ============================================================ */
+.main-nav-avatar {
+    width: 32px;
+    height: 32px;
+    background-color: #6c757d;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #fff;
+    flex-shrink: 0;
+}
+
+.main-nav-avatar-sm {
+    width: 30px;
+    height: 30px;
+    background-color: #6c757d;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #fff;
 }

@@ -82,6 +82,6 @@ export async function enviarUsuario(token, id, nombre, apellidos, fecha_nacimien
 
     } catch (error) {
         console.error('ERROR AL INICIAR SESIÓN: ', error);
-        return [false. error.message];
+        return [false, error.message];
     }
 }

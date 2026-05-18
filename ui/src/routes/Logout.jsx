@@ -17,10 +17,8 @@ export const Logout = () => {
     const {user} = useUsers();
     // para cerrar sesión basta con borrar la cookie y reiniciar la página.
     useEffect(() => {
-        // si hay token lo borra
         if (user?.token) deleteTokenCookie();
-        // fuerza un F5
-        window.location.reload(false);
+        window.location.replace('/');
     }, [])
 
     return (

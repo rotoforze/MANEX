@@ -1,11 +1,6 @@
-import mysql from 'mysql2';
+import pool from './db.mjs';
 import crypto from "crypto";
-import dotenv from 'dotenv';
-import verificadorDatos from "./empleados/verificadorDatos.mjs";
 import { verificarContrasenia } from "./empleados/hashDeContrasenias.mjs";
-
-//Cargamos las variables del archivo .env a process.env
-dotenv.config();
 
 /**
  * Intenta iniciar sesión, usando un usuario, una password y si se ha recibido,
@@ -19,26 +14,6 @@ dotenv.config();
  * @returns {Response}
  */
 export function login(req, res) {
-
-    const pool = mysql.createPool({
-        host: process.env.DB_HOST,
-        user: process.env.DB_USER,
-        password: process.env.DB_PASS,
-        database: process.env.DB_NAME,
-        port: process.env.DB_PORT
-    })
-
-    pool.on('enqueue', function () {
-        console.log('Esperando por la conexión con la bbdd.');
-    });
-
-    pool.on('acquire', function (connection) {
-        console.log('Se ha establecido la conexión %d con la bbdd.', connection.threadId)
-    });
-
-    pool.on('release', function (connection) {
-        console.log('Conexión %d liberada', connection.threadId);
-    });
 
     if (!req?.body) return res.status(401).send({ status: 401 })
     const { usuario, pass, keepSession, token } = req.body;
@@ -119,7 +94,6 @@ export function login(req, res) {
 
                             var hasToken = crearToken(pool, usuario, newToken, !!keepSession);
 
-                            console.log(newToken, hasToken, !!keepSession)
                             if (!hasToken) {
                                 newToken = '';
                             }
@@ -149,7 +123,7 @@ export function login(req, res) {
 
 
     });
-    if (res.headerSent) {
+    if (res.headersSent) {
         return res.status(404).send(
             { status: 404, message: "salida invalida" }
         );;
@@ -198,7 +172,6 @@ async function crearToken(pool, usuario = '', token = '', timepoLargo = false) {
                 [usuario, token, nuevaFechaExpiracion],
                 (error, result) => {
                     connection.release();
-                    console.log(result)
                     if (error) {
                         console.error("Error en la consulta:", error);
                     }

@@ -24,7 +24,8 @@ export function NuevaIncidenciaForm({ funcionDeCierreDeFormulario, handleNuevaIn
         setSeEstaEnviando(true);
         setMensaje(null);
 
-        const formData = new FormData(event.currentTarget);
+        const form = event.currentTarget;
+        const formData = new FormData(form);
         const [ok, texto] = await enviarIncidencia(
             user?.token,
             user?.id,
@@ -33,6 +34,7 @@ export function NuevaIncidenciaForm({ funcionDeCierreDeFormulario, handleNuevaIn
             formData.get('comentario') || '',
         );
         if (ok) {
+            form.reset();
             handleNuevaIncidencia();
         } else {
             setMensaje({ tipo: 'danger', texto });

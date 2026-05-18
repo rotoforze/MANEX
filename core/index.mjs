@@ -45,6 +45,7 @@ import delVacaciones from "./API/vacaciones/eliminar.mjs";
 import getSolicitud from "./API/vacaciones/solicitudVacaciones.mjs";
 import delProducto from "./API/productos/eliminar.mjs";
 import nuevoProducto from "./API/productos/nuevo.mjs";
+import getPerfilEmpleado from "./API/empleados/perfilEmpleado.mjs";
 
 const app = express();
 
@@ -153,7 +154,7 @@ app.get('/fichajes', (req, res) => {
     } else listaFichajes(req, res);
 });
 
-
+app.get('/empleado-perfil', (req, res) => getPerfilEmpleado(req, res));
 app.get('/productos', (req, res) => {
     const parametrosRecibidos = Object.keys(req.query);
 
@@ -237,8 +238,10 @@ app.get('/incidencias', (req, res) => {
             message: `Parámetros no permitidos: ${parametrosNoValidos.join(', ')}`
         });
     }
+    const tienePaginacion = req?.query?.pagina !== undefined || req?.query?.cantidad !== undefined;
+    const tieneFiltros = req?.query?.id || req?.query?.id_empleado || req?.query?.estado || req?.query?.fecha_inicio;
 
-    if (req?.query?.id) {
+    if (!tienePaginacion && tieneFiltros) {
         getIncidencia(req, res);
 
     } else listaIncidencias(req, res);
@@ -311,7 +314,7 @@ app.post('/incidencias', (req, res) => {
     }
     // si en la petición viene un ID, vamos a actualizarIncidencia
     // en vez de a registrar
-    if (req?.body?.id_incidencia) {
+    if (req?.body?.id) {
         actualizarIncidencia(req, res);
     } else registrarIncidencias(req, res);
 });
@@ -350,4 +353,4 @@ app.post('/reset', aplicarReset);
 app.get('/password-requests', listarSolicitudes);
 app.post('/password-requests', gestionarSolicitud);
 
-app.listen(80, () => console.log('Escuchando llamadas en http://localhost:80'));
+app.listen(2341, () => console.log('Escuchando llamadas en http://localhost:2341'));

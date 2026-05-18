@@ -1,3 +1,4 @@
+import pool from '../db.mjs';
 import mysql from 'mysql2';
 import dotenv from 'dotenv';
 
@@ -14,22 +15,13 @@ dotenv.config();
  */
 function getProducto(req, res) {
 
-    const idProducto = req.body.id;
+    const { id, estado } = req.query;
 
-    if (isNaN(idProducto) || !idProducto || idProducto < 0) {
-        return res.status(400).send({
-            status: 400,
-            message: "Parámetros inválidos o nulos"
-        });
+    if (id && (isNaN(id) || id < 0)) {
+        return res.status(400).send({ status: 400, message: "El parámetro 'id' no es válido" });
     }
 
-    const pool = mysql.createPool({
-        host: process.env.DB_HOST,
-        database: process.env.DB_NAME,
-        user: process.env.DB_USER,
-        password: process.env.DB_PASS,
-        port: process.env.DB_PORT
-    });
+
 
     pool.getConnection((err, connection) => {
         if (err) {
@@ -39,12 +31,24 @@ function getProducto(req, res) {
             });
         }
 
+        const condiciones = [];
+        const params = [];
+
+        if (id) {
+            condiciones.push(`ID = ?`);
+            params.push(id);
+        }
+
+        if (estado) {
+            condiciones.push(`estado = ?`);
+            params.push(estado);
+        }
+
+        const whereClause = condiciones.length > 0 ? ` WHERE ` + condiciones.join(' AND ') : '';
+
         connection.query(
-            `SELECT *
-             FROM inventario
-             WHERE ID = ?
-             ORDER BY nombre LIMIT 1`,
-            [idProducto],
+            `SELECT * FROM inventario${whereClause} ORDER BY nombre`,
+            params,
             (error, result) => {
 
                 connection.release();

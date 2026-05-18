@@ -24,18 +24,6 @@ const pool = mysql.createPool({
  */
 const auth = async (req, res, next) => {
 
-    pool.on('enqueue', function () {
-        console.log('Esperando por la conexión con la bbdd.');
-    });
-
-    pool.on('acquire', function (connection) {
-        console.log('Se ha establecido la conexión %d con la bbdd.', connection.threadId)
-    });
-
-    pool.on('release', function (connection) {
-        console.log('Conexión %d liberada', connection.threadId);
-    });
-
     // rutas que no requieren autenticación
     const rutasPublicas = ['/login', '/', '/permisos', '/recuperar', '/reset'];
     if (rutasPublicas.includes(req.path)) return next();
@@ -97,7 +85,7 @@ const auth = async (req, res, next) => {
  * @param token
  * @returns {number}
  */
-async function getNivelAcceso(token, pool) {
+export async function getNivelAcceso(token, pool = pool) {
     try {
         const [rows] = await pool.query(
             'SELECT e.ID_DEPARTAMENTO, a.USERNAME FROM auth_token a JOIN EMPLEADO e ON a.USERNAME = e.USERNAME WHERE a.token = ? AND a.EXPIRES_AT > NOW();',
