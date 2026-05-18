@@ -14,6 +14,8 @@ async function verificadorDatos(req, res) {
         usuario, email, contrasenia
     } = req.body;
 
+
+
     // validaciones
     if (!id) {
         if (!nombre || !fecha_nacimiento ||

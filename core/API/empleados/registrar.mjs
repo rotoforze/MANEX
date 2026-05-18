@@ -2,6 +2,7 @@ import mysql from "mysql2/promise";
 import dotenv from 'dotenv';
 import verificadorDatos from "./verificadorDatos.mjs";
 import {hashContrasenia} from "./hashDeContrasenias.mjs";
+import {getNivelAcceso} from "../middlewareAutenticación.mjs";
 
 //Cargamos las variables del archivo .env a process.env
 dotenv.config();
@@ -33,6 +34,8 @@ async function registrar(req, res) {
     };
 
     const connection = await mysql.createConnection(config);
+    const deptSuperior = getNivelAcceso(req?.headers?.token);
+    if (deptSuperior < ID_departamento) return res.status(500).send({status: 500, message: 'No se pueden crear usuarios con un nivel de acceso superior.'});
     if (!connection) return res.status(500).send({status: 500, message: 'Error al conectar a la base de datos.'});
     await connection.beginTransaction();
 

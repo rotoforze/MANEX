@@ -85,7 +85,7 @@ const auth = async (req, res, next) => {
  * @param token
  * @returns {number}
  */
-async function getNivelAcceso(token, pool) {
+export async function getNivelAcceso(token, pool = pool) {
     try {
         const [rows] = await pool.query(
             'SELECT e.ID_DEPARTAMENTO, a.USERNAME FROM auth_token a JOIN EMPLEADO e ON a.USERNAME = e.USERNAME WHERE a.token = ? AND a.EXPIRES_AT > NOW();',
