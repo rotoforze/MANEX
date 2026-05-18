@@ -14,7 +14,7 @@
     "/permisos": {
         "protected": true,
         "GET": [
-            ">1"
+            "*"
         ],
         "POST": [
             "8"
@@ -26,9 +26,9 @@
     "/empleados": {
         "protected": false,
         "DELETE": [
-            "5",
+            "8",
             "7",
-            "8"
+            "5"
         ],
         "POST": [
             "5",
@@ -50,8 +50,6 @@
             "8"
         ],
         "DELETE": [
-            "6",
-            "7",
             "8"
         ]
     },
@@ -98,6 +96,19 @@
             "8"
         ]
     },
+    "/fichajes": {
+        "protected": false,
+        "GET": [
+            ">1"
+        ],
+        "POST": [
+            ">1"
+        ],
+        "DELETE": [
+            "7",
+            "8"
+        ]
+    },
     "/vacaciones": {
         "protected": false,
         "GET": [
@@ -109,6 +120,39 @@
         "DELETE": [
             "7",
             "8"
+        ]
+    },
+    "/dashboard": {
+        "protected": false,
+        "GET": [
+            "*"
+        ]
+    },
+    "/password": {
+        "protected": true,
+        "POST": [
+            ">1"
+        ]
+    },
+    "/password-requests": {
+        "protected": true,
+        "GET": [
+            "5", "7", "8"
+        ],
+        "POST": [
+            "5", "7", "8"
+        ]
+    },
+    "/recuperar": {
+        "protected": true,
+        "POST": [
+            "*"
+        ]
+    },
+    "/reset": {
+        "protected": true,
+        "POST": [
+            "*"
         ]
     }
 }

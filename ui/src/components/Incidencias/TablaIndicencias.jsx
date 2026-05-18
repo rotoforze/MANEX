@@ -152,7 +152,7 @@ export function TablaIncidencias({ tipoIncidencia, idEmpleado }) {
         <>
             {listaIncidencias.length > 0 || hayFiltros ? (
                 <div className="table-responsive m-3 d-flex flex-column justify-content-start">
-                    <table className="table table-striped">
+                    <table className="table table-striped  align-middle">
                         <thead>
                             <tr>
                                 <th scope="col">#</th>
@@ -206,12 +206,12 @@ export function TablaIncidencias({ tipoIncidencia, idEmpleado }) {
                                         </td>
                                         <td>{obtenerValor(incidencia, ['Observaciones'])}</td>
                                         <td>{obtenerValor(incidencia, ['Comentario'])}</td>
-                                        <td className="acciones-tabla">
+                                        <td className="h-auto m-auto w-auto p-1">
                                             <button
                                                 className="btn btn-primary btn-sm"
                                                 title="Editar incidencia"
                                                 aria-label="Editar incidencia"
-                                            ><i className="bi bi-pencil-fill" aria-hidden="true" /></button>
+                                            ><i className="bi bi-pencil-fill" aria-hidden="true" /></button>&nbsp;
                                             <button
                                                 className="btn btn-danger btn-sm"
                                                 title="Eliminar incidencia"

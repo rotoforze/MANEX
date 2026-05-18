@@ -230,13 +230,13 @@ export function TablaSolicitudes({ idEmpleado }) {
                                                 {estado}
                                             </span>
                                         </td>
-                                        <td className="h-auto acciones-tabla">
+                                        <td className="h-auto w-100 p-1">
                                             <button
                                                 className="btn btn-primary btn-sm"
                                                 title="Editar solicitud"
                                                 aria-label="Editar solicitud"
                                                 onClick={() => setSolicitudEditando(solicitud)}
-                                            ><i className="bi bi-pencil-fill" aria-hidden="true" /></button>
+                                            ><i className="bi bi-pencil-fill" aria-hidden="true" /></button>&nbsp;
                                             <button
                                                 className="btn btn-danger btn-sm"
                                                 title="Eliminar solicitud"
