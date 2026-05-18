@@ -116,6 +116,7 @@ function PanelSolicitudesPassword({ token, base }) {
     const [codigoAprobado, setCodigo]     = useState(null); // { username, code }
     const [procesando, setProcesando]     = useState(null); // id en proceso
     const [pagina, setPagina]             = useState(0);
+    const [copiado, setCopiado]           = useState(false);
 
     async function cargar() {
         setCargando(true);
@@ -180,6 +181,20 @@ function PanelSolicitudesPassword({ token, base }) {
                         <div className="fw-semibold mb-1">Solicitud de <strong>{codigoAprobado.username}</strong> aprobada</div>
                         <div className="small mb-1">Comunica este código al empleado para que restablezca su contraseña:</div>
                         <span className="fs-4 fw-bold font-monospace letter-spacing-2 me-3">{codigoAprobado.code}</span>
+                        <button
+                            type="button"
+                            className={`btn btn-sm me-2 ${copiado ? 'btn-success' : 'btn-outline-secondary'}`}
+                            title="Copiar código"
+                            aria-label="Copiar código"
+                            onClick={() => {
+                                navigator.clipboard.writeText(codigoAprobado.code);
+                                setCopiado(true);
+                                setTimeout(() => setCopiado(false), 2000);
+                            }}
+                        >
+                            <i className={`bi ${copiado ? 'bi-check-lg' : 'bi-clipboard'}`} aria-hidden="true"></i>
+                            {copiado ? ' Copiado' : ' Copiar'}
+                        </button>
                         <span className="badge text-bg-light text-muted">Válido 24 horas</span>
                     </div>
                     <button type="button" className="btn-close ms-auto" onClick={() => setCodigo(null)} aria-label="Cerrar"></button>
