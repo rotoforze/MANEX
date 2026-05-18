@@ -135,62 +135,66 @@ export function TablaDepartamentos() {
                 </div>
             ) : listaDepartamentos.length > 0 || hayFiltros ? (
                 <div className="table-responsive m-3 d-flex flex-column justify-content-start">
-                    <table className="table table-striped">
-                        <thead>
-                        <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">Nombre</th>
-                            <th scope="col">Acciones</th>
-                        </tr>
-                        <tr>
-                            <th/>
-                            <th><input className="form-control form-control-sm" type="text" placeholder="Nombre"
-                                       value={filtros.nombre} onChange={e => setFiltro('nombre', e.target.value)}/></th>
-                            <th>
-                                {hayFiltros && (
-                                    <button className="btn btn-outline-secondary btn-sm w-100" onClick={limpiarFiltros}
-                                            title="Limpiar filtros">
-                                        <i className="bi bi-x-lg me-1" aria-hidden="true"/>Limpiar
-                                    </button>
-                                )}
-                            </th>
-                        </tr>
-                        </thead>
-                        <tbody className="table-group-divider">
-                        {listaDepartamentos.length > 0 ? listaDepartamentos.map(departamento => (
-                            <tr key={departamento?.ID} className={`h-auto `}>
-                                <th scope="row">
-                                    <i className={`${departamento?.ID == 8 ? 'bi bi-shield badge text-bg-danger' : ''}`}>{departamento?.ID == 8 ? '!' : ''}</i>
-                                    &nbsp;{departamento?.ID}
-                                </th>
-                                <td>{departamento?.Nombre}</td>
-                                <td className={`h-auto w-auto p-1`}>
-                                    <button
-                                        className={`btn btn-primary btn-sm`}
-                                        title="Editar departamento"
-                                        aria-label="Editar departamento"
-                                        onClick={() => setDepartamentoEditando(departamento)}
-                                        disabled={departamento?.ID == 8 || !tengoPermiso('/departamentos', 'POST')}
-                                    ><i className="bi bi-pencil-fill" aria-hidden="true"/></button>&nbsp;
-                                    <button
-                                        className="btn btn-danger btn-sm"
-                                        title="Eliminar departamento"
-                                        aria-label="Eliminar departamento"
-                                        onClick={() => setDepartamentoEliminando(departamento)}
-                                        disabled={departamento?.ID == 8 || !tengoPermiso('/departamentos', 'DELETE')}
-                                    ><i className="bi bi-trash-fill" aria-hidden="true"/></button>
-                                </td>
-                            </tr>
-                        )) : (
+                    <div className={"table-responsive"}>
+                        <table className="table table-striped">
+                            <thead>
                             <tr>
-                                <td colSpan={3} className="text-center text-muted py-4 small">
-                                    Sin resultados con los filtros aplicados.
-                                </td>
+                                <th scope="col">#</th>
+                                <th scope="col">Nombre</th>
+                                <th scope="col">Acciones</th>
                             </tr>
-                        )}
-                        </tbody>
-                    </table>
-
+                            <tr>
+                                <th/>
+                                <th><input className="form-control form-control-sm" type="text" placeholder="Nombre"
+                                           value={filtros.nombre} onChange={e => setFiltro('nombre', e.target.value)}/>
+                                </th>
+                                <th>
+                                    {hayFiltros && (
+                                        <button className="btn btn-outline-secondary btn-sm w-100"
+                                                onClick={limpiarFiltros}
+                                                title="Limpiar filtros">
+                                            <i className="bi bi-x-lg me-1" aria-hidden="true"/>Limpiar
+                                        </button>
+                                    )}
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody className="table-group-divider">
+                            {listaDepartamentos.length > 0 ? listaDepartamentos.map(departamento => (
+                                <tr key={departamento?.ID} className={`h-auto `}>
+                                    <th scope="row">
+                                        <i className={`${departamento?.ID == 8 ? 'bi bi-shield badge text-bg-danger' : ''}`}>{departamento?.ID == 8 ? '!' : ''}</i>
+                                        &nbsp;{departamento?.ID}
+                                    </th>
+                                    <td>{departamento?.Nombre}</td>
+                                    <td className={`h-auto w-auto p-1`}>
+                                        <button
+                                            className={`btn btn-primary btn-sm`}
+                                            title="Editar departamento"
+                                            aria-label="Editar departamento"
+                                            onClick={() => setDepartamentoEditando(departamento)}
+                                            disabled={departamento?.ID == 8 || !tengoPermiso('/departamentos', 'POST')}
+                                        ><i className="bi bi-pencil-fill" aria-hidden="true"/></button>
+                                        &nbsp;
+                                        <button
+                                            className="btn btn-danger btn-sm"
+                                            title="Eliminar departamento"
+                                            aria-label="Eliminar departamento"
+                                            onClick={() => setDepartamentoEliminando(departamento)}
+                                            disabled={departamento?.ID == 8 || !tengoPermiso('/departamentos', 'DELETE')}
+                                        ><i className="bi bi-trash-fill" aria-hidden="true"/></button>
+                                    </td>
+                                </tr>
+                            )) : (
+                                <tr>
+                                    <td colSpan={3} className="text-center text-muted py-4 small">
+                                        Sin resultados con los filtros aplicados.
+                                    </td>
+                                </tr>
+                            )}
+                            </tbody>
+                        </table>
+                    </div>
                     {listaDepartamentos.length > 0 &&
                         <div className="d-flex align-items-center justify-content-center gap-2 mb-3">
                             <button

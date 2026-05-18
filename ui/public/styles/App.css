@@ -329,4 +329,9 @@ form div {
         width: 28px;
         height: 28px;
     }
+    .contenedor-tabla {
+        padding: 0px !important;
+        justify-content: unset !important;
+        margin: 0px !important;
+    }
 }

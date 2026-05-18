@@ -41,9 +41,9 @@ export const ErrorPage = () => {
               Volver
             </button>
 
-            <Link className="btn btn-primary" to="/dashboard">
+            <Link className="btn btn-primary" to="/login">
               <i className="bi bi-house-door me-2" aria-hidden="true"></i>
-              Ir al inicio
+              Volver al inicio
             </Link>
           </div>
         </div>

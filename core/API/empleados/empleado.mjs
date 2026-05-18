@@ -18,9 +18,6 @@ function getEmpleado(req, res) {
             message: "Parámetros inválidos o nulos"
         });
     }
-
-
-
     pool.getConnection((err, connection) => {
         if (err) {
             return res.status(500).send({
