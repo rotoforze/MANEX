@@ -1,5 +1,6 @@
-import { NavLink } from "react-router-dom";
+import {NavLink} from "react-router-dom";
 import "../../public/styles/mainPages.css";
+import {useUsers} from "../context/UserContext.jsx";
 
 /**
  *
@@ -10,7 +11,8 @@ import "../../public/styles/mainPages.css";
  * @version 1.0.0
  * @constructor
  */
-export const NavbarConfigProfileLogout = ({ children }) => {
+export const NavbarConfigProfileLogout = ({children}) => {
+    const {tengoPermiso} = useUsers();
     return (
         <div className="d-flex flex-column card w-100 h-100 empleados-container">
             <div className="card-header">
@@ -20,12 +22,14 @@ export const NavbarConfigProfileLogout = ({ children }) => {
                             Perfil
                         </NavLink>
                     </li>
-
-                    <li className="nav-item">
-                        <NavLink className="nav-link" to="/configuration">
-                            Configuración
-                        </NavLink>
-                    </li>
+                    {
+                        tengoPermiso('/permisos', 'POST') && tengoPermiso('/permisos', 'DELETE') &&
+                        (<li className="nav-item">
+                            <NavLink className="nav-link" to="/configuration">
+                                Configuración
+                            </NavLink>
+                        </li>)
+                    }
 
                     <li className="nav-item">
                         <NavLink className="nav-link text-danger" to="/logout">

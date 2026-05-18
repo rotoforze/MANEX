@@ -21,12 +21,13 @@
     .app-shell {
         overflow: visible !important;
         height: auto !important;
+        width: 100dvw !important;
+        height: 100dvh !important;
     }
 
     .app-content {
         width: 100dvw !important;
         height: 100dvh !important;
-        padding-bottom: 56px !important;
     }
 
     /* ── Barra colapsable (dept >= 5) ── */

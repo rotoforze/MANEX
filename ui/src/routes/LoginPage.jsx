@@ -87,6 +87,9 @@ const LoginPage = () => {
             return;
         }
         if (actionData?.success) {
+            if (document.activeElement) {
+                document.activeElement.blur();
+            }
             changeUserInformation(actionData.username, actionData.id, actionData.token, actionData.department, true);
         }
     }, [actionData]);

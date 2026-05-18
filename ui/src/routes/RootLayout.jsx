@@ -18,8 +18,16 @@ export const RootLayout = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
-    const PUBLIC_ROUTES = ['/', '/login'];
+    useEffect(() => {
+        window.scrollTo(0, 0);
+        // Forzar reflow del viewport en iOS
+        document.documentElement.style.height = '';
+        requestAnimationFrame(() => {
+            document.documentElement.style.height = '100%';
+        });
+    }, [location.pathname]);
 
+    const PUBLIC_ROUTES = ['/', '/login'];
     useEffect(() => {
         if (isInitialLoading || location.pathname === '/error') return;
 
@@ -32,7 +40,7 @@ export const RootLayout = () => {
         }
     }, [user, isInitialLoading, location.pathname])
     if (isInitialLoading) return <Loading/>;
-    if (user?.username && user?.authenticated  && existeCookie()) {
+    if (user?.username && user?.authenticated && existeCookie()) {
         return (
             <div className="app-shell d-flex min-vh-100">
                 <MainNav/>

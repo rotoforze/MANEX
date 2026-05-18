@@ -253,12 +253,7 @@ export function TablaSolicitudes({idEmpleado}) {
                                                 title="Editar solicitud"
                                                 aria-label="Editar solicitud" disabled={!tengoPermiso('/vacaciones', 'POST') || estadosNoModificables.includes(estado)}
                                                 onClick={() => setSolicitudEditando(solicitud)}
-                                            ><i className="bi bi-pencil-fill" aria-hidden="true" /></button>&nbsp;
-                                            <button
-                                                className="btn btn-danger btn-sm"
-                                                title="Eliminar solicitud"
-                                                aria-label="Eliminar solicitud" disabled={!tengoPermiso('/vacaciones', 'DELETE') || estadosNoModificables.includes(estado)}
-                                            ><i className="bi bi-trash-fill" aria-hidden="true"/></button>
+                                            ><i className="bi bi-pencil-fill" aria-hidden="true" /></button>
                                         </td>
                                     </tr>
                                 );

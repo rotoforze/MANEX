@@ -94,7 +94,7 @@ export function TablaContratos() {
         cargarContratos();
     };
 
-    const contratosFiltrados = listaContratos.filter(c => (
+    const contratosFiltrados = listaContratos?.filter(c => (
         (!filtros.salario || String(c?.Salario_anual ?? '').includes(filtros.salario)) &&
         (!filtros.horas || String(c?.Horas_anuales ?? '').includes(filtros.horas))
     ));

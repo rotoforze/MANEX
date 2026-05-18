@@ -27,7 +27,7 @@ async function actualizarIncidencia(req, res) {
     }
 
 
-    const estadoSolicitud = estado === 'Cerrada' ? 'Concedido' : 'En revisión';
+    const estadoSolicitud = estado === 'Cerrada' ? 'Rechazado' : 'En revisión';
 
     const config = {
         host:     process.env.DB_HOST,
