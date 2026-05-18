@@ -17,7 +17,6 @@ async function registrarSolicitudVacaciones(req, res) {
 
     await verificadorDatos(req, res)
     if (res.headersSent) return;
-    console.log(req.body);
 
     const {fecha_inicio, fecha_fin, tipo, estado, id_incidencia, id_empleado, observaciones, comentario} = req.body;
 
