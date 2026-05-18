@@ -1,7 +1,3 @@
-.empleados-container {
-    height: fit-content !important;
-}
-
 .nuevo-producto-form {
     display: flex;
     flex-direction: column;

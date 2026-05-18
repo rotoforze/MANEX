@@ -76,7 +76,7 @@ export function listaSolicitudesVacaciones(req, res) {
                 const totalResultados = countResult[0].total;
 
                 connection.query(
-                    `SELECT sv.*, e.Nombre AS nombre_empleado, e.Apellidos AS apellidos_empleado
+                    `SELECT sv.*, i.comentario, e.Nombre AS nombre_empleado, e.Apellidos AS apellidos_empleado
                      FROM solicitud_vacaciones sv ${joins}${whereClause}
                      ORDER BY sv.id_incidencia DESC LIMIT ? OFFSET ?`,
                     [...params, cantidad, offset],

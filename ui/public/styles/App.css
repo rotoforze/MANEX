@@ -300,8 +300,8 @@ form div {
     .app-shell {
         display: flex;
         flex-direction: column;
-        overflow: hidden;
-        height: 100dvh;
+        overflow: hidden !important;
+        height: 90dvh;
     }
     .app-content {
         height: 90dvh !important;
@@ -333,5 +333,8 @@ form div {
         padding: 0px !important;
         justify-content: unset !important;
         margin: 0px !important;
+    }
+    .table thead {
+        width: 100% !important;
     }
 }

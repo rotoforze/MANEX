@@ -30,7 +30,6 @@ export function NuevaIncidenciaForm({ funcionDeCierreDeFormulario, handleNuevaIn
             user?.token,
             user?.id,
             tipoIncidencia,
-            formData.get('observaciones'),
             formData.get('comentario') || '',
         );
         if (ok) {
@@ -68,26 +67,9 @@ export function NuevaIncidenciaForm({ funcionDeCierreDeFormulario, handleNuevaIn
                             Informacion de la incidencia
                         </h4>
 
-                        <div className="row g-2">
-                            <div className="col-12 mb-2">
-                                <label htmlFor="observaciones" className="form-label mb-1" style={{fontSize: '0.85rem'}}>
-                                    Observaciones <span className="text-danger">*</span>
-                                </label>
-
-                                <input
-                                    type="text"
-                                    className="form-control form-control-sm"
-                                    id="observaciones"
-                                    name="observaciones"
-                                    maxLength="60"
-                                    required
-                                />
-                            </div>
-                        </div>
-
                         <div className="mb-2">
                             <label htmlFor="comentario" className="form-label mb-1" style={{fontSize: '0.85rem'}}>
-                                Comentario
+                                Comentario <span className="text-danger">*</span>
                             </label>
 
                             <textarea
@@ -96,6 +78,7 @@ export function NuevaIncidenciaForm({ funcionDeCierreDeFormulario, handleNuevaIn
                                 name="comentario"
                                 rows="3"
                                 maxLength="60"
+                                required
                             ></textarea>
                         </div>
 

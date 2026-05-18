@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
-import { useUsers } from "../../context/UserContext.jsx";
-import { apiFetch } from "../../utils/apiFetch.jsx";
-import { useDebounce } from "../../hooks/useDebounce.js";
-import { EditarIncidenciaForm } from "./EditarIncidenciaForm.jsx";
-import { DelIncidencia } from "./DelIncidencia.jsx";
+import {useEffect, useState} from "react";
+import {useSearchParams} from "react-router-dom";
+import {useUsers} from "../../context/UserContext.jsx";
+import {apiFetch} from "../../utils/apiFetch.jsx";
+import {useDebounce} from "../../hooks/useDebounce.js";
+import {EditarIncidenciaForm} from "./EditarIncidenciaForm.jsx";
+import {DelIncidencia} from "./DelIncidencia.jsx";
 import "../../../public/styles/tablaPermisos.css";
 import "../../../public/styles/mainPages.css";
 
@@ -45,7 +45,7 @@ export function TablaIncidencias({tipoIncidencia, idEmpleado}) {
     const dNombre = useDebounce(filtros.nombre);
     const dApellidos = useDebounce(filtros.apellidos);
 
-    const { user, tengoPermiso } = useUsers();
+    const {user, tengoPermiso} = useUsers();
 
     useEffect(() => {
         sessionStorage.setItem('tabla_incidencias_pagina', paginaActual);
@@ -137,7 +137,14 @@ export function TablaIncidencias({tipoIncidencia, idEmpleado}) {
 
     function formatearFecha(fecha) {
         return fecha
-            ? new Date(fecha).toLocaleDateString('es-ES', {timeZone: 'UTC'})
+            ? new Date(fecha).toLocaleTimeString('es-ES', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            })
             : 'N/A';
     }
 
@@ -190,16 +197,16 @@ export function TablaIncidencias({tipoIncidencia, idEmpleado}) {
             {listaIncidencias.length > 0 || hayFiltros ? (
                 <div className="m-3 d-flex flex-column contenedor-tabla">
                     <div className={"table-responsive"}>
-                        <table className="table table-striped overflow-x-auto align-middle">
+                        <table className="table table-striped">
                             <thead>
                             <tr>
                                 <th scope="col">#</th>
                                 {!idEmpleado && <th scope="col">Nombre</th>}
                                 {!idEmpleado && <th scope="col">Apellidos</th>}
-                                <th scope="col">Fecha</th>
-                                <th scope="col">Estado</th>
-                                <th scope="col">Observaciones</th>
-                                <th scope="col">Comentario</th>
+                                <th scope="col" className={"col-2"}>Fecha</th>
+                                <th scope="col" className={"col-3"}>Estado</th>
+                                <th scope="col" className={"col-4"}>Observaciones <span className={"text-secondary small"}>(Respuesta de quien ha revisado tu solicitud)</span></th>
+                                <th scope="col" className={"col-5"}>Comentario</th>
                                 <th scope="col">Acciones</th>
                             </tr>
                             <tr>
@@ -239,9 +246,9 @@ export function TablaIncidencias({tipoIncidencia, idEmpleado}) {
                             </thead>
                             <tbody className="table-group-divider">
                             {listaIncidencias.length > 0 ? listaIncidencias.map((incidencia) => {
-                                const id     = obtenerValor(incidencia, ['ID']);
+                                const id = obtenerValor(incidencia, ['ID']);
                                 const estado = obtenerValor(incidencia, ['estado'], 'Sin estado');
-                                const fecha  = obtenerValor(incidencia, ['fecha_creacion'], null);
+                                const fecha = obtenerValor(incidencia, ['fecha_creacion'], null);
 
                                 return (
                                     <tr key={id}>
@@ -256,7 +263,7 @@ export function TablaIncidencias({tipoIncidencia, idEmpleado}) {
                                         </td>
                                         <td>{obtenerValor(incidencia, ['Observaciones'])}</td>
                                         <td>{obtenerValor(incidencia, ['Comentario'])}</td>
-                                        <td className="h-auto m-auto w-auto p-1">
+                                        <td className="h-auto w-100 p-1">
                                             <button
                                                 className="btn btn-primary btn-sm"
                                                 title="Editar incidencia"
@@ -266,7 +273,7 @@ export function TablaIncidencias({tipoIncidencia, idEmpleado}) {
                                                     setIncidenciaSeleccionada(incidencia);
                                                     setMostrarFormulario(true);
                                                 }}
-                                            ><i className="bi bi-pencil-fill" aria-hidden="true" /></button>
+                                            ><i className="bi bi-pencil-fill" aria-hidden="true"/></button>&nbsp;
                                             <button
                                                 className="btn btn-danger btn-sm"
                                                 title="Eliminar incidencia"
@@ -276,7 +283,7 @@ export function TablaIncidencias({tipoIncidencia, idEmpleado}) {
                                                     setIncidenciaAEliminar(incidencia);
                                                     setEliminando(true);
                                                 }}
-                                            ><i className="bi bi-trash-fill" aria-hidden="true" /></button>
+                                            ><i className="bi bi-trash-fill" aria-hidden="true"/></button>
                                         </td>
                                     </tr>
                                 );
@@ -287,8 +294,9 @@ export function TablaIncidencias({tipoIncidencia, idEmpleado}) {
                                     </td>
                                 </tr>
                             )}
-                        </tbody>
-                    </table>
+                            </tbody>
+                        </table>
+                    </div>
 
                     {listaIncidencias.length > 0 && (
                         <div className="d-flex align-items-center justify-content-center gap-2 mb-3">
@@ -302,7 +310,9 @@ export function TablaIncidencias({tipoIncidencia, idEmpleado}) {
                                 className="btn btn-outline-secondary btn-sm bi bi-chevron-left"
                                 aria-label="Página anterior"
                                 disabled={paginaActual === 0}
-                                onClick={() => { if (paginaActual > 0) setPaginaActual(paginaActual - 1); }}
+                                onClick={() => {
+                                    if (paginaActual > 0) setPaginaActual(paginaActual - 1);
+                                }}
                             />
                             <span className="small text-muted">
                                 Página {paginaActual + 1} de {paginaMaxima + 1} · {totalRegistros} registros
@@ -311,7 +321,9 @@ export function TablaIncidencias({tipoIncidencia, idEmpleado}) {
                                 className="btn btn-outline-secondary btn-sm bi bi-chevron-right"
                                 aria-label="Página siguiente"
                                 disabled={!(paginaActual < paginaMaxima)}
-                                onClick={() => { if (paginaActual < paginaMaxima) setPaginaActual(paginaActual + 1); }}
+                                onClick={() => {
+                                    if (paginaActual < paginaMaxima) setPaginaActual(paginaActual + 1);
+                                }}
                             />
                             <button
                                 className="btn btn-outline-secondary btn-sm bi bi-chevron-bar-right"

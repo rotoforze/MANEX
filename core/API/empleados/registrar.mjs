@@ -17,12 +17,14 @@ dotenv.config();
  */
 async function registrar(req, res) {
 
-        await verificadorDatos(req, res)
+    await verificadorDatos(req, res)
     if (res.headersSent) return;
 
-    const { nombre, apellidos, fecha_nacimiento,
+    const {
+        nombre, apellidos, fecha_nacimiento,
         telefono, ID_contrato, ID_departamento,
-        usuario, email, contrasenia} = req.body;
+        usuario, email, contrasenia
+    } = req.body;
 
     // comenzamos la transaccion
     const config = {
@@ -35,7 +37,11 @@ async function registrar(req, res) {
 
     const connection = await mysql.createConnection(config);
     const deptSuperior = getNivelAcceso(req?.headers?.token);
-    if (deptSuperior < ID_departamento) return res.status(500).send({status: 500, message: 'No se pueden crear usuarios con un nivel de acceso superior.'});
+
+    if (deptSuperior < ID_departamento) return res.status(500).send({
+        status: 500,
+        message: 'No se pueden crear usuarios con un nivel de acceso superior.'
+    });
     if (!connection) return res.status(500).send({status: 500, message: 'Error al conectar a la base de datos.'});
     await connection.beginTransaction();
 
@@ -47,7 +53,7 @@ async function registrar(req, res) {
             'INSERT INTO usuario (USERNAME, PASSWORD, EMAIL) VALUES (?, ?, ?)',
             [usuario, contraseniaHasheada, email]);
 
-        const [[{ nextId }]] = await connection.query(
+        const [[{nextId}]] = await connection.query(
             'SELECT COALESCE(MAX(ID), 0) + 1 AS nextId FROM empleado FOR UPDATE'
         );
 

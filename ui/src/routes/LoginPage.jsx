@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react'
+import React, {useEffect, useState} from 'react'
 import {Form, Link, useActionData, useNavigate, useNavigation} from 'react-router-dom'
-import { useUsers } from "../context/UserContext.jsx";
-import { Loading } from "../components/Loading.jsx";
+import {useUsers} from "../context/UserContext.jsx";
+import {Loading} from "../components/Loading.jsx";
 import '../../public/styles/mainPages.css'
-import { apiFetch } from "../utils/apiFetch.jsx";
+import {apiFetch} from "../utils/apiFetch.jsx";
 
 /**
  * Componente que muestra el formulario de inicio de sesión y, de forma integrada,
@@ -17,51 +17,60 @@ import { apiFetch } from "../utils/apiFetch.jsx";
  */
 const LoginPage = () => {
 
-    const actionData  = useActionData();
-    const navigate    = useNavigate();
-    const navigation  = useNavigation();
-    const { user, changeUserInformation } = useUsers();
+    const actionData = useActionData();
+    const navigate = useNavigate();
+    const navigation = useNavigation();
+    const {user, changeUserInformation} = useUsers();
     const seEstaEnviando = navigation.state === 'submitting';
 
     const [passwordShown, setPasswordShown] = useState(false);
-    const [cargando, setCargado]            = useState(true);
+    const [cargando, setCargado] = useState(true);
 
     // ── Vista: 'login' | 'recuperar' | 'reset' ──
     const [vista, setVista] = useState('login');
 
     // ── Estado recuperación ──
-    const [recUsername, setRecUsername]         = useState('');
-    const [codigoInput, setCodigoInput]         = useState('');
-    const [passNuevo, setPassNuevo]             = useState('');
-    const [passConfirm, setPassConfirm]         = useState('');
-    const [mostrarPassRec, setMostrarPassRec]   = useState(false);
-    const [recCargando, setRecCargando]         = useState(false);
-    const [recMensaje, setRecMensaje]           = useState(null);
-    const [resetExito, setResetExito]           = useState(false);
+    const [recUsername, setRecUsername] = useState('');
+    const [codigoInput, setCodigoInput] = useState('');
+    const [passNuevo, setPassNuevo] = useState('');
+    const [passConfirm, setPassConfirm] = useState('');
+    const [mostrarPassRec, setMostrarPassRec] = useState(false);
+    const [recCargando, setRecCargando] = useState(false);
+    const [recMensaje, setRecMensaje] = useState(null);
+    const [resetExito, setResetExito] = useState(false);
 
     function irARecuperar() {
         setVista('recuperar');
-        setRecUsername(''); setCodigoGenerado(''); setCodigoInput('');
-        setPassNuevo(''); setPassConfirm(''); setRecMensaje(null); setResetExito(false);
+        setRecUsername('');
+        setCodigoInput('');
+        setPassNuevo('');
+        setPassConfirm('');
+        setRecMensaje(null);
+        setResetExito(false);
     }
 
     function volverAlLogin() {
         setVista('login');
-        setRecMensaje(null);
     }
 
     // ── Efectos login ──
     useEffect(() => {
-        if (actionData?.status === 404) return;
-        if (actionData) navigate('/dashboard');
+        if (actionData?.error == 404) {
+            setRecMensaje({tipo: 'danger', texto: actionData?.message});
+            deleteTokenCookie();
+            return;
+        }
+        if (actionData?.success) navigate('/dashboard');
     }, [actionData, navigate]);
 
     useEffect(() => {
         try {
             apiFetch(import.meta.env.VITE_BACKEND,
-                { method: 'GET', headers: { 'Content-Type': 'application/json' } })
+                {method: 'GET', headers: {'Content-Type': 'application/json'}})
                 .then(r => r.json())
-                .then(data => { if (!data.status == 200) navigate('/error'); })
+                .then(data => {
+                    if (!data.status == 200) navigate('/error');
+                })
                 .catch(() => navigate('/error'))
                 .finally(() => setCargado(false));
         } catch (error) {
@@ -71,8 +80,13 @@ const LoginPage = () => {
 
     useEffect(() => {
         if (!actionData) return;
-        if (actionData?.error == 404) return;
-        if (actionData.success) {
+        console.log(actionData);
+        if (actionData?.error == 404) {
+            setRecMensaje({tipo: 'danger', texto: actionData?.message});
+            deleteTokenCookie();
+            return;
+        }
+        if (actionData?.success) {
             changeUserInformation(actionData.username, actionData.id, actionData.token, actionData.department, true);
         }
     }, [actionData]);
@@ -85,17 +99,17 @@ const LoginPage = () => {
         try {
             const res = await apiFetch(`${import.meta.env.VITE_BACKEND}/recuperar`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: new URLSearchParams({ username: recUsername }).toString(),
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                body: new URLSearchParams({username: recUsername}).toString(),
             });
             const data = await res.json();
             if (res.ok) {
-                setRecMensaje({ tipo: 'success', texto: data.message });
+                setRecMensaje({tipo: 'success', texto: data.message});
             } else {
-                setRecMensaje({ tipo: 'danger', texto: data.message ?? 'No se pudo enviar la solicitud.' });
+                setRecMensaje({tipo: 'danger', texto: data.message ?? 'No se pudo enviar la solicitud.'});
             }
         } catch {
-            setRecMensaje({ tipo: 'danger', texto: 'Error de conexión con el servidor.' });
+            setRecMensaje({tipo: 'danger', texto: 'Error de conexión con el servidor.'});
         } finally {
             setRecCargando(false);
         }
@@ -105,7 +119,7 @@ const LoginPage = () => {
     async function handleReset(e) {
         e.preventDefault();
         if (passNuevo !== passConfirm) {
-            setRecMensaje({ tipo: 'danger', texto: 'Las contraseñas no coinciden.' });
+            setRecMensaje({tipo: 'danger', texto: 'Las contraseñas no coinciden.'});
             return;
         }
         setRecMensaje(null);
@@ -113,7 +127,7 @@ const LoginPage = () => {
         try {
             const res = await apiFetch(`${import.meta.env.VITE_BACKEND}/reset`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
                 body: new URLSearchParams({
                     username: recUsername,
                     code: codigoInput,
@@ -125,10 +139,10 @@ const LoginPage = () => {
             if (res.ok) {
                 setResetExito(true);
             } else {
-                setRecMensaje({ tipo: 'danger', texto: data.message ?? 'No se pudo restablecer la contraseña.' });
+                setRecMensaje({tipo: 'danger', texto: data.message ?? 'No se pudo restablecer la contraseña.'});
             }
         } catch {
-            setRecMensaje({ tipo: 'danger', texto: 'Error de conexión con el servidor.' });
+            setRecMensaje({tipo: 'danger', texto: 'Error de conexión con el servidor.'});
         } finally {
             setRecCargando(false);
         }
@@ -138,7 +152,7 @@ const LoginPage = () => {
     return (
         <main className="login-page d-flex align-items-center justify-content-center min-vh-100 px-3">
             {cargando ? (
-                <Loading />
+                <Loading/>
             ) : (
                 <section className="card login-card shadow-lg border-0 w-100">
                     <div className="card-body p-4 p-md-5">
@@ -158,7 +172,7 @@ const LoginPage = () => {
                                 <h1 className="h3 text-center mb-4 fw-semibold">Iniciar sesión</h1>
 
                                 <Form method="POST">
-                                    <input type="text" name="token" id="token" defaultValue={user.token} hidden />
+                                    <input type="text" name="token" id="token" defaultValue={user.token} hidden/>
 
                                     <div className="d-grid gap-3">
                                         <div>
@@ -184,7 +198,8 @@ const LoginPage = () => {
                                                     onClick={() => setPasswordShown(v => !v)}
                                                     aria-label={passwordShown ? 'Ocultar contraseña' : 'Mostrar contraseña'}
                                                 >
-                                                    <i className={`bi ${passwordShown ? 'bi-eye-slash' : 'bi-eye'}`} aria-hidden="true" />
+                                                    <i className={`bi ${passwordShown ? 'bi-eye-slash' : 'bi-eye'}`}
+                                                       aria-hidden="true"/>
                                                 </button>
                                             </div>
                                         </div>
@@ -195,12 +210,13 @@ const LoginPage = () => {
                                                 id="keepSession" name="keepSession"
                                                 defaultChecked={!!user.token}
                                             />
-                                            <label className="form-check-label" htmlFor="keepSession">
+                                            <label className="form-check-label form-control-sm" htmlFor="keepSession">
                                                 Mantener la sesión iniciada
                                             </label>
                                         </div>
 
-                                        <button className="btn btn-primary btn-lg w-100" type="submit" disabled={seEstaEnviando}>
+                                        <button className="btn btn-primary btn-lg w-100" type="submit"
+                                                disabled={seEstaEnviando}>
                                             {seEstaEnviando ? 'Iniciando sesión...' : 'Iniciar sesión'}
                                         </button>
                                     </div>
@@ -208,7 +224,7 @@ const LoginPage = () => {
 
                                 <div className="mt-4 text-center">
                                     <button
-                                        className="btn link-primary p-0 small text-light"
+                                        className="btn link-primary p-0 small text-secondary"
                                         type="button"
                                         onClick={irARecuperar}
                                     >
@@ -261,7 +277,8 @@ const LoginPage = () => {
                                     </div>
                                     <button className="btn btn-primary w-100" type="submit" disabled={recCargando}>
                                         {recCargando
-                                            ? <><span className="spinner-border spinner-border-sm me-2" role="status"></span>Enviando solicitud...</>
+                                            ? <><span className="spinner-border spinner-border-sm me-2"
+                                                      role="status"></span>Enviando solicitud...</>
                                             : 'Solicitar cambio de contraseña'
                                         }
                                     </button>
@@ -270,12 +287,16 @@ const LoginPage = () => {
                                 {recMensaje?.tipo === 'success' && (
                                     <div className="mt-3 text-center">
                                         <p className="small text-muted mb-2">
-                                            Cuando RRHH apruebe tu solicitud y te proporcione el código, pulsa el botón de abajo.
+                                            Cuando RRHH apruebe tu solicitud y te proporcione el código, pulsa el botón
+                                            de abajo.
                                         </p>
                                         <button
                                             type="button"
                                             className="btn btn-outline-primary w-100"
-                                            onClick={() => { setVista('reset'); setRecMensaje(null); }}
+                                            onClick={() => {
+                                                setVista('reset');
+                                                setRecMensaje(null);
+                                            }}
                                         >
                                             <i className="bi bi-key me-2"></i>Ya tengo un código
                                         </button>
@@ -293,7 +314,8 @@ const LoginPage = () => {
                                     <div className="text-center py-2">
                                         <i className="bi bi-check-circle-fill text-success fs-1 d-block mb-3"></i>
                                         <p className="fw-semibold">¡Contraseña restablecida!</p>
-                                        <p className="text-muted small">Ya puedes iniciar sesión con tu nueva contraseña.</p>
+                                        <p className="text-muted small">Ya puedes iniciar sesión con tu nueva
+                                            contraseña.</p>
                                         <button className="btn btn-primary w-100 mt-2" onClick={volverAlLogin}>
                                             Ir al inicio de sesión
                                         </button>
@@ -303,7 +325,10 @@ const LoginPage = () => {
                                         <button
                                             type="button"
                                             className="btn btn-link p-0 text-muted small mb-3 d-flex align-items-center gap-1"
-                                            onClick={() => { setVista('recuperar'); setRecMensaje(null); }}
+                                            onClick={() => {
+                                                setVista('recuperar');
+                                                setRecMensaje(null);
+                                            }}
                                         >
                                             <i className="bi bi-arrow-left"></i> Volver
                                         </button>
@@ -316,7 +341,8 @@ const LoginPage = () => {
                                         </div>
 
                                         {recMensaje && (
-                                            <div className={`alert alert-${recMensaje.tipo} py-2 px-3 small`} role="alert">
+                                            <div className={`alert alert-${recMensaje.tipo} py-2 px-3 small`}
+                                                 role="alert">
                                                 <i className={`bi bi-${recMensaje.tipo === 'danger' ? 'exclamation-triangle' : 'check-circle'} me-2`}></i>
                                                 {recMensaje.texto}
                                             </div>
@@ -337,7 +363,8 @@ const LoginPage = () => {
                                                     />
                                                 </div>
                                                 <div>
-                                                    <label htmlFor="reset-code" className="form-label">Código de recuperación</label>
+                                                    <label htmlFor="reset-code" className="form-label">Código de
+                                                        recuperación</label>
                                                     <input
                                                         id="reset-code"
                                                         type="text"
@@ -349,7 +376,8 @@ const LoginPage = () => {
                                                     />
                                                 </div>
                                                 <div>
-                                                    <label htmlFor="reset-pass" className="form-label">Nueva contraseña</label>
+                                                    <label htmlFor="reset-pass" className="form-label">Nueva
+                                                        contraseña</label>
                                                     <div className="input-group">
                                                         <input
                                                             id="reset-pass"
@@ -371,7 +399,8 @@ const LoginPage = () => {
                                                     <div className="form-text">Mínimo 6 caracteres.</div>
                                                 </div>
                                                 <div>
-                                                    <label htmlFor="reset-confirm" className="form-label">Confirmar contraseña</label>
+                                                    <label htmlFor="reset-confirm" className="form-label">Confirmar
+                                                        contraseña</label>
                                                     <input
                                                         id="reset-confirm"
                                                         type={mostrarPassRec ? 'text' : 'password'}
@@ -381,9 +410,11 @@ const LoginPage = () => {
                                                         required minLength={6} maxLength={255}
                                                     />
                                                 </div>
-                                                <button className="btn btn-primary w-100" type="submit" disabled={recCargando}>
+                                                <button className="btn btn-primary w-100" type="submit"
+                                                        disabled={recCargando}>
                                                     {recCargando
-                                                        ? <><span className="spinner-border spinner-border-sm me-2" role="status"></span>Restableciendo...</>
+                                                        ? <><span className="spinner-border spinner-border-sm me-2"
+                                                                  role="status"></span>Restableciendo...</>
                                                         : 'Restablecer contraseña'
                                                     }
                                                 </button>
@@ -396,7 +427,9 @@ const LoginPage = () => {
 
                     </div>
                     <div className="card-footer d-flex justify-content-center w-100 bg-transparent border-0">
-                        <Link to="/" className="navbar-brand w-auto text-secondary link-primary bi bi-arrow-left-short"> Página de información</Link>
+                        <Link to="/"
+                              className="navbar-brand w-auto text-secondary link-primary bi bi-arrow-left-short"> Página
+                            de información</Link>
                     </div>
                 </section>
             )}

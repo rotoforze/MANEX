@@ -44,7 +44,7 @@ export function NuevaSolicitudForm({ funcionDeCierreDeFormulario, handleNuevaSol
             tipo: formData.get('tipo'),
             fecha_inicio: fechaInicio,
             fecha_fin: fechaFin,
-            observaciones: formData.get('observaciones'),
+            comentario: formData.get('comentario'),
             estado: 'En revisión',
         });
         if (ok) {
@@ -146,14 +146,14 @@ export function NuevaSolicitudForm({ funcionDeCierreDeFormulario, handleNuevaSol
                         </div>
 
                         <div className="mb-2">
-                            <label htmlFor="descripcion" className="form-label mb-1" style={{fontSize: '0.85rem'}}>
+                            <label htmlFor="comentario" className="form-label mb-1" style={{fontSize: '0.85rem'}}>
                                 Descripción <span className="text-danger">*</span>
                             </label>
 
                             <textarea
                                 className="form-control form-control-sm"
-                                id="descripcion"
-                                name="observaciones"
+                                id="comentario"
+                                name="comentario"
                                 rows="3"
                                 maxLength="60"
                                 required
