@@ -1,5 +1,6 @@
 import { InfoDashboard } from "../components/Dashboard/InfoDashboard.jsx";
 import '../../public/styles/mainPages.css';
+import {useEffect} from "react";
 
 /**
  * Contenedor del Dashboard.

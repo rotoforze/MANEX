@@ -3,11 +3,11 @@
   "info": {
     "title": "API REST - MANEX",
     "description": "API de MANEX para la gestión de empleados, departamentos, contratos e inventario...",
-    "version": "1.3.1"
+    "version": "2.0.0"
   },
   "servers": [
     {
-      "url": "http://localhost:80",
+      "url": "http://localhost:2341",
       "description": "Servidor local de desarrollo"
     }
   ],
@@ -24,89 +24,308 @@
       "ErrorBadRequest": {
         "type": "object",
         "properties": {
-          "status": { "type": "integer", "example": 400 },
-          "message": { "type": "string", "example": "Parámetros inválidos o nulos" }
+          "status": {
+            "type": "integer",
+            "example": 400
+          },
+          "message": {
+            "type": "string",
+            "example": "Parámetros inválidos o nulos"
+          }
         }
       },
       "ErrorUnauthorized": {
         "type": "object",
         "properties": {
-          "status": { "type": "integer", "example": 401 },
-          "message": { "type": "string", "example": "Token caducado o inexistente" }
+          "status": {
+            "type": "integer",
+            "example": 401
+          },
+          "message": {
+            "type": "string",
+            "example": "Token caducado o inexistente"
+          }
         }
       },
       "ErrorForbidden": {
         "type": "object",
         "properties": {
-          "message": { "type": "string", "example": "No tienes permiso para esta acción" }
+          "message": {
+            "type": "string",
+            "example": "No tienes permiso para esta acción"
+          }
         }
       },
       "ErrorNotFound": {
         "type": "object",
         "properties": {
-          "status": { "type": "integer", "example": 404 },
-          "message": { "type": "string", "example": "Recurso no encontrado" }
+          "status": {
+            "type": "integer",
+            "example": 404
+          },
+          "message": {
+            "type": "string",
+            "example": "Recurso no encontrado"
+          }
         }
       },
       "ErrorServer": {
         "type": "object",
         "properties": {
-          "status": { "type": "integer", "example": 500 },
-          "message": { "type": "string", "example": "Error en el servidor" }
+          "status": {
+            "type": "integer",
+            "example": 500
+          },
+          "message": {
+            "type": "string",
+            "example": "Error en el servidor"
+          }
         }
       },
       "Empleado": {
         "type": "object",
         "properties": {
-          "id": { "type": "integer", "example": 1 },
-          "Nombre": { "type": "string", "example": "Juan" },
-          "Apellidos": { "type": "string", "example": "García López" },
-          "fecha_nacimiento": { "type": "string", "format": "date", "example": "1990-05-15" },
-          "telefono": { "type": "string", "example": "612345678" },
-          "ID_CONTRATO": { "type": "integer", "example": 3 },
-          "ID_DEPARTAMENTO": { "type": "integer", "example": 2 },
-          "username": { "type": "string", "example": "jgarcia" },
-          "esVisible": { "type": "integer", "example": 1 }
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
+          "Nombre": {
+            "type": "string",
+            "example": "Cova"
+          },
+          "Apellidos": {
+            "type": "string",
+            "example": "Blanco Álvarez"
+          },
+          "fecha_nacimiento": {
+            "type": "string",
+            "format": "date",
+            "example": "1999-03-12"
+          },
+          "telefono": {
+            "type": "string",
+            "example": "612345678"
+          },
+          "ID_CONTRATO": {
+            "type": "integer",
+            "example": 1
+          },
+          "ID_DEPARTAMENTO": {
+            "type": "integer",
+            "example": 5
+          },
+          "username": {
+            "type": "string",
+            "example": "cova"
+          },
+          "esVisible": {
+            "type": "integer",
+            "example": 1
+          }
         }
       },
       "Contrato": {
         "type": "object",
         "properties": {
-          "ID": { "type": "integer", "example": 1 },
-          "Salario_anual": { "type": "number", "example": 24000 },
-          "Horas_anuales": { "type": "number", "example": 1800 }
+          "ID": {
+            "type": "integer",
+            "example": 1
+          },
+          "Salario_anual": {
+            "type": "number",
+            "example": 24000
+          },
+          "Horas_anuales": {
+            "type": "number",
+            "example": 1800
+          }
         }
       },
       "Departamento": {
         "type": "object",
         "properties": {
-          "ID": { "type": "integer", "example": 1 },
-          "Nombre": { "type": "string", "example": "Recursos Humanos" }
+          "ID": {
+            "type": "integer",
+            "example": 1
+          },
+          "Nombre": {
+            "type": "string",
+            "example": "Recursos Humanos"
+          }
         }
       },
       "Producto": {
         "type": "object",
         "properties": {
-          "ID": { "type": "integer", "example": 1 },
-          "nombre": { "type": "string", "example": "Teclado mecánico" }
+          "ID": {
+            "type": "integer",
+            "example": 1
+          },
+          "Nombre": {
+            "type": "string",
+            "example": "Teclado mecánico"
+          },
+          "Descripcion": {
+            "type": "string",
+            "example": "Teclado mecánico con switches Cherry MX"
+          },
+          "Estado": {
+            "type": "string",
+            "example": "Disponible"
+          }
+        }
+      },
+      "Fichaje": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
+          "id_empleado": {
+            "type": "integer",
+            "example": 1
+          },
+          "username": {
+            "type": "string",
+            "example": "eneas"
+          },
+          "nombre": {
+            "type": "string",
+            "example": "Eneas"
+          },
+          "apellidos": {
+            "type": "string",
+            "example": "de la Rosa Menéndez Pedrosa"
+          },
+          "fecha_entrada": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-05-01T08:00:00"
+          },
+          "fecha_salida": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-05-01T16:00:00"
+          },
+          "tipo": {
+            "type": "string",
+            "example": "Presencial"
+          }
+        }
+      },
+      "Incidencia": {
+        "type": "object",
+        "properties": {
+          "ID": {
+            "type": "integer",
+            "example": 1
+          },
+          "ID_empleado": {
+            "type": "integer",
+            "example": 2
+          },
+          "estado": {
+            "type": "string",
+            "example": "Abierta"
+          },
+          "fecha_creacion": {
+            "type": "string",
+            "format": "date",
+            "example": "2025-05-01"
+          },
+          "Observaciones": {
+            "type": "string",
+            "example": "Problema con el acceso al sistema"
+          },
+          "Comentario": {
+            "type": "string",
+            "example": "Revisado por Alex"
+          }
+        }
+      },
+      "SolicitudVacaciones": {
+        "type": "object",
+        "properties": {
+          "ID_INCIDENCIA": {
+            "type": "integer",
+            "example": 1
+          },
+          "fecha_inicio": {
+            "type": "string",
+            "format": "date",
+            "example": "2025-08-01"
+          },
+          "fecha_fin": {
+            "type": "string",
+            "format": "date",
+            "example": "2025-08-15"
+          },
+          "tipo": {
+            "type": "string",
+            "example": "Solicitud de semana de vacaciones"
+          },
+          "estado": {
+            "type": "string",
+            "example": "En revisión"
+          }
         }
       }
     }
   },
   "security": [
-    { "tokenAuth": [] }
+    {
+      "tokenAuth": []
+    }
   ],
   "tags": [
-    { "name": "General", "description": "Endpoints generales: raíz y autenticación." },
-    { "name": "Empleados", "description": "Gestión de empleados." },
-    { "name": "Departamentos", "description": "Gestión de departamentos." },
-    { "name": "Contratos", "description": "Gestión de contratos." },
-    { "name": "Productos", "description": "Consulta del inventario de productos." }
+    {
+      "name": "General",
+      "description": "Endpoints generales: raíz, autenticación y dashboard."
+    },
+    {
+      "name": "Empleados",
+      "description": "Gestión de empleados: listado, registro, actualización y eliminación."
+    },
+    {
+      "name": "Departamentos",
+      "description": "Gestión de departamentos."
+    },
+    {
+      "name": "Contratos",
+      "description": "Gestión de contratos laborales."
+    },
+    {
+      "name": "Productos",
+      "description": "Gestión del inventario de productos."
+    },
+    {
+      "name": "Fichajes",
+      "description": "Gestión de fichajes de entrada y salida."
+    },
+    {
+      "name": "Incidencias",
+      "description": "Gestión de incidencias de empleados."
+    },
+    {
+      "name": "Vacaciones",
+      "description": "Gestión de solicitudes de vacaciones."
+    },
+    {
+      "name": "Permisos",
+      "description": "Gestión de permisos de acceso a rutas."
+    },
+    {
+      "name": "Password",
+      "description": "Gestión de contraseñas y recuperación de acceso."
+    }
   ],
   "paths": {
     "/": {
       "get": {
-        "tags": ["General"],
+        "tags": [
+          "General"
+        ],
         "summary": "Raíz de la API",
         "description": "Devuelve un mapa con todos los endpoints disponibles.",
         "security": [],
@@ -118,8 +337,13 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "status": { "type": "integer", "example": 200 },
-                    "body": { "type": "object" }
+                    "status": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "body": {
+                      "type": "object"
+                    }
                   }
                 }
               }
@@ -130,7 +354,9 @@
     },
     "/login": {
       "post": {
-        "tags": ["General"],
+        "tags": [
+          "General"
+        ],
         "summary": "Iniciar sesión",
         "description": "Autentica al usuario con credenciales (usuario + contraseña) o con un token existente. Devuelve un token de sesión.",
         "security": [],
@@ -144,12 +370,12 @@
                   "usuario": {
                     "type": "string",
                     "description": "Nombre de usuario. Requerido si no se envía token.",
-                    "example": "jgarcia"
+                    "example": "alex"
                   },
                   "pass": {
                     "type": "string",
                     "description": "Contraseña del usuario. Requerida si no se envía token.",
-                    "example": "miContraseña123"
+                    "example": "password123"
                   },
                   "keepSession": {
                     "type": "boolean",
@@ -159,7 +385,7 @@
                   "token": {
                     "type": "string",
                     "description": "Token de sesión existente para renovarlo. Si se envía, no se necesitan usuario ni pass.",
-                    "example": "abc123def456..."
+                    "example": ""
                   }
                 }
               }
@@ -174,15 +400,33 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "status": { "type": "integer", "example": 201 },
+                    "status": {
+                      "type": "integer",
+                      "example": 201
+                    },
                     "auth": {
                       "type": "object",
                       "properties": {
-                        "authorized": { "type": "boolean", "example": true },
-                        "username": { "type": "string", "example": "jgarcia" },
-                        "id": { "type": "integer", "example": 5 },
-                        "token": { "type": "string", "example": "abc123def456..." },
-                        "department": { "type": "integer", "example": 2 }
+                        "authorized": {
+                          "type": "boolean",
+                          "example": true
+                        },
+                        "username": {
+                          "type": "string",
+                          "example": "alex"
+                        },
+                        "id": {
+                          "type": "integer",
+                          "example": 3
+                        },
+                        "token": {
+                          "type": "string",
+                          "example": "abc123def456..."
+                        },
+                        "department": {
+                          "type": "integer",
+                          "example": 8
+                        }
                       }
                     }
                   }
@@ -192,45 +436,201 @@
           },
           "401": {
             "description": "Credenciales no proporcionadas.",
-            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorUnauthorized" } } }
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorUnauthorized"
+                }
+              }
+            }
           },
           "404": {
             "description": "Credenciales incorrectas o token inválido.",
-            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorNotFound" } } }
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorNotFound"
+                }
+              }
+            }
           },
           "500": {
             "description": "Error interno del servidor.",
-            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorServer" } } }
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorServer"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/dashboard": {
+      "get": {
+        "tags": [
+          "General"
+        ],
+        "summary": "Resumen del dashboard",
+        "description": "Devuelve datos personales del empleado indicado y, si el token pertenece a un admin (dept > 1), estadísticas globales del sistema.",
+        "parameters": [
+          {
+            "name": "username",
+            "in": "query",
+            "description": "Username del empleado cuyo perfil se quiere obtener.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "cova"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resumen del dashboard obtenido correctamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "user": {
+                      "type": "object"
+                    },
+                    "globalStats": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token no enviado o caducado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorUnauthorized"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Empleado no encontrado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorNotFound"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorServer"
+                }
+              }
+            }
           }
         }
       }
     },
     "/empleados": {
       "get": {
-        "tags": ["Empleados"],
-        "summary": "Listado de empleados",
-        "description": "Devuelve una lista paginada de empleados visibles. Si se pasa `id` como query param, devuelve el empleado concreto.",
+        "tags": [
+          "Empleados"
+        ],
+        "summary": "Listado de empleados o empleado concreto",
+        "description": "Sin `id` devuelve lista paginada de empleados visibles. Con `id` devuelve el empleado concreto. Admite filtros opcionales.",
         "parameters": [
           {
             "name": "id",
             "in": "query",
             "description": "ID del empleado. Si se envía, devuelve solo ese empleado.",
             "required": false,
-            "schema": { "type": "integer", "example": 5 }
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
           },
           {
             "name": "cantidad",
             "in": "query",
-            "description": "Número de resultados por página.",
             "required": false,
-            "schema": { "type": "integer", "example": 10 }
+            "schema": {
+              "type": "integer",
+              "example": 10
+            }
           },
           {
             "name": "pagina",
             "in": "query",
-            "description": "Número de página (empieza en 0).",
             "required": false,
-            "schema": { "type": "integer", "example": 0 }
+            "schema": {
+              "type": "integer",
+              "example": 0
+            }
+          },
+          {
+            "name": "nombre",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "Eneas"
+            }
+          },
+          {
+            "name": "apellidos",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "de la Rosa"
+            }
+          },
+          {
+            "name": "email",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "eneas@manex.com"
+            }
+          },
+          {
+            "name": "telefono",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "699000001"
+            }
+          },
+          {
+            "name": "departamento",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "example": 5
+            }
+          },
+          {
+            "name": "contrato",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
           }
         ],
         "responses": {
@@ -241,87 +641,157 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "status": { "type": "integer", "example": 200 },
-                    "pagina": { "type": "integer", "example": 0 },
-                    "cantidad": { "type": "integer", "example": 10 },
-                    "resultados": { "type": "integer", "example": 5 },
+                    "status": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "pagina": {
+                          "type": "integer",
+                          "example": 0
+                        },
+                        "cantidad": {
+                          "type": "integer",
+                          "example": 10
+                        },
+                        "totalPaginas": {
+                          "type": "integer",
+                          "example": 2
+                        },
+                        "resultados": {
+                          "type": "integer",
+                          "example": 15
+                        }
+                      }
+                    },
                     "data": {
                       "type": "array",
-                      "items": { "$ref": "#/components/schemas/Empleado" }
+                      "items": {
+                        "$ref": "#/components/schemas/Empleado"
+                      }
                     }
                   }
                 }
               }
             }
           },
-          "400": { "description": "Parámetros inválidos.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorBadRequest" } } } },
-          "401": { "description": "Token no enviado o caducado.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorUnauthorized" } } } },
-          "404": { "description": "Empleado no encontrado.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorNotFound" } } } },
-          "500": { "description": "Error interno.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorServer" } } } }
+          "400": {
+            "description": "Parámetros inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBadRequest"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token no enviado o caducado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorUnauthorized"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Sin permisos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorForbidden"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Empleado no encontrado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorNotFound"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorServer"
+                }
+              }
+            }
+          }
         }
       },
       "post": {
-        "tags": ["Empleados"],
+        "tags": [
+          "Empleados"
+        ],
         "summary": "Registrar o actualizar empleado",
-        "description": "Si se envía `id` en el body, actualiza el empleado existente. Si no se envía `id`, registra un nuevo empleado junto con su usuario.",
+        "description": "Si se envía `id` en el body, actualiza ese empleado. Si no se envía `id`, registra un nuevo empleado junto con su usuario.",
         "requestBody": {
           "required": true,
           "content": {
             "application/x-www-form-urlencoded": {
               "schema": {
                 "type": "object",
-                "required": ["nombre", "fecha_nacimiento", "telefono", "ID_contrato", "ID_departamento", "usuario", "contrasenia"],
                 "properties": {
                   "id": {
                     "type": "integer",
-                    "description": "ID del empleado. Si se envía, se actualizará ese empleado en lugar de crear uno nuevo.",
-                    "example": 5
+                    "description": "ID del empleado a actualizar. Si se omite, se crea uno nuevo.",
+                    "example": 1
                   },
                   "nombre": {
                     "type": "string",
-                    "description": "Nombre del empleado. Máximo 30 caracteres.",
-                    "example": "Juan"
+                    "description": "Nombre del empleado. Máx. 30 caracteres. Obligatorio en creación.",
+                    "example": "Cova"
                   },
                   "apellidos": {
                     "type": "string",
-                    "description": "Apellidos del empleado. Máximo 60 caracteres. Opcional.",
-                    "example": "García López"
+                    "description": "Apellidos. Máx. 60 caracteres. Opcional.",
+                    "example": "Blanco Álvarez"
                   },
                   "fecha_nacimiento": {
                     "type": "string",
                     "format": "date",
-                    "description": "Fecha de nacimiento del empleado.",
-                    "example": "1990-05-15"
+                    "description": "Fecha de nacimiento. Obligatorio en creación.",
+                    "example": "1999-03-12"
                   },
                   "telefono": {
                     "type": "string",
-                    "description": "Teléfono del empleado. Máximo 12 caracteres.",
-                    "example": "612345678"
+                    "description": "Teléfono. Máx. 12 caracteres. Obligatorio en creación.",
+                    "example": "612000001"
                   },
                   "ID_contrato": {
                     "type": "integer",
-                    "description": "ID del contrato asignado al empleado.",
-                    "example": 3
+                    "description": "ID del contrato asignado. Obligatorio en creación.",
+                    "example": 1
                   },
                   "ID_departamento": {
                     "type": "integer",
-                    "description": "ID del departamento asignado al empleado.",
-                    "example": 2
+                    "description": "ID del departamento. Obligatorio en creación.",
+                    "example": 5
                   },
                   "usuario": {
                     "type": "string",
-                    "description": "Nombre de usuario. Máximo 16 caracteres. No se puede cambiar una vez creado.",
-                    "example": "jgarcia"
+                    "description": "Nombre de usuario. Máx. 16 caracteres. Obligatorio en creación.",
+                    "example": "cova"
                   },
                   "email": {
                     "type": "string",
                     "format": "email",
-                    "description": "Email del empleado. Máximo 90 caracteres. Opcional.",
-                    "example": "jgarcia@empresa.com"
+                    "description": "Email. Máx. 90 caracteres. Opcional.",
+                    "example": "cova@manex.com"
                   },
                   "contrasenia": {
                     "type": "string",
-                    "description": "Contraseña del empleado (se almacenará hasheada con scrypt).",
+                    "description": "Contraseña (se almacenará hasheada). Obligatorio en creación.",
                     "example": "password123"
                   }
                 }
@@ -330,28 +800,112 @@
           }
         },
         "responses": {
-          "201": {
-            "description": "Empleado registrado o actualizado correctamente.",
+          "200": {
+            "description": "Empleado actualizado correctamente.",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "status": { "type": "integer", "example": 201 },
-                    "message": { "type": "string", "example": "Empleado registrado correctamente." }
+                    "status": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Empleado actualizado correctamente."
+                    }
                   }
                 }
               }
             }
           },
-          "400": { "description": "Faltan datos o son inválidos.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorBadRequest" } } } },
-          "401": { "description": "Token no enviado o caducado.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorUnauthorized" } } } },
-          "403": { "description": "Sin permisos suficientes.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorForbidden" } } } },
-          "500": { "description": "Error al registrar el empleado.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorServer" } } } }
+          "201": {
+            "description": "Empleado registrado correctamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 201
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Empleado registrado correctamente."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Faltan datos o son inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBadRequest"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token no enviado o caducado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorUnauthorized"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Sin permisos suficientes.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorForbidden"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "El nombre de usuario ya está en uso.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 409
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "El nombre de usuario ya está en uso."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorServer"
+                }
+              }
+            }
+          }
         }
       },
       "delete": {
-        "tags": ["Empleados"],
+        "tags": [
+          "Empleados"
+        ],
         "summary": "Eliminar empleado",
         "description": "Elimina un empleado y su usuario asociado de la base de datos en una transacción.",
         "requestBody": {
@@ -360,17 +914,19 @@
             "application/x-www-form-urlencoded": {
               "schema": {
                 "type": "object",
-                "required": ["usuario"],
+                "required": [
+                  "usuario"
+                ],
                 "properties": {
                   "id": {
                     "type": "integer",
-                    "description": "ID del empleado a eliminar.",
-                    "example": 5
+                    "description": "ID del empleado. Opcional.",
+                    "example": 1
                   },
                   "usuario": {
                     "type": "string",
-                    "description": "Nombre de usuario del empleado a eliminar. Obligatorio.",
-                    "example": "jgarcia"
+                    "description": "Username del empleado. Obligatorio.",
+                    "example": "cova"
                   }
                 }
               }
@@ -385,93 +941,308 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "status": { "type": "integer", "example": 201 },
-                    "message": { "type": "string", "example": "Empleado registrado correctamente." }
-                  }
-                }
-              }
-            }
-          },
-          "400": { "description": "ID inválido o usuario no proporcionado.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorBadRequest" } } } },
-          "401": { "description": "Token no enviado o caducado.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorUnauthorized" } } } },
-          "403": { "description": "Sin permisos suficientes.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorForbidden" } } } },
-          "500": { "description": "Error al eliminar el empleado.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorServer" } } } }
-        }
-      }
-    },
-    "/departamentos": {
-      "get": {
-        "tags": ["Departamentos"],
-        "summary": "Listado de departamentos",
-        "description": "Devuelve una lista paginada de departamentos. Si se pasa `id` como query param, devuelve el departamento concreto.",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "query",
-            "description": "ID del departamento. Si se envía, devuelve solo ese departamento.",
-            "required": false,
-            "schema": { "type": "integer", "example": 2 }
-          },
-          {
-            "name": "cantidad",
-            "in": "query",
-            "required": false,
-            "schema": { "type": "integer", "example": 10 }
-          },
-          {
-            "name": "pagina",
-            "in": "query",
-            "required": false,
-            "schema": { "type": "integer", "example": 0 }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Lista de departamentos o datos de uno concreto.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "status": { "type": "integer", "example": 200 },
-                    "pagina": { "type": "integer", "example": 0 },
-                    "cantidad": { "type": "integer", "example": 10 },
-                    "resultados": { "type": "integer", "example": 3 },
-                    "data": {
-                      "type": "array",
-                      "items": { "$ref": "#/components/schemas/Departamento" }
+                    "status": {
+                      "type": "integer",
+                      "example": 201
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Empleado eliminado correctamente."
                     }
                   }
                 }
               }
             }
           },
-          "400": { "description": "Parámetros inválidos.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorBadRequest" } } } },
-          "401": { "description": "Token no enviado o caducado.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorUnauthorized" } } } },
-          "404": { "description": "Departamento no encontrado.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorNotFound" } } } },
-          "500": { "description": "Error interno.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorServer" } } } }
+          "400": {
+            "description": "ID inválido o usuario no proporcionado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBadRequest"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token no enviado o caducado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorUnauthorized"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Sin permisos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorForbidden"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorServer"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/empleado-perfil": {
+      "get": {
+        "tags": [
+          "Empleados"
+        ],
+        "summary": "Perfil completo del empleado",
+        "description": "Devuelve toda la información de perfil de un empleado: datos personales, fichajes, horas del mes, incidencias y solicitudes de vacaciones.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "ID del empleado. Obligatorio.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 2
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Perfil del empleado obtenido correctamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "empleado": {
+                          "$ref": "#/components/schemas/Empleado"
+                        },
+                        "horas_mes": {
+                          "type": "object"
+                        },
+                        "fichajes": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/Fichaje"
+                          }
+                        },
+                        "incidencias": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/Incidencia"
+                          }
+                        },
+                        "solicitudes": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/SolicitudVacaciones"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "ID inválido o no proporcionado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBadRequest"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token no enviado o caducado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorUnauthorized"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Empleado no encontrado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorNotFound"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorServer"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/departamentos": {
+      "get": {
+        "tags": [
+          "Departamentos"
+        ],
+        "summary": "Listado de departamentos o departamento concreto",
+        "description": "Sin `id` devuelve lista paginada. Con `id` devuelve el departamento concreto. Admite filtro por nombre.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "ID del departamento.",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          },
+          {
+            "name": "cantidad",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "example": 10
+            }
+          },
+          {
+            "name": "pagina",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "example": 0
+            }
+          },
+          {
+            "name": "nombre",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "Recursos Humanos"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de departamentos o departamento concreto.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "meta": {
+                      "type": "object"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Departamento"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parámetros inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBadRequest"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token no enviado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorUnauthorized"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Departamento no encontrado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorNotFound"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorServer"
+                }
+              }
+            }
+          }
         }
       },
       "post": {
-        "tags": ["Departamentos"],
+        "tags": [
+          "Departamentos"
+        ],
         "summary": "Crear o actualizar departamento",
-        "description": "Crea un nuevo departamento. Si se envía `idAModificar`, actualiza el departamento existente con ese ID.",
+        "description": "Crea un nuevo departamento. Si se envía `idAModificar`, actualiza el existente.",
         "requestBody": {
           "required": true,
           "content": {
             "application/x-www-form-urlencoded": {
               "schema": {
                 "type": "object",
-                "required": ["nombre"],
+                "required": [
+                  "nombre"
+                ],
                 "properties": {
                   "nombre": {
                     "type": "string",
-                    "description": "Nombre del departamento.",
-                    "example": "Recursos Humanos"
+                    "description": "Nombre del departamento. Obligatorio.",
+                    "example": "Desarrollo"
                   },
                   "idAModificar": {
                     "type": "integer",
-                    "description": "ID del departamento a modificar. Opcional; si no se envía, se crea uno nuevo.",
+                    "description": "ID del departamento a modificar. Opcional.",
                     "example": 2
                   }
                 }
@@ -487,22 +1258,69 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "status": { "type": "integer", "example": 200 },
-                    "idDepartamento": { "type": "integer", "example": 4 },
-                    "message": { "type": "string", "example": "Departamento creado correctamente." }
+                    "status": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "idDepartamento": {
+                      "type": "integer",
+                      "example": 3
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Departamento creado correctamente."
+                    }
                   }
                 }
               }
             }
           },
-          "400": { "description": "Parámetros inválidos.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorBadRequest" } } } },
-          "401": { "description": "Token no enviado o caducado.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorUnauthorized" } } } },
-          "403": { "description": "Sin permisos.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorForbidden" } } } },
-          "500": { "description": "Error interno.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorServer" } } } }
+          "400": {
+            "description": "Parámetros inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBadRequest"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token no enviado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorUnauthorized"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Sin permisos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorForbidden"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorServer"
+                }
+              }
+            }
+          }
         }
       },
       "delete": {
-        "tags": ["Departamentos"],
+        "tags": [
+          "Departamentos"
+        ],
         "summary": "Eliminar departamento",
         "description": "Elimina un departamento por ID. Falla si hay empleados que dependen de él.",
         "requestBody": {
@@ -511,12 +1329,14 @@
             "application/x-www-form-urlencoded": {
               "schema": {
                 "type": "object",
-                "required": ["id"],
+                "required": [
+                  "id"
+                ],
                 "properties": {
                   "id": {
                     "type": "integer",
                     "description": "ID del departamento a eliminar.",
-                    "example": 2
+                    "example": 3
                   }
                 }
               }
@@ -531,16 +1351,49 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "status": { "type": "integer", "example": 200 },
-                    "message": { "type": "string", "example": "Departamento eliminado correctamente" }
+                    "status": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Departamento eliminado correctamente"
+                    }
                   }
                 }
               }
             }
           },
-          "400": { "description": "ID inválido o departamento no encontrado.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorBadRequest" } } } },
-          "401": { "description": "Token no enviado o caducado.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorUnauthorized" } } } },
-          "403": { "description": "Sin permisos.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorForbidden" } } } },
+          "400": {
+            "description": "ID inválido o departamento no encontrado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBadRequest"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token no enviado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorUnauthorized"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Sin permisos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorForbidden"
+                }
+              }
+            }
+          },
           "500": {
             "description": "Error interno o hay empleados dependientes.",
             "content": {
@@ -548,8 +1401,14 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "status": { "type": "integer", "example": 500 },
-                    "message": { "type": "string", "example": "Hay empleados que dependen de este Departamento. No se puede eliminar." }
+                    "status": {
+                      "type": "integer",
+                      "example": 500
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Hay empleados que dependen de este Departamento. No se puede eliminar."
+                    }
                   }
                 }
               }
@@ -560,83 +1419,149 @@
     },
     "/contratos": {
       "get": {
-        "tags": ["Contratos"],
-        "summary": "Listado de contratos",
-        "description": "Devuelve una lista paginada de contratos. Si se pasa `id` como query param, devuelve el contrato concreto.",
+        "tags": [
+          "Contratos"
+        ],
+        "summary": "Listado de contratos o contrato concreto",
+        "description": "Sin `id` devuelve lista paginada de contratos. Con `id` devuelve el contrato concreto.",
         "parameters": [
           {
             "name": "id",
             "in": "query",
-            "description": "ID del contrato. Si se envía, devuelve solo ese contrato.",
+            "description": "ID del contrato.",
             "required": false,
-            "schema": { "type": "integer", "example": 3 }
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
           },
           {
             "name": "cantidad",
             "in": "query",
             "required": false,
-            "schema": { "type": "integer", "example": 10 }
+            "schema": {
+              "type": "integer",
+              "example": 10
+            }
           },
           {
             "name": "pagina",
             "in": "query",
             "required": false,
-            "schema": { "type": "integer", "example": 0 }
+            "schema": {
+              "type": "integer",
+              "example": 0
+            }
           }
         ],
         "responses": {
           "200": {
-            "description": "Lista de contratos o datos de uno concreto.",
+            "description": "Lista de contratos o contrato concreto.",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "status": { "type": "integer", "example": 200 },
-                    "pagina": { "type": "integer", "example": 0 },
-                    "cantidad": { "type": "integer", "example": 10 },
-                    "resultados": { "type": "integer", "example": 4 },
+                    "status": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "pagina": {
+                      "type": "integer",
+                      "example": 0
+                    },
+                    "cantidad": {
+                      "type": "integer",
+                      "example": 10
+                    },
+                    "resultados": {
+                      "type": "integer",
+                      "example": 4
+                    },
                     "data": {
                       "type": "array",
-                      "items": { "$ref": "#/components/schemas/Contrato" }
+                      "items": {
+                        "$ref": "#/components/schemas/Contrato"
+                      }
                     }
                   }
                 }
               }
             }
           },
-          "400": { "description": "Parámetros inválidos.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorBadRequest" } } } },
-          "401": { "description": "Token no enviado o caducado.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorUnauthorized" } } } },
-          "404": { "description": "Contrato no encontrado.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorNotFound" } } } },
-          "500": { "description": "Error interno.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorServer" } } } }
+          "400": {
+            "description": "Parámetros inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBadRequest"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token no enviado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorUnauthorized"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Contrato no encontrado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorNotFound"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorServer"
+                }
+              }
+            }
+          }
         }
       },
       "post": {
-        "tags": ["Contratos"],
+        "tags": [
+          "Contratos"
+        ],
         "summary": "Crear o actualizar contrato",
-        "description": "Crea un nuevo contrato. Si se envía `idAModificar`, actualiza el contrato existente con ese ID.",
+        "description": "Crea un nuevo contrato. Si se envía `idAModificar`, actualiza el existente.",
         "requestBody": {
           "required": true,
           "content": {
             "application/x-www-form-urlencoded": {
               "schema": {
                 "type": "object",
-                "required": ["salarioAnual", "horasAnuales"],
+                "required": [
+                  "salarioAnual",
+                  "horasAnuales"
+                ],
                 "properties": {
                   "salarioAnual": {
                     "type": "number",
-                    "description": "Salario anual del contrato. Debe ser mayor o igual a 0.",
-                    "example": 24000
+                    "description": "Salario anual. Obligatorio. Debe ser >= 0.",
+                    "example": 22000
                   },
                   "horasAnuales": {
                     "type": "number",
-                    "description": "Horas anuales del contrato. Debe ser mayor o igual a 0.",
-                    "example": 1800
+                    "description": "Horas anuales. Obligatorio. Debe ser >= 0.",
+                    "example": 1760
                   },
                   "idAModificar": {
                     "type": "integer",
-                    "description": "ID del contrato a modificar. Opcional; si no se envía, se crea uno nuevo.",
-                    "example": 3
+                    "description": "ID del contrato a modificar. Opcional.",
+                    "example": 1
                   }
                 }
               }
@@ -651,22 +1576,69 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "status": { "type": "integer", "example": 200 },
-                    "idContrato": { "type": "integer", "example": 7 },
-                    "message": { "type": "string", "example": "Contrato creado correctamente." }
+                    "status": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "idContrato": {
+                      "type": "integer",
+                      "example": 5
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Contrato creado correctamente."
+                    }
                   }
                 }
               }
             }
           },
-          "400": { "description": "Parámetros inválidos.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorBadRequest" } } } },
-          "401": { "description": "Token no enviado o caducado.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorUnauthorized" } } } },
-          "403": { "description": "Sin permisos.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorForbidden" } } } },
-          "500": { "description": "Error interno.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorServer" } } } }
+          "400": {
+            "description": "Parámetros inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBadRequest"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token no enviado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorUnauthorized"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Sin permisos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorForbidden"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorServer"
+                }
+              }
+            }
+          }
         }
       },
       "delete": {
-        "tags": ["Contratos"],
+        "tags": [
+          "Contratos"
+        ],
         "summary": "Eliminar contrato",
         "description": "Elimina un contrato por ID. Falla si hay empleados que dependen de él.",
         "requestBody": {
@@ -675,12 +1647,14 @@
             "application/x-www-form-urlencoded": {
               "schema": {
                 "type": "object",
-                "required": ["id"],
+                "required": [
+                  "id"
+                ],
                 "properties": {
                   "id": {
                     "type": "integer",
                     "description": "ID del contrato a eliminar.",
-                    "example": 3
+                    "example": 2
                   }
                 }
               }
@@ -695,25 +1669,64 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "status": { "type": "integer", "example": 200 },
-                    "message": { "type": "string", "example": "Contrato eliminado correctamente" }
+                    "status": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Contrato eliminado correctamente"
+                    }
                   }
                 }
               }
             }
           },
-          "400": { "description": "ID inválido o contrato no encontrado.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorBadRequest" } } } },
-          "401": { "description": "Token no enviado o caducado.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorUnauthorized" } } } },
-          "403": { "description": "Sin permisos.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorForbidden" } } } },
+          "400": {
+            "description": "ID inválido o contrato no encontrado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBadRequest"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token no enviado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorUnauthorized"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Sin permisos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorForbidden"
+                }
+              }
+            }
+          },
           "500": {
-            "description": "Error interno o hay empleados dependientes.",
+            "description": "Error interno o empleados dependientes.",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "status": { "type": "integer", "example": 500 },
-                    "message": { "type": "string", "example": "Hay empleados que dependen de este contrato. No se puede eliminar." }
+                    "status": {
+                      "type": "integer",
+                      "example": 500
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Hay empleados que dependen de este contrato. No se puede eliminar."
+                    }
                   }
                 }
               }
@@ -724,55 +1737,2211 @@
     },
     "/productos": {
       "get": {
-        "tags": ["Productos"],
-        "summary": "Listado de productos",
-        "description": "Devuelve una lista paginada de productos del inventario. Si se pasa `id` como query param, devuelve el producto concreto.",
+        "tags": [
+          "Productos"
+        ],
+        "summary": "Listado de productos o producto concreto",
+        "description": "Sin `id` devuelve lista paginada del inventario. Con `id` devuelve el producto concreto. Admite filtros por nombre, descripción y estado.",
         "parameters": [
           {
             "name": "id",
             "in": "query",
-            "description": "ID del producto. Si se envía, devuelve solo ese producto.",
+            "description": "ID del producto.",
             "required": false,
-            "schema": { "type": "integer", "example": 1 }
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
           },
           {
             "name": "cantidad",
             "in": "query",
             "required": false,
-            "schema": { "type": "integer", "example": 10 }
+            "schema": {
+              "type": "integer",
+              "example": 10
+            }
           },
           {
             "name": "pagina",
             "in": "query",
             "required": false,
-            "schema": { "type": "integer", "example": 0 }
+            "schema": {
+              "type": "integer",
+              "example": 0
+            }
+          },
+          {
+            "name": "nombre",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "Teclado"
+            }
+          },
+          {
+            "name": "descripcion",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "mecánico"
+            }
+          },
+          {
+            "name": "estado",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "Disponible"
+            }
           }
         ],
         "responses": {
           "200": {
-            "description": "Lista de productos o datos de uno concreto.",
+            "description": "Lista de productos o producto concreto.",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "status": { "type": "integer", "example": 200 },
-                    "pagina": { "type": "integer", "example": 0 },
-                    "cantidad": { "type": "integer", "example": 10 },
-                    "resultados": { "type": "integer", "example": 8 },
+                    "status": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "meta": {
+                      "type": "object"
+                    },
                     "data": {
                       "type": "array",
-                      "items": { "$ref": "#/components/schemas/Producto" }
+                      "items": {
+                        "$ref": "#/components/schemas/Producto"
+                      }
                     }
                   }
                 }
               }
             }
           },
-          "400": { "description": "Parámetros inválidos.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorBadRequest" } } } },
-          "401": { "description": "Token no enviado o caducado.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorUnauthorized" } } } },
-          "404": { "description": "Producto no encontrado.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorNotFound" } } } },
-          "500": { "description": "Error interno.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorServer" } } } }
+          "400": {
+            "description": "Parámetros inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBadRequest"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token no enviado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorUnauthorized"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Producto no encontrado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorNotFound"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorServer"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Productos"
+        ],
+        "summary": "Crear o actualizar producto",
+        "description": "Crea un nuevo producto en el inventario. Si se envía `idAModificar`, actualiza el existente. Los estados válidos son: 'En proceso de envio', 'Disponible', 'No disponible', 'En mantenimiento'.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "nombre",
+                  "estado"
+                ],
+                "properties": {
+                  "nombre": {
+                    "type": "string",
+                    "description": "Nombre del producto. Obligatorio.",
+                    "example": "Monitor ultrawide"
+                  },
+                  "descripcion": {
+                    "type": "string",
+                    "description": "Descripción del producto. Opcional.",
+                    "example": "Monitor 34 pulgadas curvo"
+                  },
+                  "estado": {
+                    "type": "string",
+                    "description": "Estado del producto. Obligatorio.",
+                    "enum": [
+                      "En proceso de envio",
+                      "Disponible",
+                      "No disponible",
+                      "En mantenimiento"
+                    ],
+                    "example": "Disponible"
+                  },
+                  "idAModificar": {
+                    "type": "integer",
+                    "description": "ID del producto a modificar. Opcional.",
+                    "example": 3
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Producto creado o modificado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "idProducto": {
+                      "type": "integer",
+                      "example": 7
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Producto creado correctamente."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parámetros inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBadRequest"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token no enviado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorUnauthorized"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Sin permisos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorForbidden"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorServer"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Productos"
+        ],
+        "summary": "Eliminar producto",
+        "description": "Elimina un producto del inventario por ID.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "id"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "integer",
+                    "description": "ID del producto a eliminar.",
+                    "example": 4
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Producto eliminado correctamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Producto eliminado correctamente"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "ID inválido o producto no encontrado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBadRequest"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token no enviado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorUnauthorized"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Sin permisos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorForbidden"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno o registros asociados.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 500
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Hay registros asociados a este producto. No se puede eliminar."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/fichajes": {
+      "get": {
+        "tags": [
+          "Fichajes"
+        ],
+        "summary": "Listado de fichajes o fichajes de un usuario",
+        "description": "Con `username` sin paginación devuelve todos los fichajes de ese usuario. Con paginación o sin filtros devuelve el listado paginado.",
+        "parameters": [
+          {
+            "name": "username",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "eneas"
+            }
+          },
+          {
+            "name": "nombre",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "Eneas"
+            }
+          },
+          {
+            "name": "apellidos",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "de la Rosa"
+            }
+          },
+          {
+            "name": "tipo",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "Presencial"
+            }
+          },
+          {
+            "name": "cantidad",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "example": 10
+            }
+          },
+          {
+            "name": "pagina",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "example": 0
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de fichajes.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "meta": {
+                      "type": "object"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Fichaje"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parámetros inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBadRequest"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token no enviado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorUnauthorized"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No se encontraron fichajes.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorNotFound"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorServer"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Fichajes"
+        ],
+        "summary": "Registrar o actualizar fichaje",
+        "description": "Si el empleado ya tiene un fichaje activo (entrada sin salida), registra la salida. Si no, registra una nueva entrada. Si se envía `id` sin `tipo` o se envía `fecha_salida`, actualiza el fichaje existente.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "username"
+                ],
+                "properties": {
+                  "username": {
+                    "type": "string",
+                    "description": "Username del empleado. Obligatorio.",
+                    "example": "alex"
+                  },
+                  "tipo": {
+                    "type": "string",
+                    "description": "Tipo de fichaje. Obligatorio en creación.",
+                    "example": "Presencial"
+                  },
+                  "id": {
+                    "type": "integer",
+                    "description": "ID del fichaje a actualizar. Opcional.",
+                    "example": 5
+                  },
+                  "fecha_entrada": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "Fecha de entrada. Opcional en actualización.",
+                    "example": "2025-05-01T08:00:00"
+                  },
+                  "fecha_Salida": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "Fecha de salida. Opcional en actualización.",
+                    "example": "2025-05-01T16:00:00"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Fichaje actualizado (salida registrada o fichaje editado).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Fichaje actualizado correctamente."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Fichaje de entrada registrado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 201
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Fichaje registrado correctamente."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Faltan datos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBadRequest"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token no enviado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorUnauthorized"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Sin permisos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorForbidden"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorServer"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Fichajes"
+        ],
+        "summary": "Eliminar fichaje",
+        "description": "Elimina un fichaje por su ID.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "id"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "integer",
+                    "description": "ID del fichaje a eliminar. Obligatorio.",
+                    "example": 10
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Fichaje eliminado correctamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 201
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Fichaje eliminado correctamente."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "ID inválido.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBadRequest"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token no enviado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorUnauthorized"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Sin permisos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorForbidden"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorServer"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/incidencias": {
+      "get": {
+        "tags": [
+          "Incidencias"
+        ],
+        "summary": "Listado de incidencias o incidencia concreta",
+        "description": "Sin paginación y con filtros devuelve la incidencia/s filtradas. Con paginación devuelve el listado paginado.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          },
+          {
+            "name": "id_empleado",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "example": 2
+            }
+          },
+          {
+            "name": "estado",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "Abierta"
+            }
+          },
+          {
+            "name": "fecha_inicio",
+            "in": "query",
+            "description": "Fecha inicio del rango. Requiere también fecha_fin.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "example": "2025-01-01"
+            }
+          },
+          {
+            "name": "fecha_fin",
+            "in": "query",
+            "description": "Fecha fin del rango. Requiere también fecha_inicio.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "example": "2025-12-31"
+            }
+          },
+          {
+            "name": "nombre",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "Alex"
+            }
+          },
+          {
+            "name": "apellidos",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "Bernardos"
+            }
+          },
+          {
+            "name": "observaciones",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "acceso"
+            }
+          },
+          {
+            "name": "comentario",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "revisado"
+            }
+          },
+          {
+            "name": "cantidad",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "example": 10
+            }
+          },
+          {
+            "name": "pagina",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "example": 0
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de incidencias.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "meta": {
+                      "type": "object"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Incidencia"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parámetros inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBadRequest"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token no enviado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorUnauthorized"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Incidencia no encontrada.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorNotFound"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorServer"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Incidencias"
+        ],
+        "summary": "Crear o actualizar incidencia",
+        "description": "Si se envía `id`, actualiza la incidencia (requiere también `estado`). Si no se envía `id`, crea una nueva (requiere `id_empleado` y `observaciones`).",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer",
+                    "description": "ID de la incidencia a actualizar. Si se omite, se crea una nueva.",
+                    "example": 1
+                  },
+                  "id_empleado": {
+                    "type": "integer",
+                    "description": "ID del empleado. Obligatorio en creación.",
+                    "example": 2
+                  },
+                  "observaciones": {
+                    "type": "string",
+                    "description": "Descripción de la incidencia. Máx. 60 caracteres. Obligatorio en creación.",
+                    "example": "Problema con el ordenador"
+                  },
+                  "comentario": {
+                    "type": "string",
+                    "description": "Comentario adicional. Máx. 60 caracteres. Opcional.",
+                    "example": "Revisado por Cova"
+                  },
+                  "estado": {
+                    "type": "string",
+                    "description": "Estado de la incidencia. Obligatorio en actualización.",
+                    "example": "Cerrada"
+                  },
+                  "fecha_creacion": {
+                    "type": "string",
+                    "format": "date",
+                    "description": "Fecha de creación. Opcional en actualización.",
+                    "example": "2025-05-01"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Incidencia actualizada.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Incidencia actualizada correctamente."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Incidencia creada.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 201
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Incidencia registrado correctamente."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Faltan datos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBadRequest"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token no enviado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorUnauthorized"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Sin permisos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorForbidden"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorServer"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Incidencias"
+        ],
+        "summary": "Eliminar incidencia",
+        "description": "Elimina una incidencia y sus registros asociados (incidencia_it y solicitud_vacaciones vinculada) en una transacción.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "id"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "integer",
+                    "description": "ID de la incidencia a eliminar.",
+                    "example": 3
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Incidencia eliminada correctamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Incidencia eliminada correctamente."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "ID inválido.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBadRequest"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token no enviado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorUnauthorized"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Sin permisos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorForbidden"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Incidencia no encontrada.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorNotFound"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorServer"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/vacaciones": {
+      "get": {
+        "tags": [
+          "Vacaciones"
+        ],
+        "summary": "Listado de solicitudes de vacaciones o solicitud concreta",
+        "description": "Sin paginación con `id_empleado` o rango de fechas devuelve las solicitudes filtradas. Con paginación devuelve el listado completo paginado.",
+        "parameters": [
+          {
+            "name": "id_empleado",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          },
+          {
+            "name": "fecha_inicio",
+            "in": "query",
+            "description": "Fecha inicio del rango. Requiere también fecha_fin.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "example": "2025-08-01"
+            }
+          },
+          {
+            "name": "fecha_fin",
+            "in": "query",
+            "description": "Fecha fin del rango. Requiere también fecha_inicio.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "example": "2025-08-31"
+            }
+          },
+          {
+            "name": "tipo",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "Solicitud de semana de vacaciones"
+            }
+          },
+          {
+            "name": "estado",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "En revisión"
+            }
+          },
+          {
+            "name": "nombre",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "Cova"
+            }
+          },
+          {
+            "name": "apellidos",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "Blanco"
+            }
+          },
+          {
+            "name": "cantidad",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "example": 10
+            }
+          },
+          {
+            "name": "pagina",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "example": 0
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de solicitudes de vacaciones.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "meta": {
+                      "type": "object"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/SolicitudVacaciones"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parámetros inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBadRequest"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token no enviado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorUnauthorized"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Solicitud no encontrada.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorNotFound"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorServer"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Vacaciones"
+        ],
+        "summary": "Crear o actualizar solicitud de vacaciones",
+        "description": "Si se envía `id_incidencia`, actualiza la solicitud. Si no, crea una nueva solicitud (y una incidencia asociada automáticamente). Requiere `id_empleado` en creación.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id_incidencia": {
+                    "type": "integer",
+                    "description": "ID de la incidencia/solicitud a actualizar. Si se omite, se crea una nueva.",
+                    "example": 5
+                  },
+                  "id_empleado": {
+                    "type": "integer",
+                    "description": "ID del empleado. Obligatorio en creación.",
+                    "example": 1
+                  },
+                  "fecha_inicio": {
+                    "type": "string",
+                    "format": "date",
+                    "description": "Fecha de inicio de las vacaciones. Obligatorio en creación.",
+                    "example": "2025-08-01"
+                  },
+                  "fecha_fin": {
+                    "type": "string",
+                    "format": "date",
+                    "description": "Fecha de fin de las vacaciones. Obligatorio en creación.",
+                    "example": "2025-08-15"
+                  },
+                  "tipo": {
+                    "type": "string",
+                    "description": "Tipo de solicitud. Por defecto: 'Solicitud de semana de vacaciones'.",
+                    "example": "Solicitud de semana de vacaciones"
+                  },
+                  "estado": {
+                    "type": "string",
+                    "description": "Estado de la solicitud. Por defecto: 'En revisión'.",
+                    "example": "En revisión"
+                  },
+                  "observaciones": {
+                    "type": "string",
+                    "description": "Observaciones adicionales. Opcional.",
+                    "example": "Vacaciones de verano"
+                  },
+                  "comentario": {
+                    "type": "string",
+                    "description": "Comentario de la incidencia asociada. Opcional.",
+                    "example": "Aprobado por Eneas"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Solicitud creada o actualizada.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 201
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Solicitud Vacaciones registrada correctamente."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Faltan datos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBadRequest"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token no enviado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorUnauthorized"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Sin permisos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorForbidden"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorServer"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Vacaciones"
+        ],
+        "summary": "Eliminar solicitud de vacaciones",
+        "description": "Elimina una solicitud de vacaciones por su ID de incidencia.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "id_incidencia"
+                ],
+                "properties": {
+                  "id_incidencia": {
+                    "type": "integer",
+                    "description": "ID de la incidencia asociada a la solicitud.",
+                    "example": 5
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Solicitud eliminada correctamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Solicitud eliminada correctamente."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "ID inválido.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBadRequest"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token no enviado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorUnauthorized"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Sin permisos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorForbidden"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorServer"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/permisos": {
+      "get": {
+        "tags": [
+          "Permisos"
+        ],
+        "summary": "Obtener permisos",
+        "description": "Devuelve todos los permisos del sistema o los de una ruta concreta si se envía `ruta` en el body.",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "ruta": {
+                    "type": "string",
+                    "description": "Ruta concreta de la que obtener permisos. Opcional.",
+                    "example": "/empleados"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Permisos obtenidos correctamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token no enviado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorUnauthorized"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Permisos"
+        ],
+        "summary": "Guardar o actualizar permisos de una ruta",
+        "description": "Establece los permisos (roles permitidos) para un método HTTP concreto de una ruta. Solo accesible para el nivel 8.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "ruta",
+                  "metodo"
+                ],
+                "properties": {
+                  "ruta": {
+                    "type": "string",
+                    "description": "Ruta a configurar.",
+                    "example": "/vacaciones"
+                  },
+                  "metodo": {
+                    "type": "string",
+                    "description": "Método HTTP.",
+                    "enum": [
+                      "GET",
+                      "POST",
+                      "DELETE"
+                    ],
+                    "example": "POST"
+                  },
+                  "permisos": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Lista de roles permitidos (ej: ['5','7','8'] o ['>1'] o ['*']).",
+                    "example": [
+                      ">1"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Permisos guardados correctamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Permisos guardados correctamente"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Datos inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBadRequest"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token no enviado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorUnauthorized"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Sin permisos o ruta protegida.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorForbidden"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorServer"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Permisos"
+        ],
+        "summary": "Eliminar permisos de una ruta",
+        "description": "Elimina los permisos de un método concreto o de toda una ruta. Solo accesible para el nivel 8.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "ruta"
+                ],
+                "properties": {
+                  "ruta": {
+                    "type": "string",
+                    "description": "Ruta de la que eliminar permisos.",
+                    "example": "/vacaciones"
+                  },
+                  "metodo": {
+                    "type": "string",
+                    "description": "Método HTTP a eliminar. Si se omite, se elimina toda la ruta.",
+                    "enum": [
+                      "GET",
+                      "POST",
+                      "DELETE"
+                    ],
+                    "example": "DELETE"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Permiso eliminado correctamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Permisos guardados correctamente"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Datos inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBadRequest"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token no enviado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorUnauthorized"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Sin permisos o ruta protegida.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorForbidden"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Permiso no encontrado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorNotFound"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/password": {
+      "post": {
+        "tags": [
+          "Password"
+        ],
+        "summary": "Cambiar contraseña",
+        "description": "Cambia la contraseña del usuario autenticado. Requiere la contraseña actual.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "password_actual",
+                  "password_nuevo",
+                  "confirmar"
+                ],
+                "properties": {
+                  "password_actual": {
+                    "type": "string",
+                    "description": "Contraseña actual del usuario.",
+                    "example": "password123"
+                  },
+                  "password_nuevo": {
+                    "type": "string",
+                    "description": "Nueva contraseña. Mínimo 6 caracteres.",
+                    "example": "nuevaPassword456"
+                  },
+                  "confirmar": {
+                    "type": "string",
+                    "description": "Confirmación de la nueva contraseña.",
+                    "example": "nuevaPassword456"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Contraseña actualizada correctamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Contraseña actualizada correctamente."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Faltan campos o contraseñas no coinciden.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBadRequest"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Contraseña actual incorrecta o token no enviado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorUnauthorized"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Usuario no encontrado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorNotFound"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorServer"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/recuperar": {
+      "post": {
+        "tags": [
+          "Password"
+        ],
+        "summary": "Solicitar recuperación de contraseña",
+        "description": "Crea una solicitud de cambio de contraseña para revisión de RRHH. Ruta pública, no requiere token.",
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "username"
+                ],
+                "properties": {
+                  "username": {
+                    "type": "string",
+                    "description": "Nombre de usuario que solicita la recuperación.",
+                    "example": "eneas"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Solicitud enviada. RRHH revisará y proporcionará un código.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Solicitud enviada. RRHH revisará tu solicitud y te proporcionará un código de recuperación."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Username no proporcionado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBadRequest"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Usuario no encontrado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorNotFound"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorServer"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/reset": {
+      "post": {
+        "tags": [
+          "Password"
+        ],
+        "summary": "Restablecer contraseña con código",
+        "description": "Aplica el reset de contraseña usando el código que RRHH ha proporcionado al usuario. Ruta pública, no requiere token.",
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "username",
+                  "code",
+                  "password_nuevo",
+                  "confirmar"
+                ],
+                "properties": {
+                  "username": {
+                    "type": "string",
+                    "description": "Nombre de usuario.",
+                    "example": "eneas"
+                  },
+                  "code": {
+                    "type": "string",
+                    "description": "Código de recuperación proporcionado por RRHH (8 caracteres hex).",
+                    "example": "A1B2C3D4"
+                  },
+                  "password_nuevo": {
+                    "type": "string",
+                    "description": "Nueva contraseña. Mínimo 6 caracteres.",
+                    "example": "nuevaPassword789"
+                  },
+                  "confirmar": {
+                    "type": "string",
+                    "description": "Confirmación de la nueva contraseña.",
+                    "example": "nuevaPassword789"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Contraseña restablecida correctamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Contraseña restablecida correctamente. Ya puedes iniciar sesión."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Faltan campos, contraseñas no coinciden o código inválido/expirado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBadRequest"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorServer"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/password-requests": {
+      "get": {
+        "tags": [
+          "Password"
+        ],
+        "summary": "Listar solicitudes de recuperación pendientes",
+        "description": "Devuelve las solicitudes de cambio de contraseña pendientes. Solo accesible para niveles 5, 7 y 8 (RRHH).",
+        "responses": {
+          "200": {
+            "description": "Lista de solicitudes pendientes.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "solicitudes": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer",
+                            "example": 1
+                          },
+                          "username": {
+                            "type": "string",
+                            "example": "cova"
+                          },
+                          "estado": {
+                            "type": "string",
+                            "example": "Pendiente"
+                          },
+                          "fecha_solicitud": {
+                            "type": "string",
+                            "format": "date-time",
+                            "example": "2025-05-01T10:00:00"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token no enviado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorUnauthorized"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Sin permisos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorForbidden"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorServer"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Password"
+        ],
+        "summary": "Aprobar o rechazar solicitud de recuperación",
+        "description": "RRHH aprueba o rechaza una solicitud de cambio de contraseña. Al aprobar, genera un código de recuperación de 8 caracteres para comunicar al usuario.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "id",
+                  "accion"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "integer",
+                    "description": "ID de la solicitud a gestionar.",
+                    "example": 1
+                  },
+                  "accion": {
+                    "type": "string",
+                    "description": "Acción a realizar.",
+                    "enum": [
+                      "aprobar",
+                      "rechazar"
+                    ],
+                    "example": "aprobar"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Solicitud gestionada. Si se aprueba, devuelve el código para el usuario.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "code": {
+                      "type": "string",
+                      "description": "Código de recuperación (solo al aprobar).",
+                      "example": "A1B2C3D4"
+                    },
+                    "username": {
+                      "type": "string",
+                      "example": "cova"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Solicitud de cova aprobada."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Faltan campos o acción inválida.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBadRequest"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token no enviado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorUnauthorized"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Sin permisos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorForbidden"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Solicitud no encontrada o ya gestionada.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorNotFound"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorServer"
+                }
+              }
+            }
+          }
         }
       }
     }

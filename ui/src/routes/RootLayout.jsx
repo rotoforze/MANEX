@@ -19,7 +19,6 @@ export const RootLayout = () => {
     const location = useLocation();
 
     const PUBLIC_ROUTES = ['/', '/login'];
-
     useEffect(() => {
         if (isInitialLoading || location.pathname === '/error') return;
 
@@ -32,7 +31,7 @@ export const RootLayout = () => {
         }
     }, [user, isInitialLoading, location.pathname])
     if (isInitialLoading) return <Loading/>;
-    if (user?.username && user?.authenticated  && existeCookie()) {
+    if (user?.username && user?.authenticated && existeCookie()) {
         return (
             <div className="app-shell d-flex min-vh-100">
                 <MainNav/>
