@@ -1,36 +1,38 @@
-import { useState } from 'react';
-import { useMensaje } from "../../hooks/useMensaje.js";
+import React, { useState } from 'react';
 import { useUsers } from "../../context/UserContext.jsx";
 import { apiFetch } from "../../utils/apiFetch.jsx";
-
-const ESTADOS_VALIDOS = ['Abierta', 'Cerrada'];
+import { useMensaje } from "../../hooks/useMensaje.js";
 
 /**
  * Formulario de edición de una incidencia existente.
- * Envía POST a VITE_BACKEND_INCIDENCIAS con id en el body → actualizar.mjs hace UPDATE.
  *
- * @author Covadonga Blanco Álvarez
- * @version 1.0.0
- * @param {Object}   incidencia                    - Fila de la incidencia tal como llega del listado
- * @param {Function} funcionDeCierreDeFormulario    - Cierra el formulario sin guardar
- * @param {Function} handleIncidenciaActualizada    - Callback tras actualización exitosa
+ * @author Covadonga Blanco Alvarez
+ * @version 1.0
+ * @param {Object}   incidencia                 - Fila de la incidencia tal como llega del listado
+ * @param {Function} funcionDeCierreDeFormulario - Cierra el formulario sin guardar
+ * @param {Function} handleIncidenciaActualizada - Callback tras actualizacion exitosa
  */
 export function EditarIncidenciaForm({ incidencia, funcionDeCierreDeFormulario, handleIncidenciaActualizada }) {
 
     const { user } = useUsers();
-
     const [enviando, setEnviando] = useState(false);
-    const [mensaje, setMensaje] = useMensaje();
+    const [mensaje,  setMensaje]  = useMensaje();
+
+    const BASE = import.meta.env.VITE_BACKEND;
+
+    const fechaISO = (fecha) =>
+        fecha ? new Date(fecha).toISOString().split('T')[0] : '';
 
     const [form, setForm] = useState({
-        id:             incidencia?.ID             ?? '',
-        id_empleado:    incidencia?.ID_empleado    ?? incidencia?.ID_EMPLEADO ?? '',
-        fecha_creacion: incidencia?.fecha_creacion
-            ? new Date(incidencia.fecha_creacion).toISOString().split('T')[0]
-            : '',
-        estado:         incidencia?.estado         ?? ESTADOS_VALIDOS[0],
-        observaciones:  incidencia?.Observaciones  ?? '',
-        comentario:     incidencia?.Comentario     ?? '',
+        id:  incidencia?.ID               ?? '',
+        id_empleado:    incidencia?.ID_empleado
+                        ?? incidencia?.id_empleado   ?? '',
+        fecha_creacion: fechaISO(incidencia?.fecha_creacion),
+        estado:         incidencia?.estado            ?? 'Abierta',
+        observaciones:  incidencia?.Observaciones
+                        ?? incidencia?.observaciones  ?? '',
+        comentario:     incidencia?.Comentario
+                        ?? incidencia?.comentario     ?? '',
     });
 
     const handleChange = (e) => {
@@ -45,7 +47,7 @@ export function EditarIncidenciaForm({ incidencia, funcionDeCierreDeFormulario, 
 
         try {
             const response = await apiFetch(
-                import.meta.env.VITE_BACKEND_INCIDENCIAS || `${import.meta.env.VITE_BACKEND}/incidencias`,
+                `${BASE}/incidencias`,
                 {
                     method: 'POST',
                     headers: {
@@ -59,7 +61,7 @@ export function EditarIncidenciaForm({ incidencia, funcionDeCierreDeFormulario, 
             const data = await response.json();
 
             if (response.ok) {
-                setMensaje({ tipo: 'success', texto: data?.message ?? 'Incidencia actualizada correctamente.' });
+                setMensaje({ tipo: 'success', texto: 'Incidencia actualizada correctamente.' });
                 setTimeout(() => {
                     handleIncidenciaActualizada?.();
                 }, 1000);
@@ -68,7 +70,7 @@ export function EditarIncidenciaForm({ incidencia, funcionDeCierreDeFormulario, 
             }
         } catch (err) {
             console.error(err);
-            setMensaje({ tipo: 'danger', texto: 'Error de conexión con el servidor.' });
+            setMensaje({ tipo: 'danger', texto: 'Error de conexion con el servidor.' });
         } finally {
             setEnviando(false);
         }
@@ -78,10 +80,9 @@ export function EditarIncidenciaForm({ incidencia, funcionDeCierreDeFormulario, 
         <div className="superponer">
             <div
                 className="card confirmacion"
-                style={{ width: 'min(95dvw, 800px)', overflowY: 'auto' }}
+                style={{ width: 'min(95dvw, 700px)', overflowY: 'auto' }}
             >
-                <div className="card-header d-flex justify-content-between align-items-center">
-                    <span className="small text-muted">ID: {incidencia?.ID}</span>
+                <div className="card-header d-flex justify-content-end align-items-center">
                     <button
                         type="button"
                         className="btn btn-outline-danger btn-sm bi bi-x"
@@ -90,8 +91,8 @@ export function EditarIncidenciaForm({ incidencia, funcionDeCierreDeFormulario, 
                     />
                 </div>
 
-                <div className="card-body p-2">
-                    <h2 className="text-center mb-2">Editar incidencia</h2>
+                <div className="card-body p-3">
+                    <h2 className="text-center mb-3" style={{ fontSize: '1.2rem' }}>Editar incidencia</h2>
 
                     {mensaje && (
                         <div className={`alert alert-${mensaje.tipo} py-1 px-2 small mb-2`}>
@@ -101,23 +102,7 @@ export function EditarIncidenciaForm({ incidencia, funcionDeCierreDeFormulario, 
 
                     <form onSubmit={handleSubmit}>
 
-                        <h4 className="mb-2 mt-1 border-bottom pb-1 small fw-semibold">Información de la incidencia</h4>
-
-                        <div className="mb-2">
-                            <label htmlFor="fecha_creacion" className="form-label small mb-1">
-                                Fecha de creación <span className="text-danger">*</span>
-                            </label>
-                            <input
-                                type="date"
-                                className="form-control form-control-sm"
-                                id="fecha_creacion"
-                                name="fecha_creacion"
-                                value={form.fecha_creacion}
-                                onChange={handleChange}
-                                required
-                            />
-                        </div>
-
+                        {/* Estado */}
                         <div className="mb-2">
                             <label htmlFor="estado" className="form-label small mb-1">
                                 Estado <span className="text-danger">*</span>
@@ -130,15 +115,16 @@ export function EditarIncidenciaForm({ incidencia, funcionDeCierreDeFormulario, 
                                 onChange={handleChange}
                                 required
                             >
-                                {ESTADOS_VALIDOS.map(e => (
-                                    <option key={e} value={e}>{e}</option>
-                                ))}
+                                <option value="Abierta">Abierta</option>
+                                <option value="Cerrada">Cerrada</option>
+                            
                             </select>
                         </div>
 
+                        {/* Observaciones */}
                         <div className="mb-2">
                             <label htmlFor="observaciones" className="form-label small mb-1">
-                                Observaciones <span className="text-danger">*</span>
+                                Observaciones
                             </label>
                             <textarea
                                 className="form-control form-control-sm"
@@ -147,13 +133,15 @@ export function EditarIncidenciaForm({ incidencia, funcionDeCierreDeFormulario, 
                                 value={form.observaciones}
                                 onChange={handleChange}
                                 rows={3}
-                                maxLength={60}
-                                required
+                                placeholder="Descripcion de la incidencia..."
                             />
                         </div>
 
+                        {/* Comentario */}
                         <div className="mb-2">
-                            <label htmlFor="comentario" className="form-label small mb-1">Comentario</label>
+                            <label htmlFor="comentario" className="form-label small mb-1">
+                                Comentario
+                            </label>
                             <textarea
                                 className="form-control form-control-sm"
                                 id="comentario"
@@ -161,11 +149,27 @@ export function EditarIncidenciaForm({ incidencia, funcionDeCierreDeFormulario, 
                                 value={form.comentario}
                                 onChange={handleChange}
                                 rows={3}
-                                maxLength={60}
+                                placeholder="Comentario interno..."
                             />
                         </div>
 
-                        <div className="d-flex justify-content-end gap-2 mt-2">
+                        {/* Fecha creacion*/}
+                        <div className="mb-3">
+                            <label htmlFor="fecha_creacion" className="form-label small mb-1">
+                                Fecha de creacion
+                            </label>
+                            <input
+                                type="date"
+                                className="form-control form-control-sm bg-light"
+                                id="fecha_creacion"
+                                name="fecha_creacion"
+                                value={form.fecha_creacion}
+                                readOnly
+                                disabled
+                            />
+                        </div>
+
+                        <div className="d-flex justify-content-end gap-2">
                             <button
                                 type="button"
                                 className="btn btn-secondary btn-sm"

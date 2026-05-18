@@ -314,7 +314,7 @@ app.post('/incidencias', (req, res) => {
     }
     // si en la petición viene un ID, vamos a actualizarIncidencia
     // en vez de a registrar
-    if (req?.body?.id_incidencia) {
+    if (req?.body?.id) {
         actualizarIncidencia(req, res);
     } else registrarIncidencias(req, res);
 });
