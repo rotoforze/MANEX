@@ -186,17 +186,6 @@ export function TablaEmpleados() {
                                 <th scope="col">Acciones</th>
                             </tr>
                             <tr>
-<<<<<<< HEAD
-                                <th />
-                                <th><input className="form-control form-control-sm" type="text" placeholder="Nombre" value={filtros.nombre} onChange={e => setFiltro('nombre', e.target.value)} /></th>
-                                <th><input className="form-control form-control-sm" type="text" placeholder="Apellidos" value={filtros.apellidos} onChange={e => setFiltro('apellidos', e.target.value)} /></th>
-                                <th><input className="form-control form-control-sm" type="text" placeholder="Email" value={filtros.email} onChange={e => setFiltro('email', e.target.value)} /></th>
-                                <th><input className="form-control form-control-sm" type="text" placeholder="Teléfono" value={filtros.telefono} onChange={e => setFiltro('telefono', e.target.value)} /></th>
-                                <th />
-                                <th />
-                                <th><input className="form-control form-control-sm" type="text" placeholder="Dpto." value={filtros.departamento} onChange={e => setFiltro('departamento', e.target.value)} /></th>
-                                <th><input className="form-control form-control-sm" type="text" placeholder="Contrato" value={filtros.contrato} onChange={e => setFiltro('contrato', e.target.value)} /></th>
-=======
                                 <th/>
                                 <th><input className="form-control form-control-sm" type="text" placeholder="Nombre"
                                            value={filtros.nombre} onChange={e => setFiltro('nombre', e.target.value)}/>
@@ -218,7 +207,6 @@ export function TablaEmpleados() {
                                 <th><input className="form-control form-control-sm" type="text" placeholder="Contrato"
                                            value={filtros.contrato}
                                            onChange={e => setFiltro('contrato', e.target.value)}/></th>
->>>>>>> main
                                 <th>
                                     {hayFiltros && (
                                         <button className="btn btn-outline-secondary btn-sm w-100"
@@ -250,8 +238,6 @@ export function TablaEmpleados() {
                                     <td>{empleado?.ID_DEPARTAMENTO}</td>
                                     <td>{empleado?.ID_CONTRATO}</td>
                                     <td className="acciones-tabla">
-<<<<<<< HEAD
-=======
                                         <button
                                             className="btn btn-info btn-sm"
                                             title="Ver empleado"
@@ -260,7 +246,6 @@ export function TablaEmpleados() {
                                         >
                                             <i className="bi bi-eye-fill" aria-hidden="true"/>
                                         </button>
->>>>>>> main
                                         <button
                                             className="btn btn-info btn-sm"
                                             title="Ver empleado"
@@ -275,27 +260,15 @@ export function TablaEmpleados() {
                                             aria-label="Editar empleado"
                                             onClick={() => setEmpleadoEditando(empleado)}
                                             disabled={!tengoPermiso('/empleados', 'POST')}
-<<<<<<< HEAD
-                                        >
-                                            <i className="bi bi-pencil-fill" aria-hidden="true" />
-                                        </button>
-=======
                                         ><i className="bi bi-pencil-fill" aria-hidden="true"/></button>
                                         &nbsp;
->>>>>>> main
                                         <button
                                             className="btn btn-danger btn-sm"
                                             title="Eliminar empleado"
                                             aria-label="Eliminar empleado"
                                             onClick={() => setEmpleadoEliminando(empleado)}
                                             disabled={!tengoPermiso('/empleados', 'DELETE')}
-<<<<<<< HEAD
-                                        >
-                                            <i className="bi bi-trash-fill" aria-hidden="true" />
-                                        </button>
-=======
                                         ><i className="bi bi-trash-fill" aria-hidden="true"/></button>
->>>>>>> main
                                     </td>
                                 </tr>
                             )) : (
