@@ -148,7 +148,7 @@ export function TablaFichajes({setFichajeActivo}) {
                                 <th scope="col">Tipo</th>
                                 <th scope="col"></th>
                             </tr>
-                            <tr className="table-light">
+                            <tr>
                                 <th />
                                 <th />
                                 <th><input className="form-control form-control-sm" type="text" placeholder="Usuario" value={filtros.usuario} onChange={e => setFiltro('usuario', e.target.value)} /></th>

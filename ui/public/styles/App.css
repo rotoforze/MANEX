@@ -14,6 +14,12 @@ body {
     background-repeat: repeat;
 }
 
+[data-bs-theme="dark"] body {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='2048' height='1024'%3E%3Ctext x='50%25' y='50%25' font-family='sans-serif' font-weight='900' font-size='256' fill='rgba(255,255,255,0.05)' text-anchor='middle' dominant-baseline='middle'%3EMANEX%3C/text%3E%3C/svg%3E"),
+    conic-gradient(from 150deg at 50% 33%, #1e2433 60deg, transparent 0),
+    conic-gradient(from -30deg at 50% 66%, #1e2433 60deg, #0d1117 0);
+}
+
 form {
     width: auto;
     margin: 0;
@@ -54,7 +60,7 @@ form div {
 }
 
 .support-card {
-    background-color: rgba(248, 249, 250, .9);
+    background-color: var(--bs-secondary-bg);
 }
 
 .support-icon {
@@ -92,7 +98,7 @@ form div {
 }
 
 .dashboard-main {
-    background-color: rgba(248, 249, 250, .82);
+    background-color: var(--bs-body-bg);
 }
 
 .dashboard-hero {
@@ -270,7 +276,7 @@ form div {
         left: 0;
         right: 0;
         height: 10dvh;
-        background-color: #212529;
+        background-color: var(--bs-dark-bg-subtle, #212529);
         padding: 0.5rem 1rem !important;
         z-index: 1000;
         display: flex !important;

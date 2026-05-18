@@ -236,7 +236,7 @@ export function EditarEmpleadoForm({ empleado, funcionDeCierreDeFormulario, hand
                                 </label>
                                 <input
                                     type="text"
-                                    className="form-control form-control-sm bg-light"
+                                    className="form-control form-control-sm"
                                     id="usuario"
                                     value={form.usuario}
                                     readOnly

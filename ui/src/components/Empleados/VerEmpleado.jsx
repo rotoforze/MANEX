@@ -295,7 +295,7 @@ export function VerEmpleado({ empleado, onClose }) {
                                 : (
                                     <div className="table-responsive">
                                         <table className="table table-sm table-striped table-hover">
-                                            <thead className="table-light">
+                                            <thead>
                                                 <tr>
                                                     <th className="small">Entrada</th>
                                                     <th className="small">Salida</th>
@@ -349,7 +349,7 @@ export function VerEmpleado({ empleado, onClose }) {
                                 : (
                                     <div className="table-responsive">
                                         <table className="table table-sm table-striped table-hover">
-                                            <thead className="table-light">
+                                            <thead>
                                                 <tr>
                                                     <th className="small">Fecha inicio</th>
                                                     <th className="small">Fecha fin</th>
@@ -389,7 +389,7 @@ export function VerEmpleado({ empleado, onClose }) {
                                 : (
                                     <div className="table-responsive">
                                         <table className="table table-sm table-striped table-hover">
-                                            <thead className="table-light">
+                                            <thead>
                                                 <tr>
                                                     <th className="small">Estado</th>
                                                     <th className="small">Fecha creación</th>
