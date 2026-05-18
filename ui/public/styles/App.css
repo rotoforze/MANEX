@@ -334,4 +334,7 @@ form div {
         justify-content: unset !important;
         margin: 0px !important;
     }
+    .table thead {
+        width: 100% !important;
+    }
 }

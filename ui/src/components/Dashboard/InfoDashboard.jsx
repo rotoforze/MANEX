@@ -111,7 +111,7 @@ function TablaResumen({filas, columnas, vacia}) {
     );
 }
 
-// ── Panel RRHH: Solicitudes de cambio de contraseña ─────────────────────────
+// ── Panel RRHH: Solicitudes de cambio de contraseña
 
 const PANEL_POR_PAGINA = 5;
 
@@ -517,7 +517,11 @@ export function InfoDashboard() {
                             <div className="text-muted small mb-3">
                                 {fichajeActivo ? (
                                     <>
-                                        <span>Entrada: <b>{formatHora(fichajeActivo.fecha_entrada)}</b></span>
+                                        <span>Entrada: <b>{new Date(fichajeActivo.fecha_entrada).toLocaleTimeString('es-ES', {
+                                            hour: '2-digit',
+                                            minute: '2-digit',
+                                            second: '2-digit'
+                                        })}</b></span>
                                         <span className="mx-1">·</span>
                                         <span>Duración: <b>{calcularDuracion(fichajeActivo.fecha_entrada, null)}</b></span>
                                         <span className="mx-1">·</span>
@@ -710,9 +714,9 @@ export function InfoDashboard() {
             </div>
 
             {/* ══════════════════════════════════════════════
-                SECCIÓN ESTADÍSTICAS GLOBALES (solo admins)
+                SECCIÓN ESTADÍSTICAS GLOBALES (solo admins y gerencia)
             ══════════════════════════════════════════════ */}
-            {kpisGlobales && (
+            {kpisGlobales && user?.departamento >= 7 && (
                 <>
                     <hr className="my-4"/>
 

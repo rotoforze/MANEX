@@ -15,7 +15,7 @@ import '../../public/styles/mainPages.css';
  */
 export function Solicitudes() {
 
-  const { user } = useUsers();
+  const { user, tengoPermiso } = useUsers();
   const idEmpleadoFiltro = user?.departamento === 1 ? user?.id : undefined;
 
   const [registroVisible, setRegistroVisible] = useState(false);
@@ -48,7 +48,7 @@ export function Solicitudes() {
         <div className="d-flex gap-2 align-items-start justify-content-start top-accion">
           <button
             className={"btn top-accion-btn " + (registroVisible ? 'btn-danger' : 'btn-primary')}
-            onClick={() => setRegistroVisible(!registroVisible)}
+            onClick={() => setRegistroVisible(!registroVisible)} disabled={!tengoPermiso('/vacaciones', 'POST')}
           >
             {registroVisible ? 'Cerrar formulario' : 'Nueva solicitud'}
           </button>

@@ -37,11 +37,11 @@ async function actualizarIncidencia(req, res) {
 
         const [resultado] = await connection.query(
             `UPDATE incidencia
-             SET estado        = ?,
-                 Observaciones = ?,
-                 Comentario    = ?,
-                 ID_empleado   = ?,
-                 fecha_creacion = ?
+             SET ${estado ? 'estado = ?,' : ''}
+                 ${observaciones ? 'observaciones = ?,' : ''},
+                 ${comentario ? 'comentario = ?,' : ''},
+                 ${id_empleado ? 'id_empleado = ?,' : ''},
+                 ${fecha_creacion ? 'fecha_creacion = ?,' : ''}
              WHERE ID = ?`,
             [
                 estado,
