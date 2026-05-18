@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
-import { useUsers } from "../../context/UserContext.jsx";
-import { apiFetch } from "../../utils/apiFetch.jsx";
-import { useDebounce } from "../../hooks/useDebounce.js";
+import {useEffect, useState} from "react";
+import {useSearchParams} from "react-router-dom";
+import {useUsers} from "../../context/UserContext.jsx";
+import {apiFetch} from "../../utils/apiFetch.jsx";
+import {useDebounce} from "../../hooks/useDebounce.js";
 import "../../../public/styles/tablaPermisos.css";
 import "../../../public/styles/mainPages.css";
 
@@ -25,16 +25,16 @@ export function TablaFichajes({setFichajeActivo}) {
     const [cantidadPorPagina] = useState(10);
     const [searchParams, setSearchParams] = useSearchParams();
     const [filtros, setFiltros] = useState({
-        usuario:   '',
-        nombre:    searchParams.get('nombre')    || '',
+        usuario: '',
+        nombre: searchParams.get('nombre') || '',
         apellidos: searchParams.get('apellidos') || '',
-        tipo:      searchParams.get('tipo')      || '',
+        tipo: searchParams.get('tipo') || '',
     });
-    const setFiltro = (campo, valor) => setFiltros(prev => ({ ...prev, [campo]: valor }));
-    const dNombre    = useDebounce(filtros.nombre);
+    const setFiltro = (campo, valor) => setFiltros(prev => ({...prev, [campo]: valor}));
+    const dNombre = useDebounce(filtros.nombre);
     const dApellidos = useDebounce(filtros.apellidos);
 
-    const { user } = useUsers();
+    const {user} = useUsers();
 
     useEffect(() => {
         sessionStorage.setItem('tabla_fichajes_pagina', paginaActual);
@@ -42,10 +42,10 @@ export function TablaFichajes({setFichajeActivo}) {
 
     useEffect(() => {
         const p = {};
-        if (dNombre)        p.nombre    = dNombre;
-        if (dApellidos)     p.apellidos = dApellidos;
-        if (filtros.tipo)   p.tipo      = filtros.tipo;
-        setSearchParams(p, { replace: true });
+        if (dNombre) p.nombre = dNombre;
+        if (dApellidos) p.apellidos = dApellidos;
+        if (filtros.tipo) p.tipo = filtros.tipo;
+        setSearchParams(p, {replace: true});
     }, [dNombre, dApellidos, filtros.tipo]);
 
     useEffect(() => {
@@ -54,8 +54,8 @@ export function TablaFichajes({setFichajeActivo}) {
 
     const hayFiltros = !!(dNombre || dApellidos || filtros.tipo);
     const limpiarFiltros = () => {
-        setFiltros({ usuario: '', nombre: '', apellidos: '', tipo: '' });
-        setSearchParams({}, { replace: true });
+        setFiltros({usuario: '', nombre: '', apellidos: '', tipo: ''});
+        setSearchParams({}, {replace: true});
     };
 
     useEffect(() => {
@@ -63,10 +63,14 @@ export function TablaFichajes({setFichajeActivo}) {
         const urlFichajes = import.meta.env.VITE_BACKEND_FICHAJES
             || `${import.meta.env.VITE_BACKEND}/fichajes`;
 
-        const params = new URLSearchParams({ pagina: paginaActual, cantidad: cantidadPorPagina, username: user?.username });
-        if (dNombre)        params.set('nombre', dNombre);
-        if (dApellidos)     params.set('apellidos', dApellidos);
-        if (filtros.tipo)   params.set('tipo', filtros.tipo);
+        const params = new URLSearchParams({
+            pagina: paginaActual,
+            cantidad: cantidadPorPagina,
+            username: user?.username
+        });
+        if (dNombre) params.set('nombre', dNombre);
+        if (dApellidos) params.set('apellidos', dApellidos);
+        if (filtros.tipo) params.set('tipo', filtros.tipo);
 
         apiFetch(
             `${urlFichajes}?${params}`,
@@ -107,7 +111,7 @@ export function TablaFichajes({setFichajeActivo}) {
 
     function formatearFecha(fecha) {
         return fecha
-            ? new Date(fecha).toLocaleString('es-ES', { timeZone: 'UTC' })
+            ? new Date(fecha).toLocaleString('es-ES', {timeZone: 'UTC'})
             : 'N/A';
     }
 
@@ -124,7 +128,7 @@ export function TablaFichajes({setFichajeActivo}) {
     if (errorCarga) {
         return (
             <div className="tabla-empty-state">
-                <i className="bi bi-exclamation-circle tabla-empty-icon text-danger" aria-hidden="true" />
+                <i className="bi bi-exclamation-circle tabla-empty-icon text-danger" aria-hidden="true"/>
                 <p className="text-danger mb-0">{errorCarga}</p>
             </div>
         );
@@ -134,9 +138,10 @@ export function TablaFichajes({setFichajeActivo}) {
     return (
         <>
             {listaFichajes.length > 0 || hayFiltros ? (
-                <div className="table-responsive m-3 d-flex flex-column justify-content-start">
-                    <table className="table table-striped">
-                        <thead>
+                <div className="contenedor-tabla m-3 d-flex flex-column justify-content-start">
+                    <div className={"table-responsive"}>
+                        <table className="table table-striped">
+                            <thead>
                             <tr>
                                 <th scope="col">#</th>
                                 <th scope="col">Empleado</th>
@@ -149,15 +154,22 @@ export function TablaFichajes({setFichajeActivo}) {
                                 <th scope="col"></th>
                             </tr>
                             <tr>
-                                <th />
-                                <th />
-                                <th><input className="form-control form-control-sm" type="text" placeholder="Usuario" value={filtros.usuario} onChange={e => setFiltro('usuario', e.target.value)} /></th>
-                                <th><input className="form-control form-control-sm" type="text" placeholder="Nombre" value={filtros.nombre} onChange={e => setFiltro('nombre', e.target.value)} /></th>
-                                <th><input className="form-control form-control-sm" type="text" placeholder="Apellidos" value={filtros.apellidos} onChange={e => setFiltro('apellidos', e.target.value)} /></th>
-                                <th />
-                                <th />
+                                <th/>
+                                <th/>
+                                <th><input className="form-control form-control-sm" type="text" placeholder="Usuario"
+                                           value={filtros.usuario}
+                                           onChange={e => setFiltro('usuario', e.target.value)}/></th>
+                                <th><input className="form-control form-control-sm" type="text" placeholder="Nombre"
+                                           value={filtros.nombre} onChange={e => setFiltro('nombre', e.target.value)}/>
+                                </th>
+                                <th><input className="form-control form-control-sm" type="text" placeholder="Apellidos"
+                                           value={filtros.apellidos}
+                                           onChange={e => setFiltro('apellidos', e.target.value)}/></th>
+                                <th/>
+                                <th/>
                                 <th>
-                                    <select className="form-select form-select-sm" value={filtros.tipo} onChange={e => setFiltro('tipo', e.target.value)}>
+                                    <select className="form-select form-select-sm" value={filtros.tipo}
+                                            onChange={e => setFiltro('tipo', e.target.value)}>
                                         <option value="">Todos</option>
                                         <option value="Presencial">Presencial</option>
                                         <option value="Remoto">Remoto</option>
@@ -165,14 +177,15 @@ export function TablaFichajes({setFichajeActivo}) {
                                 </th>
                                 <th>
                                     {hayFiltros && (
-                                        <button className="btn btn-outline-secondary btn-sm w-100" onClick={limpiarFiltros} title="Limpiar filtros">
-                                            <i className="bi bi-x-lg me-1" aria-hidden="true" />Limpiar
+                                        <button className="btn btn-outline-secondary btn-sm w-100"
+                                                onClick={limpiarFiltros} title="Limpiar filtros">
+                                            <i className="bi bi-x-lg me-1" aria-hidden="true"/>Limpiar
                                         </button>
                                     )}
                                 </th>
                             </tr>
-                        </thead>
-                        <tbody className="table-group-divider">
+                            </thead>
+                            <tbody className="table-group-divider">
                             {listaFichajes.length > 0 ? listaFichajes.map((fichaje) => {
                                 const id = obtenerValor(fichaje, ['id']);
                                 const idEmpleado = obtenerValor(fichaje, ['id_empleado']);
@@ -199,42 +212,47 @@ export function TablaFichajes({setFichajeActivo}) {
                                     </td>
                                 </tr>
                             )}
-                        </tbody>
-                    </table>
-
-                    {listaFichajes.length > 0 && <div className="d-flex align-items-center justify-content-center gap-2 mb-3">
-                        <button
-                            className="btn btn-outline-secondary btn-sm bi bi-chevron-bar-left"
-                            aria-label="Primera página"
-                            disabled={paginaActual === 0}
-                            onClick={() => setPaginaActual(0)}
-                        />
-                        <button
-                            className="btn btn-outline-secondary btn-sm bi bi-chevron-left"
-                            aria-label="Página anterior"
-                            disabled={paginaActual === 0}
-                            onClick={() => { if (paginaActual > 0) setPaginaActual(paginaActual - 1); }}
-                        />
-                        <span className="small text-muted">
+                            </tbody>
+                        </table>
+                    </div>
+                    {listaFichajes.length > 0 &&
+                        <div className="d-flex align-items-center justify-content-center gap-2 mb-3">
+                            <button
+                                className="btn btn-outline-secondary btn-sm bi bi-chevron-bar-left"
+                                aria-label="Primera página"
+                                disabled={paginaActual === 0}
+                                onClick={() => setPaginaActual(0)}
+                            />
+                            <button
+                                className="btn btn-outline-secondary btn-sm bi bi-chevron-left"
+                                aria-label="Página anterior"
+                                disabled={paginaActual === 0}
+                                onClick={() => {
+                                    if (paginaActual > 0) setPaginaActual(paginaActual - 1);
+                                }}
+                            />
+                            <span className="small text-muted">
                             Página {paginaActual + 1} de {paginaMaxima + 1} · {totalRegistros} registros
                         </span>
-                        <button
-                            className="btn btn-outline-secondary btn-sm bi bi-chevron-right"
-                            aria-label="Página siguiente"
-                            disabled={!(paginaActual < paginaMaxima)}
-                            onClick={() => { if (paginaActual < paginaMaxima) setPaginaActual(paginaActual + 1); }}
-                        />
-                        <button
-                            className="btn btn-outline-secondary btn-sm bi bi-chevron-bar-right"
-                            aria-label="Última página"
-                            disabled={!(paginaActual < paginaMaxima)}
-                            onClick={() => setPaginaActual(paginaMaxima)}
-                        />
-                    </div>}
+                            <button
+                                className="btn btn-outline-secondary btn-sm bi bi-chevron-right"
+                                aria-label="Página siguiente"
+                                disabled={!(paginaActual < paginaMaxima)}
+                                onClick={() => {
+                                    if (paginaActual < paginaMaxima) setPaginaActual(paginaActual + 1);
+                                }}
+                            />
+                            <button
+                                className="btn btn-outline-secondary btn-sm bi bi-chevron-bar-right"
+                                aria-label="Última página"
+                                disabled={!(paginaActual < paginaMaxima)}
+                                onClick={() => setPaginaActual(paginaMaxima)}
+                            />
+                        </div>}
                 </div>
             ) : (
                 <div className="tabla-empty-state">
-                    <i className="bi bi-person-check tabla-empty-icon" aria-hidden="true" />
+                    <i className="bi bi-person-check tabla-empty-icon" aria-hidden="true"/>
                     <p className="text-muted mb-0">No hay fichajes registrados.</p>
                 </div>
             )}

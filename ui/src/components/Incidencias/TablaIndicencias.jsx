@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
-import { useUsers } from "../../context/UserContext.jsx";
-import { apiFetch } from "../../utils/apiFetch.jsx";
-import { useDebounce } from "../../hooks/useDebounce.js";
+import {useEffect, useState} from "react";
+import {useSearchParams} from "react-router-dom";
+import {useUsers} from "../../context/UserContext.jsx";
+import {apiFetch} from "../../utils/apiFetch.jsx";
+import {useDebounce} from "../../hooks/useDebounce.js";
 import "../../../public/styles/tablaPermisos.css";
 import "../../../public/styles/mainPages.css";
 
@@ -14,7 +14,7 @@ import "../../../public/styles/mainPages.css";
  * @returns {React.JSX.Element}
  * @constructor
  */
-export function TablaIncidencias({ tipoIncidencia, idEmpleado }) {
+export function TablaIncidencias({tipoIncidencia, idEmpleado}) {
     const [listaIncidencias, setListaIncidencias] = useState([]);
     const [cargando, setCargando] = useState(true);
     const [errorCarga, setErrorCarga] = useState('');
@@ -24,19 +24,19 @@ export function TablaIncidencias({ tipoIncidencia, idEmpleado }) {
     const [cantidadPorPagina] = useState(10);
     const [searchParams, setSearchParams] = useSearchParams();
     const [filtros, setFiltros] = useState({
-        estado:        searchParams.get('estado')        || '',
+        estado: searchParams.get('estado') || '',
         observaciones: searchParams.get('observaciones') || '',
-        comentario:    searchParams.get('comentario')    || '',
-        nombre:        searchParams.get('nombre')        || '',
-        apellidos:     searchParams.get('apellidos')     || '',
+        comentario: searchParams.get('comentario') || '',
+        nombre: searchParams.get('nombre') || '',
+        apellidos: searchParams.get('apellidos') || '',
     });
-    const setFiltro = (campo, valor) => setFiltros(prev => ({ ...prev, [campo]: valor }));
+    const setFiltro = (campo, valor) => setFiltros(prev => ({...prev, [campo]: valor}));
     const dObservaciones = useDebounce(filtros.observaciones);
-    const dComentario    = useDebounce(filtros.comentario);
-    const dNombre        = useDebounce(filtros.nombre);
-    const dApellidos     = useDebounce(filtros.apellidos);
+    const dComentario = useDebounce(filtros.comentario);
+    const dNombre = useDebounce(filtros.nombre);
+    const dApellidos = useDebounce(filtros.apellidos);
 
-    const { user } = useUsers();
+    const {user} = useUsers();
 
     useEffect(() => {
         sessionStorage.setItem('tabla_incidencias_pagina', paginaActual);
@@ -44,12 +44,12 @@ export function TablaIncidencias({ tipoIncidencia, idEmpleado }) {
 
     useEffect(() => {
         const p = {};
-        if (filtros.estado)  p.estado        = filtros.estado;
-        if (dObservaciones)  p.observaciones  = dObservaciones;
-        if (dComentario)     p.comentario     = dComentario;
-        if (dNombre)         p.nombre         = dNombre;
-        if (dApellidos)      p.apellidos      = dApellidos;
-        setSearchParams(p, { replace: true });
+        if (filtros.estado) p.estado = filtros.estado;
+        if (dObservaciones) p.observaciones = dObservaciones;
+        if (dComentario) p.comentario = dComentario;
+        if (dNombre) p.nombre = dNombre;
+        if (dApellidos) p.apellidos = dApellidos;
+        setSearchParams(p, {replace: true});
     }, [filtros.estado, dObservaciones, dComentario, dNombre, dApellidos]);
 
     useEffect(() => {
@@ -58,8 +58,8 @@ export function TablaIncidencias({ tipoIncidencia, idEmpleado }) {
 
     const hayFiltros = !!(filtros.estado || dObservaciones || dComentario || dNombre || dApellidos);
     const limpiarFiltros = () => {
-        setFiltros({ estado: '', observaciones: '', comentario: '', nombre: '', apellidos: '' });
-        setSearchParams({}, { replace: true });
+        setFiltros({estado: '', observaciones: '', comentario: '', nombre: '', apellidos: ''});
+        setSearchParams({}, {replace: true});
     };
 
     useEffect(() => {
@@ -67,13 +67,13 @@ export function TablaIncidencias({ tipoIncidencia, idEmpleado }) {
         const urlIncidencias = import.meta.env.VITE_BACKEND_INCIDENCIAS
             || `${import.meta.env.VITE_BACKEND}/incidencias`;
 
-        const params = new URLSearchParams({ pagina: paginaActual, cantidad: cantidadPorPagina });
-        if (idEmpleado)     params.set('id_empleado',   idEmpleado);
-        if (filtros.estado) params.set('estado',        filtros.estado);
+        const params = new URLSearchParams({pagina: paginaActual, cantidad: cantidadPorPagina});
+        if (idEmpleado) params.set('id_empleado', idEmpleado);
+        if (filtros.estado) params.set('estado', filtros.estado);
         if (dObservaciones) params.set('observaciones', dObservaciones);
-        if (dComentario)    params.set('comentario',    dComentario);
-        if (dNombre)        params.set('nombre',        dNombre);
-        if (dApellidos)     params.set('apellidos',     dApellidos);
+        if (dComentario) params.set('comentario', dComentario);
+        if (dNombre) params.set('nombre', dNombre);
+        if (dApellidos) params.set('apellidos', dApellidos);
 
         apiFetch(
             `${urlIncidencias}?${params}`,
@@ -124,7 +124,7 @@ export function TablaIncidencias({ tipoIncidencia, idEmpleado }) {
 
     function formatearFecha(fecha) {
         return fecha
-            ? new Date(fecha).toLocaleDateString('es-ES', { timeZone: 'UTC' })
+            ? new Date(fecha).toLocaleDateString('es-ES', {timeZone: 'UTC'})
             : 'N/A';
     }
 
@@ -141,7 +141,7 @@ export function TablaIncidencias({ tipoIncidencia, idEmpleado }) {
     if (errorCarga) {
         return (
             <div className="tabla-empty-state">
-                <i className="bi bi-exclamation-circle tabla-empty-icon text-danger" aria-hidden="true" />
+                <i className="bi bi-exclamation-circle tabla-empty-icon text-danger" aria-hidden="true"/>
                 <p className="text-danger mb-0">{errorCarga}</p>
             </div>
         );
@@ -151,9 +151,10 @@ export function TablaIncidencias({ tipoIncidencia, idEmpleado }) {
     return (
         <>
             {listaIncidencias.length > 0 || hayFiltros ? (
-                <div className="table-responsive m-3 d-flex flex-column justify-content-start">
-                    <table className="table table-striped  align-middle">
-                        <thead>
+                <div className="m-3 d-flex flex-column contenedor-tabla">
+                    <div className={"table-responsive"}>
+                        <table className="table table-striped overflow-x-auto align-middle">
+                            <thead>
                             <tr>
                                 <th scope="col">#</th>
                                 {!idEmpleado && <th scope="col">Nombre</th>}
@@ -165,29 +166,41 @@ export function TablaIncidencias({ tipoIncidencia, idEmpleado }) {
                                 <th scope="col">Acciones</th>
                             </tr>
                             <tr>
-                                <th />
-                                {!idEmpleado && <th><input className="form-control form-control-sm" type="text" placeholder="Nombre" value={filtros.nombre} onChange={e => setFiltro('nombre', e.target.value)} /></th>}
-                                {!idEmpleado && <th><input className="form-control form-control-sm" type="text" placeholder="Apellidos" value={filtros.apellidos} onChange={e => setFiltro('apellidos', e.target.value)} /></th>}
-                                <th />
+                                <th/>
+                                {!idEmpleado &&
+                                    <th><input className="form-control form-control-sm" type="text" placeholder="Nombre"
+                                               value={filtros.nombre}
+                                               onChange={e => setFiltro('nombre', e.target.value)}/></th>}
+                                {!idEmpleado && <th><input className="form-control form-control-sm" type="text"
+                                                           placeholder="Apellidos" value={filtros.apellidos}
+                                                           onChange={e => setFiltro('apellidos', e.target.value)}/>
+                                </th>}
+                                <th/>
                                 <th>
-                                    <select className="form-select form-select-sm" value={filtros.estado} onChange={e => setFiltro('estado', e.target.value)}>
+                                    <select className="form-select form-select-sm" value={filtros.estado}
+                                            onChange={e => setFiltro('estado', e.target.value)}>
                                         <option value="">Todos</option>
                                         <option value="Abierta">Abierta</option>
                                         <option value="Cerrada">Cerrada</option>
                                     </select>
                                 </th>
-                                <th><input className="form-control form-control-sm" type="text" placeholder="Observaciones" value={filtros.observaciones} onChange={e => setFiltro('observaciones', e.target.value)} /></th>
-                                <th><input className="form-control form-control-sm" type="text" placeholder="Comentario" value={filtros.comentario} onChange={e => setFiltro('comentario', e.target.value)} /></th>
+                                <th><input className="form-control form-control-sm" type="text"
+                                           placeholder="Observaciones" value={filtros.observaciones}
+                                           onChange={e => setFiltro('observaciones', e.target.value)}/></th>
+                                <th><input className="form-control form-control-sm" type="text" placeholder="Comentario"
+                                           value={filtros.comentario}
+                                           onChange={e => setFiltro('comentario', e.target.value)}/></th>
                                 <th>
                                     {hayFiltros && (
-                                        <button className="btn btn-outline-secondary btn-sm w-100" onClick={limpiarFiltros} title="Limpiar filtros">
-                                            <i className="bi bi-x-lg me-1" aria-hidden="true" />Limpiar
+                                        <button className="btn btn-outline-secondary btn-sm w-100"
+                                                onClick={limpiarFiltros} title="Limpiar filtros">
+                                            <i className="bi bi-x-lg me-1" aria-hidden="true"/>Limpiar
                                         </button>
                                     )}
                                 </th>
                             </tr>
-                        </thead>
-                        <tbody className="table-group-divider">
+                            </thead>
+                            <tbody className="table-group-divider">
                             {listaIncidencias.length > 0 ? listaIncidencias.map((incidencia) => {
                                 const id = obtenerValor(incidencia, ['ID']);
                                 const estado = obtenerValor(incidencia, ['estado'], 'Sin estado');
@@ -211,12 +224,13 @@ export function TablaIncidencias({ tipoIncidencia, idEmpleado }) {
                                                 className="btn btn-primary btn-sm"
                                                 title="Editar incidencia"
                                                 aria-label="Editar incidencia"
-                                            ><i className="bi bi-pencil-fill" aria-hidden="true" /></button>&nbsp;
+                                            ><i className="bi bi-pencil-fill" aria-hidden="true"/></button>
+                                            &nbsp;
                                             <button
                                                 className="btn btn-danger btn-sm"
                                                 title="Eliminar incidencia"
                                                 aria-label="Eliminar incidencia"
-                                            ><i className="bi bi-trash-fill" aria-hidden="true" /></button>
+                                            ><i className="bi bi-trash-fill" aria-hidden="true"/></button>
                                         </td>
                                     </tr>
                                 );
@@ -227,42 +241,47 @@ export function TablaIncidencias({ tipoIncidencia, idEmpleado }) {
                                     </td>
                                 </tr>
                             )}
-                        </tbody>
-                    </table>
-
-                    {listaIncidencias.length > 0 && <div className="d-flex align-items-center justify-content-center gap-2 mb-3">
-                        <button
-                            className="btn btn-outline-secondary btn-sm bi bi-chevron-bar-left"
-                            aria-label="Primera página"
-                            disabled={paginaActual === 0}
-                            onClick={() => setPaginaActual(0)}
-                        />
-                        <button
-                            className="btn btn-outline-secondary btn-sm bi bi-chevron-left"
-                            aria-label="Página anterior"
-                            disabled={paginaActual === 0}
-                            onClick={() => { if (paginaActual > 0) setPaginaActual(paginaActual - 1); }}
-                        />
-                        <span className="small text-muted">
+                            </tbody>
+                        </table>
+                    </div>
+                    {listaIncidencias.length > 0 &&
+                        <div className="d-flex align-items-center justify-content-center gap-2 mb-3">
+                            <button
+                                className="btn btn-outline-secondary btn-sm bi bi-chevron-bar-left"
+                                aria-label="Primera página"
+                                disabled={paginaActual === 0}
+                                onClick={() => setPaginaActual(0)}
+                            />
+                            <button
+                                className="btn btn-outline-secondary btn-sm bi bi-chevron-left"
+                                aria-label="Página anterior"
+                                disabled={paginaActual === 0}
+                                onClick={() => {
+                                    if (paginaActual > 0) setPaginaActual(paginaActual - 1);
+                                }}
+                            />
+                            <span className="small text-muted">
                             Página {paginaActual + 1} de {paginaMaxima + 1} · {totalRegistros} registros
                         </span>
-                        <button
-                            className="btn btn-outline-secondary btn-sm bi bi-chevron-right"
-                            aria-label="Página siguiente"
-                            disabled={!(paginaActual < paginaMaxima)}
-                            onClick={() => { if (paginaActual < paginaMaxima) setPaginaActual(paginaActual + 1); }}
-                        />
-                        <button
-                            className="btn btn-outline-secondary btn-sm bi bi-chevron-bar-right"
-                            aria-label="Última página"
-                            disabled={!(paginaActual < paginaMaxima)}
-                            onClick={() => setPaginaActual(paginaMaxima)}
-                        />
-                    </div>}
+                            <button
+                                className="btn btn-outline-secondary btn-sm bi bi-chevron-right"
+                                aria-label="Página siguiente"
+                                disabled={!(paginaActual < paginaMaxima)}
+                                onClick={() => {
+                                    if (paginaActual < paginaMaxima) setPaginaActual(paginaActual + 1);
+                                }}
+                            />
+                            <button
+                                className="btn btn-outline-secondary btn-sm bi bi-chevron-bar-right"
+                                aria-label="Última página"
+                                disabled={!(paginaActual < paginaMaxima)}
+                                onClick={() => setPaginaActual(paginaMaxima)}
+                            />
+                        </div>}
                 </div>
             ) : (
                 <div className="tabla-empty-state">
-                    <i className="bi bi-bookmark tabla-empty-icon" aria-hidden="true" />
+                    <i className="bi bi-bookmark tabla-empty-icon" aria-hidden="true"/>
                     <p className="text-muted mb-0">No hay incidencias registradas.</p>
                 </div>
             )}

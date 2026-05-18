@@ -46,7 +46,7 @@ async function delIncidencia(req, res) {
 
         console.error('Error al eliminar la incidenia:', error);
 
-        return res.status(500).send({status: 500, message: 'Error al eliminado el la incidencia.'});
+        return res.status(500).send({status: 500, message: 'Error al eliminar la incidencia.'});
 
     } finally {
         await connection.end();

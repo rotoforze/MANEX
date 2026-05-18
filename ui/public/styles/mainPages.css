@@ -1,5 +1,5 @@
 .empleados-container {
-    min-height: 100%;
+    height: fit-content !important;
 }
 
 .nuevo-producto-form {
