@@ -142,7 +142,7 @@ export function TablaIncidencias({tipoIncidencia, idEmpleado}) {
     }
 
     // Número de columnas según si se muestra o no el empleado
-    const numColumnas = idEmpleado ? 5 : 7;
+    const numColumnas = idEmpleado ? 6 : 8;
 
     if (cargando) {
         return (
@@ -287,8 +287,9 @@ export function TablaIncidencias({tipoIncidencia, idEmpleado}) {
                                     </td>
                                 </tr>
                             )}
-                        </tbody>
-                    </table>
+                            </tbody>
+                        </table>
+                    </div>
 
                     {listaIncidencias.length > 0 && (
                         <div className="d-flex align-items-center justify-content-center gap-2 mb-3">
